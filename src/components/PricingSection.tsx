@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
@@ -11,6 +10,8 @@ const PricingSection = () => {
       period: "/month",
       description: "Perfect for small real estate companies",
       features: [
+        "Up to 2 projects",
+        "Up to 50 units",
         "Project dashboard",
         "KYC onboarding",
         "Document uploads",
@@ -25,6 +26,8 @@ const PricingSection = () => {
       period: "/month",
       description: "Complete solution for growing companies",
       features: [
+        "Up to 200 projects",
+        "Up to 5,000 units",
         "Full suite including CRM",
         "Unit allocation & mapping",
         "Virtual payment accounts",
@@ -39,9 +42,11 @@ const PricingSection = () => {
       name: "Enterprise",
       price: "Custom",
       period: "Pricing",
-      description: "Tailored for large organizations",
+      description: "Whitelabel solution for large organizations",
       features: [
+        "Unlimited projects & units",
         "Whitelabel solution",
+        "Custom branding",
         "Custom APIs",
         "Super Admin tools",
         "Custom dashboards",
