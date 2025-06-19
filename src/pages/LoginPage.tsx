@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Eye, EyeOff, Building, Home } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Building, Home, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
@@ -64,7 +64,11 @@ const LoginPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center pb-2">
-          <div className="mx-auto mb-4">
+          <div className="flex items-center justify-between mb-4">
+            <Link to="/" className="inline-flex items-center text-purple-600 hover:text-purple-700 dark:text-purple-400">
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back to Home
+            </Link>
             <h1 className="text-2xl font-bold text-purple-600 dark:text-purple-400">ProptyOS</h1>
           </div>
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Welcome back</h2>

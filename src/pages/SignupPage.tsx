@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, User, Phone, Building, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Phone, Building, Eye, EyeOff, Check, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 type UserType = 'company' | 'landlord' | null;
@@ -118,6 +118,30 @@ const SignupPage = () => {
           </div>
         </button>
       </div>
+
+      {/* What you'll get section */}
+      <Card className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
+        <CardHeader>
+          <h3 className="font-semibold text-purple-900 dark:text-purple-100">What you'll get:</h3>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[
+              '14-day free trial',
+              'Full access to all features',
+              'Unlimited properties',
+              'Customer support',
+              'Mobile app access',
+              'Data export capabilities'
+            ].map((feature, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <Check className="h-4 w-4 text-emerald-500" />
+                <span className="text-slate-700 dark:text-slate-300">{feature}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 
@@ -274,7 +298,11 @@ const SignupPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center pb-2">
-          <div className="mx-auto mb-4">
+          <div className="flex items-center justify-between mb-4">
+            <Link to="/" className="inline-flex items-center text-purple-600 hover:text-purple-700 dark:text-purple-400">
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back to Home
+            </Link>
             <h1 className="text-2xl font-bold text-purple-600 dark:text-purple-400">ProptyOS</h1>
           </div>
         </CardHeader>
