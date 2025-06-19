@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Plus, MapPin, FileText, Building } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NewProjectForm } from './forms/NewProjectForm';
+import { ProjectDocumentsView } from './projects/ProjectDocumentsView';
 
 const mockProjects = [
   {
@@ -42,6 +43,8 @@ const mockProjects = [
 export function ProjectsUnits() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
+  const [isDocumentsModalOpen, setIsDocumentsModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
@@ -79,9 +82,10 @@ export function ProjectsUnits() {
     navigate(`/company/projects/${projectId}/blocks`);
   };
 
-  const handleViewDocuments = (e: React.MouseEvent, projectId: number) => {
+  const handleViewDocuments = (e: React.MouseEvent, project: any) => {
     e.stopPropagation();
-    navigate('/company/documents', { state: { projectId } });
+    setSelectedProject(project);
+    setIsDocumentsModalOpen(true);
   };
 
   return (
@@ -232,7 +236,7 @@ export function ProjectsUnits() {
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={(e) => handleViewDocuments(e, project.id)}
+                      onClick={(e) => handleViewDocuments(e, project)}
                     >
                       <FileText className="h-3 w-3 mr-1" />
                       Documents
@@ -303,7 +307,7 @@ export function ProjectsUnits() {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={(e) => handleViewDocuments(e, project.id)}
+                          onClick={(e) => handleViewDocuments(e, project)}
                         >
                           <FileText className="h-3 w-3" />
                         </Button>
@@ -327,6 +331,19 @@ export function ProjectsUnits() {
             </DialogDescription>
           </DialogHeader>
           <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Documents Modal */}
+      <Dialog open={isDocumentsModalOpen} onOpenChange={setIsDocumentsModalOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Project Documents - {selectedProject?.name}</DialogTitle>
+            <DialogDescription>
+              View and manage documents for this project
+            </DialogDescription>
+          </DialogHeader>
+          <ProjectDocumentsView project={selectedProject} />
         </DialogContent>
       </Dialog>
     </div>

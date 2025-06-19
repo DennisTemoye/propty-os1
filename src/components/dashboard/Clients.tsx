@@ -7,12 +7,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Eye, FileText, DollarSign, User, Building, Search } from 'lucide-react';
+import { Plus, FileText, DollarSign, User, Building, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientForm } from './clients/ClientForm';
 import { ClientDetailView } from './clients/ClientDetailView';
 import { AssignPropertyModal } from './clients/AssignPropertyModal';
 import { AddPaymentModal } from './clients/AddPaymentModal';
+import { ClientDocumentsView } from './clients/ClientDocumentsView';
 import { useNavigate } from 'react-router-dom';
 
 const mockClients = [
