@@ -1,12 +1,10 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 
 const PricingSection = () => {
-  const [isRealEstate, setIsRealEstate] = useState(true);
-
-  const realEstatePlans = [
+  const plans = [
     {
       name: "Starter",
       price: "₦20,000",
@@ -54,94 +52,20 @@ const PricingSection = () => {
     }
   ];
 
-  const landlordPlans = [
-    {
-      name: "Starter",
-      price: "Free",
-      period: "",
-      description: "Great for individual landlords",
-      features: [
-        "Up to 2 units",
-        "Rent reminders",
-        "Basic rent history",
-        "Tenant contact management",
-        "Email support"
-      ],
-      isPopular: false
-    },
-    {
-      name: "Pro",
-      price: "₦15,000",
-      period: "/month",
-      description: "Perfect for small property portfolios",
-      features: [
-        "Up to 20 units",
-        "Digital rent collection",
-        "Expense tracking",
-        "Document storage",
-        "Maintenance requests",
-        "SMS notifications",
-        "Priority support"
-      ],
-      isPopular: true
-    },
-    {
-      name: "Enterprise",
-      price: "₦40,000",
-      period: "/month",
-      description: "Complete automation for large portfolios",
-      features: [
-        "Unlimited units",
-        "Vendor/staff payments",
-        "Full automation",
-        "Advanced analytics",
-        "Multi-property management",
-        "Custom integrations"
-      ],
-      isPopular: false
-    }
-  ];
-
-  const currentPlans = isRealEstate ? realEstatePlans : landlordPlans;
-
   return (
     <section id="pricing" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-            Flexible Pricing for All Property Types
+            Flexible Pricing for Real Estate Companies
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Choose the plan that fits your needs, whether you're managing a single property or an entire real estate empire
+            Choose the plan that fits your needs, whether you're developing properties, selling land, or managing real estate sales teams across Africa
           </p>
-
-          {/* Toggle Switch */}
-          <div className="inline-flex bg-gray-100 rounded-2xl p-1">
-            <button
-              onClick={() => setIsRealEstate(true)}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                isRealEstate
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              For Real Estate Companies
-            </button>
-            <button
-              onClick={() => setIsRealEstate(false)}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                !isRealEstate
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              For Landlords
-            </button>
-          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {currentPlans.map((plan, index) => (
+          {plans.map((plan, index) => (
             <div
               key={index}
               className={`relative rounded-2xl border-2 p-8 transition-all duration-300 ${
