@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,9 +8,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Eye, FileText, DollarSign, User, Building, Search } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientForm } from './clients/ClientForm';
 import { ClientDetailView } from './clients/ClientDetailView';
 import { AssignPropertyModal } from './clients/AssignPropertyModal';
+import { AddPaymentModal } from './clients/AddPaymentModal';
 import { useNavigate } from 'react-router-dom';
 
 const mockClients = [
@@ -20,8 +23,14 @@ const mockClients = [
     phone: '+234 801 234 5678',
     address: '123 Victoria Island, Lagos',
     nationalId: 'ABC123456789',
-    project: 'Victoria Gardens',
-    unit: 'Block A - Plot 02',
+    passportPhoto: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=150&h=150&fit=crop&crop=face',
+    projects: [
+      {
+        name: 'Victoria Gardens',
+        unit: 'Block A - Plot 02',
+        assignedDate: '2024-01-10'
+      }
+    ],
     status: 'active',
     kycStatus: 'approved',
     totalPaid: '₦15M',
@@ -38,8 +47,14 @@ const mockClients = [
     phone: '+234 802 345 6789',
     address: '456 Ikoyi, Lagos',
     nationalId: 'DEF987654321',
-    project: 'Emerald Heights',
-    unit: 'Block B - Plot 12',
+    passportPhoto: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=150&h=150&fit=crop&crop=face',
+    projects: [
+      {
+        name: 'Emerald Heights',
+        unit: 'Block B - Plot 12',
+        assignedDate: '2024-01-15'
+      }
+    ],
     status: 'pending',
     kycStatus: 'pending',
     totalPaid: '₦8M',
@@ -56,8 +71,19 @@ const mockClients = [
     phone: '+234 803 456 7890',
     address: '789 Lekki, Lagos',
     nationalId: 'GHI456789123',
-    project: 'Golden View',
-    unit: 'Block C - Plot 05',
+    passportPhoto: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=150&h=150&fit=crop&crop=face',
+    projects: [
+      {
+        name: 'Golden View',
+        unit: 'Block C - Plot 05',
+        assignedDate: '2023-12-01'
+      },
+      {
+        name: 'Victoria Gardens',
+        unit: 'Block D - Plot 08',
+        assignedDate: '2023-11-15'
+      }
+    ],
     status: 'completed',
     kycStatus: 'approved',
     totalPaid: '₦25M',
@@ -74,8 +100,8 @@ const mockClients = [
     phone: '+234 804 567 8901',
     address: '321 Ajah, Lagos',
     nationalId: 'JKL789123456',
-    project: null,
-    unit: null,
+    passportPhoto: null,
+    projects: [],
     status: 'unassigned',
     kycStatus: 'approved',
     totalPaid: '₦0',
@@ -91,6 +117,7 @@ export function Clients() {
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const [isNewClientOpen, setIsNewClientOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
+  const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards'); // Default to cards
@@ -143,12 +170,13 @@ export function Clients() {
 
   const handleAddPayment = (e: React.MouseEvent, client: any) => {
     e.stopPropagation();
-    navigate(`/company/clients/${client.id}`, { state: { openPayment: true } });
+    setSelectedClient(client);
+    setIsAddPaymentOpen(true);
   };
 
   const handleViewDocuments = (e: React.MouseEvent, client: any) => {
     e.stopPropagation();
-    navigate('/company/documents');
+    navigate('/company/documents', { state: { clientId: client.id } });
   };
 
   return (
@@ -274,10 +302,18 @@ export function Clients() {
             >
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">{client.name}</CardTitle>
-                    <p className="text-sm text-gray-600">{client.email}</p>
-                    <p className="text-sm text-gray-600">{client.phone}</p>
+                  <div className="flex items-start space-x-3">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
+                      <AvatarFallback>
+                        <User className="h-6 w-6" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-lg">{client.name}</CardTitle>
+                      <p className="text-sm text-gray-600">{client.email}</p>
+                      <p className="text-sm text-gray-600">{client.phone}</p>
+                    </div>
                   </div>
                   <div className="flex flex-col gap-2">
                     <Badge className={getStatusColor(client.status)}>
@@ -290,12 +326,15 @@ export function Clients() {
                 </div>
               </CardHeader>
               <CardContent>
-                {client.project ? (
+                {client.projects && client.projects.length > 0 ? (
                   <div className="space-y-3">
-                    <div>
-                      <div className="font-medium">{client.project}</div>
-                      <div className="text-sm text-gray-500">{client.unit}</div>
-                    </div>
+                    {client.projects.map((project: any, index: number) => (
+                      <div key={index} className="border-b pb-2 last:border-b-0">
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-sm text-gray-500">{project.unit}</div>
+                        <div className="text-xs text-gray-400">Assigned: {project.assignedDate}</div>
+                      </div>
+                    ))}
                     
                     <div>
                       <div className="flex justify-between text-sm mb-1">
@@ -377,7 +416,7 @@ export function Clients() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Client</TableHead>
-                  <TableHead>Project/Unit</TableHead>
+                  <TableHead>Projects/Units</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>KYC</TableHead>
                   <TableHead>Payment Progress</TableHead>
@@ -390,17 +429,29 @@ export function Clients() {
                   <TableRow key={client.id} className="cursor-pointer hover:bg-gray-50"
                            onClick={() => handleClientClick(client.id)}>
                     <TableCell>
-                      <div>
-                        <div className="font-medium">{client.name}</div>
-                        <div className="text-sm text-gray-500">{client.email}</div>
-                        <div className="text-sm text-gray-500">{client.phone}</div>
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
+                          <AvatarFallback>
+                            <User className="h-5 w-5" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{client.name}</div>
+                          <div className="text-sm text-gray-500">{client.email}</div>
+                          <div className="text-sm text-gray-500">{client.phone}</div>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      {client.project ? (
-                        <div>
-                          <div className="font-medium">{client.project}</div>
-                          <div className="text-sm text-gray-500">{client.unit}</div>
+                      {client.projects && client.projects.length > 0 ? (
+                        <div className="space-y-1">
+                          {client.projects.map((project: any, index: number) => (
+                            <div key={index}>
+                              <div className="font-medium text-sm">{project.name}</div>
+                              <div className="text-xs text-gray-500">{project.unit}</div>
+                            </div>
+                          ))}
                         </div>
                       ) : (
                         <span className="text-gray-400">Not assigned</span>
@@ -451,7 +502,7 @@ export function Clients() {
                         }}>
                           <Eye className="h-3 w-3" />
                         </Button>
-                        {!client.project && (
+                        {(!client.projects || client.projects.length === 0) && (
                           <Button 
                             size="sm" 
                             onClick={(e) => {
@@ -480,16 +531,22 @@ export function Clients() {
         </Card>
       )}
 
-      {/* Client Detail Modal */}
-      <Dialog open={!!selectedClient} onOpenChange={() => setSelectedClient(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      {/* New Client Modal */}
+      <Dialog open={isNewClientOpen} onOpenChange={setIsNewClientOpen}>
+        <DialogTrigger asChild>
+          <Button className="bg-purple-600 hover:bg-purple-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Client
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Client Details - {selectedClient?.name}</DialogTitle>
+            <DialogTitle>Add New Client</DialogTitle>
             <DialogDescription>
-              Comprehensive client profile and property information
+              Create a new client profile and manage their information
             </DialogDescription>
           </DialogHeader>
-          {selectedClient && <ClientDetailView client={selectedClient} />}
+          <ClientForm onClose={() => setIsNewClientOpen(false)} />
         </DialogContent>
       </Dialog>
 
@@ -497,6 +554,13 @@ export function Clients() {
       <AssignPropertyModal 
         isOpen={isAssignPropertyOpen}
         onClose={() => setIsAssignPropertyOpen(false)}
+        client={selectedClient}
+      />
+
+      {/* Add Payment Modal */}
+      <AddPaymentModal 
+        isOpen={isAddPaymentOpen}
+        onClose={() => setIsAddPaymentOpen(false)}
         client={selectedClient}
       />
     </div>

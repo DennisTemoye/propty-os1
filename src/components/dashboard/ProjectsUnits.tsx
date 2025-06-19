@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,6 +57,19 @@ export function ProjectsUnits() {
     }
   };
 
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'Housing':
+        return 'bg-blue-100 text-blue-800';
+      case 'Land':
+        return 'bg-green-100 text-green-800';
+      case 'Mixed':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   const handleProjectClick = (projectId: number) => {
     navigate(`/company/projects/${projectId}`);
   };
@@ -69,7 +81,7 @@ export function ProjectsUnits() {
 
   const handleViewDocuments = (e: React.MouseEvent, projectId: number) => {
     e.stopPropagation();
-    navigate('/company/documents');
+    navigate('/company/documents', { state: { projectId } });
   };
 
   return (
@@ -146,17 +158,20 @@ export function ProjectsUnits() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{project.name}</CardTitle>
-                  <Badge className={getStatusColor(project.status)}>
-                    {project.status}
-                  </Badge>
+                  <div className="flex gap-2">
+                    <Badge className={getCategoryColor(project.category)}>
+                      {project.category}
+                    </Badge>
+                    <Badge className={getStatusColor(project.status)}>
+                      {project.status}
+                    </Badge>
+                  </div>
                 </div>
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin className="h-4 w-4 mr-1" />
                   {project.location}
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>{project.category}</span>
-                  <span>•</span>
                   <span>{project.type}</span>
                 </div>
               </CardHeader>
@@ -256,7 +271,11 @@ export function ProjectsUnits() {
                         <div className="text-sm text-gray-500">{project.type}</div>
                       </div>
                     </TableCell>
-                    <TableCell>{project.category}</TableCell>
+                    <TableCell>
+                      <Badge className={getCategoryColor(project.category)}>
+                        {project.category}
+                      </Badge>
+                    </TableCell>
                     <TableCell>{project.location}</TableCell>
                     <TableCell>
                       <div className="text-sm">

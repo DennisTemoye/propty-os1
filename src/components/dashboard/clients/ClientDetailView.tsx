@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard } from 'lucide-react';
 
 interface ClientDetailViewProps {
@@ -75,6 +75,19 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="flex items-center space-x-4 mb-4">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
+                  <AvatarFallback>
+                    <User className="h-10 w-10" />
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="text-lg font-semibold">{client.name}</h3>
+                  <p className="text-sm text-gray-600">ID: {client.nationalId}</p>
+                </div>
+              </div>
+              
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Status:</span>
                 <Badge className={getStatusColor(client.status)}>
@@ -87,6 +100,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                   {client.kycStatus}
                 </Badge>
               </div>
+              
               <div className="space-y-2">
                 <div className="flex items-center text-sm">
                   <Mail className="h-4 w-4 mr-2 text-gray-400" />
@@ -100,10 +114,6 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                   <MapPin className="h-4 w-4 mr-2 text-gray-400 mt-0.5" />
                   <span>{client.address}</span>
                 </div>
-                <div className="flex items-center text-sm">
-                  <CreditCard className="h-4 w-4 mr-2 text-gray-400" />
-                  ID: {client.nationalId}
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -113,55 +123,61 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Building className="h-5 w-5 mr-2" />
-                Property Summary
+                Properties Summary
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {client.project ? (
+              {client.projects && client.projects.length > 0 ? (
                 <div className="space-y-4">
-                  <div>
-                    <div className="font-medium">{client.project}</div>
-                    <div className="text-sm text-gray-600">{client.unit}</div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      Assigned: {client.assignedDate}
+                  {client.projects.map((project: any, index: number) => (
+                    <div key={index} className="border-b pb-3 last:border-b-0">
+                      <div className="font-medium">{project.name}</div>
+                      <div className="text-sm text-gray-600">{project.unit}</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Assigned: {project.assignedDate}
+                      </div>
                     </div>
-                  </div>
+                  ))}
                   
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>Payment Progress</span>
-                      <span className="font-medium">{client.paymentProgress}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-green-600 h-2 rounded-full"
-                        style={{ width: `${client.paymentProgress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">Total Paid:</span>
-                      <div className="font-medium text-green-600">{client.totalPaid}</div>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Balance:</span>
-                      <div className="font-medium">{client.balance}</div>
-                    </div>
-                  </div>
-                  
-                  {client.nextPayment && (
-                    <div className="text-sm">
-                      <span className="text-gray-500">Next Payment:</span>
-                      <div className="font-medium">{client.nextPayment}</div>
-                    </div>
+                  {client.paymentProgress !== undefined && (
+                    <>
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span>Payment Progress</span>
+                          <span className="font-medium">{client.paymentProgress}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-green-600 h-2 rounded-full"
+                            style={{ width: `${client.paymentProgress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-500">Total Paid:</span>
+                          <div className="font-medium text-green-600">{client.totalPaid}</div>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Balance:</span>
+                          <div className="font-medium">{client.balance}</div>
+                        </div>
+                      </div>
+                      
+                      {client.nextPayment && (
+                        <div className="text-sm">
+                          <span className="text-gray-500">Next Payment:</span>
+                          <div className="font-medium">{client.nextPayment}</div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <Building className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p>No property assigned</p>
+                  <p>No properties assigned</p>
                   <Button className="mt-3 bg-green-600 hover:bg-green-700">
                     Assign Property
                   </Button>

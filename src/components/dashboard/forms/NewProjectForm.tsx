@@ -6,6 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
 interface NewProjectFormProps {
@@ -19,9 +20,6 @@ interface ProjectFormData {
   category: string;
   projectType: string;
   totalUnits: number;
-  startDate?: string;
-  expectedCompletion?: string;
-  status: string;
 }
 
 export function NewProjectForm({ onClose }: NewProjectFormProps) {
@@ -33,11 +31,23 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
       category: '',
       projectType: '',
       totalUnits: 0,
-      startDate: '',
-      expectedCompletion: '',
-      status: 'upcoming',
     },
   });
+
+  const selectedCategory = form.watch('category');
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'Housing':
+        return 'bg-blue-100 text-blue-800';
+      case 'Land':
+        return 'bg-green-100 text-green-800';
+      case 'Mixed':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   const onSubmit = (data: ProjectFormData) => {
     console.log('Creating new project:', data);
@@ -144,32 +154,6 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
 
           <FormField
             control={form.control}
-            name="status"
-            rules={{ required: 'Status is required' }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="upcoming">Upcoming</SelectItem>
-                    <SelectItem value="ongoing">Ongoing</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
             name="totalUnits"
             rules={{ required: 'Total units is required', min: { value: 1, message: 'Must be at least 1' } }}
             render={({ field }) => (
@@ -182,35 +166,16 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Start Date (Optional)</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="expectedCompletion"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Expected Completion (Optional)</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
+
+        {selectedCategory && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Category:</span>
+            <Badge className={getCategoryColor(selectedCategory)}>
+              {selectedCategory}
+            </Badge>
+          </div>
+        )}
 
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
           <Input type="file" accept="image/*,.pdf" className="hidden" id="layout-upload" />

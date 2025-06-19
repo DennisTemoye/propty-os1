@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, FileText, Building, Users, BarChart3 } from 'lucide-react';
 import { ProjectDetailView } from '@/components/dashboard/projects/ProjectDetailView';
 import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
 import { toast } from 'sonner';
@@ -30,7 +30,7 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return <div>Project not found</div>;
-  }
+  };
 
   const handleEdit = () => {
     setIsEditOpen(true);
@@ -42,6 +42,22 @@ export default function ProjectDetailPage() {
       toast.success('Project deleted successfully');
       navigate('/company/projects');
     }
+  };
+
+  const handleManageBlocks = () => {
+    navigate(`/company/projects/${project.id}/blocks`);
+  };
+
+  const handleViewDocuments = () => {
+    navigate('/company/documents', { state: { projectId: project.id } });
+  };
+
+  const handleViewClients = () => {
+    navigate('/company/clients', { state: { projectId: project.id } });
+  };
+
+  const handleViewReports = () => {
+    navigate('/company/reports', { state: { projectId: project.id } });
   };
 
   return (
@@ -76,6 +92,41 @@ export default function ProjectDetailPage() {
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Button 
+            onClick={handleManageBlocks}
+            className="h-16 bg-blue-600 hover:bg-blue-700"
+          >
+            <Building className="h-5 w-5 mr-2" />
+            Manage Blocks & Units
+          </Button>
+          <Button 
+            onClick={handleViewDocuments}
+            variant="outline"
+            className="h-16"
+          >
+            <FileText className="h-5 w-5 mr-2" />
+            View Documents
+          </Button>
+          <Button 
+            onClick={handleViewClients}
+            variant="outline"
+            className="h-16"
+          >
+            <Users className="h-5 w-5 mr-2" />
+            View Clients
+          </Button>
+          <Button 
+            onClick={handleViewReports}
+            variant="outline"
+            className="h-16"
+          >
+            <BarChart3 className="h-5 w-5 mr-2" />
+            Generate Reports
+          </Button>
         </div>
         
         <ProjectDetailView project={project} />

@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-react';
@@ -18,8 +18,14 @@ const mockClients = [
     phone: '+234 801 234 5678',
     address: '123 Victoria Island, Lagos',
     nationalId: 'ABC123456789',
-    project: 'Victoria Gardens',
-    unit: 'Block A - Plot 02',
+    passportPhoto: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=150&h=150&fit=crop&crop=face',
+    projects: [
+      {
+        name: 'Victoria Gardens',
+        unit: 'Block A - Plot 02',
+        assignedDate: '2024-01-10'
+      }
+    ],
     status: 'active',
     kycStatus: 'approved',
     totalPaid: '₦15M',
@@ -34,11 +40,18 @@ const mockClients = [
 export default function ClientDetailPage() {
   const { clientId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   
   const client = mockClients.find(c => c.id === parseInt(clientId || '1'));
+
+  useEffect(() => {
+    if (location.state?.openPayment) {
+      setIsAddPaymentOpen(true);
+    }
+  }, [location.state]);
 
   if (!client) {
     return <div>Client not found</div>;
