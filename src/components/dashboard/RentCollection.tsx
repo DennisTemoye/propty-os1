@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -130,16 +129,55 @@ export function RentCollection() {
   const totalOverdue = rentData.filter(r => r.status === 'Overdue').reduce((sum, r) => sum + r.amount, 0);
   const collectionRate = Math.round((totalCollected / (totalCollected + totalPending + totalOverdue)) * 100);
 
+  const kpiData = [
+    {
+      title: 'Collected This Month',
+      value: `$${totalCollected.toLocaleString()}`,
+      subtitle: 'Payments received',
+      icon: CheckCircle,
+      color: 'text-emerald-700',
+      bgColor: 'bg-emerald-100',
+      cardBg: 'from-emerald-50 to-emerald-100',
+    },
+    {
+      title: 'Pending',
+      value: `$${totalPending.toLocaleString()}`,
+      subtitle: 'Due soon',
+      icon: CreditCard,
+      color: 'text-amber-700',
+      bgColor: 'bg-amber-100',
+      cardBg: 'from-amber-50 to-amber-100',
+    },
+    {
+      title: 'Overdue',
+      value: `$${totalOverdue.toLocaleString()}`,
+      subtitle: 'Needs attention',
+      icon: AlertCircle,
+      color: 'text-red-700',
+      bgColor: 'bg-red-100',
+      cardBg: 'from-red-50 to-red-100',
+    },
+    {
+      title: 'Collection Rate',
+      value: `${collectionRate}%`,
+      subtitle: 'Success rate',
+      icon: CreditCard,
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-100',
+      cardBg: 'from-blue-50 to-blue-100',
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Rent Collection</h1>
         <div className="flex space-x-2">
-          <Button variant="outline" onClick={handleExportData}>
+          <Button variant="outline" onClick={() => {}}>
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700" onClick={handleAddPayment}>
+          <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => {}}>
             <Plus className="h-4 w-4 mr-2" />
             Record Payment
           </Button>
@@ -147,51 +185,25 @@ export function RentCollection() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-green-600">${totalCollected.toLocaleString()}</div>
-                <div className="text-sm text-gray-500">Collected This Month</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpiData.map((kpi, index) => (
+          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-600 mb-2">
+                    {kpi.title}
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                  <div className="text-xs text-gray-500">{kpi.subtitle}</div>
+                </div>
+                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
+                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                </div>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-yellow-600">${totalPending.toLocaleString()}</div>
-                <div className="text-sm text-gray-500">Pending</div>
-              </div>
-              <CreditCard className="h-8 w-8 text-yellow-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-red-600">${totalOverdue.toLocaleString()}</div>
-                <div className="text-sm text-gray-500">Overdue</div>
-              </div>
-              <AlertCircle className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-blue-600">{collectionRate}%</div>
-                <div className="text-sm text-gray-500">Collection Rate</div>
-              </div>
-              <CreditCard className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Search */}
