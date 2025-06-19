@@ -117,49 +117,61 @@ export function Properties() {
         <AddPropertyModal />
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+      {/* Stats Cards - Updated Design */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="bg-gradient-to-br from-sky-50 to-sky-100 border-sky-200 border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-blue-600">{properties.length}</div>
-                <div className="text-sm text-gray-500">Total Properties</div>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-gray-600 mb-2">Total Properties</div>
+                <div className="text-3xl font-bold text-sky-900 mb-1">{properties.length}</div>
+                <div className="text-xs text-gray-600">In Portfolio</div>
               </div>
-              <Building className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 shadow-lg">
+                <Building className="h-6 w-6 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-green-600">{totalUnits}</div>
-                <div className="text-sm text-gray-500">Total Units</div>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-gray-600 mb-2">Total Units</div>
+                <div className="text-3xl font-bold text-emerald-900 mb-1">{totalUnits}</div>
+                <div className="text-xs text-gray-600">Available Units</div>
               </div>
-              <Home className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg">
+                <Home className="h-6 w-6 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-purple-600">{totalOccupied}</div>
-                <div className="text-sm text-gray-500">Occupied</div>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-gray-600 mb-2">Occupied</div>
+                <div className="text-3xl font-bold text-purple-900 mb-1">{totalOccupied}</div>
+                <div className="text-xs text-gray-600">Active Tenants</div>
               </div>
-              <Users className="h-8 w-8 text-purple-600" />
+              <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
+                <Users className="h-6 w-6 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-orange-600">{totalVacant}</div>
-                <div className="text-sm text-gray-500">Vacant</div>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-gray-600 mb-2">Vacant</div>
+                <div className="text-3xl font-bold text-amber-900 mb-1">{totalVacant}</div>
+                <div className="text-xs text-gray-600">Available Units</div>
               </div>
-              <Building className="h-8 w-8 text-orange-600" />
+              <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg">
+                <Building className="h-6 w-6 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
