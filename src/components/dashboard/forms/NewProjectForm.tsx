@@ -16,10 +16,12 @@ interface ProjectFormData {
   name: string;
   location: string;
   description: string;
+  category: string;
   projectType: string;
   totalUnits: number;
-  startDate: string;
-  expectedCompletion: string;
+  startDate?: string;
+  expectedCompletion?: string;
+  status: string;
 }
 
 export function NewProjectForm({ onClose }: NewProjectFormProps) {
@@ -28,10 +30,12 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
       name: '',
       location: '',
       description: '',
+      category: '',
       projectType: '',
       totalUnits: 0,
       startDate: '',
       expectedCompletion: '',
+      status: 'upcoming',
     },
   });
 
@@ -90,7 +94,31 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <FormField
+            control={form.control}
+            name="category"
+            rules={{ required: 'Category is required' }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Housing">Housing</SelectItem>
+                    <SelectItem value="Land">Land</SelectItem>
+                    <SelectItem value="Mixed">Mixed</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="projectType"
@@ -101,14 +129,12 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select project type" />
+                      <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="residential">Residential</SelectItem>
-                    <SelectItem value="commercial">Commercial</SelectItem>
-                    <SelectItem value="mixed-use">Mixed Use</SelectItem>
-                    <SelectItem value="land">Land Development</SelectItem>
+                    <SelectItem value="Residential">Residential</SelectItem>
+                    <SelectItem value="Commercial">Commercial</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -116,6 +142,32 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="status"
+            rules={{ required: 'Status is required' }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="upcoming">Upcoming</SelectItem>
+                    <SelectItem value="ongoing">Ongoing</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="totalUnits"
@@ -130,16 +182,13 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
               </FormItem>
             )}
           />
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="startDate"
-            rules={{ required: 'Start date is required' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel>Start Date (Optional)</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -153,7 +202,7 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
             name="expectedCompletion"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Expected Completion</FormLabel>
+                <FormLabel>Expected Completion (Optional)</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -161,6 +210,16 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+          <Input type="file" accept="image/*,.pdf" className="hidden" id="layout-upload" />
+          <label htmlFor="layout-upload" className="cursor-pointer">
+            <div className="text-gray-500">
+              <p className="text-sm">Upload Site Layout (Optional)</p>
+              <p className="text-xs mt-1">Drag and drop or click to select image/PDF</p>
+            </div>
+          </label>
         </div>
 
         <div className="flex justify-end space-x-2 pt-4">

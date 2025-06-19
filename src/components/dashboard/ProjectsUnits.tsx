@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, MapPin, FileText, Building, Edit, Trash2, Eye } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Plus, MapPin, FileText, Building } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { NewProjectForm } from './forms/NewProjectForm';
 
 const mockProjects = [
   {
@@ -40,6 +42,7 @@ const mockProjects = [
 
 export function ProjectsUnits() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
@@ -55,25 +58,17 @@ export function ProjectsUnits() {
     }
   };
 
-  const handleProjectDetails = (projectId: number) => {
+  const handleProjectClick = (projectId: number) => {
     navigate(`/company/projects/${projectId}`);
   };
 
-  const handleManageBlocks = (projectId: number) => {
+  const handleManageBlocks = (e: React.MouseEvent, projectId: number) => {
+    e.stopPropagation();
     navigate(`/company/projects/${projectId}/blocks`);
   };
 
-  const handleEditProject = (projectId: number) => {
-    console.log('Edit project:', projectId);
-    // Implement edit functionality
-  };
-
-  const handleDeleteProject = (projectId: number) => {
-    console.log('Delete project:', projectId);
-    // Implement delete functionality
-  };
-
-  const handleViewDocuments = (projectId: number) => {
+  const handleViewDocuments = (e: React.MouseEvent, projectId: number) => {
+    e.stopPropagation();
     navigate('/company/documents');
   };
 
@@ -84,7 +79,10 @@ export function ProjectsUnits() {
           <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
           <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units</p>
         </div>
-        <Button className="bg-purple-600 hover:bg-purple-700">
+        <Button 
+          className="bg-purple-600 hover:bg-purple-700"
+          onClick={() => setIsNewProjectOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           New Project
         </Button>
@@ -140,7 +138,11 @@ export function ProjectsUnits() {
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {mockProjects.map((project) => (
-            <Card key={project.id} className="hover:shadow-lg transition-shadow">
+            <Card 
+              key={project.id} 
+              className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => handleProjectClick(project.id)}
+            >
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{project.name}</CardTitle>
@@ -205,7 +207,7 @@ export function ProjectsUnits() {
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={() => handleManageBlocks(project.id)}
+                      onClick={(e) => handleManageBlocks(e, project.id)}
                     >
                       <Building className="h-3 w-3 mr-1" />
                       Manage Blocks
@@ -215,40 +217,11 @@ export function ProjectsUnits() {
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={() => handleViewDocuments(project.id)}
+                      onClick={(e) => handleViewDocuments(e, project.id)}
                     >
                       <FileText className="h-3 w-3 mr-1" />
                       Documents
                     </Button>
-
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex-1"
-                      onClick={() => handleProjectDetails(project.id)}
-                    >
-                      <Eye className="h-3 w-3 mr-1" />
-                      View Details
-                    </Button>
-
-                    <div className="flex gap-1">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex-1"
-                        onClick={() => handleEditProject(project.id)}
-                      >
-                        <Edit className="h-3 w-3" />
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex-1"
-                        onClick={() => handleDeleteProject(project.id)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -272,7 +245,11 @@ export function ProjectsUnits() {
               </TableHeader>
               <TableBody>
                 {mockProjects.map((project) => (
-                  <TableRow key={project.id} className="hover:bg-gray-50">
+                  <TableRow 
+                    key={project.id} 
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => handleProjectClick(project.id)}
+                  >
                     <TableCell>
                       <div>
                         <div className="font-medium">{project.name}</div>
@@ -300,37 +277,16 @@ export function ProjectsUnits() {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => handleProjectDetails(project.id)}
-                        >
-                          <Eye className="h-3 w-3" />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleManageBlocks(project.id)}
+                          onClick={(e) => handleManageBlocks(e, project.id)}
                         >
                           <Building className="h-3 w-3" />
                         </Button>
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => handleViewDocuments(project.id)}
+                          onClick={(e) => handleViewDocuments(e, project.id)}
                         >
                           <FileText className="h-3 w-3" />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleEditProject(project.id)}
-                        >
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleDeleteProject(project.id)}
-                        >
-                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     </TableCell>
@@ -341,6 +297,19 @@ export function ProjectsUnits() {
           </CardContent>
         </Card>
       )}
+
+      {/* New Project Modal */}
+      <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Create New Project</DialogTitle>
+            <DialogDescription>
+              Add a new real estate project to your portfolio
+            </DialogDescription>
+          </DialogHeader>
+          <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
