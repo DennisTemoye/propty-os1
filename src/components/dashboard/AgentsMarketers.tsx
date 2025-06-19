@@ -135,7 +135,7 @@ export function AgentsMarketers() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {mockAgents.map((agent) => (
-          <Card key={agent.id} className="hover:shadow-lg transition-shadow">
+          <Card key={agent.id} className="hover:shadow-lg transition-shadow bg-white">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">

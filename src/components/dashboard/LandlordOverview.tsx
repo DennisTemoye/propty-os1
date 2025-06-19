@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -114,17 +113,15 @@ const chartConfig = {
 
 export function LandlordOverview() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-white via-purple-50 to-white border-b border-purple-100 px-6 py-6 backdrop-blur-sm">
+      <div className="bg-white border-b px-6 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-              Landlord Dashboard
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900">Landlord Dashboard</h1>
             <p className="text-gray-600 mt-1">Manage your properties and tenants efficiently</p>
           </div>
-          <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
             <Plus className="h-5 w-5 mr-2" />
             Add Property
           </Button>
@@ -156,7 +153,7 @@ export function LandlordOverview() {
 
         {/* Analytics Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-0 shadow-lg rounded-2xl">
+          <Card className="bg-white border shadow-sm rounded-xl">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-800">Monthly Revenue vs Expenses</CardTitle>
             </CardHeader>
@@ -186,7 +183,7 @@ export function LandlordOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-0 shadow-lg rounded-2xl">
+          <Card className="bg-white border shadow-sm rounded-xl">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-800">Annual Revenue Trend</CardTitle>
             </CardHeader>
@@ -205,7 +202,7 @@ export function LandlordOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-0 shadow-lg rounded-2xl">
+          <Card className="bg-white border shadow-sm rounded-xl">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-800">Unit Occupancy</CardTitle>
             </CardHeader>
@@ -234,7 +231,7 @@ export function LandlordOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-0 shadow-lg rounded-2xl">
+          <Card className="bg-white border shadow-sm rounded-xl">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-800">Recent Activity</CardTitle>
             </CardHeader>
@@ -278,7 +275,7 @@ export function LandlordOverview() {
         </div>
 
         {/* Upcoming Due Dates */}
-        <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-0 shadow-lg rounded-2xl">
+        <Card className="bg-white border shadow-sm rounded-xl">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold text-gray-800">Upcoming Due Dates</CardTitle>
           </CardHeader>
