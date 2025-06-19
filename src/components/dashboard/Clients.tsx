@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Eye, FileText, DollarSign, User, Building, Search } from 'lucide-react';
 import { ClientForm } from './clients/ClientForm';
+import { ClientDetailView } from './clients/ClientDetailView';
 import { AssignPropertyModal } from './clients/AssignPropertyModal';
 import { useNavigate } from 'react-router-dom';
 
@@ -387,7 +388,7 @@ export function Clients() {
               <TableBody>
                 {filteredClients.map((client) => (
                   <TableRow key={client.id} className="cursor-pointer hover:bg-gray-50"
-                           onClick={() => setSelectedClient(client)}>
+                           onClick={() => handleClientClick(client.id)}>
                     <TableCell>
                       <div>
                         <div className="font-medium">{client.name}</div>
@@ -446,7 +447,7 @@ export function Clients() {
                       <div className="flex space-x-2">
                         <Button variant="outline" size="sm" onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedClient(client);
+                          handleClientClick(client.id);
                         }}>
                           <Eye className="h-3 w-3" />
                         </Button>
@@ -455,7 +456,7 @@ export function Clients() {
                             size="sm" 
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleAssignProperty(client);
+                              handleAssignProperty(e, client);
                             }}
                             className="bg-green-600 hover:bg-green-700"
                           >
@@ -463,10 +464,10 @@ export function Clients() {
                             Assign
                           </Button>
                         )}
-                        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
+                        <Button variant="outline" size="sm" onClick={(e) => handleViewDocuments(e, client)}>
                           <FileText className="h-3 w-3" />
                         </Button>
-                        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
+                        <Button variant="outline" size="sm" onClick={(e) => handleAddPayment(e, client)}>
                           <DollarSign className="h-3 w-3" />
                         </Button>
                       </div>
