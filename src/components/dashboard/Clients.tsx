@@ -468,7 +468,7 @@ export function Clients() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {client.project ? (
+                      {client.projects && client.projects.length > 0 ? (
                         <div>
                           <div className="font-medium text-green-600">{client.totalPaid}</div>
                           <div className="text-sm text-gray-500">
