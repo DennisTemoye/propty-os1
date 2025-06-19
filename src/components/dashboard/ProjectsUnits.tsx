@@ -5,67 +5,87 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, MapPin, FileText, Upload, Edit, Trash2, Eye, Users, DollarSign, Calendar } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Plus, MapPin, FileText, Upload, Edit, Trash2, Eye, Users, DollarSign, Calendar, Building } from 'lucide-react';
 import { NewProjectForm } from './forms/NewProjectForm';
-import { MapView } from './maps/MapView';
-import { DocumentsView } from './documents/DocumentsView';
-import { LayoutUpload } from './uploads/LayoutUpload';
-import { GeoTagUnits } from './maps/GeoTagUnits';
-import { ReportsGenerator } from './reports/ReportsGenerator';
+import { BlocksUnitsManager } from './projects/BlocksUnitsManager';
 import { ProjectDetailView } from './projects/ProjectDetailView';
+import { AssignUnitModal } from './projects/AssignUnitModal';
 
 const mockProjects = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
+    category: 'Housing',
+    type: 'Residential',
     location: 'Lekki, Lagos',
+    totalBlocks: 5,
     totalUnits: 150,
     soldUnits: 89,
     reservedUnits: 23,
     availableUnits: 38,
-    status: 'active',
+    status: 'ongoing',
+    revenue: '₦2.5B',
+    blocks: [
+      {
+        id: 1,
+        name: 'Block A',
+        type: 'Duplex',
+        description: 'Premium duplex units',
+        units: [
+          { id: 1, plotId: 'Block A - Plot 01', size: '500sqm', price: '₦25M', status: 'available', client: null },
+          { id: 2, plotId: 'Block A - Plot 02', size: '500sqm', price: '₦25M', status: 'sold', client: 'John Doe' },
+          { id: 3, plotId: 'Block A - Plot 03', size: '500sqm', price: '₦25M', status: 'reserved', client: 'Jane Smith' }
+        ]
+      }
+    ]
   },
   {
     id: 2,
     name: 'Emerald Heights',
+    category: 'Mixed',
+    type: 'Commercial',
     location: 'Abuja, FCT',
+    totalBlocks: 8,
     totalUnits: 200,
     soldUnits: 156,
     reservedUnits: 12,
     availableUnits: 32,
-    status: 'active',
-  },
-  {
-    id: 3,
-    name: 'Golden View Apartments',
-    location: 'Port Harcourt, Rivers',
-    totalUnits: 80,
-    soldUnits: 45,
-    reservedUnits: 15,
-    availableUnits: 20,
-    status: 'planning',
-  },
+    status: 'ongoing',
+    revenue: '₦4.2B'
+  }
 ];
 
 export function ProjectsUnits() {
-  const [selectedProject, setSelectedProject] = useState<number | null>(null);
-  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
   const [selectedProjectForDetail, setSelectedProjectForDetail] = useState<any>(null);
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
+  const [selectedUnit, setSelectedUnit] = useState<any>(null);
+  const [isAssignUnitOpen, setIsAssignUnitOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
+      case 'ongoing':
         return 'bg-green-100 text-green-800';
-      case 'planning':
+      case 'upcoming':
         return 'bg-yellow-100 text-yellow-800';
       case 'completed':
         return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getUnitStatusColor = (status: string) => {
+    switch (status) {
+      case 'available':
+        return 'bg-green-100 text-green-800';
+      case 'reserved':
+        return 'bg-orange-100 text-orange-800';
+      case 'sold':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -75,10 +95,18 @@ export function ProjectsUnits() {
     setSelectedProjectForDetail(project);
   };
 
+  const handleAssignUnit = (unit: any) => {
+    setSelectedUnit(unit);
+    setIsAssignUnitOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Projects & Units</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
+          <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units</p>
+        </div>
         <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
           <DialogTrigger asChild>
             <Button className="bg-purple-600 hover:bg-purple-700">
@@ -89,90 +117,224 @@ export function ProjectsUnits() {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Create New Project</DialogTitle>
+              <DialogDescription>
+                Add a new real estate project to your portfolio
+              </DialogDescription>
             </DialogHeader>
             <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {mockProjects.map((project) => (
-          <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => handleProjectClick(project)}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{project.name}</CardTitle>
-                <Badge className={getStatusColor(project.status)}>
-                  {project.status}
-                </Badge>
-              </div>
-              <div className="flex items-center text-sm text-gray-500">
-                <MapPin className="h-4 w-4 mr-1" />
-                {project.location}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span>Total Units:</span>
-                  <span className="font-medium">{project.totalUnits}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Sold:</span>
-                  <span className="font-medium text-green-600">{project.soldUnits}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Reserved:</span>
-                  <span className="font-medium text-yellow-600">{project.reservedUnits}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Available:</span>
-                  <span className="font-medium text-blue-600">{project.availableUnits}</span>
-                </div>
-                
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-                  <div 
-                    className="bg-green-600 h-2 rounded-full"
-                    style={{ width: `${(project.soldUnits / project.totalUnits) * 100}%` }}
-                  ></div>
-                </div>
-                
-                <div className="flex space-x-2 mt-4">
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
-                        <MapPin className="h-3 w-3 mr-1" />
-                        View Map
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent side="right" className="w-full max-w-4xl">
-                      <SheetHeader>
-                        <SheetTitle>{project.name} - Map View</SheetTitle>
-                      </SheetHeader>
-                      <MapView project={project} />
-                    </SheetContent>
-                  </Sheet>
-                  
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
-                        <FileText className="h-3 w-3 mr-1" />
-                        Documents
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent side="right" className="w-full max-w-2xl">
-                      <SheetHeader>
-                        <SheetTitle>{project.name} - Documents</SheetTitle>
-                      </SheetHeader>
-                      <DocumentsView project={project} />
-                    </SheetContent>
-                  </Sheet>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Project Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-gray-900">12</div>
+            <div className="text-sm text-gray-500">Total Projects</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-green-600">1,247</div>
+            <div className="text-sm text-gray-500">Total Units</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-blue-600">845</div>
+            <div className="text-sm text-gray-500">Units Sold</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-purple-600">₦15.2B</div>
+            <div className="text-sm text-gray-500">Total Revenue</div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* View Toggle */}
+      <div className="flex items-center gap-2">
+        <Button
+          variant={viewMode === 'grid' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setViewMode('grid')}
+        >
+          Grid View
+        </Button>
+        <Button
+          variant={viewMode === 'table' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setViewMode('table')}
+        >
+          Table View
+        </Button>
+      </div>
+
+      {/* Projects Display */}
+      {viewMode === 'grid' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {mockProjects.map((project) => (
+            <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => handleProjectClick(project)}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">{project.name}</CardTitle>
+                  <Badge className={getStatusColor(project.status)}>
+                    {project.status}
+                  </Badge>
+                </div>
+                <div className="flex items-center text-sm text-gray-500">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  {project.location}
+                </div>
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <span>{project.category}</span>
+                  <span>•</span>
+                  <span>{project.type}</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex justify-between">
+                      <span>Blocks:</span>
+                      <span className="font-medium">{project.totalBlocks || 0}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Total Units:</span>
+                      <span className="font-medium">{project.totalUnits}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Sold:</span>
+                      <span className="font-medium text-green-600">{project.soldUnits}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Reserved:</span>
+                      <span className="font-medium text-orange-600">{project.reservedUnits}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Available:</span>
+                      <span className="font-medium text-blue-600">{project.availableUnits}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+                    <div 
+                      className="bg-green-600 h-2 rounded-full"
+                      style={{ width: `${(project.soldUnits / project.totalUnits) * 100}%` }}
+                    ></div>
+                  </div>
+
+                  <div className="pt-2 border-t">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Revenue:</span>
+                      <span className="font-bold text-purple-600">{project.revenue}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex space-x-2 mt-4">
+                    <Button variant="outline" size="sm" className="flex-1" onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedProject(project);
+                    }}>
+                      <Building className="h-3 w-3 mr-1" />
+                      Manage Blocks
+                    </Button>
+                    
+                    <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
+                      <FileText className="h-3 w-3 mr-1" />
+                      Documents
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Project</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Blocks/Units</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Revenue</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockProjects.map((project) => (
+                  <TableRow key={project.id} className="cursor-pointer hover:bg-gray-50"
+                           onClick={() => handleProjectClick(project)}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-sm text-gray-500">{project.type}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{project.category}</TableCell>
+                    <TableCell>{project.location}</TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div>{project.totalBlocks || 0} blocks</div>
+                        <div className="text-gray-500">{project.totalUnits} units</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getStatusColor(project.status)}>
+                        {project.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium text-purple-600">
+                      {project.revenue}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" size="sm" onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedProject(project);
+                        }}>
+                          <Building className="h-3 w-3" />
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
+                          <FileText className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Blocks & Units Management Modal */}
+      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Manage Blocks & Units - {selectedProject?.name}</DialogTitle>
+            <DialogDescription>
+              Structure your project by blocks and units, and assign units to clients
+            </DialogDescription>
+          </DialogHeader>
+          {selectedProject && (
+            <BlocksUnitsManager 
+              project={selectedProject} 
+              onAssignUnit={handleAssignUnit}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Project Detail Modal */}
       <Dialog open={!!selectedProjectForDetail} onOpenChange={() => setSelectedProjectForDetail(null)}>
@@ -187,59 +349,12 @@ export function ProjectsUnits() {
         </DialogContent>
       </Dialog>
 
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Project Management Tools</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="h-20 flex-col">
-                  <Upload className="h-6 w-6 mb-2" />
-                  Upload Layout
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Upload Project Layout</DialogTitle>
-                </DialogHeader>
-                <LayoutUpload />
-              </DialogContent>
-            </Dialog>
-            
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="h-20 flex-col">
-                  <MapPin className="h-6 w-6 mb-2" />
-                  Geo-tag Units
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl">
-                <DialogHeader>
-                  <DialogTitle>Geo-tag Units</DialogTitle>
-                </DialogHeader>
-                <GeoTagUnits />
-              </DialogContent>
-            </Dialog>
-            
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="h-20 flex-col">
-                  <FileText className="h-6 w-6 mb-2" />
-                  Generate Reports
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Generate Project Reports</DialogTitle>
-                </DialogHeader>
-                <ReportsGenerator />
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Assign Unit Modal */}
+      <AssignUnitModal 
+        isOpen={isAssignUnitOpen}
+        onClose={() => setIsAssignUnitOpen(false)}
+        unit={selectedUnit}
+      />
     </div>
   );
 }
