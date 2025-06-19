@@ -1,20 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ThemeToggle } from './ThemeToggle';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -24,79 +16,130 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  const menuItems = [
-    { label: 'About', id: 'why-proptyos' },
-    { label: 'Features', id: 'features' },
-    { label: 'Pricing', id: 'pricing' },
-    { label: 'Contact', id: 'contact' },
-    { label: 'FAQ', id: 'faq' }
-  ];
-
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
-    }`}>
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">P</span>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link to="/" className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              ProptyOS
+            </Link>
           </div>
-          <span className="text-xl font-bold text-gray-900">ProptyOS</span>
-        </div>
 
-        {/* Desktop Menu */}
-        <nav className="hidden md:flex items-center space-x-8">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className="text-gray-700 hover:text-purple-600 transition-colors duration-200 font-medium"
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <button 
+              onClick={() => scrollToSection('about')}
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
-              {item.label}
+              About
             </button>
-          ))}
-          <Button variant="ghost" className="text-gray-700 hover:text-purple-600">
-            Login
-          </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-            Get Started
-          </Button>
-        </nav>
+            <button 
+              onClick={() => scrollToSection('features')}
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              Features
+            </button>
+            <button 
+              onClick={() => scrollToSection('pricing')}
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              Pricing
+            </button>
+            <button 
+              onClick={() => scrollToSection('contact')}
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              Contact
+            </button>
+            <button 
+              onClick={() => scrollToSection('faq')}
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              FAQ
+            </button>
+          </nav>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
-          <nav className="container mx-auto px-4 py-4 space-y-4">
-            {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="block w-full text-left text-gray-700 hover:text-purple-600 transition-colors duration-200 font-medium py-2"
-              >
-                {item.label}
-              </button>
-            ))}
-            <div className="space-y-2 pt-4 border-t border-gray-200">
-              <Button variant="ghost" className="w-full justify-start text-gray-700 hover:text-purple-600">
+          {/* Right side buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            <ThemeToggle />
+            <Link to="/login">
+              <Button variant="ghost" className="text-gray-700 dark:text-gray-300">
                 Login
               </Button>
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+            </Link>
+            <Link to="/signup">
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white">
                 Get Started
               </Button>
-            </div>
-          </nav>
+            </Link>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="h-9 w-9"
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
-      )}
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-800">
+            <nav className="flex flex-col space-y-4">
+              <button 
+                onClick={() => scrollToSection('about')}
+                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+              >
+                About
+              </button>
+              <button 
+                onClick={() => scrollToSection('features')}
+                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+              >
+                Features
+              </button>
+              <button 
+                onClick={() => scrollToSection('pricing')}
+                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+              >
+                Pricing
+              </button>
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+              >
+                Contact
+              </button>
+              <button 
+                onClick={() => scrollToSection('faq')}
+                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+              >
+                FAQ
+              </button>
+              <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200 dark:border-gray-800">
+                <Link to="/login">
+                  <Button variant="ghost" className="w-full justify-start text-gray-700 dark:text-gray-300">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+            </nav>
+          </div>
+        )}
+      </div>
     </header>
   );
 };
