@@ -1,9 +1,85 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building, Users, CreditCard, DollarSign, AlertCircle, Calculator, TrendingUp, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Building, Users, CreditCard, DollarSign, AlertCircle, Calculator, TrendingUp, Calendar, Plus, Home } from 'lucide-react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+
+const kpiData = [
+  {
+    title: 'Total Properties',
+    value: '8',
+    subtitle: '+1 from last month',
+    icon: Building,
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-100',
+    cardBg: 'from-blue-50 to-blue-100',
+  },
+  {
+    title: 'Total Units',
+    value: '42',
+    subtitle: '36 occupied, 6 vacant',
+    icon: Home,
+    color: 'text-emerald-700',
+    bgColor: 'bg-emerald-100',
+    cardBg: 'from-emerald-50 to-emerald-100',
+  },
+  {
+    title: 'Occupancy Rate',
+    value: '85.7%',
+    subtitle: '+2.3% from last month',
+    icon: Users,
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-100',
+    cardBg: 'from-purple-50 to-purple-100',
+  },
+  {
+    title: 'Monthly Revenue',
+    value: '$51,000',
+    subtitle: '+8.2% from last month',
+    icon: DollarSign,
+    color: 'text-emerald-700',
+    bgColor: 'bg-emerald-100',
+    cardBg: 'from-emerald-50 to-emerald-100',
+  },
+  {
+    title: 'Annual Revenue',
+    value: '$620,000',
+    subtitle: '+6.9% from last year',
+    icon: Calendar,
+    color: 'text-sky-700',
+    bgColor: 'bg-sky-100',
+    cardBg: 'from-sky-50 to-sky-100',
+  },
+  {
+    title: 'Outstanding Balance',
+    value: '$3,250',
+    subtitle: '3 overdue accounts',
+    icon: AlertCircle,
+    color: 'text-red-700',
+    bgColor: 'bg-red-100',
+    cardBg: 'from-red-50 to-red-100',
+  },
+  {
+    title: 'Net Profit',
+    value: '$495,000',
+    subtitle: 'Annual profit margin: 79.8%',
+    icon: TrendingUp,
+    color: 'text-emerald-700',
+    bgColor: 'bg-emerald-100',
+    cardBg: 'from-emerald-50 to-emerald-100',
+  },
+  {
+    title: 'Operating Expenses',
+    value: '$11,500',
+    subtitle: 'This month',
+    icon: Calculator,
+    color: 'text-amber-700',
+    bgColor: 'bg-amber-100',
+    cardBg: 'from-amber-50 to-amber-100',
+  },
+];
 
 const monthlyData = [
   { month: 'Jan', rent: 45000, expenses: 8500 },
@@ -38,265 +114,201 @@ const chartConfig = {
 
 export function LandlordOverview() {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-        <div className="text-sm text-gray-500">
-          Last updated: {new Date().toLocaleDateString()}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-white via-purple-50 to-white border-b border-purple-100 px-6 py-6 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
+              Landlord Dashboard
+            </h1>
+            <p className="text-gray-600 mt-1">Manage your properties and tenants efficiently</p>
+          </div>
+          <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <Plus className="h-5 w-5 mr-2" />
+            Add Property
+          </Button>
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">8</div>
-            <p className="text-xs text-muted-foreground">
-              +1 from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Units</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">42</div>
-            <p className="text-xs text-muted-foreground">
-              36 occupied, 6 vacant
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">85.7%</div>
-            <p className="text-xs text-green-600">
-              +2.3% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$51,000</div>
-            <p className="text-xs text-green-600">
-              +8.2% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Annual Revenue</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$620,000</div>
-            <p className="text-xs text-green-600">
-              +6.9% from last year
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding Balance</CardTitle>
-            <AlertCircle className="h-4 w-4 text-red-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">$3,250</div>
-            <p className="text-xs text-muted-foreground">
-              3 overdue accounts
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">$495,000</div>
-            <p className="text-xs text-green-600">
-              Annual profit margin: 79.8%
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Operating Expenses</CardTitle>
-            <Calculator className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$11,500</div>
-            <p className="text-xs text-muted-foreground">
-              This month
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Analytics Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Monthly Revenue vs Expenses</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="rent" fill="var(--color-rent)" />
-                  <Bar dataKey="expenses" fill="var(--color-expenses)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Annual Revenue Trend</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={annualData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line type="monotone" dataKey="rent" stroke="var(--color-rent)" strokeWidth={3} />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Unit Occupancy</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={occupancyData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {occupancyData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Rent payment received</p>
-                  <p className="text-xs text-gray-500">Unit 2A - John Smith - $1,200</p>
+      <div className="p-6 space-y-8">
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {kpiData.map((kpi, index) => (
+            <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-gray-600 mb-2">
+                      {kpi.title}
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                    <div className="text-xs text-gray-500">{kpi.subtitle}</div>
+                  </div>
+                  <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
+                    <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                  </div>
                 </div>
-                <span className="text-xs text-gray-500">2h ago</span>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Analytics Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-0 shadow-lg rounded-2xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold text-gray-800">Monthly Revenue vs Expenses</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={monthlyData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="month" stroke="#64748b" />
+                    <YAxis stroke="#64748b" />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="rent" fill="url(#rentGradient)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="expenses" fill="url(#expenseGradient)" radius={[4, 4, 0, 0]} />
+                    <defs>
+                      <linearGradient id="rentGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#8b5cf6" />
+                        <stop offset="100%" stopColor="#a855f7" />
+                      </linearGradient>
+                      <linearGradient id="expenseGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#ef4444" />
+                        <stop offset="100%" stopColor="#f87171" />
+                      </linearGradient>
+                    </defs>
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-0 shadow-lg rounded-2xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold text-gray-800">Annual Revenue Trend</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={annualData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="year" stroke="#64748b" />
+                    <YAxis stroke="#64748b" />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line type="monotone" dataKey="rent" stroke="#8b5cf6" strokeWidth={3} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-0 shadow-lg rounded-2xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold text-gray-800">Unit Occupancy</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={occupancyData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {occupancyData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-0 shadow-lg rounded-2xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold text-gray-800">Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">Rent payment received</p>
+                    <p className="text-xs text-gray-600">Unit 2A - John Smith - $1,200</p>
+                  </div>
+                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">2h ago</span>
+                </div>
+                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">New tenant added</p>
+                    <p className="text-xs text-gray-600">Unit 3B - Sarah Johnson</p>
+                  </div>
+                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">5h ago</span>
+                </div>
+                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">Maintenance request</p>
+                    <p className="text-xs text-gray-600">Unit 1C - Plumbing issue</p>
+                  </div>
+                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">1d ago</span>
+                </div>
+                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">Overdue payment</p>
+                    <p className="text-xs text-gray-600">Unit 4A - Mike Davis - $950</p>
+                  </div>
+                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">3d ago</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">New tenant added</p>
-                  <p className="text-xs text-gray-500">Unit 3B - Sarah Johnson</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Upcoming Due Dates */}
+        <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-0 shadow-lg rounded-2xl">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-semibold text-gray-800">Upcoming Due Dates</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex justify-between items-center p-4 bg-white/60 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">Unit 1A - Mike Davis</p>
+                  <p className="text-xs text-gray-600">Due: Dec 1, 2024</p>
                 </div>
-                <span className="text-xs text-gray-500">5h ago</span>
+                <span className="text-sm font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg">$950</span>
               </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Maintenance request</p>
-                  <p className="text-xs text-gray-500">Unit 1C - Plumbing issue</p>
+              <div className="flex justify-between items-center p-4 bg-white/60 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">Unit 2C - Lisa Wong</p>
+                  <p className="text-xs text-gray-600">Due: Dec 1, 2024</p>
                 </div>
-                <span className="text-xs text-gray-500">1d ago</span>
+                <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">$1,100</span>
               </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Overdue payment</p>
-                  <p className="text-xs text-gray-500">Unit 4A - Mike Davis - $950</p>
+              <div className="flex justify-between items-center p-4 bg-white/60 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">Unit 3A - Robert Kim</p>
+                  <p className="text-xs text-gray-600">Due: Dec 3, 2024</p>
                 </div>
-                <span className="text-xs text-gray-500">3d ago</span>
+                <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">$1,300</span>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Upcoming Due Dates</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-              <div>
-                <p className="text-sm font-medium">Unit 1A - Mike Davis</p>
-                <p className="text-xs text-gray-500">Due: Dec 1, 2024</p>
-              </div>
-              <span className="text-sm font-bold text-red-600">$950</span>
-            </div>
-            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-              <div>
-                <p className="text-sm font-medium">Unit 2C - Lisa Wong</p>
-                <p className="text-xs text-gray-500">Due: Dec 1, 2024</p>
-              </div>
-              <span className="text-sm font-bold">$1,100</span>
-            </div>
-            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-              <div>
-                <p className="text-sm font-medium">Unit 3A - Robert Kim</p>
-                <p className="text-xs text-gray-500">Due: Dec 3, 2024</p>
-              </div>
-              <span className="text-sm font-bold">$1,300</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
