@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard } from 'lucide-react';
 import { ClientDocumentsView } from './ClientDocumentsView';
+import { InstalmentTracking } from './InstalmentTracking';
 
 interface ClientDetailViewProps {
   client: any;
@@ -141,8 +141,9 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="properties" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 h-12">
+        <TabsList className="grid w-full grid-cols-5 h-12">
           <TabsTrigger value="properties" className="text-base">Properties</TabsTrigger>
+          <TabsTrigger value="instalments" className="text-base">Instalments</TabsTrigger>
           <TabsTrigger value="payments" className="text-base">Payments</TabsTrigger>
           <TabsTrigger value="documents" className="text-base">Documents</TabsTrigger>
           <TabsTrigger value="activity" className="text-base">Activity</TabsTrigger>
@@ -202,6 +203,10 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="instalments" className="mt-6">
+          <InstalmentTracking client={client} />
         </TabsContent>
 
         <TabsContent value="payments" className="mt-6">
