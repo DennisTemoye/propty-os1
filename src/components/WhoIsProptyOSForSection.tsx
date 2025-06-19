@@ -10,21 +10,24 @@ const WhoIsProptyOSForSection = () => {
       title: 'Property Developers',
       description: 'Build and sell residential estates, commercial properties, or mixed-use developments with comprehensive project management.',
       features: ['Project & Unit Management', 'Client KYC & Allocation', 'Payment Milestone Tracking', 'Document Generation'],
-      gradient: 'from-purple-500 to-blue-600'
+      gradient: 'from-purple-500 to-blue-600',
+      cardGradient: 'from-purple-50 to-blue-50'
     },
     {
       icon: Map,
       title: 'Land Developers',
       description: 'Develop and sell residential or commercial plots with detailed mapping and allocation systems.',
       features: ['Plot Mapping & GPS', 'Land Banking Management', 'Survey Documentation', 'Allocation Certificates'],
-      gradient: 'from-green-500 to-teal-600'
+      gradient: 'from-green-500 to-teal-600',
+      cardGradient: 'from-green-50 to-teal-50'
     },
     {
       icon: TrendingUp,
       title: 'Real Estate Marketers',
       description: 'Manage sales teams, track leads, and automate commission calculations for maximum performance.',
       features: ['Agent CRM System', 'Lead Management', 'Commission Tracking', 'Performance Analytics'],
-      gradient: 'from-amber-500 to-orange-600'
+      gradient: 'from-amber-500 to-orange-600',
+      cardGradient: 'from-amber-50 to-orange-50'
     }
   ];
 
@@ -44,7 +47,7 @@ const WhoIsProptyOSForSection = () => {
           {targetUsers.map((user, index) => (
             <Card key={index} className="border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden">
               <div className={`bg-gradient-to-br ${user.gradient} p-1`}>
-                <CardContent className="bg-white dark:bg-gray-700 p-8 m-0 rounded-lg">
+                <CardContent className={`bg-gradient-to-br ${user.cardGradient} dark:bg-gray-700 p-8 m-0 rounded-lg`}>
                   <div className={`w-16 h-16 bg-gradient-to-br ${user.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6`}>
                     <user.icon className="w-8 h-8 text-white" />
                   </div>
