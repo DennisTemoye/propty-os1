@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -56,296 +57,213 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
   ];
 
   return (
-    <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="grid w-full grid-cols-5">
-        <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="property">Properties</TabsTrigger>
-        <TabsTrigger value="payments">Payments</TabsTrigger>
-        <TabsTrigger value="documents">Documents</TabsTrigger>
-        <TabsTrigger value="activity">Activity</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="overview" className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Personal Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <User className="h-5 w-5 mr-2" />
-                Personal Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-4 mb-4">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
-                  <AvatarFallback>
-                    <User className="h-10 w-10" />
-                  </AvatarFallback>
-                </Avatar>
+    <div className="space-y-8">
+      {/* Header Section - Client Summary */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-0 shadow-sm">
+        <CardContent className="p-8">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-6">
+              <Avatar className="h-24 w-24 border-4 border-white shadow-md">
+                <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
+                <AvatarFallback className="bg-blue-100 text-blue-600 text-lg font-semibold">
+                  <User className="h-12 w-12" />
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="space-y-3">
                 <div>
-                  <h3 className="text-lg font-semibold">{client.name}</h3>
-                  <p className="text-sm text-gray-600">ID: {client.nationalId}</p>
+                  <h1 className="text-3xl font-bold text-gray-900">{client.name}</h1>
+                  <p className="text-gray-600 text-lg">ID: {client.nationalId}</p>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <Badge className={`${getStatusColor(client.status)} px-3 py-1 text-sm font-medium`}>
+                    {client.status}
+                  </Badge>
+                  <Badge className={`${getKycStatusColor(client.kycStatus)} px-3 py-1 text-sm font-medium`}>
+                    KYC {client.kycStatus}
+                  </Badge>
                 </div>
               </div>
-              
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Status:</span>
-                <Badge className={getStatusColor(client.status)}>
-                  {client.status}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">KYC Status:</span>
-                <Badge className={getKycStatusColor(client.kycStatus)}>
-                  {client.kycStatus}
-                </Badge>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center text-sm">
-                  <Mail className="h-4 w-4 mr-2 text-gray-400" />
-                  {client.email}
-                </div>
-                <div className="flex items-center text-sm">
-                  <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                  {client.phone}
-                </div>
-                <div className="flex items-start text-sm">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-400 mt-0.5" />
-                  <span>{client.address}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Updated Properties Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Building className="h-5 w-5 mr-2" />
-                Properties Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {client.projects && client.projects.length > 0 ? (
-                <div className="space-y-4">
-                  {/* Show all properties */}
-                  {client.projects.map((project: any, index: number) => (
-                    <div key={index} className="border-b pb-3 last:border-b-0">
-                      <div className="font-medium">{project.name}</div>
-                      <div className="text-sm text-gray-600">{project.unit}</div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        Assigned: {project.assignedDate}
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {client.paymentProgress !== undefined && (
-                    <>
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span>Payment Progress</span>
-                          <span className="font-medium">{client.paymentProgress}%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-green-600 h-2 rounded-full"
-                            style={{ width: `${client.paymentProgress}%` }}
-                          ></div>
-                        </div>
+            {/* Quick Stats */}
+            <div className="text-right space-y-2">
+              <div className="text-sm text-gray-600">Total Investment</div>
+              <div className="text-2xl font-bold text-green-600">{client.totalPaid}</div>
+              <div className="text-sm text-gray-600">
+                {client.projects?.length || 0} Properties
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Contact Information */}
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl">Contact Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <Mail className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="font-medium">{client.email}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-green-50 rounded-lg">
+                <Phone className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Phone</p>
+                <p className="font-medium">{client.phone}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <MapPin className="h-5 w-5 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Address</p>
+                <p className="font-medium">{client.address}</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="properties" className="w-full">
+        <TabsList className="grid w-full grid-cols-4 h-12">
+          <TabsTrigger value="properties" className="text-base">Properties</TabsTrigger>
+          <TabsTrigger value="payments" className="text-base">Payments</TabsTrigger>
+          <TabsTrigger value="documents" className="text-base">Documents</TabsTrigger>
+          <TabsTrigger value="activity" className="text-base">Activity</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="properties" className="mt-6">
+          {client.projects && client.projects.length > 0 ? (
+            <div className="space-y-4">
+              {client.projects.slice(0, 6).map((project: any, index: number) => (
+                <Card key={index} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h3 className="font-semibold text-lg">{project.name}</h3>
+                        <p className="text-gray-600">{project.unit}</p>
+                        <p className="text-sm text-gray-500">Assigned: {project.assignedDate}</p>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-500">Total Paid:</span>
-                          <div className="font-medium text-green-600">{client.totalPaid}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Balance:</span>
-                          <div className="font-medium">{client.balance}</div>
-                        </div>
-                      </div>
-                      
-                      {client.nextPayment && (
-                        <div className="text-sm">
-                          <span className="text-gray-500">Next Payment:</span>
-                          <div className="font-medium">{client.nextPayment}</div>
+                      {index === 0 && (
+                        <div className="text-right space-y-2">
+                          <div className="text-sm text-gray-500">Payment Progress</div>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-32 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-green-600 h-2 rounded-full"
+                                style={{ width: `${client.paymentProgress}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-medium">{client.paymentProgress}%</span>
+                          </div>
                         </div>
                       )}
-                    </>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Building className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p>No properties assigned</p>
-                  <Button className="mt-3 bg-green-600 hover:bg-green-700">
-                    Assign Property
-                  </Button>
-                </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              {client.projects.length > 6 && (
+                <Card className="border-dashed">
+                  <CardContent className="p-6 text-center">
+                    <p className="text-gray-600">
+                      +{client.projects.length - 6} more properties
+                    </p>
+                  </CardContent>
+                </Card>
               )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Documents Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="h-5 w-5 mr-2" />
-              Documents Overview
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {client.documents.map((doc: string, index: number) => (
-                <div key={index} className="flex items-center p-3 border rounded-lg">
-                  <FileText className="h-4 w-4 mr-2 text-blue-600" />
-                  <span className="text-sm">{doc}</span>
-                </div>
-              ))}
             </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-12">
+                <Building className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Properties Assigned</h3>
+                <p className="text-gray-500 mb-6">This client hasn't been assigned a property yet.</p>
+                <Button className="bg-green-600 hover:bg-green-700">
+                  Assign Property
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
 
-      <TabsContent value="property" className="space-y-6">
-        {client.projects && client.projects.length > 0 ? (
-          <div className="space-y-6">
-            {client.projects.map((project: any, index: number) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle>Property {index + 1}: {project.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Project</label>
-                      <div className="font-medium">{project.name}</div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Unit</label>
-                      <div className="font-medium">{project.unit}</div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Assigned Date</label>
-                      <div className="font-medium">{project.assignedDate}</div>
-                    </div>
-                  </div>
-                  
-                  {index === 0 && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="text-sm font-medium text-gray-500">Payment Summary</label>
-                        <div className="mt-2 space-y-2">
-                          <div className="flex justify-between">
-                            <span>Total Paid:</span>
-                            <span className="font-medium text-green-600">{client.totalPaid}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Outstanding:</span>
-                            <span className="font-medium">{client.balance}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Progress:</span>
-                            <span className="font-medium">{client.paymentProgress}%</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="text-sm font-medium text-gray-500">Next Milestone</label>
-                        <div className="mt-2">
-                          {client.nextPayment ? (
-                            <div>
-                              <div className="font-medium">{client.nextPayment}</div>
-                              <div className="text-sm text-gray-600">Payment due</div>
-                            </div>
-                          ) : (
-                            <div className="text-gray-500">All payments completed</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
+        <TabsContent value="payments" className="mt-6">
           <Card>
-            <CardContent className="text-center py-12">
-              <Building className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Property Assigned</h3>
-              <p className="text-gray-500 mb-4">This client hasn't been assigned a property yet.</p>
-              <Button className="bg-green-600 hover:bg-green-700">
-                Assign Property
-              </Button>
+            <CardHeader>
+              <CardTitle className="text-xl">Payment History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-base">Date</TableHead>
+                    <TableHead className="text-base">Type</TableHead>
+                    <TableHead className="text-base">Amount</TableHead>
+                    <TableHead className="text-base">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockPaymentHistory.map((payment) => (
+                    <TableRow key={payment.id} className="h-14">
+                      <TableCell className="text-base">{payment.date}</TableCell>
+                      <TableCell className="text-base">{payment.type}</TableCell>
+                      <TableCell className="font-semibold text-base">{payment.amount}</TableCell>
+                      <TableCell>
+                        <Badge className={payment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                          {payment.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
-        )}
-      </TabsContent>
+        </TabsContent>
 
-      <TabsContent value="payments" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Payment History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockPaymentHistory.map((payment) => (
-                  <TableRow key={payment.id}>
-                    <TableCell>{payment.date}</TableCell>
-                    <TableCell>{payment.type}</TableCell>
-                    <TableCell className="font-medium">{payment.amount}</TableCell>
-                    <TableCell>
-                      <Badge className={payment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                        {payment.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </TabsContent>
+        <TabsContent value="documents" className="mt-6">
+          <ClientDocumentsView client={client} />
+        </TabsContent>
 
-      <TabsContent value="documents" className="space-y-6">
-        <ClientDocumentsView client={client} />
-      </TabsContent>
-
-      <TabsContent value="activity" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Activity Log</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {mockActivityLog.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-3 p-3 border-l-4 border-l-blue-500 bg-blue-50">
-                  <Calendar className="h-4 w-4 mt-0.5 text-blue-600" />
-                  <div className="flex-1">
-                    <div className="font-medium">{activity.action}</div>
-                    <div className="text-sm text-gray-600">{activity.details}</div>
-                    <div className="text-xs text-gray-500 mt-1">{activity.date}</div>
+        <TabsContent value="activity" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {mockActivityLog.map((activity) => (
+                  <div key={activity.id} className="flex items-start space-x-4 p-4 border-l-4 border-l-blue-500 bg-blue-50 rounded-r-lg">
+                    <Calendar className="h-5 w-5 mt-1 text-blue-600" />
+                    <div className="flex-1">
+                      <div className="font-medium text-lg">{activity.action}</div>
+                      <div className="text-gray-600 mt-1">{activity.details}</div>
+                      <div className="text-sm text-gray-500 mt-2">{activity.date}</div>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
