@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Globe, Layout, Shield, Users } from 'lucide-react';
+import { Globe, Layout, Shield, TrendingUp } from 'lucide-react';
 
 const WhyProptyOSSection = () => {
   const features = [
@@ -12,13 +12,13 @@ const WhyProptyOSSection = () => {
     },
     {
       icon: Layout,
-      title: 'All-in-One Dashboard',
-      description: 'Manage rent, sales, documents, CRM, and more from a single, intuitive dashboard that scales with your business.',
+      title: 'All-in-One Project Manager',
+      description: 'Manage projects, sales, documents, CRM, and payments from a single, intuitive dashboard that scales with your business.',
     },
     {
-      icon: Users,
-      title: 'Role-Based Access',
-      description: 'Assign roles and control access for team members, agents, and staff with granular permission settings.',
+      icon: TrendingUp,
+      title: 'Complete Sales Pipeline',
+      description: 'From lead generation to commission tracking, manage your entire sales process with automated workflows.',
     },
     {
       icon: Shield,

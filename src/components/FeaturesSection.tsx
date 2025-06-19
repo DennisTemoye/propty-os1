@@ -12,15 +12,15 @@ import {
   Shield, 
   UserCheck, 
   Map, 
-  Tag 
+  Calculator 
 } from 'lucide-react';
 
 const FeaturesSection = () => {
   const features = [
     {
       icon: Home,
-      title: "Rent & Sales Management",
-      description: "Complete property lifecycle management from listing to closing"
+      title: "Project & Unit Management",
+      description: "Complete property development lifecycle from planning to delivery"
     },
     {
       icon: MapPin,
@@ -29,22 +29,22 @@ const FeaturesSection = () => {
     },
     {
       icon: CreditCard,
-      title: "Virtual Payment Accounts",
-      description: "Dedicated payment accounts for each property and tenant"
+      title: "Instalment Payment Tracking",
+      description: "Milestone-based payment tracking with automated receipt generation"
     },
     {
       icon: Users,
-      title: "Buyer & Tenant Dashboards",
-      description: "Self-service portals for customers to track their properties"
+      title: "Client KYC & Onboarding",
+      description: "Streamlined customer verification and document management"
     },
     {
       icon: TrendingUp,
-      title: "Agent CRM & Commission Tracker",
+      title: "Marketer CRM & Commission Tracking",
       description: "Manage sales teams and automatically calculate commissions"
     },
     {
       icon: Briefcase,
-      title: "Staff/Vendor & Expense Management",
+      title: "Staff Management & Expense Tracking",
       description: "Track expenses, manage vendors, and handle payroll"
     },
     {
@@ -64,8 +64,8 @@ const FeaturesSection = () => {
     },
     {
       icon: UserCheck,
-      title: "KYC Client Onboarding",
-      description: "Streamlined know-your-customer verification process"
+      title: "Role-Based Access Control",
+      description: "Granular permissions for team members and stakeholders"
     },
     {
       icon: Map,
@@ -73,46 +73,38 @@ const FeaturesSection = () => {
       description: "Interactive maps with property locations and boundaries"
     },
     {
-      icon: Tag,
-      title: "Property Tagging System",
-      description: "Advanced categorization and search capabilities"
+      icon: Calculator,
+      title: "Financial Reports & Analytics",
+      description: "Comprehensive reporting for sales, expenses, and performance"
     }
   ];
 
   return (
-    <section id="features" className="py-20 bg-gradient-to-br from-gray-50 to-purple-50">
+    <section id="features" className="py-20 bg-gray-50 dark:bg-gray-800">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-            Everything You Need in One Platform
+          <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            Features Overview
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive features designed to streamline every aspect of property and real estate management
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Everything you need to manage real estate projects, sales, and client relationships in one powerful platform.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-purple-200 group"
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center mb-4 group-hover:from-purple-200 group-hover:to-purple-300 transition-all duration-300">
-                  <IconComponent className="w-6 h-6 text-purple-600" />
-                </div>
-                
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  {feature.title}
-                </h3>
-                
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {feature.description}
-                </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <div key={index} className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-4">
+                <feature.icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
-            );
-          })}
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                {feature.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

@@ -17,16 +17,17 @@ import {
   HelpCircle,
   LogOut,
   Home,
+  Users2,
 } from 'lucide-react';
 
 const sidebarItems = [
   { icon: Home, label: 'Dashboard', path: '/company/dashboard' },
   { icon: Building2, label: 'Projects', path: '/company/projects' },
   { icon: Users, label: 'Clients', path: '/company/clients' },
-  { icon: UserCheck, label: 'Marketers & Commission', path: '/company/marketers' },
+  { icon: UserCheck, label: 'Marketers', path: '/company/marketers' },
   { icon: BarChart3, label: 'Reports', path: '/company/reports' },
   { icon: DollarSign, label: 'Accounting & Expenses', path: '/company/accounting' },
-  { icon: Users, label: 'Staff & Payroll', path: '/company/staff' },
+  { icon: Users2, label: 'Staff & Payroll', path: '/company/staff' },
   { icon: Shield, label: 'Roles & Permissions', path: '/company/roles' },
   { icon: FileText, label: 'Documents & Media', path: '/company/documents' },
   { icon: Settings, label: 'Settings', path: '/company/settings' },

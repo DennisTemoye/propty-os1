@@ -13,7 +13,6 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetCodePage from "./pages/ResetCodePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CompanyDashboard from "./pages/CompanyDashboard";
-import LandlordDashboard from "./pages/LandlordDashboard";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import ProjectBlocksPage from "./pages/ProjectBlocksPage";
 import ClientDetailPage from "./pages/ClientDetailPage";
@@ -50,14 +49,6 @@ const App = () => (
             <Route path="/company/settings" element={<CompanyDashboard />} />
             <Route path="/company/reports" element={<CompanyDashboard />} />
             <Route path="/company/help" element={<CompanyDashboard />} />
-            <Route path="/landlord/dashboard" element={<LandlordDashboard />} />
-            <Route path="/landlord/properties" element={<LandlordDashboard />} />
-            <Route path="/landlord/tenants" element={<LandlordDashboard />} />
-            <Route path="/landlord/rent-collection" element={<LandlordDashboard />} />
-            <Route path="/landlord/accounting" element={<LandlordDashboard />} />
-            <Route path="/landlord/lease-documents" element={<LandlordDashboard />} />
-            <Route path="/landlord/staff-vendors" element={<LandlordDashboard />} />
-            <Route path="/landlord/settings" element={<LandlordDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
