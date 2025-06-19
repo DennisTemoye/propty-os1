@@ -1,16 +1,15 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, DialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, MapPin, FileText, Upload } from 'lucide-react';
+import { Plus, MapPin, FileText, Upload, Edit, Trash2, Eye, Users, DollarSign, Calendar } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { NewProjectForm } from './forms/NewProjectForm';
 import { MapView } from './maps/MapView';
@@ -18,6 +17,7 @@ import { DocumentsView } from './documents/DocumentsView';
 import { LayoutUpload } from './uploads/LayoutUpload';
 import { GeoTagUnits } from './maps/GeoTagUnits';
 import { ReportsGenerator } from './reports/ReportsGenerator';
+import { ProjectDetailView } from './projects/ProjectDetailView';
 
 const mockProjects = [
   {
@@ -55,6 +55,7 @@ const mockProjects = [
 export function ProjectsUnits() {
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
+  const [selectedProjectForDetail, setSelectedProjectForDetail] = useState<any>(null);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -67,6 +68,10 @@ export function ProjectsUnits() {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleProjectClick = (project: any) => {
+    setSelectedProjectForDetail(project);
   };
 
   return (
@@ -92,7 +97,7 @@ export function ProjectsUnits() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {mockProjects.map((project) => (
           <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => setSelectedProject(project.id)}>
+                onClick={() => handleProjectClick(project)}>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">{project.name}</CardTitle>
@@ -167,6 +172,19 @@ export function ProjectsUnits() {
           </Card>
         ))}
       </div>
+
+      {/* Project Detail Modal */}
+      <Dialog open={!!selectedProjectForDetail} onOpenChange={() => setSelectedProjectForDetail(null)}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Project Details - {selectedProjectForDetail?.name}</DialogTitle>
+            <DialogDescription>
+              Comprehensive project overview and management
+            </DialogDescription>
+          </DialogHeader>
+          {selectedProjectForDetail && <ProjectDetailView project={selectedProjectForDetail} />}
+        </DialogContent>
+      </Dialog>
 
       <Card className="mt-6">
         <CardHeader>
