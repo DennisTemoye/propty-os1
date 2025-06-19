@@ -281,10 +281,10 @@ export function Clients() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-yellow-600">
-              {mockClients.filter(c => c.kycStatus === 'pending').length}
+            <div className="text-2xl font-bold text-orange-600">
+              {mockClients.filter(c => c.nextPayment && new Date(c.nextPayment) < new Date()).length}
             </div>
-            <div className="text-sm text-gray-500">Pending KYC</div>
+            <div className="text-sm text-gray-500">Pending Payments</div>
           </CardContent>
         </Card>
         <Card>
