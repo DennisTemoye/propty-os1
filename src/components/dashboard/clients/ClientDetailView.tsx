@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard } from 'lucide-react';
+import { ClientDocumentsView } from './ClientDocumentsView';
 
 interface ClientDetailViewProps {
   client: any;
@@ -321,26 +322,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
       </TabsContent>
 
       <TabsContent value="documents" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Document Management</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {client.documents.map((doc: string, index: number) => (
-                <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center">
-                    <FileText className="h-5 w-5 mr-3 text-blue-600" />
-                    <span className="font-medium">{doc}</span>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Download
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <ClientDocumentsView client={client} />
       </TabsContent>
 
       <TabsContent value="activity" className="space-y-6">
