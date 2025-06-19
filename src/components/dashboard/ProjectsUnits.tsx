@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,6 +38,118 @@ const mockProjects = [
     availableUnits: 32,
     status: 'ongoing',
     revenue: '₦4.2B'
+  },
+  {
+    id: 3,
+    name: 'Golden View Towers',
+    category: 'Housing',
+    type: 'Residential',
+    location: 'Victoria Island, Lagos',
+    totalBlocks: 12,
+    totalUnits: 300,
+    soldUnits: 245,
+    reservedUnits: 18,
+    availableUnits: 37,
+    status: 'ongoing',
+    revenue: '₦6.8B'
+  },
+  {
+    id: 4,
+    name: 'Sunset Heights',
+    category: 'Housing',
+    type: 'Residential',
+    location: 'Ikoyi, Lagos',
+    totalBlocks: 6,
+    totalUnits: 180,
+    soldUnits: 167,
+    reservedUnits: 8,
+    availableUnits: 5,
+    status: 'completed',
+    revenue: '₦3.9B'
+  },
+  {
+    id: 5,
+    name: 'Marina Heights',
+    category: 'Mixed',
+    type: 'Mixed-Use',
+    location: 'Marina, Lagos',
+    totalBlocks: 10,
+    totalUnits: 250,
+    soldUnits: 198,
+    reservedUnits: 25,
+    availableUnits: 27,
+    status: 'ongoing',
+    revenue: '₦5.5B'
+  },
+  {
+    id: 6,
+    name: 'Palm Grove Estate',
+    category: 'Housing',
+    type: 'Residential',
+    location: 'Ajah, Lagos',
+    totalBlocks: 15,
+    totalUnits: 400,
+    soldUnits: 280,
+    reservedUnits: 45,
+    availableUnits: 75,
+    status: 'ongoing',
+    revenue: '₦7.2B'
+  },
+  {
+    id: 7,
+    name: 'Royal Gardens',
+    category: 'Land',
+    type: 'Land Development',
+    location: 'Epe, Lagos',
+    totalBlocks: 20,
+    totalUnits: 500,
+    soldUnits: 320,
+    reservedUnits: 80,
+    availableUnits: 100,
+    status: 'ongoing',
+    revenue: '₦4.8B'
+  },
+  {
+    id: 8,
+    name: 'Crystal Bay',
+    category: 'Housing',
+    type: 'Waterfront',
+    location: 'Banana Island, Lagos',
+    totalBlocks: 4,
+    totalUnits: 80,
+    soldUnits: 65,
+    reservedUnits: 10,
+    availableUnits: 5,
+    status: 'ongoing',
+    revenue: '₦8.5B'
+  },
+  {
+    id: 9,
+    name: 'Metro Heights',
+    category: 'Mixed',
+    type: 'Commercial',
+    location: 'Ikeja, Lagos',
+    totalBlocks: 7,
+    totalUnits: 220,
+    soldUnits: 180,
+    reservedUnits: 15,
+    availableUnits: 25,
+    status: 'ongoing',
+    revenue: '₦3.8B'
+  },
+  {
+    id: 10,
+    name: 'Paradise Gardens',
+    category: 'Housing',
+    type: 'Residential',
+    location: 'Ibadan, Oyo',
+    totalBlocks: 8,
+    totalUnits: 160,
+    soldUnits: 45,
+    reservedUnits: 20,
+    availableUnits: 95,
+    status: 'upcoming',
+    revenue: '₦1.2B'
   }
 ];
 

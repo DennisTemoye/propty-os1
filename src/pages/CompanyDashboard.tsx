@@ -5,6 +5,7 @@ import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { ProjectsUnits } from '@/components/dashboard/ProjectsUnits';
 import { Clients } from '@/components/dashboard/Clients';
+import { MarketersCommission } from '@/pages/MarketersCommissionPage';
 import { Accounting } from '@/components/dashboard/Accounting';
 import { Documents } from '@/components/dashboard/Documents';
 import { StaffPayroll } from '@/components/dashboard/StaffPayroll';
@@ -25,6 +26,8 @@ const CompanyDashboard = () => {
       return <ProjectsUnits />;
     } else if (path.startsWith('/company/clients')) {
       return <Clients />;
+    } else if (path.startsWith('/company/marketers')) {
+      return <MarketersCommission />;
     } else if (path.startsWith('/company/accounting')) {
       return <Accounting />;
     } else if (path.startsWith('/company/documents')) {

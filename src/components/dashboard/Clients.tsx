@@ -54,15 +54,70 @@ const mockClients = [
         name: 'Emerald Heights',
         unit: 'Block B - Plot 12',
         assignedDate: '2024-01-15'
+      },
+      {
+        name: 'Victoria Gardens',
+        unit: 'Block A - Plot 05',
+        assignedDate: '2024-01-20'
+      },
+      {
+        name: 'Golden View',
+        unit: 'Block C - Plot 03',
+        assignedDate: '2024-01-25'
+      },
+      {
+        name: 'Sunset Heights',
+        unit: 'Block D - Plot 07',
+        assignedDate: '2024-02-01'
+      },
+      {
+        name: 'Marina Heights',
+        unit: 'Block E - Plot 10',
+        assignedDate: '2024-02-05'
+      },
+      {
+        name: 'Palm Grove Estate',
+        unit: 'Block F - Plot 15',
+        assignedDate: '2024-02-10'
+      },
+      {
+        name: 'Royal Gardens',
+        unit: 'Block G - Plot 08',
+        assignedDate: '2024-02-15'
+      },
+      {
+        name: 'Crystal Bay',
+        unit: 'Block H - Plot 12',
+        assignedDate: '2024-02-20'
+      },
+      {
+        name: 'Metro Heights',
+        unit: 'Block I - Plot 18',
+        assignedDate: '2024-02-25'
+      },
+      {
+        name: 'Paradise Gardens',
+        unit: 'Block J - Plot 22',
+        assignedDate: '2024-03-01'
+      },
+      {
+        name: 'Golden View Towers',
+        unit: 'Block K - Plot 30',
+        assignedDate: '2024-03-05'
+      },
+      {
+        name: 'Emerald Heights Phase 2',
+        unit: 'Block L - Plot 25',
+        assignedDate: '2024-03-10'
       }
     ],
-    status: 'pending',
-    kycStatus: 'pending',
-    totalPaid: '₦8M',
-    balance: '₦17M',
-    nextPayment: '2024-01-30',
-    documents: ['Application Form'],
-    paymentProgress: 32,
+    status: 'active',
+    kycStatus: 'approved',
+    totalPaid: '₦285M',
+    balance: '₦415M',
+    nextPayment: '2024-02-20',
+    documents: ['Allocation Letter', 'MoU', 'Payment Schedule', 'Investment Agreement'],
+    paymentProgress: 41,
     assignedDate: '2024-01-15'
   },
   {
