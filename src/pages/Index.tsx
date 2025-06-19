@@ -3,6 +3,7 @@ import React from 'react';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
 import TrustedBySection from '../components/TrustedBySection';
+import WhoIsProptyOSForSection from '../components/WhoIsProptyOSForSection';
 import WhyProptyOSSection from '../components/WhyProptyOSSection';
 import FeaturesSection from '../components/FeaturesSection';
 import PricingSection from '../components/PricingSection';
@@ -13,10 +14,11 @@ import Footer from '../components/Footer';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       <Header />
       <HeroSection />
       <TrustedBySection />
+      <WhoIsProptyOSForSection />
       <WhyProptyOSSection />
       <FeaturesSection />
       <PricingSection />
