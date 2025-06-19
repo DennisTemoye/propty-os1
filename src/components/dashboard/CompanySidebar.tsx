@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,6 @@ import {
   BarChart3,
   DollarSign,
   CreditCard,
-  Briefcase,
   Shield,
   HelpCircle,
   LogOut,
@@ -28,9 +26,8 @@ const sidebarItems = [
   { icon: FileText, label: 'Documents', path: '/company/documents' },
   { icon: UserCheck, label: 'Agents & Marketers', path: '/company/agents' },
   { icon: BarChart3, label: 'Reports', path: '/company/reports' },
-  { icon: DollarSign, label: 'Accounting', path: '/company/accounting' },
+  { icon: DollarSign, label: 'Accounting & Expenses', path: '/company/accounting' },
   { icon: CreditCard, label: 'Commissions', path: '/company/commissions' },
-  { icon: Briefcase, label: 'Vendors & Expenses', path: '/company/vendors' },
   { icon: Users, label: 'Staff & Payroll', path: '/company/staff' },
   { icon: Shield, label: 'Roles & Permissions', path: '/company/roles' },
   { icon: Settings, label: 'Settings', path: '/company/settings' },

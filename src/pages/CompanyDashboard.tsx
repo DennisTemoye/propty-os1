@@ -9,7 +9,6 @@ import { AgentsMarketers } from '@/components/dashboard/AgentsMarketers';
 import { Commissions } from '@/components/dashboard/Commissions';
 import { Accounting } from '@/components/dashboard/Accounting';
 import { Documents } from '@/components/dashboard/Documents';
-import { VendorsExpenses } from '@/components/dashboard/VendorsExpenses';
 import { StaffPayroll } from '@/components/dashboard/StaffPayroll';
 import { RolesPermissions } from '@/components/dashboard/RolesPermissions';
 import { Settings } from '@/components/dashboard/Settings';
@@ -35,8 +34,6 @@ const CompanyDashboard = () => {
       return <Accounting />;
     } else if (path.startsWith('/company/documents')) {
       return <Documents />;
-    } else if (path.startsWith('/company/vendors')) {
-      return <VendorsExpenses />;
     } else if (path.startsWith('/company/staff')) {
       return <StaffPayroll />;
     } else if (path.startsWith('/company/roles')) {
