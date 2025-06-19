@@ -5,7 +5,7 @@ import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { ProjectsUnits } from '@/components/dashboard/ProjectsUnits';
 import { Clients } from '@/components/dashboard/Clients';
-import MarketersCommission from '@/pages/MarketersCommissionPage';
+import { MarketersCommission } from '@/components/dashboard/MarketersCommission';
 import { Accounting } from '@/components/dashboard/Accounting';
 import { Documents } from '@/components/dashboard/Documents';
 import { StaffPayroll } from '@/components/dashboard/StaffPayroll';
