@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Building, Plus, Search, MapPin, Home, Building2, Store } from 'lucide-react';
+import { Building, Plus, Search, MapPin, Home, Building2, Store, Users } from 'lucide-react';
 import {
   Table,
   TableBody,
