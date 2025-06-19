@@ -3,7 +3,21 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, MapPin, FileText, Upload } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { NewProjectForm } from './forms/NewProjectForm';
+import { MapView } from './maps/MapView';
+import { DocumentsView } from './documents/DocumentsView';
+import { LayoutUpload } from './uploads/LayoutUpload';
+import { GeoTagUnits } from './maps/GeoTagUnits';
+import { ReportsGenerator } from './reports/ReportsGenerator';
 
 const mockProjects = [
   {
@@ -40,6 +54,7 @@ const mockProjects = [
 
 export function ProjectsUnits() {
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -58,10 +73,20 @@ export function ProjectsUnits() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Projects & Units</h1>
-        <Button className="bg-purple-600 hover:bg-purple-700">
-          <Plus className="h-4 w-4 mr-2" />
-          New Project
-        </Button>
+        <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <Plus className="h-4 w-4 mr-2" />
+              New Project
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Create New Project</DialogTitle>
+            </DialogHeader>
+            <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -107,14 +132,35 @@ export function ProjectsUnits() {
                 </div>
                 
                 <div className="flex space-x-2 mt-4">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <MapPin className="h-3 w-3 mr-1" />
-                    View Map
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <FileText className="h-3 w-3 mr-1" />
-                    Documents
-                  </Button>
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
+                        <MapPin className="h-3 w-3 mr-1" />
+                        View Map
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-full max-w-4xl">
+                      <SheetHeader>
+                        <SheetTitle>{project.name} - Map View</SheetTitle>
+                      </SheetHeader>
+                      <MapView project={project} />
+                    </SheetContent>
+                  </Sheet>
+                  
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
+                        <FileText className="h-3 w-3 mr-1" />
+                        Documents
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-full max-w-2xl">
+                      <SheetHeader>
+                        <SheetTitle>{project.name} - Documents</SheetTitle>
+                      </SheetHeader>
+                      <DocumentsView project={project} />
+                    </SheetContent>
+                  </Sheet>
                 </div>
               </div>
             </CardContent>
@@ -128,18 +174,50 @@ export function ProjectsUnits() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-20 flex-col">
-              <Upload className="h-6 w-6 mb-2" />
-              Upload Layout
-            </Button>
-            <Button variant="outline" className="h-20 flex-col">
-              <MapPin className="h-6 w-6 mb-2" />
-              Geo-tag Units
-            </Button>
-            <Button variant="outline" className="h-20 flex-col">
-              <FileText className="h-6 w-6 mb-2" />
-              Generate Reports
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="h-20 flex-col">
+                  <Upload className="h-6 w-6 mb-2" />
+                  Upload Layout
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Upload Project Layout</DialogTitle>
+                </DialogHeader>
+                <LayoutUpload />
+              </DialogContent>
+            </Dialog>
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="h-20 flex-col">
+                  <MapPin className="h-6 w-6 mb-2" />
+                  Geo-tag Units
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle>Geo-tag Units</DialogTitle>
+                </DialogHeader>
+                <GeoTagUnits />
+              </DialogContent>
+            </Dialog>
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="h-20 flex-col">
+                  <FileText className="h-6 w-6 mb-2" />
+                  Generate Reports
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Generate Project Reports</DialogTitle>
+                </DialogHeader>
+                <ReportsGenerator />
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>
