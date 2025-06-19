@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,17 +12,21 @@ const kpiData = [
     subtitle: '156 Units Sold',
     icon: DollarSign,
     color: 'text-emerald-700',
-    bgColor: 'bg-emerald-100',
-    cardBg: 'from-emerald-50 to-emerald-100',
+    bgColor: 'bg-emerald-50',
+    iconBg: 'bg-emerald-100',
+    cardBg: 'from-emerald-50/50 to-emerald-100/30',
+    trend: '+12.5%'
   },
   {
     title: 'Ongoing Projects',
     value: '12',
     subtitle: '3 New This Month',
     icon: Building,
-    color: 'text-sky-700',
-    bgColor: 'bg-sky-100',
-    cardBg: 'from-sky-50 to-sky-100',
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-50',
+    iconBg: 'bg-blue-100',
+    cardBg: 'from-blue-50/50 to-blue-100/30',
+    trend: '+25%'
   },
   {
     title: 'Total Clients',
@@ -29,8 +34,10 @@ const kpiData = [
     subtitle: '89 Active',
     icon: Users,
     color: 'text-purple-700',
-    bgColor: 'bg-purple-100',
-    cardBg: 'from-purple-50 to-purple-100',
+    bgColor: 'bg-purple-50',
+    iconBg: 'bg-purple-100',
+    cardBg: 'from-purple-50/50 to-purple-100/30',
+    trend: '+8.3%'
   },
   {
     title: 'Pending Allocations',
@@ -38,8 +45,10 @@ const kpiData = [
     subtitle: 'Awaiting Approval',
     icon: FileText,
     color: 'text-amber-700',
-    bgColor: 'bg-amber-100',
-    cardBg: 'from-amber-50 to-amber-100',
+    bgColor: 'bg-amber-50',
+    iconBg: 'bg-amber-100',
+    cardBg: 'from-amber-50/50 to-amber-100/30',
+    trend: '-5.2%'
   },
   {
     title: 'Active Marketers',
@@ -47,8 +56,10 @@ const kpiData = [
     subtitle: '8 Top Performers',
     icon: UserCheck,
     color: 'text-indigo-700',
-    bgColor: 'bg-indigo-100',
-    cardBg: 'from-indigo-50 to-indigo-100',
+    bgColor: 'bg-indigo-50',
+    iconBg: 'bg-indigo-100',
+    cardBg: 'from-indigo-50/50 to-indigo-100/30',
+    trend: '+15.7%'
   },
   {
     title: 'Commissions Paid',
@@ -56,8 +67,10 @@ const kpiData = [
     subtitle: 'This Month',
     icon: Calculator,
     color: 'text-teal-700',
-    bgColor: 'bg-teal-100',
-    cardBg: 'from-teal-50 to-teal-100',
+    bgColor: 'bg-teal-50',
+    iconBg: 'bg-teal-100',
+    cardBg: 'from-teal-50/50 to-teal-100/30',
+    trend: '+18.9%'
   },
   {
     title: 'Monthly Expenses',
@@ -65,8 +78,10 @@ const kpiData = [
     subtitle: 'Operational Costs',
     icon: Truck,
     color: 'text-rose-700',
-    bgColor: 'bg-rose-100',
-    cardBg: 'from-rose-50 to-rose-100',
+    bgColor: 'bg-rose-50',
+    iconBg: 'bg-rose-100',
+    cardBg: 'from-rose-50/50 to-rose-100/30',
+    trend: '+3.1%'
   },
 ];
 
@@ -87,37 +102,42 @@ const projectStatusData = [
 
 export function DashboardOverview() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50">
       {/* Header Section */}
-      <div className="bg-white border-b px-6 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Company Dashboard</h1>
-            <p className="text-gray-600 mt-1">Welcome back! Here's your business overview</p>
+      <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-8 py-8">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 bg-clip-text text-transparent">
+              Company Dashboard
+            </h1>
+            <p className="text-slate-600 text-lg font-medium">Welcome back! Here's your business overview</p>
           </div>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-            <Plus className="h-5 w-5 mr-2" />
+          <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg font-semibold">
+            <Plus className="h-5 w-5 mr-3" />
             Add New Project
           </Button>
         </div>
       </div>
 
-      <div className="p-6 space-y-8">
+      <div className="px-8 py-8 max-w-7xl mx-auto space-y-10">
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {kpiData.map((kpi, index) => (
-            <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
-              <CardContent className="p-6">
+            <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 rounded-3xl overflow-hidden group`}>
+              <CardContent className="p-8">
                 <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-600 mb-2">
+                  <div className="flex-1 space-y-3">
+                    <div className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                       {kpi.title}
                     </div>
-                    <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
-                    <div className="text-xs text-gray-500">{kpi.subtitle}</div>
+                    <div className="text-3xl font-bold text-slate-900">{kpi.value}</div>
+                    <div className="text-sm text-slate-500 font-medium">{kpi.subtitle}</div>
+                    <div className={`text-xs font-bold ${kpi.trend.startsWith('+') ? 'text-emerald-600' : 'text-red-500'} bg-white/60 px-3 py-1 rounded-full inline-block`}>
+                      {kpi.trend}
+                    </div>
                   </div>
-                  <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
-                    <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                  <div className={`p-4 rounded-2xl ${kpi.iconBg} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                    <kpi.icon className={`h-7 w-7 ${kpi.color}`} />
                   </div>
                 </div>
               </CardContent>
@@ -126,22 +146,29 @@ export function DashboardOverview() {
         </div>
 
         {/* Charts and Additional Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="bg-white border shadow-sm rounded-xl lg:col-span-2">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Sales Performance</CardTitle>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl lg:col-span-2 overflow-hidden">
+            <CardHeader className="pb-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+              <CardTitle className="text-2xl font-bold text-slate-800">Sales Performance</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+            <CardContent className="p-8">
+              <ResponsiveContainer width="100%" height={320}>
                 <BarChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="month" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
+                  <XAxis dataKey="month" stroke="#64748b" fontSize={12} fontWeight={500} />
+                  <YAxis stroke="#64748b" fontSize={12} fontWeight={500} />
                   <Tooltip 
                     formatter={(value, name) => [value, name === 'sales' ? 'Units Sold' : 'Revenue (₦B)']}
-                    contentStyle={{ backgroundColor: 'white', border: 'none', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: 'none', 
+                      borderRadius: '16px', 
+                      boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
                   />
-                  <Bar dataKey="sales" fill="url(#barGradient)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="sales" fill="url(#barGradient)" radius={[8, 8, 0, 0]} />
                   <defs>
                     <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#8b5cf6" />
@@ -153,27 +180,35 @@ export function DashboardOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border shadow-sm rounded-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Project Status</CardTitle>
+          <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="pb-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+              <CardTitle className="text-2xl font-bold text-slate-800">Project Status</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+            <CardContent className="p-8">
+              <ResponsiveContainer width="100%" height={320}>
                 <PieChart>
                   <Pie
                     data={projectStatusData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
+                    outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
                     label={({ name, value }) => `${name}: ${value}%`}
+                    labelStyle={{ fontSize: '12px', fontWeight: '600' }}
                   >
                     {projectStatusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: 'white', border: 'none', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
+                  <Tooltip contentStyle={{ 
+                    backgroundColor: 'white', 
+                    border: 'none', 
+                    borderRadius: '16px', 
+                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }} />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
@@ -181,90 +216,90 @@ export function DashboardOverview() {
         </div>
 
         {/* Bottom Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-white border shadow-sm rounded-xl">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800">Recent Activity</CardTitle>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+              <CardTitle className="text-2xl font-bold text-slate-800">Recent Activity</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
-                  <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+            <CardContent className="p-8">
+              <div className="space-y-6">
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-emerald-50 to-white rounded-2xl border border-emerald-100">
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-lg"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">New client onboarded</p>
-                    <p className="text-xs text-gray-600">John Doe - Lagos Estate</p>
+                    <p className="text-base font-semibold text-slate-800">New client onboarded</p>
+                    <p className="text-sm text-slate-600 font-medium">John Doe - Lagos Estate</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">2 min ago</span>
+                  <span className="text-xs text-slate-500 bg-white/80 px-3 py-2 rounded-xl font-medium">2 min ago</span>
                 </div>
-                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-white rounded-2xl border border-blue-100">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full shadow-lg"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Payment received</p>
-                    <p className="text-xs text-gray-600">₦2.5M - Victoria Gardens</p>
+                    <p className="text-base font-semibold text-slate-800">Payment received</p>
+                    <p className="text-sm text-slate-600 font-medium">₦2.5M - Victoria Gardens</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">1 hour ago</span>
+                  <span className="text-xs text-slate-500 bg-white/80 px-3 py-2 rounded-xl font-medium">1 hour ago</span>
                 </div>
-                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
-                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-50 to-white rounded-2xl border border-purple-100">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full shadow-lg"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Commission approved</p>
-                    <p className="text-xs text-gray-600">Agent Smith - ₦125K</p>
+                    <p className="text-base font-semibold text-slate-800">Commission approved</p>
+                    <p className="text-sm text-slate-600 font-medium">Agent Smith - ₦125K</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">3 hours ago</span>
+                  <span className="text-xs text-slate-500 bg-white/80 px-3 py-2 rounded-xl font-medium">3 hours ago</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white border shadow-sm rounded-xl">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800">Top Performing Agents</CardTitle>
+          <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+              <CardTitle className="text-2xl font-bold text-slate-800">Top Performing Agents</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-sm font-bold text-white">JS</span>
+            <CardContent className="p-8">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-white rounded-2xl border border-purple-100">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                      <span className="text-base font-bold text-white">JS</span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Jane Smith</p>
-                      <p className="text-xs text-gray-600">16 sales this month</p>
+                      <p className="text-base font-bold text-slate-800">Jane Smith</p>
+                      <p className="text-sm text-slate-600 font-medium">16 sales this month</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-emerald-600">₦4.2M</span>
-                    <div className="text-xs text-gray-500">Commission</div>
+                    <span className="text-lg font-bold text-emerald-600">₦4.2M</span>
+                    <div className="text-xs text-slate-500 font-medium">Commission</div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-sm font-bold text-white">MD</span>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-white rounded-2xl border border-blue-100">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                      <span className="text-base font-bold text-white">MD</span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Mike Davis</p>
-                      <p className="text-xs text-gray-600">8 sales this month</p>
+                      <p className="text-base font-bold text-slate-800">Mike Davis</p>
+                      <p className="text-sm text-slate-600 font-medium">8 sales this month</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-emerald-600">₦3.1M</span>
-                    <div className="text-xs text-gray-500">Commission</div>
+                    <span className="text-lg font-bold text-emerald-600">₦3.1M</span>
+                    <div className="text-xs text-slate-500 font-medium">Commission</div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-sm font-bold text-white">SJ</span>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-white rounded-2xl border border-emerald-100">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                      <span className="text-base font-bold text-white">SJ</span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Sarah Johnson</p>
-                      <p className="text-xs text-gray-600">6 sales this month</p>
+                      <p className="text-base font-bold text-slate-800">Sarah Johnson</p>
+                      <p className="text-sm text-slate-600 font-medium">6 sales this month</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-emerald-600">₦2.8M</span>
-                    <div className="text-xs text-gray-500">Commission</div>
+                    <span className="text-lg font-bold text-emerald-600">₦2.8M</span>
+                    <div className="text-xs text-slate-500 font-medium">Commission</div>
                   </div>
                 </div>
               </div>

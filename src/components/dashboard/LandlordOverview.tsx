@@ -12,8 +12,10 @@ const kpiData = [
     subtitle: '+1 from last month',
     icon: Building,
     color: 'text-blue-700',
-    bgColor: 'bg-blue-100',
-    cardBg: 'from-blue-50 to-blue-100',
+    bgColor: 'bg-blue-50',
+    iconBg: 'bg-blue-100',
+    cardBg: 'from-blue-50/50 to-blue-100/30',
+    trend: '+12.5%'
   },
   {
     title: 'Total Units',
@@ -21,8 +23,10 @@ const kpiData = [
     subtitle: '36 occupied, 6 vacant',
     icon: Home,
     color: 'text-emerald-700',
-    bgColor: 'bg-emerald-100',
-    cardBg: 'from-emerald-50 to-emerald-100',
+    bgColor: 'bg-emerald-50',
+    iconBg: 'bg-emerald-100',
+    cardBg: 'from-emerald-50/50 to-emerald-100/30',
+    trend: '+5.7%'
   },
   {
     title: 'Occupancy Rate',
@@ -30,8 +34,10 @@ const kpiData = [
     subtitle: '+2.3% from last month',
     icon: Users,
     color: 'text-purple-700',
-    bgColor: 'bg-purple-100',
-    cardBg: 'from-purple-50 to-purple-100',
+    bgColor: 'bg-purple-50',
+    iconBg: 'bg-purple-100',
+    cardBg: 'from-purple-50/50 to-purple-100/30',
+    trend: '+2.3%'
   },
   {
     title: 'Monthly Revenue',
@@ -39,8 +45,10 @@ const kpiData = [
     subtitle: '+8.2% from last month',
     icon: DollarSign,
     color: 'text-emerald-700',
-    bgColor: 'bg-emerald-100',
-    cardBg: 'from-emerald-50 to-emerald-100',
+    bgColor: 'bg-emerald-50',
+    iconBg: 'bg-emerald-100',
+    cardBg: 'from-emerald-50/50 to-emerald-100/30',
+    trend: '+8.2%'
   },
   {
     title: 'Annual Revenue',
@@ -48,8 +56,10 @@ const kpiData = [
     subtitle: '+6.9% from last year',
     icon: Calendar,
     color: 'text-sky-700',
-    bgColor: 'bg-sky-100',
-    cardBg: 'from-sky-50 to-sky-100',
+    bgColor: 'bg-sky-50',
+    iconBg: 'bg-sky-100',
+    cardBg: 'from-sky-50/50 to-sky-100/30',
+    trend: '+6.9%'
   },
   {
     title: 'Outstanding Balance',
@@ -57,8 +67,10 @@ const kpiData = [
     subtitle: '3 overdue accounts',
     icon: AlertCircle,
     color: 'text-red-700',
-    bgColor: 'bg-red-100',
-    cardBg: 'from-red-50 to-red-100',
+    bgColor: 'bg-red-50',
+    iconBg: 'bg-red-100',
+    cardBg: 'from-red-50/50 to-red-100/30',
+    trend: '-15.3%'
   },
   {
     title: 'Net Profit',
@@ -66,8 +78,10 @@ const kpiData = [
     subtitle: 'Annual profit margin: 79.8%',
     icon: TrendingUp,
     color: 'text-emerald-700',
-    bgColor: 'bg-emerald-100',
-    cardBg: 'from-emerald-50 to-emerald-100',
+    bgColor: 'bg-emerald-50',
+    iconBg: 'bg-emerald-100',
+    cardBg: 'from-emerald-50/50 to-emerald-100/30',
+    trend: '+11.4%'
   },
   {
     title: 'Operating Expenses',
@@ -75,8 +89,10 @@ const kpiData = [
     subtitle: 'This month',
     icon: Calculator,
     color: 'text-amber-700',
-    bgColor: 'bg-amber-100',
-    cardBg: 'from-amber-50 to-amber-100',
+    bgColor: 'bg-amber-50',
+    iconBg: 'bg-amber-100',
+    cardBg: 'from-amber-50/50 to-amber-100/30',
+    trend: '+3.1%'
   },
 ];
 
@@ -113,37 +129,42 @@ const chartConfig = {
 
 export function LandlordOverview() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50">
       {/* Header Section */}
-      <div className="bg-white border-b px-6 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Landlord Dashboard</h1>
-            <p className="text-gray-600 mt-1">Manage your properties and tenants efficiently</p>
+      <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-8 py-8">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 bg-clip-text text-transparent">
+              Landlord Dashboard
+            </h1>
+            <p className="text-slate-600 text-lg font-medium">Manage your properties and tenants efficiently</p>
           </div>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-            <Plus className="h-5 w-5 mr-2" />
+          <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg font-semibold">
+            <Plus className="h-5 w-5 mr-3" />
             Add Property
           </Button>
         </div>
       </div>
 
-      <div className="p-6 space-y-8">
+      <div className="px-8 py-8 max-w-7xl mx-auto space-y-10">
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {kpiData.map((kpi, index) => (
-            <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
-              <CardContent className="p-6">
+            <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 rounded-3xl overflow-hidden group`}>
+              <CardContent className="p-8">
                 <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-600 mb-2">
+                  <div className="flex-1 space-y-3">
+                    <div className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                       {kpi.title}
                     </div>
-                    <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
-                    <div className="text-xs text-gray-500">{kpi.subtitle}</div>
+                    <div className="text-3xl font-bold text-slate-900">{kpi.value}</div>
+                    <div className="text-sm text-slate-500 font-medium">{kpi.subtitle}</div>
+                    <div className={`text-xs font-bold ${kpi.trend.startsWith('+') ? 'text-emerald-600' : 'text-red-500'} bg-white/60 px-3 py-1 rounded-full inline-block`}>
+                      {kpi.trend}
+                    </div>
                   </div>
-                  <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
-                    <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                  <div className={`p-4 rounded-2xl ${kpi.iconBg} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                    <kpi.icon className={`h-7 w-7 ${kpi.color}`} />
                   </div>
                 </div>
               </CardContent>
@@ -152,18 +173,18 @@ export function LandlordOverview() {
         </div>
 
         {/* Analytics Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-white border shadow-sm rounded-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Monthly Revenue vs Expenses</CardTitle>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="pb-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+              <CardTitle className="text-2xl font-bold text-slate-800">Monthly Revenue vs Expenses</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-8">
               <ChartContainer config={chartConfig} className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={monthlyData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="month" stroke="#64748b" />
-                    <YAxis stroke="#64748b" />
+                    <XAxis dataKey="month" stroke="#64748b" fontSize={12} fontWeight={500} />
+                    <YAxis stroke="#64748b" fontSize={12} fontWeight={500} />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Bar dataKey="rent" fill="url(#rentGradient)" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="expenses" fill="url(#expenseGradient)" radius={[4, 4, 0, 0]} />
@@ -183,17 +204,17 @@ export function LandlordOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border shadow-sm rounded-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Annual Revenue Trend</CardTitle>
+          <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="pb-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+              <CardTitle className="text-2xl font-bold text-slate-800">Annual Revenue Trend</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-8">
               <ChartContainer config={chartConfig} className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={annualData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="year" stroke="#64748b" />
-                    <YAxis stroke="#64748b" />
+                    <XAxis dataKey="year" stroke="#64748b" fontSize={12} fontWeight={500} />
+                    <YAxis stroke="#64748b" fontSize={12} fontWeight={500} />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Line type="monotone" dataKey="rent" stroke="#8b5cf6" strokeWidth={3} />
                   </LineChart>
@@ -202,11 +223,11 @@ export function LandlordOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border shadow-sm rounded-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Unit Occupancy</CardTitle>
+          <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="pb-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+              <CardTitle className="text-2xl font-bold text-slate-800">Unit Occupancy</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-8">
               <ChartContainer config={chartConfig} className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -231,43 +252,43 @@ export function LandlordOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border shadow-sm rounded-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Recent Activity</CardTitle>
+          <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="pb-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+              <CardTitle className="text-2xl font-bold text-slate-800">Recent Activity</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
-                  <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+            <CardContent className="p-8">
+              <div className="space-y-6">
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-emerald-50 to-white rounded-2xl border border-emerald-100">
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-lg"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Rent payment received</p>
-                    <p className="text-xs text-gray-600">Unit 2A - John Smith - $1,200</p>
+                    <p className="text-base font-semibold text-slate-800">Rent payment received</p>
+                    <p className="text-sm text-slate-600 font-medium">Unit 2A - John Smith - $1,200</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">2h ago</span>
+                  <span className="text-xs text-slate-500 bg-white/80 px-3 py-2 rounded-xl font-medium">2h ago</span>
                 </div>
-                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-white rounded-2xl border border-blue-100">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full shadow-lg"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">New tenant added</p>
-                    <p className="text-xs text-gray-600">Unit 3B - Sarah Johnson</p>
+                    <p className="text-base font-semibold text-slate-800">New tenant added</p>
+                    <p className="text-sm text-slate-600 font-medium">Unit 3B - Sarah Johnson</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">5h ago</span>
+                  <span className="text-xs text-slate-500 bg-white/80 px-3 py-2 rounded-xl font-medium">5h ago</span>
                 </div>
-                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-yellow-50 to-white rounded-2xl border border-yellow-100">
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full shadow-lg"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Maintenance request</p>
-                    <p className="text-xs text-gray-600">Unit 1C - Plumbing issue</p>
+                    <p className="text-base font-semibold text-slate-800">Maintenance request</p>
+                    <p className="text-sm text-slate-600 font-medium">Unit 1C - Plumbing issue</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">1d ago</span>
+                  <span className="text-xs text-slate-500 bg-white/80 px-3 py-2 rounded-xl font-medium">1d ago</span>
                 </div>
-                <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-red-50 to-white rounded-2xl border border-red-100">
+                  <div className="w-3 h-3 bg-red-500 rounded-full shadow-lg"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Overdue payment</p>
-                    <p className="text-xs text-gray-600">Unit 4A - Mike Davis - $950</p>
+                    <p className="text-base font-semibold text-slate-800">Overdue payment</p>
+                    <p className="text-sm text-slate-600 font-medium">Unit 4A - Mike Davis - $950</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">3d ago</span>
+                  <span className="text-xs text-slate-500 bg-white/80 px-3 py-2 rounded-xl font-medium">3d ago</span>
                 </div>
               </div>
             </CardContent>
@@ -275,32 +296,32 @@ export function LandlordOverview() {
         </div>
 
         {/* Upcoming Due Dates */}
-        <Card className="bg-white border shadow-sm rounded-xl">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold text-gray-800">Upcoming Due Dates</CardTitle>
+        <Card className="bg-white/70 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-3xl overflow-hidden">
+          <CardHeader className="pb-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+            <CardTitle className="text-2xl font-bold text-slate-800">Upcoming Due Dates</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex justify-between items-center p-4 bg-white/60 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="p-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex justify-between items-center p-6 bg-gradient-to-r from-red-50 to-white rounded-2xl border border-red-100 shadow-sm hover:shadow-lg transition-shadow">
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">Unit 1A - Mike Davis</p>
-                  <p className="text-xs text-gray-600">Due: Dec 1, 2024</p>
+                  <p className="text-base font-bold text-slate-800">Unit 1A - Mike Davis</p>
+                  <p className="text-sm text-slate-600 font-medium">Due: Dec 1, 2024</p>
                 </div>
-                <span className="text-sm font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg">$950</span>
+                <span className="text-lg font-bold text-red-600 bg-red-50 px-4 py-2 rounded-xl">$950</span>
               </div>
-              <div className="flex justify-between items-center p-4 bg-white/60 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-center p-6 bg-gradient-to-r from-emerald-50 to-white rounded-2xl border border-emerald-100 shadow-sm hover:shadow-lg transition-shadow">
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">Unit 2C - Lisa Wong</p>
-                  <p className="text-xs text-gray-600">Due: Dec 1, 2024</p>
+                  <p className="text-base font-bold text-slate-800">Unit 2C - Lisa Wong</p>
+                  <p className="text-sm text-slate-600 font-medium">Due: Dec 1, 2024</p>
                 </div>
-                <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">$1,100</span>
+                <span className="text-lg font-bold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl">$1,100</span>
               </div>
-              <div className="flex justify-between items-center p-4 bg-white/60 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-center p-6 bg-gradient-to-r from-emerald-50 to-white rounded-2xl border border-emerald-100 shadow-sm hover:shadow-lg transition-shadow">
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">Unit 3A - Robert Kim</p>
-                  <p className="text-xs text-gray-600">Due: Dec 3, 2024</p>
+                  <p className="text-base font-bold text-slate-800">Unit 3A - Robert Kim</p>
+                  <p className="text-sm text-slate-600 font-medium">Due: Dec 3, 2024</p>
                 </div>
-                <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">$1,300</span>
+                <span className="text-lg font-bold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl">$1,300</span>
               </div>
             </div>
           </CardContent>
