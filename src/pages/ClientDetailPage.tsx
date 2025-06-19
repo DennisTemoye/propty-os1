@@ -34,6 +34,77 @@ const mockClients = [
     documents: ['Allocation Letter', 'MoU', 'Payment Schedule'],
     paymentProgress: 60,
     assignedDate: '2024-01-10'
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    phone: '+234 802 345 6789',
+    address: '456 Ikoyi, Lagos',
+    nationalId: 'DEF987654321',
+    passportPhoto: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=150&h=150&fit=crop&crop=face',
+    projects: [
+      {
+        name: 'Emerald Heights',
+        unit: 'Block B - Plot 12',
+        assignedDate: '2024-01-15'
+      }
+    ],
+    status: 'pending',
+    kycStatus: 'pending',
+    totalPaid: '₦8M',
+    balance: '₦17M',
+    nextPayment: '2024-01-30',
+    documents: ['Application Form'],
+    paymentProgress: 32,
+    assignedDate: '2024-01-15'
+  },
+  {
+    id: 3,
+    name: 'Mike Johnson',
+    email: 'mike@example.com',
+    phone: '+234 803 456 7890',
+    address: '789 Lekki, Lagos',
+    nationalId: 'GHI456789123',
+    passportPhoto: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=150&h=150&fit=crop&crop=face',
+    projects: [
+      {
+        name: 'Golden View',
+        unit: 'Block C - Plot 05',
+        assignedDate: '2023-12-01'
+      },
+      {
+        name: 'Victoria Gardens',
+        unit: 'Block D - Plot 08',
+        assignedDate: '2023-11-15'
+      }
+    ],
+    status: 'completed',
+    kycStatus: 'approved',
+    totalPaid: '₦25M',
+    balance: '₦0',
+    nextPayment: null,
+    documents: ['Allocation Letter', 'MoU', 'Payment Schedule', 'Certificate of Occupancy'],
+    paymentProgress: 100,
+    assignedDate: '2023-12-01'
+  },
+  {
+    id: 4,
+    name: 'Sarah Wilson',
+    email: 'sarah@example.com',
+    phone: '+234 804 567 8901',
+    address: '321 Ajah, Lagos',
+    nationalId: 'JKL789123456',
+    passportPhoto: null,
+    projects: [],
+    status: 'unassigned',
+    kycStatus: 'approved',
+    totalPaid: '₦0',
+    balance: '₦0',
+    nextPayment: null,
+    documents: ['KYC Documents'],
+    paymentProgress: 0,
+    assignedDate: null
   }
 ];
 
