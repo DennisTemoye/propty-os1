@@ -45,28 +45,26 @@ const WhoIsProptyOSForSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {targetUsers.map((user, index) => (
-            <Card key={index} className="border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden">
-              <div className={`bg-gradient-to-br ${user.gradient} p-1`}>
-                <CardContent className={`bg-gradient-to-br ${user.cardGradient} dark:bg-gray-700 p-8 m-0 rounded-lg`}>
-                  <div className={`w-16 h-16 bg-gradient-to-br ${user.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6`}>
-                    <user.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
-                    {user.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6 text-center">
-                    {user.description}
-                  </p>
-                  <ul className="space-y-2">
-                    {user.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                        <div className={`w-2 h-2 bg-gradient-to-r ${user.gradient} rounded-full mr-3`}></div>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </div>
+            <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden">
+              <CardContent className={`bg-gradient-to-br ${user.cardGradient} dark:bg-gray-700 p-8 m-0 rounded-lg`}>
+                <div className={`w-16 h-16 bg-gradient-to-br ${user.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6`}>
+                  <user.icon className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
+                  {user.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6 text-center">
+                  {user.description}
+                </p>
+                <ul className="space-y-2">
+                  {user.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                      <div className={`w-2 h-2 bg-gradient-to-r ${user.gradient} rounded-full mr-3`}></div>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
             </Card>
           ))}
         </div>
