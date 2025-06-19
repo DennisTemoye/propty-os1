@@ -48,6 +48,14 @@ const App = () => (
             <Route path="/company/settings" element={<CompanyDashboard />} />
             <Route path="/company/reports" element={<CompanyDashboard />} />
             <Route path="/company/help" element={<CompanyDashboard />} />
+            <Route path="/landlord/dashboard" element={<LandlordDashboard />} />
+            <Route path="/landlord/properties" element={<LandlordDashboard />} />
+            <Route path="/landlord/tenants" element={<LandlordDashboard />} />
+            <Route path="/landlord/rent-collection" element={<LandlordDashboard />} />
+            <Route path="/landlord/accounting" element={<LandlordDashboard />} />
+            <Route path="/landlord/lease-documents" element={<LandlordDashboard />} />
+            <Route path="/landlord/staff-vendors" element={<LandlordDashboard />} />
+            <Route path="/landlord/settings" element={<LandlordDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
