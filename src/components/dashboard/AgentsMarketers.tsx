@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, TrendingUp, Users, DollarSign } from 'lucide-react';
+import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 const mockAgents = [
   {
@@ -68,36 +70,36 @@ export function AgentsMarketers() {
       value: mockAgents.length.toString(),
       subtitle: 'All registered',
       icon: Users,
-      color: 'text-purple-700',
-      bgColor: 'bg-purple-100',
-      cardBg: 'from-purple-50 to-purple-100',
+      gradient: 'bg-gradient-to-tr from-purple-500 to-blue-400',
+      iconBg: 'bg-white/20',
+      iconColor: 'text-white',
     },
     {
       title: 'Active',
       value: activeAgents.toString(),
       subtitle: 'Currently working',
       icon: TrendingUp,
-      color: 'text-emerald-700',
-      bgColor: 'bg-emerald-100',
-      cardBg: 'from-emerald-50 to-emerald-100',
+      gradient: 'bg-gradient-to-tr from-green-400 to-teal-300',
+      iconBg: 'bg-white/20',
+      iconColor: 'text-white',
     },
     {
       title: 'Total Leads',
       value: totalLeads.toString(),
       subtitle: 'All time generated',
       icon: Users,
-      color: 'text-blue-700',
-      bgColor: 'bg-blue-100',
-      cardBg: 'from-blue-50 to-blue-100',
+      gradient: 'bg-gradient-to-tr from-orange-400 to-amber-300',
+      iconBg: 'bg-white/20',
+      iconColor: 'text-white',
     },
     {
       title: 'Total Commission',
       value: `₦${totalCommission.toFixed(1)}M`,
       subtitle: 'Earnings to date',
       icon: DollarSign,
-      color: 'text-amber-700',
-      bgColor: 'bg-amber-100',
-      cardBg: 'from-amber-50 to-amber-100',
+      gradient: 'bg-gradient-to-tr from-indigo-400 to-pink-300',
+      iconBg: 'bg-white/20',
+      iconColor: 'text-white',
     },
   ];
 
@@ -114,22 +116,16 @@ export function AgentsMarketers() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
-          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-600 mb-2">
-                    {kpi.title}
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
-                  <div className="text-xs text-gray-500">{kpi.subtitle}</div>
-                </div>
-                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
-                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <GradientKpiCard
+            key={index}
+            title={kpi.title}
+            value={kpi.value}
+            subtitle={kpi.subtitle}
+            icon={kpi.icon}
+            gradient={kpi.gradient}
+            iconBg={kpi.iconBg}
+            iconColor={kpi.iconColor}
+          />
         ))}
       </div>
 

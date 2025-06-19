@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Building, Users, DollarSign, FileText, UserCheck, Calculator, Truck, Plus } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 const kpiData = [
   {
@@ -10,10 +12,9 @@ const kpiData = [
     value: '₦2.4B',
     subtitle: '156 Units Sold',
     icon: DollarSign,
-    color: 'text-emerald-700',
-    bgColor: 'bg-emerald-50',
-    iconBg: 'bg-emerald-100',
-    cardBg: 'from-emerald-50/50 to-emerald-100/30',
+    gradient: 'bg-gradient-to-tr from-purple-500 to-blue-400',
+    iconBg: 'bg-white/20',
+    iconColor: 'text-white',
     trend: '+12.5%'
   },
   {
@@ -21,10 +22,9 @@ const kpiData = [
     value: '12',
     subtitle: '3 New This Month',
     icon: Building,
-    color: 'text-blue-700',
-    bgColor: 'bg-blue-50',
-    iconBg: 'bg-blue-100',
-    cardBg: 'from-blue-50/50 to-blue-100/30',
+    gradient: 'bg-gradient-to-tr from-green-400 to-teal-300',
+    iconBg: 'bg-white/20',
+    iconColor: 'text-white',
     trend: '+25%'
   },
   {
@@ -32,10 +32,9 @@ const kpiData = [
     value: '1,247',
     subtitle: '89 Active',
     icon: Users,
-    color: 'text-purple-700',
-    bgColor: 'bg-purple-50',
-    iconBg: 'bg-purple-100',
-    cardBg: 'from-purple-50/50 to-purple-100/30',
+    gradient: 'bg-gradient-to-tr from-orange-400 to-amber-300',
+    iconBg: 'bg-white/20',
+    iconColor: 'text-white',
     trend: '+8.3%'
   },
   {
@@ -43,10 +42,9 @@ const kpiData = [
     value: '23',
     subtitle: 'Awaiting Approval',
     icon: FileText,
-    color: 'text-amber-700',
-    bgColor: 'bg-amber-50',
-    iconBg: 'bg-amber-100',
-    cardBg: 'from-amber-50/50 to-amber-100/30',
+    gradient: 'bg-gradient-to-tr from-indigo-400 to-pink-300',
+    iconBg: 'bg-white/20',
+    iconColor: 'text-white',
     trend: '-5.2%'
   },
   {
@@ -54,10 +52,9 @@ const kpiData = [
     value: '45',
     subtitle: '8 Top Performers',
     icon: UserCheck,
-    color: 'text-indigo-700',
-    bgColor: 'bg-indigo-50',
-    iconBg: 'bg-indigo-100',
-    cardBg: 'from-indigo-50/50 to-indigo-100/30',
+    gradient: 'bg-gradient-to-tr from-emerald-400 to-cyan-300',
+    iconBg: 'bg-white/20',
+    iconColor: 'text-white',
     trend: '+15.7%'
   },
   {
@@ -65,10 +62,9 @@ const kpiData = [
     value: '₦45.2M',
     subtitle: 'This Month',
     icon: Calculator,
-    color: 'text-teal-700',
-    bgColor: 'bg-teal-50',
-    iconBg: 'bg-teal-100',
-    cardBg: 'from-teal-50/50 to-teal-100/30',
+    gradient: 'bg-gradient-to-tr from-rose-400 to-pink-300',
+    iconBg: 'bg-white/20',
+    iconColor: 'text-white',
     trend: '+18.9%'
   },
   {
@@ -76,10 +72,9 @@ const kpiData = [
     value: '₦12.8M',
     subtitle: 'Operational Costs',
     icon: Truck,
-    color: 'text-rose-700',
-    bgColor: 'bg-rose-50',
-    iconBg: 'bg-rose-100',
-    cardBg: 'from-rose-50/50 to-rose-100/30',
+    gradient: 'bg-gradient-to-tr from-violet-400 to-purple-300',
+    iconBg: 'bg-white/20',
+    iconColor: 'text-white',
     trend: '+3.1%'
   },
 ];
@@ -122,25 +117,17 @@ export function DashboardOverview() {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {kpiData.map((kpi, index) => (
-            <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 rounded-3xl overflow-hidden group`}>
-              <CardContent className="p-8">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 space-y-3">
-                    <div className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
-                      {kpi.title}
-                    </div>
-                    <div className="text-3xl font-bold text-slate-900">{kpi.value}</div>
-                    <div className="text-sm text-slate-500 font-medium">{kpi.subtitle}</div>
-                    <div className={`text-xs font-bold ${kpi.trend.startsWith('+') ? 'text-emerald-600' : 'text-red-500'} bg-white/60 px-3 py-1 rounded-full inline-block`}>
-                      {kpi.trend}
-                    </div>
-                  </div>
-                  <div className={`p-4 rounded-2xl ${kpi.iconBg} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
-                    <kpi.icon className={`h-7 w-7 ${kpi.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <GradientKpiCard
+              key={index}
+              title={kpi.title}
+              value={kpi.value}
+              subtitle={kpi.subtitle}
+              icon={kpi.icon}
+              gradient={kpi.gradient}
+              iconBg={kpi.iconBg}
+              iconColor={kpi.iconColor}
+              trend={kpi.trend}
+            />
           ))}
         </div>
 
