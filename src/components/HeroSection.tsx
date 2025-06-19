@@ -6,8 +6,132 @@ import { ArrowRight, Play } from 'lucide-react';
 const HeroSection = () => {
   const [currentView, setCurrentView] = useState(0);
   const dashboardViews = [
-    'Real Estate Company Dashboard',
-    'Landlord Dashboard'
+    {
+      title: 'Real Estate Company Dashboard',
+      screenshot: (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+          <div className="flex items-center space-x-2 mb-4">
+            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="ml-4 text-xs text-gray-500 dark:text-gray-400">ProptyOS - Company Dashboard</div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-8 h-8 bg-purple-600 rounded-lg"></div>
+              <div className="h-3 bg-purple-200 dark:bg-purple-800 rounded w-32"></div>
+            </div>
+            <div className="grid grid-cols-4 gap-3">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                <div className="w-6 h-6 bg-blue-500 rounded mb-2"></div>
+                <div className="h-2 bg-blue-200 dark:bg-blue-800 rounded w-12 mb-1"></div>
+                <div className="h-4 bg-blue-600 rounded w-8 font-bold"></div>
+              </div>
+              <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                <div className="w-6 h-6 bg-green-500 rounded mb-2"></div>
+                <div className="h-2 bg-green-200 dark:bg-green-800 rounded w-16 mb-1"></div>
+                <div className="h-4 bg-green-600 rounded w-10 font-bold"></div>
+              </div>
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg">
+                <div className="w-6 h-6 bg-purple-500 rounded mb-2"></div>
+                <div className="h-2 bg-purple-200 dark:bg-purple-800 rounded w-14 mb-1"></div>
+                <div className="h-4 bg-purple-600 rounded w-12 font-bold"></div>
+              </div>
+              <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
+                <div className="w-6 h-6 bg-orange-500 rounded mb-2"></div>
+                <div className="h-2 bg-orange-200 dark:bg-orange-800 rounded w-10 mb-1"></div>
+                <div className="h-4 bg-orange-600 rounded w-14 font-bold"></div>
+              </div>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mt-3">
+              <div className="flex justify-between items-center mb-2">
+                <div className="h-3 bg-gray-400 rounded w-24"></div>
+                <div className="h-3 bg-purple-500 rounded w-16"></div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex space-x-2">
+                  <div className="h-8 bg-purple-200 dark:bg-purple-800 rounded flex-1"></div>
+                  <div className="h-8 bg-blue-200 dark:bg-blue-800 rounded flex-1"></div>
+                  <div className="h-8 bg-green-200 dark:bg-green-800 rounded flex-1"></div>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: 'Landlord Dashboard',
+      screenshot: (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+          <div className="flex items-center space-x-2 mb-4">
+            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="ml-4 text-xs text-gray-500 dark:text-gray-400">ProptyOS - Landlord Dashboard</div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-8 h-8 bg-purple-600 rounded-lg"></div>
+              <div className="h-3 bg-purple-200 dark:bg-purple-800 rounded w-32"></div>
+            </div>
+            <div className="grid grid-cols-4 gap-3">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                <div className="w-6 h-6 bg-blue-500 rounded mb-2"></div>
+                <div className="h-2 bg-blue-200 dark:bg-blue-800 rounded w-16 mb-1"></div>
+                <div className="h-4 bg-blue-600 rounded w-6 font-bold"></div>
+              </div>
+              <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                <div className="w-6 h-6 bg-green-500 rounded mb-2"></div>
+                <div className="h-2 bg-green-200 dark:bg-green-800 rounded w-12 mb-1"></div>
+                <div className="h-4 bg-green-600 rounded w-8 font-bold"></div>
+              </div>
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg">
+                <div className="w-6 h-6 bg-purple-500 rounded mb-2"></div>
+                <div className="h-2 bg-purple-200 dark:bg-purple-800 rounded w-14 mb-1"></div>
+                <div className="h-4 bg-purple-600 rounded w-10 font-bold"></div>
+              </div>
+              <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
+                <div className="w-6 h-6 bg-red-500 rounded mb-2"></div>
+                <div className="h-2 bg-red-200 dark:bg-red-800 rounded w-18 mb-1"></div>
+                <div className="h-4 bg-red-600 rounded w-12 font-bold"></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                <div className="h-3 bg-gray-400 rounded w-20 mb-2"></div>
+                <div className="space-y-2">
+                  <div className="h-16 bg-gradient-to-r from-purple-200 to-purple-300 dark:from-purple-800 dark:to-purple-700 rounded"></div>
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                    <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                    <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                <div className="h-3 bg-gray-400 rounded w-24 mb-2"></div>
+                <div className="space-y-2">
+                  <div className="flex space-x-1">
+                    <div className="w-8 h-8 bg-green-400 rounded-full"></div>
+                    <div className="w-6 h-8 bg-orange-400 rounded-full"></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                    <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
   ];
 
   useEffect(() => {
@@ -68,28 +192,15 @@ const HeroSection = () => {
 
           {/* Right Content - Dashboard Preview */}
           <div className="relative">
-            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500">
-              <div className="flex items-center space-x-2 mb-6">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <div className="ml-4 text-sm text-gray-500 dark:text-gray-400">ProptyOS Dashboard</div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="h-4 bg-purple-200 dark:bg-purple-800 rounded w-3/4 animate-pulse"></div>
-                <div className="h-32 bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900 dark:to-purple-800 rounded-xl flex items-center justify-center">
-                  <span className="text-purple-600 dark:text-purple-400 font-semibold text-lg">
-                    {dashboardViews[currentView]}
-                  </span>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="h-16 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-                  <div className="h-16 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-                  <div className="h-16 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-                </div>
-                <div className="h-20 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-              </div>
+            <div className="transform rotate-3 hover:rotate-0 transition-transform duration-500">
+              {dashboardViews[currentView].screenshot}
+            </div>
+
+            {/* Dashboard Title */}
+            <div className="mt-4 text-center">
+              <span className="text-purple-600 dark:text-purple-400 font-semibold text-lg">
+                {dashboardViews[currentView].title}
+              </span>
             </div>
 
             {/* Floating elements */}

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Building, Plus, Search, MapPin, Home, Building2, Store, Users } from 'lucide-react';
+import { Building, Search, MapPin, Home, Building2, Store, Users, Eye, Edit, Trash2 } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -13,12 +13,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { AddPropertyModal } from './forms/AddPropertyModal';
+import { useToast } from '@/hooks/use-toast';
 
 export function Properties() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const { toast } = useToast();
 
-  const properties = [
+  const [properties, setProperties] = useState([
     {
       id: 1,
       name: 'Sunset Apartments',
@@ -49,7 +52,7 @@ export function Properties() {
       vacant: 1,
       monthlyRevenue: 9800
     }
-  ];
+  ]);
 
   const getPropertyIcon = (type: string) => {
     switch (type) {
@@ -68,14 +71,50 @@ export function Properties() {
     return <Badge className="bg-red-100 text-red-800">Low</Badge>;
   };
 
+  const handleViewProperty = (property: any) => {
+    toast({
+      title: "Viewing Property",
+      description: `Opening detailed view for ${property.name}`,
+    });
+    // Navigate to property detail page
+    console.log('Viewing property:', property);
+  };
+
+  const handleEditProperty = (property: any) => {
+    toast({
+      title: "Edit Property",
+      description: `Opening edit form for ${property.name}`,
+    });
+    // Open edit modal
+    console.log('Editing property:', property);
+  };
+
+  const handleDeleteProperty = (property: any) => {
+    if (window.confirm(`Are you sure you want to delete ${property.name}?`)) {
+      setProperties(prev => prev.filter(p => p.id !== property.id));
+      toast({
+        title: "Property Deleted",
+        description: `${property.name} has been removed from your portfolio.`,
+      });
+    }
+  };
+
+  const filteredProperties = properties.filter(property => {
+    const matchesSearch = property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         property.address.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === 'all' || property.type.toLowerCase() === filterStatus;
+    return matchesSearch && matchesFilter;
+  });
+
+  const totalUnits = properties.reduce((sum, prop) => sum + prop.totalUnits, 0);
+  const totalOccupied = properties.reduce((sum, prop) => sum + prop.occupied, 0);
+  const totalVacant = properties.reduce((sum, prop) => sum + prop.vacant, 0);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Properties & Units</h1>
-        <Button className="bg-purple-600 hover:bg-purple-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Property
-        </Button>
+        <AddPropertyModal />
       </div>
 
       {/* Stats Cards */}
@@ -84,7 +123,7 @@ export function Properties() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-blue-600">3</div>
+                <div className="text-2xl font-bold text-blue-600">{properties.length}</div>
                 <div className="text-sm text-gray-500">Total Properties</div>
               </div>
               <Building className="h-8 w-8 text-blue-600" />
@@ -95,7 +134,7 @@ export function Properties() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-green-600">26</div>
+                <div className="text-2xl font-bold text-green-600">{totalUnits}</div>
                 <div className="text-sm text-gray-500">Total Units</div>
               </div>
               <Home className="h-8 w-8 text-green-600" />
@@ -106,7 +145,7 @@ export function Properties() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-purple-600">21</div>
+                <div className="text-2xl font-bold text-purple-600">{totalOccupied}</div>
                 <div className="text-sm text-gray-500">Occupied</div>
               </div>
               <Users className="h-8 w-8 text-purple-600" />
@@ -117,7 +156,7 @@ export function Properties() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-orange-600">5</div>
+                <div className="text-2xl font-bold text-orange-600">{totalVacant}</div>
                 <div className="text-sm text-gray-500">Vacant</div>
               </div>
               <Building className="h-8 w-8 text-orange-600" />
@@ -168,7 +207,7 @@ export function Properties() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {properties.map((property) => (
+              {filteredProperties.map((property) => (
                 <TableRow key={property.id}>
                   <TableCell>
                     <div className="flex items-center space-x-3">
@@ -193,8 +232,30 @@ export function Properties() {
                   <TableCell className="font-medium">${property.monthlyRevenue.toLocaleString()}</TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">View</Button>
-                      <Button variant="outline" size="sm">Edit</Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleViewProperty(property)}
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        View
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleEditProperty(property)}
+                      >
+                        <Edit className="h-3 w-3 mr-1" />
+                        Edit
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleDeleteProperty(property)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>

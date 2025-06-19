@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, Plus, Search, Download, AlertCircle, CheckCircle } from 'lucide-react';
+import { CreditCard, Plus, Search, Download, AlertCircle, CheckCircle, Bell, Receipt } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -13,11 +13,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useToast } from '@/hooks/use-toast';
 
 export function RentCollection() {
   const [searchTerm, setSearchTerm] = useState('');
+  const { toast } = useToast();
 
-  const rentData = [
+  const [rentData, setRentData] = useState([
     {
       id: 1,
       tenant: 'John Smith',
@@ -47,8 +49,18 @@ export function RentCollection() {
       status: 'Overdue',
       paymentDate: null,
       method: null
+    },
+    {
+      id: 4,
+      tenant: 'Lisa Wong',
+      unit: '2C',
+      amount: 1350,
+      dueDate: '2024-12-03',
+      status: 'Pending',
+      paymentDate: null,
+      method: null
     }
-  ];
+  ]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -63,16 +75,71 @@ export function RentCollection() {
     }
   };
 
+  const handleRecordPayment = (rentItem: any) => {
+    setRentData(prev => prev.map(item => 
+      item.id === rentItem.id 
+        ? { ...item, status: 'Paid', paymentDate: new Date().toISOString().split('T')[0], method: 'Cash' }
+        : item
+    ));
+    
+    toast({
+      title: "Payment Recorded",
+      description: `Payment of $${rentItem.amount} recorded for ${rentItem.tenant}`,
+    });
+  };
+
+  const handleSendReminder = (rentItem: any) => {
+    toast({
+      title: "Reminder Sent",
+      description: `Payment reminder sent to ${rentItem.tenant}`,
+    });
+    console.log('Sending reminder to:', rentItem);
+  };
+
+  const handleDownloadReceipt = (rentItem: any) => {
+    toast({
+      title: "Receipt Downloaded",
+      description: `Receipt for ${rentItem.tenant} downloaded successfully`,
+    });
+    console.log('Downloading receipt for:', rentItem);
+  };
+
+  const handleExportData = () => {
+    toast({
+      title: "Data Exported",
+      description: "Rent collection data exported successfully",
+    });
+    console.log('Exporting rent collection data');
+  };
+
+  const handleAddPayment = () => {
+    toast({
+      title: "Add Payment",
+      description: "Opening payment recording form",
+    });
+    console.log('Opening add payment modal');
+  };
+
+  const filteredRentData = rentData.filter(item =>
+    item.tenant.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.unit.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalCollected = rentData.filter(r => r.status === 'Paid').reduce((sum, r) => sum + r.amount, 0);
+  const totalPending = rentData.filter(r => r.status === 'Pending').reduce((sum, r) => sum + r.amount, 0);
+  const totalOverdue = rentData.filter(r => r.status === 'Overdue').reduce((sum, r) => sum + r.amount, 0);
+  const collectionRate = Math.round((totalCollected / (totalCollected + totalPending + totalOverdue)) * 100);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Rent Collection</h1>
         <div className="flex space-x-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleExportData}>
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700">
+          <Button className="bg-purple-600 hover:bg-purple-700" onClick={handleAddPayment}>
             <Plus className="h-4 w-4 mr-2" />
             Record Payment
           </Button>
@@ -85,7 +152,7 @@ export function RentCollection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-green-600">$15,200</div>
+                <div className="text-2xl font-bold text-green-600">${totalCollected.toLocaleString()}</div>
                 <div className="text-sm text-gray-500">Collected This Month</div>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
@@ -96,7 +163,7 @@ export function RentCollection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-yellow-600">$2,850</div>
+                <div className="text-2xl font-bold text-yellow-600">${totalPending.toLocaleString()}</div>
                 <div className="text-sm text-gray-500">Pending</div>
               </div>
               <CreditCard className="h-8 w-8 text-yellow-600" />
@@ -107,7 +174,7 @@ export function RentCollection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-red-600">$1,100</div>
+                <div className="text-2xl font-bold text-red-600">${totalOverdue.toLocaleString()}</div>
                 <div className="text-sm text-gray-500">Overdue</div>
               </div>
               <AlertCircle className="h-8 w-8 text-red-600" />
@@ -118,7 +185,7 @@ export function RentCollection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-blue-600">92%</div>
+                <div className="text-2xl font-bold text-blue-600">{collectionRate}%</div>
                 <div className="text-sm text-gray-500">Collection Rate</div>
               </div>
               <CreditCard className="h-8 w-8 text-blue-600" />
@@ -158,7 +225,7 @@ export function RentCollection() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rentData.map((rent) => (
+              {filteredRentData.map((rent) => (
                 <TableRow key={rent.id}>
                   <TableCell className="font-medium">{rent.tenant}</TableCell>
                   <TableCell>{rent.unit}</TableCell>
@@ -168,16 +235,36 @@ export function RentCollection() {
                   <TableCell>{rent.method || '-'}</TableCell>
                   <TableCell>{getStatusBadge(rent.status)}</TableCell>
                   <TableCell>
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-1">
                       {rent.status === 'Paid' ? (
-                        <Button variant="outline" size="sm">
-                          <Download className="h-3 w-3 mr-1" />
-                          Receipt
-                        </Button>
+                        <>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleDownloadReceipt(rent)}
+                          >
+                            <Receipt className="h-3 w-3 mr-1" />
+                            Receipt
+                          </Button>
+                        </>
                       ) : (
                         <>
-                          <Button variant="outline" size="sm">Record</Button>
-                          <Button variant="outline" size="sm">Remind</Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleRecordPayment(rent)}
+                          >
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Record
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleSendReminder(rent)}
+                          >
+                            <Bell className="h-3 w-3 mr-1" />
+                            Remind
+                          </Button>
                         </>
                       )}
                     </div>
