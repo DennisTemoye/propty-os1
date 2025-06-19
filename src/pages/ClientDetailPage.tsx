@@ -48,15 +48,30 @@ const mockClients = [
         name: 'Emerald Heights',
         unit: 'Block B - Plot 12',
         assignedDate: '2024-01-15'
+      },
+      {
+        name: 'Victoria Gardens',
+        unit: 'Block A - Plot 05',
+        assignedDate: '2024-01-20'
+      },
+      {
+        name: 'Golden View',
+        unit: 'Block C - Plot 03',
+        assignedDate: '2024-01-25'
+      },
+      {
+        name: 'Sunset Heights',
+        unit: 'Block D - Plot 07',
+        assignedDate: '2024-02-01'
       }
     ],
-    status: 'pending',
-    kycStatus: 'pending',
-    totalPaid: '₦8M',
-    balance: '₦17M',
-    nextPayment: '2024-01-30',
-    documents: ['Application Form'],
-    paymentProgress: 32,
+    status: 'active',
+    kycStatus: 'approved',
+    totalPaid: '₦45M',
+    balance: '₦55M',
+    nextPayment: '2024-02-20',
+    documents: ['Allocation Letter', 'MoU', 'Payment Schedule', 'Investment Agreement'],
+    paymentProgress: 45,
     assignedDate: '2024-01-15'
   },
   {
