@@ -12,6 +12,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetCodePage from "./pages/ResetCodePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CompanyDashboard from "./pages/CompanyDashboard";
+import LandlordDashboard from "./pages/LandlordDashboard";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import ProjectBlocksPage from "./pages/ProjectBlocksPage";
 import ClientDetailPage from "./pages/ClientDetailPage";
