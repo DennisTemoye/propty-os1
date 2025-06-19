@@ -21,7 +21,7 @@ import {
 
 const sidebarItems = [
   { icon: Home, label: 'Dashboard', path: '/company/dashboard' },
-  { icon: Building2, label: 'Projects & Units', path: '/company/projects' },
+  { icon: Building2, label: 'Projects', path: '/company/projects' },
   { icon: Users, label: 'Clients', path: '/company/clients' },
   { icon: UserCheck, label: 'Marketers & Commission', path: '/company/marketers' },
   { icon: BarChart3, label: 'Reports', path: '/company/reports' },

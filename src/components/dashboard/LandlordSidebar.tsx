@@ -1,7 +1,11 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
   Home, 
   Building, 
   Users, 
@@ -10,89 +14,91 @@ import {
   FileText, 
   HardHat, 
   Settings, 
+  HelpCircle,
   LogOut 
 } from 'lucide-react';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
-  useSidebar,
-} from '@/components/ui/sidebar';
 
-const menuItems = [
-  { title: 'Dashboard Overview', url: '/landlord/dashboard', icon: Home },
-  { title: 'Properties & Units', url: '/landlord/properties', icon: Building },
-  { title: 'Tenants', url: '/landlord/tenants', icon: Users },
-  { title: 'Rent Collection', url: '/landlord/rent-collection', icon: CreditCard },
-  { title: 'Accounting', url: '/landlord/accounting', icon: Calculator },
-  { title: 'Lease Documents', url: '/landlord/lease-documents', icon: FileText },
-  { title: 'Staff & Vendors', url: '/landlord/staff-vendors', icon: HardHat },
-  { title: 'Settings', url: '/landlord/settings', icon: Settings },
+const sidebarItems = [
+  { icon: Home, label: 'Dashboard', path: '/landlord/dashboard' },
+  { icon: Building, label: 'Properties', path: '/landlord/properties' },
+  { icon: Users, label: 'Tenants', path: '/landlord/tenants' },
+  { icon: CreditCard, label: 'Rent Collection', path: '/landlord/rent-collection' },
+  { icon: Calculator, label: 'Accounting', path: '/landlord/accounting' },
+  { icon: FileText, label: 'Lease Documents', path: '/landlord/lease-documents' },
+  { icon: HardHat, label: 'Staff & Vendors', path: '/landlord/staff-vendors' },
+  { icon: Settings, label: 'Settings', path: '/landlord/settings' },
 ];
 
-export function LandlordSidebar() {
-  const { state } = useSidebar();
+interface LandlordSidebarProps {
+  className?: string;
+}
+
+export function LandlordSidebar({ className }: LandlordSidebarProps) {
   const location = useLocation();
-  const isCollapsed = state === 'collapsed';
+  const navigate = useNavigate();
+
+  const isActivePath = (path: string) => {
+    if (path === '/landlord/dashboard') {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
+  };
 
   const handleLogout = () => {
     window.location.href = '/login';
   };
 
   return (
-    <Sidebar className="border-r">
-      <SidebarContent>
-        <div className="p-4">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 bg-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
-            </div>
-            {!isCollapsed && (
-              <div>
-                <h2 className="font-bold text-lg text-purple-600">ProptyOS</h2>
-                <p className="text-xs text-gray-500">Landlord Portal</p>
-              </div>
-            )}
+    <div className={cn('pb-12 w-64', className)}>
+      <div className="space-y-4 py-4">
+        <div className="px-3 py-2">
+          <div className="flex items-center mb-2">
+            <Building className="h-6 w-6 mr-2 text-purple-600" />
+            <h2 className="text-lg font-semibold tracking-tight">ProptyOS</h2>
+          </div>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Badge variant="outline" className="text-xs">
+              Landlord Portal
+            </Badge>
           </div>
         </div>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location.pathname === item.url}>
-                    <Link to={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+        <div className="px-3">
+          <ScrollArea className="h-[calc(100vh-120px)]">
+            <div className="space-y-1">
+              {sidebarItems.map((item) => (
+                <Button
+                  key={item.path}
+                  variant={isActivePath(item.path) ? 'secondary' : 'ghost'}
+                  className={cn(
+                    'w-full justify-start',
+                    isActivePath(item.path) && 'bg-purple-100 text-purple-900'
+                  )}
+                  onClick={() => navigate(item.path)}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.label}
+                </Button>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <div className="mt-auto p-4">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50">
-                <LogOut className="h-4 w-4" />
-                {!isCollapsed && <span>Logout</span>}
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+            </div>
+            <div className="mt-8 pt-4 border-t">
+              <div className="space-y-1">
+                <Button variant="ghost" className="w-full justify-start">
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Help & Support
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          </ScrollArea>
         </div>
-
-        <SidebarTrigger className="absolute -right-3 top-4 bg-white border border-gray-300 rounded-full p-1" />
-      </SidebarContent>
-    </Sidebar>
+      </div>
+    </div>
   );
 }

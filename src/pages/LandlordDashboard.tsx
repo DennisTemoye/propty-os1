@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { LandlordSidebar } from '@/components/dashboard/LandlordSidebar';
 import { LandlordOverview } from '@/components/dashboard/LandlordOverview';
 import { Properties } from '@/components/dashboard/Properties';
@@ -40,14 +39,12 @@ const LandlordDashboard = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gray-50">
-        <LandlordSidebar />
-        <main className="flex-1 p-6">
-          {renderActiveModule()}
-        </main>
-      </div>
-    </SidebarProvider>
+    <div className="min-h-screen flex w-full bg-gray-50">
+      <LandlordSidebar />
+      <main className="flex-1 p-6">
+        {renderActiveModule()}
+      </main>
+    </div>
   );
 };
 
