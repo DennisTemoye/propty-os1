@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
@@ -12,6 +11,7 @@ import { StaffPayroll } from '@/components/dashboard/StaffPayroll';
 import { RolesPermissions } from '@/components/dashboard/RolesPermissions';
 import { Settings } from '@/components/dashboard/Settings';
 import { Reports } from '@/components/dashboard/Reports';
+import { HelpSupport } from '@/components/dashboard/HelpSupport';
 import { useLocation } from 'react-router-dom';
 
 const CompanyDashboard = () => {
@@ -40,6 +40,8 @@ const CompanyDashboard = () => {
       return <Settings />;
     } else if (path.startsWith('/company/reports')) {
       return <Reports />;
+    } else if (path.startsWith('/company/help')) {
+      return <HelpSupport />;
     } else {
       return <DashboardOverview />;
     }
