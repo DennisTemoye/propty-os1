@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play, Building, Users, DollarSign, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
@@ -21,26 +22,55 @@ const HeroSection = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-purple-700 rounded-xl shadow-lg"></div>
               <div className="h-4 bg-gradient-to-r from-slate-300 to-slate-200 rounded-lg w-40"></div>
             </div>
+            {/* Actual KPI Cards with Real Data */}
             <div className="grid grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200/40 p-4 rounded-xl shadow-sm">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mb-3 shadow-md"></div>
-                <div className="h-3 bg-blue-200 rounded-lg w-16 mb-2"></div>
-                <div className="h-5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg w-12 shadow-sm"></div>
+              <div className="bg-gradient-to-tr from-purple-500 to-blue-400 rounded-2xl shadow-md p-4 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-white/80 mb-2">Total Sales</div>
+                    <div className="text-lg font-bold text-white">₦2.4B</div>
+                    <div className="text-xs text-white/70">156 Units Sold</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/20 shadow-sm">
+                    <DollarSign className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200/40 p-4 rounded-xl shadow-sm">
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg mb-3 shadow-md"></div>
-                <div className="h-3 bg-emerald-200 rounded-lg w-20 mb-2"></div>
-                <div className="h-5 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg w-14 shadow-sm"></div>
+              <div className="bg-gradient-to-tr from-green-400 to-teal-300 rounded-2xl shadow-md p-4 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-white/80 mb-2">Ongoing Projects</div>
+                    <div className="text-lg font-bold text-white">12</div>
+                    <div className="text-xs text-white/70">3 New This Month</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/20 shadow-sm">
+                    <Building className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-violet-50 to-violet-100/50 border border-violet-200/40 p-4 rounded-xl shadow-sm">
-                <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-violet-600 rounded-lg mb-3 shadow-md"></div>
-                <div className="h-3 bg-violet-200 rounded-lg w-18 mb-2"></div>
-                <div className="h-5 bg-gradient-to-r from-violet-600 to-violet-700 rounded-lg w-16 shadow-sm"></div>
+              <div className="bg-gradient-to-tr from-orange-400 to-amber-300 rounded-2xl shadow-md p-4 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-white/80 mb-2">Total Clients</div>
+                    <div className="text-lg font-bold text-white">1,247</div>
+                    <div className="text-xs text-white/70">89 Active</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/20 shadow-sm">
+                    <Users className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200/40 p-4 rounded-xl shadow-sm">
-                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg mb-3 shadow-md"></div>
-                <div className="h-3 bg-amber-200 rounded-lg w-14 mb-2"></div>
-                <div className="h-5 bg-gradient-to-r from-amber-600 to-amber-700 rounded-lg w-18 shadow-sm"></div>
+              <div className="bg-gradient-to-tr from-indigo-400 to-pink-300 rounded-2xl shadow-md p-4 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-white/80 mb-2">Pending Allocations</div>
+                    <div className="text-lg font-bold text-white">23</div>
+                    <div className="text-xs text-white/70">Awaiting Approval</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/20 shadow-sm">
+                    <FileText className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/40 rounded-xl p-4 mt-4 shadow-sm">
@@ -80,26 +110,55 @@ const HeroSection = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-purple-700 rounded-xl shadow-lg"></div>
               <div className="h-4 bg-gradient-to-r from-slate-300 to-slate-200 rounded-lg w-40"></div>
             </div>
+            {/* Actual Landlord KPI Cards with Real Data */}
             <div className="grid grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200/40 p-4 rounded-xl shadow-sm">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mb-3 shadow-md"></div>
-                <div className="h-3 bg-blue-200 rounded-lg w-20 mb-2"></div>
-                <div className="h-5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg w-10 shadow-sm"></div>
+              <div className="bg-gradient-to-tr from-purple-500 to-blue-400 rounded-2xl shadow-md p-4 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-white/80 mb-2">Total Properties</div>
+                    <div className="text-lg font-bold text-white">8</div>
+                    <div className="text-xs text-white/70">+1 from last month</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/20 shadow-sm">
+                    <Building className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200/40 p-4 rounded-xl shadow-sm">
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg mb-3 shadow-md"></div>
-                <div className="h-3 bg-emerald-200 rounded-lg w-16 mb-2"></div>
-                <div className="h-5 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg w-12 shadow-sm"></div>
+              <div className="bg-gradient-to-tr from-green-400 to-teal-300 rounded-2xl shadow-md p-4 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-white/80 mb-2">Occupancy Rate</div>
+                    <div className="text-lg font-bold text-white">85.7%</div>
+                    <div className="text-xs text-white/70">+2.3% from last month</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/20 shadow-sm">
+                    <Users className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-violet-50 to-violet-100/50 border border-violet-200/40 p-4 rounded-xl shadow-sm">
-                <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-violet-600 rounded-lg mb-3 shadow-md"></div>
-                <div className="h-3 bg-violet-200 rounded-lg w-18 mb-2"></div>
-                <div className="h-5 bg-gradient-to-r from-violet-600 to-violet-700 rounded-lg w-14 shadow-sm"></div>
+              <div className="bg-gradient-to-tr from-orange-400 to-amber-300 rounded-2xl shadow-md p-4 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-white/80 mb-2">Monthly Revenue</div>
+                    <div className="text-lg font-bold text-white">$51,000</div>
+                    <div className="text-xs text-white/70">+8.2% from last month</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/20 shadow-sm">
+                    <DollarSign className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-rose-50 to-rose-100/50 border border-rose-200/40 p-4 rounded-xl shadow-sm">
-                <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-rose-600 rounded-lg mb-3 shadow-md"></div>
-                <div className="h-3 bg-rose-200 rounded-lg w-22 mb-2"></div>
-                <div className="h-5 bg-gradient-to-r from-rose-600 to-rose-700 rounded-lg w-16 shadow-sm"></div>
+              <div className="bg-gradient-to-tr from-rose-400 to-pink-300 rounded-2xl shadow-md p-4 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-white/80 mb-2">Outstanding Balance</div>
+                    <div className="text-lg font-bold text-white">$3,250</div>
+                    <div className="text-xs text-white/70">3 overdue accounts</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/20 shadow-sm">
+                    <FileText className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
