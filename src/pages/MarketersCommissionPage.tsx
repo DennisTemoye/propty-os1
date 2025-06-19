@@ -95,7 +95,7 @@ const mockCommissions = [
   },
 ];
 
-export function MarketersCommission() {
+export default function MarketersCommission() {
   const navigate = useNavigate();
   const [marketers, setMarketers] = useState(mockMarketers);
   const [commissions, setCommissions] = useState(mockCommissions);
