@@ -6,6 +6,45 @@ import { Button } from '@/components/ui/button';
 import { Calculator, TrendingUp, TrendingDown, Plus, Download } from 'lucide-react';
 
 export function LandlordAccounting() {
+  const kpiData = [
+    {
+      title: 'Total Income',
+      value: '$45,230',
+      subtitle: 'Monthly revenue',
+      icon: TrendingUp,
+      color: 'text-green-700',
+      bgColor: 'bg-green-100',
+      cardBg: 'from-green-50 to-green-100',
+    },
+    {
+      title: 'Total Expenses',
+      value: '$8,450',
+      subtitle: 'Monthly costs',
+      icon: TrendingDown,
+      color: 'text-red-700',
+      bgColor: 'bg-red-100',
+      cardBg: 'from-red-50 to-red-100',
+    },
+    {
+      title: 'Net Income',
+      value: '$36,780',
+      subtitle: 'Profit this month',
+      icon: Calculator,
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-100',
+      cardBg: 'from-blue-50 to-blue-100',
+    },
+    {
+      title: 'Profit Margin',
+      value: '81.3%',
+      subtitle: 'Monthly performance',
+      icon: TrendingUp,
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-100',
+      cardBg: 'from-purple-50 to-purple-100',
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -22,52 +61,26 @@ export function LandlordAccounting() {
         </div>
       </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-green-600">$45,230</div>
-                <div className="text-sm text-gray-500">Total Income</div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpiData.map((kpi, index) => (
+          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-600 mb-2">
+                    {kpi.title}
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                  <div className="text-xs text-gray-500">{kpi.subtitle}</div>
+                </div>
+                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
+                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                </div>
               </div>
-              <TrendingUp className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-red-600">$8,450</div>
-                <div className="text-sm text-gray-500">Total Expenses</div>
-              </div>
-              <TrendingDown className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-blue-600">$36,780</div>
-                <div className="text-sm text-gray-500">Net Income</div>
-              </div>
-              <Calculator className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-purple-600">81.3%</div>
-                <div className="text-sm text-gray-500">Profit Margin</div>
-              </div>
-              <TrendingUp className="h-8 w-8 text-purple-600" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Tabs defaultValue="income" className="space-y-6">
