@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { FileText, Download, Upload, Eye, Trash2, Plus } from 'lucide-react';
+import { FileText, Download, Upload, Trash2, Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 interface Document {
@@ -170,7 +169,7 @@ export function ClientDocumentsView({ client }: ClientDocumentsViewProps) {
                     {doc.status}
                   </Badge>
                   <Button size="sm" variant="outline" onClick={() => setViewDocument(doc)}>
-                    <Eye className="h-4 w-4" />
+                    <FileText className="h-4 w-4" />
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => handleDownload(doc)}>
                     <Download className="h-4 w-4" />

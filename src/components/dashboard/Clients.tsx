@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, FileText, DollarSign, User, Building, Search, Eye } from 'lucide-react';
+import { Plus, FileText, DollarSign, User, Building, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientForm } from './clients/ClientForm';
 import { ClientDetailView } from './clients/ClientDetailView';
@@ -119,9 +119,10 @@ export function Clients() {
   const [isNewClientOpen, setIsNewClientOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
+  const [isDocumentsOpen, setIsDocumentsOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards'); // Default to cards
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
@@ -177,7 +178,8 @@ export function Clients() {
 
   const handleViewDocuments = (e: React.MouseEvent, client: any) => {
     e.stopPropagation();
-    navigate('/company/documents', { state: { clientId: client.id } });
+    setSelectedClient(client);
+    setIsDocumentsOpen(true);
   };
 
   return (
@@ -329,13 +331,17 @@ export function Clients() {
               <CardContent>
                 {client.projects && client.projects.length > 0 ? (
                   <div className="space-y-3">
-                    {client.projects.map((project: any, index: number) => (
-                      <div key={index} className="border-b pb-2 last:border-b-0">
-                        <div className="font-medium">{project.name}</div>
-                        <div className="text-sm text-gray-500">{project.unit}</div>
-                        <div className="text-xs text-gray-400">Assigned: {project.assignedDate}</div>
-                      </div>
-                    ))}
+                    {/* Show only first property with "+X more" indicator */}
+                    <div className="border-b pb-2">
+                      <div className="font-medium">{client.projects[0].name}</div>
+                      <div className="text-sm text-gray-500">{client.projects[0].unit}</div>
+                      <div className="text-xs text-gray-400">Assigned: {client.projects[0].assignedDate}</div>
+                      {client.projects.length > 1 && (
+                        <div className="text-xs text-blue-600 mt-1">
+                          +{client.projects.length - 1} more
+                        </div>
+                      )}
+                    </div>
                     
                     <div>
                       <div className="flex justify-between text-sm mb-1">
@@ -374,19 +380,8 @@ export function Clients() {
                   </div>
                 )}
                 
+                {/* Updated action buttons - removed View button */}
                 <div className="flex space-x-2 mt-4 pt-3 border-t">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleClientClick(client.id);
-                    }}
-                  >
-                    <Eye className="h-3 w-3 mr-1" />
-                    View
-                  </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -447,12 +442,15 @@ export function Clients() {
                     <TableCell>
                       {client.projects && client.projects.length > 0 ? (
                         <div className="space-y-1">
-                          {client.projects.map((project: any, index: number) => (
-                            <div key={index}>
-                              <div className="font-medium text-sm">{project.name}</div>
-                              <div className="text-xs text-gray-500">{project.unit}</div>
+                          <div>
+                            <div className="font-medium text-sm">{client.projects[0].name}</div>
+                            <div className="text-xs text-gray-500">{client.projects[0].unit}</div>
+                          </div>
+                          {client.projects.length > 1 && (
+                            <div className="text-xs text-blue-600">
+                              +{client.projects.length - 1} more
                             </div>
-                          ))}
+                          )}
                         </div>
                       ) : (
                         <span className="text-gray-400">Not assigned</span>
@@ -497,12 +495,6 @@ export function Clients() {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          handleClientClick(client.id);
-                        }}>
-                          <Eye className="h-3 w-3" />
-                        </Button>
                         {(!client.projects || client.projects.length === 0) && (
                           <Button 
                             size="sm" 
@@ -564,6 +556,19 @@ export function Clients() {
         onClose={() => setIsAddPaymentOpen(false)}
         client={selectedClient}
       />
+
+      {/* Documents Modal */}
+      <Dialog open={isDocumentsOpen} onOpenChange={setIsDocumentsOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Client Documents - {selectedClient?.name}</DialogTitle>
+            <DialogDescription>
+              Manage documents for this client
+            </DialogDescription>
+          </DialogHeader>
+          {selectedClient && <ClientDocumentsView client={selectedClient} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

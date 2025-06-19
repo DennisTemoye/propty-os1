@@ -58,7 +58,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
     <Tabs defaultValue="overview" className="w-full">
       <TabsList className="grid w-full grid-cols-5">
         <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="property">Property</TabsTrigger>
+        <TabsTrigger value="property">Properties</TabsTrigger>
         <TabsTrigger value="payments">Payments</TabsTrigger>
         <TabsTrigger value="documents">Documents</TabsTrigger>
         <TabsTrigger value="activity">Activity</TabsTrigger>
@@ -118,7 +118,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
             </CardContent>
           </Card>
 
-          {/* Property Summary */}
+          {/* Updated Properties Summary */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -129,6 +129,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
             <CardContent>
               {client.projects && client.projects.length > 0 ? (
                 <div className="space-y-4">
+                  {/* Show all properties */}
                   {client.projects.map((project: any, index: number) => (
                     <div key={index} className="border-b pb-3 last:border-b-0">
                       <div className="font-medium">{project.name}</div>
@@ -209,62 +210,68 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
       </TabsContent>
 
       <TabsContent value="property" className="space-y-6">
-        {client.project ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Property Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Project</label>
-                  <div className="font-medium">{client.project}</div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Unit</label>
-                  <div className="font-medium">{client.unit}</div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Assigned Date</label>
-                  <div className="font-medium">{client.assignedDate}</div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Payment Summary</label>
-                  <div className="mt-2 space-y-2">
-                    <div className="flex justify-between">
-                      <span>Total Paid:</span>
-                      <span className="font-medium text-green-600">{client.totalPaid}</span>
+        {client.projects && client.projects.length > 0 ? (
+          <div className="space-y-6">
+            {client.projects.map((project: any, index: number) => (
+              <Card key={index}>
+                <CardHeader>
+                  <CardTitle>Property {index + 1}: {project.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Project</label>
+                      <div className="font-medium">{project.name}</div>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Outstanding:</span>
-                      <span className="font-medium">{client.balance}</span>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Unit</label>
+                      <div className="font-medium">{project.unit}</div>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Progress:</span>
-                      <span className="font-medium">{client.paymentProgress}%</span>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Assigned Date</label>
+                      <div className="font-medium">{project.assignedDate}</div>
                     </div>
                   </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Next Milestone</label>
-                  <div className="mt-2">
-                    {client.nextPayment ? (
+                  
+                  {index === 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <div className="font-medium">{client.nextPayment}</div>
-                        <div className="text-sm text-gray-600">Payment due</div>
+                        <label className="text-sm font-medium text-gray-500">Payment Summary</label>
+                        <div className="mt-2 space-y-2">
+                          <div className="flex justify-between">
+                            <span>Total Paid:</span>
+                            <span className="font-medium text-green-600">{client.totalPaid}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Outstanding:</span>
+                            <span className="font-medium">{client.balance}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Progress:</span>
+                            <span className="font-medium">{client.paymentProgress}%</span>
+                          </div>
+                        </div>
                       </div>
-                    ) : (
-                      <div className="text-gray-500">All payments completed</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                      
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Next Milestone</label>
+                        <div className="mt-2">
+                          {client.nextPayment ? (
+                            <div>
+                              <div className="font-medium">{client.nextPayment}</div>
+                              <div className="text-sm text-gray-600">Payment due</div>
+                            </div>
+                          ) : (
+                            <div className="text-gray-500">All payments completed</div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         ) : (
           <Card>
             <CardContent className="text-center py-12">
