@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Building, Users, DollarSign, FileText, UserCheck, Calculator, Truck, Plus } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 const kpiData = [
   {
@@ -10,63 +12,70 @@ const kpiData = [
     value: '₦2.4B',
     subtitle: '156 Units Sold',
     icon: DollarSign,
-    color: 'text-emerald-700',
-    bgColor: 'bg-emerald-100',
-    cardBg: 'from-emerald-50 to-emerald-100',
+    gradientFrom: 'from-purple-500',
+    gradientTo: 'to-blue-400',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
   },
   {
     title: 'Ongoing Projects',
     value: '12',
     subtitle: '3 New This Month',
     icon: Building,
-    color: 'text-sky-700',
-    bgColor: 'bg-sky-100',
-    cardBg: 'from-sky-50 to-sky-100',
+    gradientFrom: 'from-green-400',
+    gradientTo: 'to-teal-300',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
   },
   {
     title: 'Total Clients',
     value: '1,247',
     subtitle: '89 Active',
     icon: Users,
-    color: 'text-purple-700',
-    bgColor: 'bg-purple-100',
-    cardBg: 'from-purple-50 to-purple-100',
+    gradientFrom: 'from-orange-400',
+    gradientTo: 'to-amber-300',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
   },
   {
     title: 'Pending Allocations',
     value: '23',
     subtitle: 'Awaiting Approval',
     icon: FileText,
-    color: 'text-amber-700',
-    bgColor: 'bg-amber-100',
-    cardBg: 'from-amber-50 to-amber-100',
+    gradientFrom: 'from-indigo-400',
+    gradientTo: 'to-pink-300',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
   },
   {
     title: 'Active Marketers',
     value: '45',
     subtitle: '8 Top Performers',
     icon: UserCheck,
-    color: 'text-indigo-700',
-    bgColor: 'bg-indigo-100',
-    cardBg: 'from-indigo-50 to-indigo-100',
+    gradientFrom: 'from-violet-400',
+    gradientTo: 'to-purple-300',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
   },
   {
     title: 'Commissions Paid',
     value: '₦45.2M',
     subtitle: 'This Month',
     icon: Calculator,
-    color: 'text-teal-700',
-    bgColor: 'bg-teal-100',
-    cardBg: 'from-teal-50 to-teal-100',
+    gradientFrom: 'from-emerald-400',
+    gradientTo: 'to-cyan-300',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
   },
   {
     title: 'Monthly Expenses',
     value: '₦12.8M',
     subtitle: 'Operational Costs',
     icon: Truck,
-    color: 'text-rose-700',
-    bgColor: 'bg-rose-100',
-    cardBg: 'from-rose-50 to-rose-100',
+    gradientFrom: 'from-rose-400',
+    gradientTo: 'to-pink-300',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
   },
 ];
 
@@ -106,22 +115,17 @@ export function DashboardOverview() {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {kpiData.map((kpi, index) => (
-            <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-600 mb-2">
-                      {kpi.title}
-                    </div>
-                    <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
-                    <div className="text-xs text-gray-500">{kpi.subtitle}</div>
-                  </div>
-                  <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
-                    <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <GradientKpiCard
+              key={index}
+              title={kpi.title}
+              value={kpi.value}
+              subtitle={kpi.subtitle}
+              icon={kpi.icon}
+              gradientFrom={kpi.gradientFrom}
+              gradientTo={kpi.gradientTo}
+              iconBgColor={kpi.iconBgColor}
+              iconColor={kpi.iconColor}
+            />
           ))}
         </div>
 
