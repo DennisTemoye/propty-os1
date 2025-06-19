@@ -217,62 +217,30 @@ export function ProjectsUnits() {
         </Button>
       </div>
 
-      {/* Project Summary Cards - Updated Design */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="text-sm font-medium text-gray-600 mb-2">Total Projects</div>
-                <div className="text-3xl font-bold text-purple-900 mb-1">12</div>
-                <div className="text-xs text-gray-600">Active Portfolio</div>
-              </div>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
-                <Building className="h-6 w-6 text-white" />
-              </div>
-            </div>
+      {/* Project Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-gray-900">12</div>
+            <div className="text-sm text-gray-500">Total Projects</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="text-sm font-medium text-gray-600 mb-2">Total Units</div>
-                <div className="text-3xl font-bold text-emerald-900 mb-1">1,247</div>
-                <div className="text-xs text-gray-600">Available Inventory</div>
-              </div>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg">
-                <Building className="h-6 w-6 text-white" />
-              </div>
-            </div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-green-600">1,247</div>
+            <div className="text-sm text-gray-500">Total Units</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-sky-50 to-sky-100 border-sky-200 border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="text-sm font-medium text-gray-600 mb-2">Units Sold</div>
-                <div className="text-3xl font-bold text-sky-900 mb-1">845</div>
-                <div className="text-xs text-gray-600">Successfully Sold</div>
-              </div>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 shadow-lg">
-                <Building className="h-6 w-6 text-white" />
-              </div>
-            </div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-blue-600">845</div>
+            <div className="text-sm text-gray-500">Units Sold</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="text-sm font-medium text-gray-600 mb-2">Total Revenue</div>
-                <div className="text-3xl font-bold text-amber-900 mb-1">₦15.2B</div>
-                <div className="text-xs text-gray-600">Generated Revenue</div>
-              </div>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg">
-                <Building className="h-6 w-6 text-white" />
-              </div>
-            </div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-purple-600">₦15.2B</div>
+            <div className="text-sm text-gray-500">Total Revenue</div>
           </CardContent>
         </Card>
       </div>
