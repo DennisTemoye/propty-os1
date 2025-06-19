@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -63,15 +62,35 @@ const mockClients = [
         name: 'Sunset Heights',
         unit: 'Block D - Plot 07',
         assignedDate: '2024-02-01'
+      },
+      {
+        name: 'Marina Heights',
+        unit: 'Block E - Plot 10',
+        assignedDate: '2024-02-05'
+      },
+      {
+        name: 'Palm Grove Estate',
+        unit: 'Block F - Plot 15',
+        assignedDate: '2024-02-10'
+      },
+      {
+        name: 'Royal Gardens',
+        unit: 'Block G - Plot 08',
+        assignedDate: '2024-02-15'
+      },
+      {
+        name: 'Crystal Bay',
+        unit: 'Block H - Plot 12',
+        assignedDate: '2024-02-20'
       }
     ],
     status: 'active',
     kycStatus: 'approved',
-    totalPaid: '₦45M',
-    balance: '₦55M',
+    totalPaid: '₦125M',
+    balance: '₦175M',
     nextPayment: '2024-02-20',
     documents: ['Allocation Letter', 'MoU', 'Payment Schedule', 'Investment Agreement'],
-    paymentProgress: 45,
+    paymentProgress: 42,
     assignedDate: '2024-01-15'
   },
   {

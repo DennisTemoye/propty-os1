@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building, Users, DollarSign, FileText, UserCheck, Calculator, Truck } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 
 const kpiData = [
   {
@@ -62,6 +63,21 @@ const kpiData = [
   },
 ];
 
+const salesData = [
+  { month: 'Jan', sales: 65, revenue: 2.4 },
+  { month: 'Feb', sales: 59, revenue: 2.1 },
+  { month: 'Mar', sales: 80, revenue: 2.8 },
+  { month: 'Apr', sales: 81, revenue: 3.2 },
+  { month: 'May', sales: 56, revenue: 2.0 },
+  { month: 'Jun', sales: 55, revenue: 1.9 },
+];
+
+const projectStatusData = [
+  { name: 'Completed', value: 40, color: '#10b981' },
+  { name: 'In Progress', value: 35, color: '#3b82f6' },
+  { name: 'Planning', value: 25, color: '#f59e0b' },
+];
+
 export function DashboardOverview() {
   return (
     <div className="space-y-6">
@@ -89,6 +105,52 @@ export function DashboardOverview() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Sales Performance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={salesData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip formatter={(value, name) => [value, name === 'sales' ? 'Units Sold' : 'Revenue (₦B)']} />
+                <Bar dataKey="sales" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Project Status Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={projectStatusData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, value }) => `${name}: ${value}%`}
+                >
+                  {projectStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
@@ -139,7 +201,7 @@ export function DashboardOverview() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Jane Smith</p>
-                    <p className="text-xs text-gray-500">12 sales this month</p>
+                    <p className="text-xs text-gray-500">16 sales this month</p>
                   </div>
                 </div>
                 <span className="text-sm font-bold text-green-600">₦4.2M</span>

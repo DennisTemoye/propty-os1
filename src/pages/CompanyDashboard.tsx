@@ -12,6 +12,7 @@ import { Documents } from '@/components/dashboard/Documents';
 import { StaffPayroll } from '@/components/dashboard/StaffPayroll';
 import { RolesPermissions } from '@/components/dashboard/RolesPermissions';
 import { Settings } from '@/components/dashboard/Settings';
+import { Reports } from '@/components/dashboard/Reports';
 import { useLocation } from 'react-router-dom';
 
 const CompanyDashboard = () => {
@@ -40,6 +41,8 @@ const CompanyDashboard = () => {
       return <RolesPermissions />;
     } else if (path.startsWith('/company/settings')) {
       return <Settings />;
+    } else if (path.startsWith('/company/reports')) {
+      return <Reports />;
     } else {
       return <DashboardOverview />;
     }
