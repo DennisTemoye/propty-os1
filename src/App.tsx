@@ -42,6 +42,13 @@ const App = () => (
             <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
             <Route path="/company/documents" element={<CompanyDashboard />} />
             <Route path="/company/agents" element={<AgentsMarketersPage />} />
+            <Route path="/company/commissions" element={<CompanyDashboard />} />
+            <Route path="/company/accounting" element={<CompanyDashboard />} />
+            <Route path="/company/vendors" element={<CompanyDashboard />} />
+            <Route path="/company/staff" element={<CompanyDashboard />} />
+            <Route path="/company/roles" element={<CompanyDashboard />} />
+            <Route path="/company/settings" element={<CompanyDashboard />} />
+            <Route path="/company/reports" element={<CompanyDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
