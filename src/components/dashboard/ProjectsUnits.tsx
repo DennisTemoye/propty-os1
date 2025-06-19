@@ -3,15 +3,9 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, MapPin, FileText, Upload, Edit, Trash2, Eye, Users, DollarSign, Calendar, Building } from 'lucide-react';
-import { NewProjectForm } from './forms/NewProjectForm';
-import { BlocksUnitsManager } from './projects/BlocksUnitsManager';
-import { ProjectDetailView } from './projects/ProjectDetailView';
-import { AssignUnitModal } from './projects/AssignUnitModal';
+import { Plus, MapPin, FileText, Building, Edit, Trash2, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const mockProjects = [
   {
@@ -26,20 +20,7 @@ const mockProjects = [
     reservedUnits: 23,
     availableUnits: 38,
     status: 'ongoing',
-    revenue: '₦2.5B',
-    blocks: [
-      {
-        id: 1,
-        name: 'Block A',
-        type: 'Duplex',
-        description: 'Premium duplex units',
-        units: [
-          { id: 1, plotId: 'Block A - Plot 01', size: '500sqm', price: '₦25M', status: 'available', client: null },
-          { id: 2, plotId: 'Block A - Plot 02', size: '500sqm', price: '₦25M', status: 'sold', client: 'John Doe' },
-          { id: 3, plotId: 'Block A - Plot 03', size: '500sqm', price: '₦25M', status: 'reserved', client: 'Jane Smith' }
-        ]
-      }
-    ]
+    revenue: '₦2.5B'
   },
   {
     id: 2,
@@ -58,12 +39,8 @@ const mockProjects = [
 ];
 
 export function ProjectsUnits() {
-  const [selectedProject, setSelectedProject] = useState<any>(null);
-  const [selectedProjectForDetail, setSelectedProjectForDetail] = useState<any>(null);
-  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
-  const [selectedUnit, setSelectedUnit] = useState<any>(null);
-  const [isAssignUnitOpen, setIsAssignUnitOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -78,26 +55,26 @@ export function ProjectsUnits() {
     }
   };
 
-  const getUnitStatusColor = (status: string) => {
-    switch (status) {
-      case 'available':
-        return 'bg-green-100 text-green-800';
-      case 'reserved':
-        return 'bg-orange-100 text-orange-800';
-      case 'sold':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  const handleProjectDetails = (projectId: number) => {
+    navigate(`/company/projects/${projectId}`);
   };
 
-  const handleProjectClick = (project: any) => {
-    setSelectedProjectForDetail(project);
+  const handleManageBlocks = (projectId: number) => {
+    navigate(`/company/projects/${projectId}/blocks`);
   };
 
-  const handleAssignUnit = (unit: any) => {
-    setSelectedUnit(unit);
-    setIsAssignUnitOpen(true);
+  const handleEditProject = (projectId: number) => {
+    console.log('Edit project:', projectId);
+    // Implement edit functionality
+  };
+
+  const handleDeleteProject = (projectId: number) => {
+    console.log('Delete project:', projectId);
+    // Implement delete functionality
+  };
+
+  const handleViewDocuments = (projectId: number) => {
+    navigate('/company/documents');
   };
 
   return (
@@ -107,23 +84,10 @@ export function ProjectsUnits() {
           <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
           <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units</p>
         </div>
-        <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-purple-600 hover:bg-purple-700">
-              <Plus className="h-4 w-4 mr-2" />
-              New Project
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Create New Project</DialogTitle>
-              <DialogDescription>
-                Add a new real estate project to your portfolio
-              </DialogDescription>
-            </DialogHeader>
-            <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        <Button className="bg-purple-600 hover:bg-purple-700">
+          <Plus className="h-4 w-4 mr-2" />
+          New Project
+        </Button>
       </div>
 
       {/* Project Summary Cards */}
@@ -176,8 +140,7 @@ export function ProjectsUnits() {
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {mockProjects.map((project) => (
-            <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => handleProjectClick(project)}>
+            <Card key={project.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{project.name}</CardTitle>
@@ -237,19 +200,55 @@ export function ProjectsUnits() {
                     </div>
                   </div>
                   
-                  <div className="flex space-x-2 mt-4">
-                    <Button variant="outline" size="sm" className="flex-1" onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedProject(project);
-                    }}>
+                  <div className="grid grid-cols-2 gap-2 mt-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleManageBlocks(project.id)}
+                    >
                       <Building className="h-3 w-3 mr-1" />
                       Manage Blocks
                     </Button>
                     
-                    <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleViewDocuments(project.id)}
+                    >
                       <FileText className="h-3 w-3 mr-1" />
                       Documents
                     </Button>
+
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleProjectDetails(project.id)}
+                    >
+                      <Eye className="h-3 w-3 mr-1" />
+                      View Details
+                    </Button>
+
+                    <div className="flex gap-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleEditProject(project.id)}
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleDeleteProject(project.id)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -273,8 +272,7 @@ export function ProjectsUnits() {
               </TableHeader>
               <TableBody>
                 {mockProjects.map((project) => (
-                  <TableRow key={project.id} className="cursor-pointer hover:bg-gray-50"
-                           onClick={() => handleProjectClick(project)}>
+                  <TableRow key={project.id} className="hover:bg-gray-50">
                     <TableCell>
                       <div>
                         <div className="font-medium">{project.name}</div>
@@ -299,14 +297,40 @@ export function ProjectsUnits() {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedProject(project);
-                        }}>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleProjectDetails(project.id)}
+                        >
+                          <Eye className="h-3 w-3" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleManageBlocks(project.id)}
+                        >
                           <Building className="h-3 w-3" />
                         </Button>
-                        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleViewDocuments(project.id)}
+                        >
                           <FileText className="h-3 w-3" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleEditProject(project.id)}
+                        >
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleDeleteProject(project.id)}
+                        >
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     </TableCell>
@@ -317,44 +341,6 @@ export function ProjectsUnits() {
           </CardContent>
         </Card>
       )}
-
-      {/* Blocks & Units Management Modal */}
-      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Manage Blocks & Units - {selectedProject?.name}</DialogTitle>
-            <DialogDescription>
-              Structure your project by blocks and units, and assign units to clients
-            </DialogDescription>
-          </DialogHeader>
-          {selectedProject && (
-            <BlocksUnitsManager 
-              project={selectedProject} 
-              onAssignUnit={handleAssignUnit}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Project Detail Modal */}
-      <Dialog open={!!selectedProjectForDetail} onOpenChange={() => setSelectedProjectForDetail(null)}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Project Details - {selectedProjectForDetail?.name}</DialogTitle>
-            <DialogDescription>
-              Comprehensive project overview and management
-            </DialogDescription>
-          </DialogHeader>
-          {selectedProjectForDetail && <ProjectDetailView project={selectedProjectForDetail} />}
-        </DialogContent>
-      </Dialog>
-
-      {/* Assign Unit Modal */}
-      <AssignUnitModal 
-        isOpen={isAssignUnitOpen}
-        onClose={() => setIsAssignUnitOpen(false)}
-        unit={selectedUnit}
-      />
     </div>
   );
 }

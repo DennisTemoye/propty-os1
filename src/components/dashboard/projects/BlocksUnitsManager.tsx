@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Building, Users, Edit, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { UnitEditModal } from './UnitEditModal';
 
 interface BlocksUnitsManagerProps {
   project: any;
@@ -22,6 +23,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
   const [selectedBlock, setSelectedBlock] = useState<any>(null);
   const [isNewBlockOpen, setIsNewBlockOpen] = useState(false);
   const [isNewUnitOpen, setIsNewUnitOpen] = useState(false);
+  const [editingUnit, setEditingUnit] = useState<any>(null);
 
   const form = useForm();
 
@@ -82,6 +84,15 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
     setIsNewUnitOpen(false);
   };
 
+  const handleEditUnit = (unit: any) => {
+    setEditingUnit(unit);
+  };
+
+  const handleDeleteUnit = (unitId: number) => {
+    console.log('Delete unit:', unitId);
+    // Implement delete functionality
+  };
+
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -126,7 +137,6 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
             </Card>
           </div>
 
-          {/* Blocks Overview */}
           <Card>
             <CardHeader>
               <CardTitle>Blocks Overview</CardTitle>
@@ -367,8 +377,19 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
                                 Assign
                               </Button>
                             )}
-                            <Button variant="outline" size="sm">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleEditUnit(unit)}
+                            >
                               <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleDeleteUnit(unit.id)}
+                            >
+                              <Trash2 className="h-3 w-3" />
                             </Button>
                           </div>
                         </TableCell>
@@ -381,6 +402,13 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Unit Edit Modal */}
+      <UnitEditModal 
+        isOpen={!!editingUnit}
+        onClose={() => setEditingUnit(null)}
+        unit={editingUnit}
+      />
     </div>
   );
 }

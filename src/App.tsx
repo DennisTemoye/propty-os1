@@ -12,6 +12,8 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetCodePage from "./pages/ResetCodePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CompanyDashboard from "./pages/CompanyDashboard";
+import ProjectDetailPage from "./pages/ProjectDetailPage";
+import ProjectBlocksPage from "./pages/ProjectBlocksPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +33,10 @@ const App = () => (
             <Route path="/reset-code" element={<ResetCodePage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/company/dashboard" element={<CompanyDashboard />} />
+            <Route path="/company/projects" element={<CompanyDashboard />} />
+            <Route path="/company/projects/:projectId" element={<ProjectDetailPage />} />
+            <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
+            <Route path="/company/documents" element={<CompanyDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
