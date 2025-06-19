@@ -47,7 +47,8 @@ const menuItems = [
 ];
 
 export function CompanySidebar({ activeModule, setActiveModule }: CompanySidebarProps) {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
 
   const handleLogout = () => {
     // Handle logout logic
@@ -55,13 +56,13 @@ export function CompanySidebar({ activeModule, setActiveModule }: CompanySidebar
   };
 
   return (
-    <Sidebar className={collapsed ? "w-14" : "w-64"} collapsible>
+    <Sidebar className={isCollapsed ? "w-14" : "w-64"} collapsible="icon">
       <SidebarHeader className="border-b p-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">P</span>
           </div>
-          {!collapsed && (
+          {!isCollapsed && (
             <div>
               <h2 className="font-bold text-lg text-purple-600">ProptyOS</h2>
               <p className="text-xs text-gray-500">Company Dashboard</p>
@@ -83,7 +84,7 @@ export function CompanySidebar({ activeModule, setActiveModule }: CompanySidebar
                     className="w-full justify-start"
                   >
                     <item.icon className="h-4 w-4" />
-                    {!collapsed && <span>{item.label}</span>}
+                    {!isCollapsed && <span>{item.label}</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -94,7 +95,7 @@ export function CompanySidebar({ activeModule, setActiveModule }: CompanySidebar
                   className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <LogOut className="h-4 w-4" />
-                  {!collapsed && <span>Logout</span>}
+                  {!isCollapsed && <span>Logout</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
