@@ -23,7 +23,7 @@ const mockProjectSites = [
     availableUnits: 38,
     status: 'active',
     description: 'Premium residential estate with modern amenities',
-    projectSize: '50 hectares',
+    projectSize: '50,000', // in square meters
     developmentStage: 'Construction',
     documentTitle: 'Certificate of Occupancy',
     completionPercentage: 65,
@@ -45,7 +45,7 @@ const mockProjectSites = [
     availableUnits: 18,
     status: 'paused',
     description: 'Modern commercial spaces and offices',
-    projectSize: '15 hectares',
+    projectSize: '15,000', // in square meters
     developmentStage: 'Marketing',
     documentTitle: 'Approved Survey Plan',
     completionPercentage: 80,
@@ -66,7 +66,7 @@ const mockProjectSites = [
     availableUnits: 0,
     status: 'sold out',
     description: 'Prime land plots for residential development',
-    projectSize: '100 hectares',
+    projectSize: '100,000', // in square meters
     developmentStage: 'Handover',
     documentTitle: 'Family Receipt & Layout Plan',
     completionPercentage: 100,
@@ -288,7 +288,6 @@ export function ProjectSites() {
                       {project.status}
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-600 leading-relaxed">{project.description}</p>
                 </CardHeader>
                 
                 <CardContent className="pt-0 space-y-4">
@@ -307,10 +306,14 @@ export function ProjectSites() {
                   </div>
 
                   {/* Project Info Grid */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 p-3 rounded-lg">
-                      <div className="text-xs text-gray-500 mb-1">Project Size</div>
-                      <div className="font-semibold text-gray-900 text-sm">{project.projectSize}</div>
+                      <div className="text-xs text-gray-500 mb-1">Size</div>
+                      <div className="font-semibold text-gray-900 text-sm">{project.projectSize} m²</div>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="text-xs text-gray-500 mb-1">Units</div>
+                      <div className="font-semibold text-gray-900 text-sm">{project.totalUnits}</div>
                     </div>
                     <div className="bg-gray-50 p-3 rounded-lg">
                       <div className="text-xs text-gray-500 mb-1">Stage</div>
@@ -379,7 +382,7 @@ export function ProjectSites() {
                               {project.location}
                             </div>
                             <div>•</div>
-                            <div>{project.projectSize}</div>
+                            <div>{project.projectSize} m²</div>
                             <div>•</div>
                             <div className="flex items-center">
                               <Calendar className="h-4 w-4 mr-1" />
