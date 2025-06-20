@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Lock, User, Phone, Building, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, Phone, Building, Eye, EyeOff, ArrowLeft, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const SignupPage = () => {
@@ -18,6 +18,7 @@ const SignupPage = () => {
     fullName: '',
     businessName: '',
     businessType: '',
+    projectSize: '',
     email: '',
     phone: '',
     password: ''
@@ -28,7 +29,7 @@ const SignupPage = () => {
   };
 
   const validateForm = () => {
-    if (!formData.fullName || !formData.businessName || !formData.businessType || !formData.email || !formData.phone || !formData.password) {
+    if (!formData.fullName || !formData.businessName || !formData.businessType || !formData.projectSize || !formData.email || !formData.phone || !formData.password) {
       setError('Please fill in all required fields');
       return false;
     }
@@ -126,6 +127,21 @@ const SignupPage = () => {
                   <SelectItem value="land-developer">Land Developer</SelectItem>
                   <SelectItem value="marketer">Marketer</SelectItem>
                   <SelectItem value="mixed">Mixed — Estate & Land Developer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="projectSize">Company Project Size</Label>
+              <Select onValueChange={(value) => handleInputChange('projectSize', value)} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select project size" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Less than 10 project sites</SelectItem>
+                  <SelectItem value="medium">11-20 project sites</SelectItem>
+                  <SelectItem value="large">21-50 project sites</SelectItem>
+                  <SelectItem value="enterprise">Above 50 project sites</SelectItem>
                 </SelectContent>
               </Select>
             </div>
