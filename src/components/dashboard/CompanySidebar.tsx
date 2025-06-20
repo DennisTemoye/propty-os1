@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Building2,
@@ -22,6 +23,8 @@ import {
   FolderOpen,
   Gift,
   TrendingUp,
+  ChevronDown,
+  Wrench,
 } from 'lucide-react';
 
 const sidebarItems = [
@@ -32,11 +35,12 @@ const sidebarItems = [
   { icon: DollarSign, label: 'Accounting', path: '/company/accounting' },
   { icon: Users2, label: 'Team & Roles', path: '/company/team' },
   { icon: BarChart3, label: 'Reports', path: '/company/reports' },
-  { icon: TrendingUp, label: 'CRM Pipelines', path: '/company/crm' },
-  { icon: FolderOpen, label: 'Document Manager', path: '/company/documents' },
-  { icon: Calendar, label: 'Calendar & Scheduling', path: '/company/calendar' },
-  { icon: Settings, label: 'Settings', path: '/company/settings' },
-  { icon: Gift, label: 'Referral Program', path: '/company/referrals' },
+];
+
+const advancedToolsItems = [
+  { icon: TrendingUp, label: 'CRM Pipelines', path: '/company/crm', description: 'Manage leads across stages: Contacted → Inspection → Offer → Payment → Closed' },
+  { icon: FolderOpen, label: 'Document Manager', path: '/company/documents', description: 'Store and manage signed documents, survey plans, allocation letters, and related files' },
+  { icon: Calendar, label: 'Calendar & Scheduling', path: '/company/calendar', description: 'Track inspections, scheduled meetings, follow-up deadlines, and important project dates' },
 ];
 
 interface CompanySidebarProps {
@@ -46,12 +50,17 @@ interface CompanySidebarProps {
 export function CompanySidebar({ className }: CompanySidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isAdvancedToolsOpen, setIsAdvancedToolsOpen] = useState(false);
 
   const isActivePath = (path: string) => {
     if (path === '/company/dashboard') {
       return location.pathname === path;
     }
     return location.pathname.startsWith(path);
+  };
+
+  const isAdvancedToolsActive = () => {
+    return advancedToolsItems.some(item => isActivePath(item.path));
   };
 
   const handleLogout = () => {
@@ -90,6 +99,57 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
                   {item.label}
                 </Button>
               ))}
+              
+              {/* Advanced Tools Collapsible Section */}
+              <Collapsible 
+                open={isAdvancedToolsOpen} 
+                onOpenChange={setIsAdvancedToolsOpen}
+                className="mt-2"
+              >
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant={isAdvancedToolsActive() ? 'secondary' : 'ghost'}
+                    className={cn(
+                      'w-full justify-between',
+                      isAdvancedToolsActive() && 'bg-purple-100 text-purple-900'
+                    )}
+                  >
+                    <div className="flex items-center">
+                      <Wrench className="mr-2 h-4 w-4" />
+                      Advanced Tools
+                    </div>
+                    <ChevronDown className={cn(
+                      "h-4 w-4 transition-transform duration-200",
+                      isAdvancedToolsOpen && "rotate-180"
+                    )} />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-1 mt-1">
+                  {advancedToolsItems.map((item) => (
+                    <Button
+                      key={item.path}
+                      variant={isActivePath(item.path) ? 'secondary' : 'ghost'}
+                      className={cn(
+                        'w-full justify-start pl-8 text-sm',
+                        isActivePath(item.path) && 'bg-purple-100 text-purple-900'
+                      )}
+                      onClick={() => navigate(item.path)}
+                    >
+                      <item.icon className="mr-2 h-3 w-3" />
+                      {item.label}
+                    </Button>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/settings')}>
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Button>
+              <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/referrals')}>
+                <Gift className="mr-2 h-4 w-4" />
+                Referral Program
+              </Button>
             </div>
             <div className="mt-8 pt-4 border-t">
               <div className="space-y-1">
