@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play, Building, Users, DollarSign, FileText, TrendingUp, Calendar, AlertCircle, MapPin } from 'lucide-react';
+import { ArrowRight, Play, Building, Users, DollarSign, FileText, TrendingUp, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
@@ -105,7 +105,7 @@ const HeroSection = () => {
                   <div className="bg-gradient-to-tr from-purple-500 to-purple-600 rounded-xl shadow-md p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="text-xs font-medium text-white/80 mb-1">Total Sales</div>
+                        <div className="text-xs font-medium text-white/80 mb-1">Total Revenue</div>
                         <div className="text-lg font-bold text-white">₦2.4B</div>
                         <div className="text-xs text-white/70">+12% this month</div>
                       </div>
@@ -117,12 +117,12 @@ const HeroSection = () => {
                   <div className="bg-gradient-to-tr from-blue-500 to-blue-600 rounded-xl shadow-md p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="text-xs font-medium text-white/80 mb-1">Project Sites</div>
+                        <div className="text-xs font-medium text-white/80 mb-1">Active Projects</div>
                         <div className="text-lg font-bold text-white">24</div>
                         <div className="text-xs text-white/70">3 new this week</div>
                       </div>
                       <div className="p-2 rounded-lg bg-white/20">
-                        <MapPin className="h-4 w-4 text-white" />
+                        <Building className="h-4 w-4 text-white" />
                       </div>
                     </div>
                   </div>
@@ -130,8 +130,8 @@ const HeroSection = () => {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="text-xs font-medium text-white/80 mb-1">Total Clients</div>
-                        <div className="text-lg font-bold text-white">1,247</div>
-                        <div className="text-xs text-white/70">89 active</div>
+                        <div className="text-lg font-bold text-white">1,847</div>
+                        <div className="text-xs text-white/70">156 active</div>
                       </div>
                       <div className="p-2 rounded-lg bg-white/20">
                         <Users className="h-4 w-4 text-white" />
@@ -141,28 +141,12 @@ const HeroSection = () => {
                   <div className="bg-gradient-to-tr from-amber-500 to-amber-600 rounded-xl shadow-md p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="text-xs font-medium text-white/80 mb-1">Units Allocated</div>
-                        <div className="text-lg font-bold text-white">156</div>
-                        <div className="text-xs text-white/70">23 pending</div>
+                        <div className="text-xs font-medium text-white/80 mb-1">Growth Rate</div>
+                        <div className="text-lg font-bold text-white">28%</div>
+                        <div className="text-xs text-white/70">year over year</div>
                       </div>
                       <div className="p-2 rounded-lg bg-white/20">
-                        <Building className="h-4 w-4 text-white" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional KPI Row */}
-                <div className="grid grid-cols-1 gap-4 mb-6">
-                  <div className="bg-gradient-to-tr from-red-500 to-red-600 rounded-xl shadow-md p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="text-xs font-medium text-white/80 mb-1">Pending Payments</div>
-                        <div className="text-lg font-bold text-white">₦45.2M</div>
-                        <div className="text-xs text-white/70">12 overdue accounts</div>
-                      </div>
-                      <div className="p-2 rounded-lg bg-white/20">
-                        <AlertCircle className="h-4 w-4 text-white" />
+                        <TrendingUp className="h-4 w-4 text-white" />
                       </div>
                     </div>
                   </div>
