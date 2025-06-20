@@ -69,15 +69,15 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
   };
 
   return (
-    <div className={cn('pb-12 w-64 bg-gradient-to-b from-navy-900 via-navy-800 to-navy-900 min-h-screen', className)}>
+    <div className={cn('pb-12 w-64', className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="flex items-center mb-2">
-            <Building2 className="h-6 w-6 mr-2 text-blue-300" />
-            <h2 className="text-lg font-semibold tracking-tight text-white">ProptyOS</h2>
+            <Building2 className="h-6 w-6 mr-2 text-purple-600" />
+            <h2 className="text-lg font-semibold tracking-tight">ProptyOS</h2>
           </div>
-          <div className="flex items-center text-sm text-blue-200">
-            <Badge variant="outline" className="text-xs border-blue-400 text-blue-200">
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Badge variant="outline" className="text-xs">
               Real Estate CRM
             </Badge>
           </div>
@@ -90,8 +90,8 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
                   key={item.path}
                   variant={isActivePath(item.path) ? 'secondary' : 'ghost'}
                   className={cn(
-                    'w-full justify-start text-blue-100 hover:bg-blue-700/50 hover:text-white',
-                    isActivePath(item.path) && 'bg-blue-600 text-white shadow-lg'
+                    'w-full justify-start',
+                    isActivePath(item.path) && 'bg-purple-100 text-purple-900'
                   )}
                   onClick={() => navigate(item.path)}
                 >
@@ -110,8 +110,8 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
                   <Button
                     variant={isAdvancedToolsActive() ? 'secondary' : 'ghost'}
                     className={cn(
-                      'w-full justify-between text-blue-100 hover:bg-blue-700/50 hover:text-white',
-                      isAdvancedToolsActive() && 'bg-blue-600 text-white shadow-lg'
+                      'w-full justify-between',
+                      isAdvancedToolsActive() && 'bg-purple-100 text-purple-900'
                     )}
                   >
                     <div className="flex items-center">
@@ -130,8 +130,8 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
                       key={item.path}
                       variant={isActivePath(item.path) ? 'secondary' : 'ghost'}
                       className={cn(
-                        'w-full justify-start pl-8 text-sm text-blue-100 hover:bg-blue-700/50 hover:text-white',
-                        isActivePath(item.path) && 'bg-blue-600 text-white shadow-lg'
+                        'w-full justify-start pl-8 text-sm',
+                        isActivePath(item.path) && 'bg-purple-100 text-purple-900'
                       )}
                       onClick={() => navigate(item.path)}
                     >
@@ -142,24 +142,24 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
                 </CollapsibleContent>
               </Collapsible>
 
-              <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-700/50 hover:text-white" onClick={() => navigate('/company/settings')}>
+              <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/settings')}>
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </Button>
-              <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-700/50 hover:text-white" onClick={() => navigate('/company/referrals')}>
+              <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/referrals')}>
                 <Gift className="mr-2 h-4 w-4" />
                 Referral Program
               </Button>
             </div>
-            <div className="mt-8 pt-4 border-t border-blue-600">
+            <div className="mt-8 pt-4 border-t">
               <div className="space-y-1">
-                <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-700/50 hover:text-white" onClick={() => navigate('/company/help')}>
+                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/help')}>
                   <HelpCircle className="mr-2 h-4 w-4" />
                   Support / Help Center
                 </Button>
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-start text-red-300 hover:text-red-200 hover:bg-red-500/20"
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
                   onClick={handleLogout}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
