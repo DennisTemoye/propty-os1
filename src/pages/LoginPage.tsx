@@ -51,16 +51,19 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md mb-6">
+        <div className="flex items-center justify-between mb-6">
+          <Link to="/" className="inline-flex items-center text-purple-600 hover:text-purple-700 dark:text-purple-400">
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back to Home
+          </Link>
+          <h1 className="text-2xl font-bold text-purple-600 dark:text-purple-400">ProptyOS</h1>
+        </div>
+      </div>
+      
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center pb-2">
-          <div className="flex items-center justify-between mb-4">
-            <Link to="/" className="inline-flex items-center text-purple-600 hover:text-purple-700 dark:text-purple-400">
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back to Home
-            </Link>
-            <h1 className="text-2xl font-bold text-purple-600 dark:text-purple-400">ProptyOS</h1>
-          </div>
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Welcome back</h2>
           <p className="text-gray-600 dark:text-gray-400">Sign in to your account</p>
         </CardHeader>
