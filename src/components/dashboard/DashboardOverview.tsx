@@ -121,7 +121,7 @@ export function DashboardOverview() {
       <div className="bg-white border-b px-6 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Company Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600 mt-1">Real Estate Sales & Project Management Overview</p>
           </div>
           <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
