@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Edit, Trash2, FileText, Building, Users, BarChart3 } from 'lucide-react';
 import { ProjectDetailView } from '@/components/dashboard/projects/ProjectDetailView';
-import { ProjectSiteForm } from '@/components/dashboard/projects/ProjectSiteForm';
+import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
 import { toast } from 'sonner';
 
 const mockProjects = [
@@ -13,49 +13,11 @@ const mockProjects = [
     id: 1,
     name: 'Victoria Gardens Estate',
     location: 'Lekki, Lagos',
-    category: 'Housing',
-    type: 'Residential',
     totalUnits: 150,
     soldUnits: 89,
     reservedUnits: 23,
     availableUnits: 38,
-    status: 'active',
-    description: 'Premium residential estate with modern amenities',
-    projectSize: '50 hectares',
-    developmentStage: 'Construction',
-    documentTitle: 'Victoria Gardens Master Plan 2024'
-  },
-  {
-    id: 2,
-    name: 'Mainland Commercial Plaza',
-    location: 'Ikeja, Lagos',
-    category: 'Both',
-    type: 'Commercial',
-    totalUnits: 75,
-    soldUnits: 45,
-    reservedUnits: 12,
-    availableUnits: 18,
-    status: 'active',
-    description: 'Modern commercial spaces and offices',
-    projectSize: '15 hectares',
-    developmentStage: 'Marketing',
-    documentTitle: 'Mainland Plaza Development Guide'
-  },
-  {
-    id: 3,
-    name: 'Sunset Land Development',
-    location: 'Abuja FCT',
-    category: 'Lands',
-    type: 'Residential',
-    totalUnits: 200,
-    soldUnits: 200,
-    reservedUnits: 0,
-    availableUnits: 0,
-    status: 'sold out',
-    description: 'Prime land plots for residential development',
-    projectSize: '100 hectares',
-    developmentStage: 'Completed',
-    documentTitle: 'Sunset Subdivision Layout Plan'
+    status: 'active'
   }
 ];
 
@@ -67,20 +29,8 @@ export default function ProjectDetailPage() {
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
   if (!project) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center py-12">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Project not found</h1>
-            <Button onClick={() => navigate('/company/projects')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Projects
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    return <div>Project not found</div>;
+  };
 
   const handleEdit = () => {
     setIsEditOpen(true);
@@ -183,17 +133,14 @@ export default function ProjectDetailPage() {
 
         {/* Edit Project Modal */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Edit Project</DialogTitle>
               <DialogDescription>
                 Update project information and settings
               </DialogDescription>
             </DialogHeader>
-            <ProjectSiteForm 
-              project={project}
-              onClose={() => setIsEditOpen(false)} 
-            />
+            <NewProjectForm onClose={() => setIsEditOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>
