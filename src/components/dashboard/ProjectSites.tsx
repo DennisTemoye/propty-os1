@@ -249,11 +249,6 @@ export function ProjectSites() {
                       <div className="font-medium">{project.developmentStage}</div>
                     </div>
                   </div>
-
-                  <div className="text-sm">
-                    <span className="text-gray-600">Document:</span>
-                    <div className="font-medium text-blue-600">{project.documentTitle}</div>
-                  </div>
                   
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
@@ -263,21 +258,6 @@ export function ProjectSites() {
                     <div>
                       <span className="text-gray-600">Total Units:</span>
                       <div className="font-medium">{project.totalUnits}</div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-green-50 p-2 rounded">
-                      <div className="text-lg font-bold text-green-600">{project.soldUnits}</div>
-                      <div className="text-xs text-green-700">Sold</div>
-                    </div>
-                    <div className="bg-yellow-50 p-2 rounded">
-                      <div className="text-lg font-bold text-yellow-600">{project.reservedUnits}</div>
-                      <div className="text-xs text-yellow-700">Reserved</div>
-                    </div>
-                    <div className="bg-blue-50 p-2 rounded">
-                      <div className="text-lg font-bold text-blue-600">{project.availableUnits}</div>
-                      <div className="text-xs text-blue-700">Available</div>
                     </div>
                   </div>
                 </div>
@@ -303,7 +283,6 @@ export function ProjectSites() {
                           <MapPin className="h-3 w-3 mr-1" />
                           {project.location} • {project.projectSize} • {project.developmentStage}
                         </div>
-                        <div className="text-sm text-blue-600 mt-1">{project.documentTitle}</div>
                       </div>
                       <div className="flex flex-wrap gap-1">
                         <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
@@ -323,6 +302,14 @@ export function ProjectSites() {
                     <div className="text-center">
                       <div className="font-medium text-green-600">{project.soldUnits}</div>
                       <div className="text-gray-500">Sold</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium text-yellow-600">{project.reservedUnits}</div>
+                      <div className="text-gray-500">Reserved</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium text-blue-600">{project.availableUnits}</div>
+                      <div className="text-gray-500">Available</div>
                     </div>
                   </div>
                 </div>
