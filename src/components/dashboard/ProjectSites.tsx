@@ -23,7 +23,7 @@ const mockProjectSites = [
     reservedUnits: 23,
     availableUnits: 38,
     status: 'active',
-    priority: 'high',
+    propertyType: 'Residential',
     projectSize: 50000,
     developmentStage: 'Construction',
     completionPercentage: 65,
@@ -43,7 +43,7 @@ const mockProjectSites = [
     reservedUnits: 12,
     availableUnits: 18,
     status: 'paused',
-    priority: 'medium',
+    propertyType: 'Commercial',
     projectSize: 15000,
     developmentStage: 'Marketing',
     completionPercentage: 80,
@@ -63,7 +63,7 @@ const mockProjectSites = [
     reservedUnits: 4,
     availableUnits: 0,
     status: 'completed',
-    priority: 'low',
+    propertyType: 'Mixed-Use',
     projectSize: 100000,
     developmentStage: 'Handover',
     completionPercentage: 100,
@@ -97,11 +97,11 @@ export function ProjectSites() {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-700';
-      case 'medium': return 'bg-yellow-100 text-yellow-700';
-      case 'low': return 'bg-green-100 text-green-700';
+  const getPropertyTypeColor = (type: string) => {
+    switch (type) {
+      case 'Residential': return 'bg-blue-100 text-blue-700';
+      case 'Commercial': return 'bg-purple-100 text-purple-700';
+      case 'Mixed-Use': return 'bg-green-100 text-green-700';
       default: return 'bg-gray-100 text-gray-700';
     }
   };
@@ -255,6 +255,7 @@ export function ProjectSites() {
           {filteredProjects.map((project) => {
             const statusConfig = getStatusConfig(project.status);
             const StatusIcon = statusConfig.icon;
+            const salesProgress = (project.soldUnits / project.totalUnits) * 100;
             
             return (
               <Card 
@@ -273,8 +274,8 @@ export function ProjectSites() {
                       <StatusIcon className="h-3 w-3 mr-1" />
                       {project.status}
                     </Badge>
-                    <Badge className={getPriorityColor(project.priority)}>
-                      {project.priority}
+                    <Badge className={getPropertyTypeColor(project.propertyType)}>
+                      {project.propertyType}
                     </Badge>
                   </div>
                 </div>
@@ -285,16 +286,34 @@ export function ProjectSites() {
                     <MapPin className="h-4 w-4 mr-1" />
                     {project.location}
                   </div>
+
+                  {/* Blocks and Units Info */}
+                  <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <Building2 className="h-4 w-4 mr-1 text-gray-600" />
+                        <span className="text-lg font-bold text-gray-900">{project.totalBlocks}</span>
+                      </div>
+                      <div className="text-xs text-gray-500">Blocks</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <House className="h-4 w-4 mr-1 text-gray-600" />
+                        <span className="text-lg font-bold text-gray-900">{project.totalUnits}</span>
+                      </div>
+                      <div className="text-xs text-gray-500">Units</div>
+                    </div>
+                  </div>
                   
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span>Progress</span>
-                      <span className="font-medium">{project.completionPercentage}%</span>
+                      <span>Sales Progress</span>
+                      <span className="font-medium">{salesProgress.toFixed(1)}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        className="bg-indigo-600 h-2 rounded-full" 
-                        style={{ width: `${project.completionPercentage}%` }}
+                        className="bg-green-600 h-2 rounded-full" 
+                        style={{ width: `${salesProgress}%` }}
                       />
                     </div>
                   </div>
@@ -343,6 +362,7 @@ export function ProjectSites() {
           {filteredProjects.map((project) => {
             const statusConfig = getStatusConfig(project.status);
             const StatusIcon = statusConfig.icon;
+            const salesProgress = (project.soldUnits / project.totalUnits) * 100;
             
             return (
               <Card 
@@ -366,6 +386,9 @@ export function ProjectSites() {
                             <StatusIcon className="h-3 w-3 mr-1" />
                             {project.status}
                           </Badge>
+                          <Badge className={getPropertyTypeColor(project.propertyType)}>
+                            {project.propertyType}
+                          </Badge>
                         </div>
                         
                         <div className="flex items-center text-gray-600 text-sm space-x-4">
@@ -384,6 +407,10 @@ export function ProjectSites() {
                     
                     <div className="flex items-center space-x-6 text-sm">
                       <div className="text-center">
+                        <div className="font-bold">{project.totalBlocks}</div>
+                        <div className="text-gray-500">Blocks</div>
+                      </div>
+                      <div className="text-center">
                         <div className="font-bold">{project.totalUnits}</div>
                         <div className="text-gray-500">Units</div>
                       </div>
@@ -392,8 +419,8 @@ export function ProjectSites() {
                         <div className="text-gray-500">Sold</div>
                       </div>
                       <div className="text-center">
-                        <div className="font-bold">{project.completionPercentage}%</div>
-                        <div className="text-gray-500">Progress</div>
+                        <div className="font-bold">{salesProgress.toFixed(1)}%</div>
+                        <div className="text-gray-500">Sales Progress</div>
                       </div>
                       
                       <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
