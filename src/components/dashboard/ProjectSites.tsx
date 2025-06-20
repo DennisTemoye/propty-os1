@@ -1,14 +1,14 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Users, Home, TrendingUp } from 'lucide-react';
+import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 const mockProjectSites = [
   {
@@ -132,56 +132,31 @@ export function ProjectSites() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <GradientKpiCard
-          title="Total Projects"
-          value={totalProjects.toString()}
-          subtitle="Active projects"
-          icon={Building2}
-          gradientFrom="from-blue-500"
-          gradientTo="to-blue-600"
-          iconBgColor="bg-blue-100"
-          iconColor="text-blue-600"
-        />
-        <GradientKpiCard
-          title="Total Units"
-          value={totalUnits.toLocaleString()}
-          subtitle="All project units"
-          icon={Home}
-          gradientFrom="from-purple-500"
-          gradientTo="to-purple-600"
-          iconBgColor="bg-purple-100"
-          iconColor="text-purple-600"
-        />
-        <GradientKpiCard
-          title="Units Sold"
-          value={totalSold.toLocaleString()}
-          subtitle={`${((totalSold / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={TrendingUp}
-          gradientFrom="from-green-500"
-          gradientTo="to-green-600"
-          iconBgColor="bg-green-100"
-          iconColor="text-green-600"
-        />
-        <GradientKpiCard
-          title="Reserved"
-          value={totalReserved.toLocaleString()}
-          subtitle={`${((totalReserved / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={Users}
-          gradientFrom="from-yellow-500"
-          gradientTo="to-yellow-600"
-          iconBgColor="bg-yellow-100"
-          iconColor="text-yellow-600"
-        />
-        <GradientKpiCard
-          title="Available"
-          value={totalAvailable.toLocaleString()}
-          subtitle={`${((totalAvailable / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={MapPin}
-          gradientFrom="from-indigo-500"
-          gradientTo="to-indigo-600"
-          iconBgColor="bg-indigo-100"
-          iconColor="text-indigo-600"
-        />
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Total Projects</div>
+          <div className="text-2xl font-bold">{totalProjects}</div>
+          <div className="text-xs opacity-75">Active projects</div>
+        </div>
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Total Units</div>
+          <div className="text-2xl font-bold">{totalUnits.toLocaleString()}</div>
+          <div className="text-xs opacity-75">All project units</div>
+        </div>
+        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Units Sold</div>
+          <div className="text-2xl font-bold">{totalSold.toLocaleString()}</div>
+          <div className="text-xs opacity-75">{((totalSold / totalUnits) * 100).toFixed(1)}% of total</div>
+        </div>
+        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Reserved</div>
+          <div className="text-2xl font-bold">{totalReserved.toLocaleString()}</div>
+          <div className="text-xs opacity-75">{((totalReserved / totalUnits) * 100).toFixed(1)}% of total</div>
+        </div>
+        <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Available</div>
+          <div className="text-2xl font-bold">{totalAvailable.toLocaleString()}</div>
+          <div className="text-xs opacity-75">{((totalAvailable / totalUnits) * 100).toFixed(1)}% of total</div>
+        </div>
       </div>
 
       {/* Enhanced Filters */}
@@ -246,62 +221,59 @@ export function ProjectSites() {
           {filteredProjects.map((project) => (
             <Card 
               key={project.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer"
+              className="hover:shadow-lg transition-shadow cursor-pointer border-0 shadow-sm"
               onClick={() => handleCardClick(project.id)}
             >
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <CardTitle className="text-lg mb-2">{project.name}</CardTitle>
-                    <div className="flex items-center text-gray-600 mb-2">
+                    <CardTitle className="text-lg mb-2 text-gray-900">{project.name}</CardTitle>
+                    <div className="flex items-center text-gray-600 mb-3">
                       <MapPin className="h-4 w-4 mr-1" />
-                      {project.location}
-                    </div>
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      <Badge className={getStatusColor(project.status)}>
-                        {project.status}
-                      </Badge>
+                      <span className="text-sm">{project.location}</span>
                     </div>
                   </div>
+                  <Badge className={getStatusColor(project.status)}>
+                    {project.status}
+                  </Badge>
                 </div>
-                <p className="text-sm text-gray-600">{project.description}</p>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Size:</span>
-                      <div className="font-medium">{project.projectSize}</div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-gray-600 text-xs">Project Size</span>
+                      <div className="font-medium text-gray-900">{project.projectSize}</div>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Stage:</span>
-                      <div className="font-medium">{project.developmentStage}</div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-gray-600 text-xs">Development Stage</span>
+                      <div className="font-medium text-gray-900">{project.developmentStage}</div>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Blocks:</span>
-                      <div className="font-medium text-blue-600">{project.totalBlocks}</div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-gray-600 text-xs">Blocks</span>
+                      <div className="font-bold text-blue-600 text-lg">{project.totalBlocks}</div>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Total Units:</span>
-                      <div className="font-medium">{project.totalUnits}</div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-gray-600 text-xs">Total Units</span>
+                      <div className="font-bold text-gray-900 text-lg">{project.totalUnits}</div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-green-50 p-2 rounded">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-green-50 border border-green-200 p-3 rounded-lg text-center">
                       <div className="text-lg font-bold text-green-600">{project.soldUnits}</div>
-                      <div className="text-xs text-green-700">Sold</div>
+                      <div className="text-xs text-green-700 font-medium">Sold</div>
                     </div>
-                    <div className="bg-yellow-50 p-2 rounded">
+                    <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-center">
                       <div className="text-lg font-bold text-yellow-600">{project.reservedUnits}</div>
-                      <div className="text-xs text-yellow-700">Reserved</div>
+                      <div className="text-xs text-yellow-700 font-medium">Reserved</div>
                     </div>
-                    <div className="bg-blue-50 p-2 rounded">
+                    <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-center">
                       <div className="text-lg font-bold text-blue-600">{project.availableUnits}</div>
-                      <div className="text-xs text-blue-700">Available</div>
+                      <div className="text-xs text-blue-700 font-medium">Available</div>
                     </div>
                   </div>
                 </div>
