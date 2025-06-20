@@ -243,22 +243,18 @@ export function ProjectSites() {
                 </div>
                 <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
                   <Button
-                    variant="ghost"
+                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
                     size="sm"
                     onClick={() => setViewMode('grid')}
-                    className={`${viewMode === 'grid' 
-                      ? 'bg-white shadow-sm text-indigo-600 border border-indigo-100' 
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-200'}`}
+                    className={viewMode === 'grid' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'}
                   >
                     <LayoutGrid className="h-4 w-4" />
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant={viewMode === 'list' ? 'default' : 'ghost'}
                     size="sm"
                     onClick={() => setViewMode('list')}
-                    className={`${viewMode === 'list' 
-                      ? 'bg-white shadow-sm text-indigo-600 border border-indigo-100' 
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-200'}`}
+                    className={viewMode === 'list' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'}
                   >
                     <List className="h-4 w-4" />
                   </Button>
@@ -311,50 +307,35 @@ export function ProjectSites() {
 
                   {/* Project Info Grid */}
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100 p-3 rounded-lg">
-                      <div className="text-xs text-blue-600 font-medium mb-1">Size</div>
-                      <div className="font-bold text-blue-800 text-sm">{project.projectSize} m²</div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="text-xs text-gray-500 mb-1">Size</div>
+                      <div className="font-semibold text-gray-900 text-sm">{project.projectSize} m²</div>
                     </div>
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 border border-purple-100 p-3 rounded-lg">
-                      <div className="text-xs text-purple-600 font-medium mb-1">Units</div>
-                      <div className="font-bold text-purple-800 text-sm">{project.totalUnits}</div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="text-xs text-gray-500 mb-1">Units</div>
+                      <div className="font-semibold text-gray-900 text-sm">{project.totalUnits}</div>
                     </div>
-                    <div className="bg-gradient-to-br from-indigo-50 to-indigo-100/50 border border-indigo-100 p-3 rounded-lg">
-                      <div className="text-xs text-indigo-600 font-medium mb-1">Stage</div>
-                      <Badge className={`${getStageColor(project.developmentStage)} text-xs border-0 font-medium`}>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="text-xs text-gray-500 mb-1">Stage</div>
+                      <Badge className={`${getStageColor(project.developmentStage)} text-xs`}>
                         {project.developmentStage}
                       </Badge>
                     </div>
                   </div>
 
-                  {/* Enhanced KPI Stats Grid */}
+                  {/* Stats Grid */}
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-100 p-4 rounded-xl text-center relative overflow-hidden">
-                      <div className="relative z-10">
-                        <div className="text-xl font-bold text-emerald-700 mb-1">{project.soldUnits}</div>
-                        <div className="text-xs text-emerald-600 font-medium">Sold Units</div>
-                      </div>
-                      <div className="absolute top-1 right-1 opacity-20">
-                        <DollarSign className="h-5 w-5 text-emerald-500" />
-                      </div>
+                    <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-lg text-center">
+                      <div className="text-lg font-bold text-emerald-600">{project.soldUnits}</div>
+                      <div className="text-xs text-emerald-700 font-medium">Sold</div>
                     </div>
-                    <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-100 p-4 rounded-xl text-center relative overflow-hidden">
-                      <div className="relative z-10">
-                        <div className="text-xl font-bold text-amber-700 mb-1">{project.reservedUnits}</div>
-                        <div className="text-xs text-amber-600 font-medium">Reserved</div>
-                      </div>
-                      <div className="absolute top-1 right-1 opacity-20">
-                        <Calendar className="h-5 w-5 text-amber-500" />
-                      </div>
+                    <div className="bg-amber-50 border border-amber-100 p-3 rounded-lg text-center">
+                      <div className="text-lg font-bold text-amber-600">{project.reservedUnits}</div>
+                      <div className="text-xs text-amber-700 font-medium">Reserved</div>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100 p-4 rounded-xl text-center relative overflow-hidden">
-                      <div className="relative z-10">
-                        <div className="text-xl font-bold text-blue-700 mb-1">{project.availableUnits}</div>
-                        <div className="text-xs text-blue-600 font-medium">Available</div>
-                      </div>
-                      <div className="absolute top-1 right-1 opacity-20">
-                        <House className="h-5 w-5 text-blue-500" />
-                      </div>
+                    <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg text-center">
+                      <div className="text-lg font-bold text-blue-600">{project.availableUnits}</div>
+                      <div className="text-xs text-blue-700 font-medium">Available</div>
                     </div>
                   </div>
 
