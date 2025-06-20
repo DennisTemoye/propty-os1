@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -10,11 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { CalendarIcon, Upload, MapPin, Building, Users, DollarSign, FileText, Plus, Trash2, Eye } from 'lucide-react';
-import { format } from 'date-fns';
+import { Building, Users, FileText, Plus, Trash2, Eye } from 'lucide-react';
 
 interface EnhancedProjectSiteFormProps {
   project?: any;
@@ -28,13 +24,11 @@ interface ProjectFormData {
   description: string;
   category: string;
   projectType: string;
+  projectSize: number;
+  developmentStage: string;
   
   // Project Details
   totalUnits: number;
-  projectSize: number;
-  estimatedValue: number;
-  startDate: Date;
-  estimatedCompletion: Date;
   
   // Project Team
   projectManager: string;
@@ -80,11 +74,9 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
       description: project?.description || '',
       category: project?.category || '',
       projectType: project?.projectType || '',
-      totalUnits: project?.totalUnits || 0,
       projectSize: project?.projectSize || 0,
-      estimatedValue: project?.estimatedValue || 0,
-      startDate: project?.startDate ? new Date(project.startDate) : new Date(),
-      estimatedCompletion: project?.estimatedCompletion ? new Date(project.estimatedCompletion) : new Date(),
+      developmentStage: project?.developmentStage || '',
+      totalUnits: project?.totalUnits || 0,
       projectManager: project?.projectManager || '',
       salesTeam: project?.salesTeam || [],
       amenities: project?.amenities || [],
@@ -266,43 +258,7 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
                   />
                 </div>
 
-                {selectedCategory && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Category:</span>
-                    <Badge className={getCategoryColor(selectedCategory)}>
-                      {categories.find(c => c.value === selectedCategory)?.label}
-                    </Badge>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="details" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2" />
-                  Project Details & Timeline
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="totalUnits"
-                    rules={{ required: 'Total units is required', min: { value: 1, message: 'Must be at least 1' } }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Total Units *</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="Enter total units" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="projectSize"
@@ -320,86 +276,64 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
 
                   <FormField
                     control={form.control}
-                    name="estimatedValue"
+                    name="developmentStage"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Estimated Value (₦)</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="Enter estimated project value" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
-                        </FormControl>
+                        <FormLabel>Development Stage</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select stage" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="planning">Planning</SelectItem>
+                            <SelectItem value="construction">Construction</SelectItem>
+                            <SelectItem value="marketing">Marketing</SelectItem>
+                            <SelectItem value="handover">Handover</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="startDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Start Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={`w-full pl-3 text-left font-normal ${!field.value && "text-muted-foreground"}`}
-                              >
-                                {field.value ? format(field.value, "PPP") : "Pick a date"}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => date < new Date("1900-01-01")}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                {selectedCategory && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">Category:</span>
+                    <Badge className={getCategoryColor(selectedCategory)}>
+                      {categories.find(c => c.value === selectedCategory)?.label}
+                    </Badge>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-                  <FormField
-                    control={form.control}
-                    name="estimatedCompletion"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Estimated Completion</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={`w-full pl-3 text-left font-normal ${!field.value && "text-muted-foreground"}`}
-                              >
-                                {field.value ? format(field.value, "PPP") : "Pick a date"}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => date < new Date()}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+          <TabsContent value="details" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  Project Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="totalUnits"
+                  rules={{ required: 'Total units is required', min: { value: 1, message: 'Must be at least 1' } }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Total Units *</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="Enter total units" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </CardContent>
             </Card>
 
@@ -494,6 +428,7 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
             </Card>
           </TabsContent>
 
+          
           <TabsContent value="team" className="space-y-6">
             <Card>
               <CardHeader>
@@ -633,11 +568,10 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Image Upload */}
+                
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Project Images</label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-400 transition-colors">
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <Input type="file" accept="image/*" multiple className="hidden" id="images-upload" />
                     <label htmlFor="images-upload" className="cursor-pointer">
                       <div className="text-gray-600">
@@ -649,11 +583,10 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
                   </div>
                 </div>
 
-                {/* Layout Plans Upload */}
+                
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Layout Plans & Blueprints</label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors">
-                    <FileText className="h-10 w-10 text-gray-400 mx-auto mb-3" />
                     <Input type="file" accept=".pdf,.dwg,.png,.jpg" multiple className="hidden" id="layout-upload" />
                     <label htmlFor="layout-upload" className="cursor-pointer">
                       <div className="text-gray-600">
@@ -664,11 +597,10 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
                   </div>
                 </div>
 
-                {/* Documents Upload */}
+                
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Legal Documents</label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors">
-                    <FileText className="h-10 w-10 text-gray-400 mx-auto mb-3" />
                     <Input type="file" accept=".pdf,.doc,.docx" multiple className="hidden" id="documents-upload" />
                     <label htmlFor="documents-upload" className="cursor-pointer">
                       <div className="text-gray-600">
@@ -683,7 +615,6 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
           </TabsContent>
         </Tabs>
 
-        {/* Form Actions */}
         <div className="flex justify-between items-center pt-6 border-t border-gray-200">
           <Button type="button" variant="outline" onClick={onClose} className="px-6">
             Cancel
