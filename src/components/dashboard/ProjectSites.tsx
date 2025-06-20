@@ -137,50 +137,50 @@ export function ProjectSites() {
           value={totalProjects.toString()}
           subtitle="Active projects"
           icon={Building2}
-          gradientFrom="from-purple-50"
-          gradientTo="to-purple-100"
-          iconBgColor="bg-purple-200"
-          iconColor="text-purple-600"
+          gradientFrom="from-blue-500"
+          gradientTo="to-blue-600"
+          iconBgColor="bg-blue-200"
+          iconColor="text-blue-700"
         />
         <GradientKpiCard
           title="Total Units"
           value={totalUnits.toLocaleString()}
           subtitle="All project units"
           icon={Home}
-          gradientFrom="from-green-50"
-          gradientTo="to-green-100"
-          iconBgColor="bg-green-200"
-          iconColor="text-green-600"
+          gradientFrom="from-purple-500"
+          gradientTo="to-purple-600"
+          iconBgColor="bg-purple-200"
+          iconColor="text-purple-700"
         />
         <GradientKpiCard
           title="Units Sold"
           value={totalSold.toLocaleString()}
           subtitle={`${((totalSold / totalUnits) * 100).toFixed(1)}% of total`}
           icon={DollarSign}
-          gradientFrom="from-blue-50"
-          gradientTo="to-blue-100"
-          iconBgColor="bg-blue-200"
-          iconColor="text-blue-600"
+          gradientFrom="from-green-500"
+          gradientTo="to-green-600"
+          iconBgColor="bg-green-200"
+          iconColor="text-green-700"
         />
         <GradientKpiCard
           title="Reserved"
           value={totalReserved.toLocaleString()}
           subtitle={`${((totalReserved / totalUnits) * 100).toFixed(1)}% of total`}
           icon={MapPin}
-          gradientFrom="from-yellow-50"
-          gradientTo="to-yellow-100"
+          gradientFrom="from-yellow-500"
+          gradientTo="to-yellow-600"
           iconBgColor="bg-yellow-200"
-          iconColor="text-yellow-600"
+          iconColor="text-yellow-700"
         />
         <GradientKpiCard
           title="Available"
           value={totalAvailable.toLocaleString()}
           subtitle={`${((totalAvailable / totalUnits) * 100).toFixed(1)}% of total`}
           icon={Building2}
-          gradientFrom="from-indigo-50"
-          gradientTo="to-indigo-100"
+          gradientFrom="from-indigo-500"
+          gradientTo="to-indigo-600"
           iconBgColor="bg-indigo-200"
-          iconColor="text-indigo-600"
+          iconColor="text-indigo-700"
         />
       </div>
 
