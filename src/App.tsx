@@ -41,13 +41,15 @@ const App = () => (
             <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
             <Route path="/company/clients" element={<CompanyDashboard />} />
             <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
-            <Route path="/company/marketers" element={<CompanyDashboard />} />
+            <Route path="/company/sales" element={<CompanyDashboard />} />
             <Route path="/company/accounting" element={<CompanyDashboard />} />
-            <Route path="/company/staff" element={<CompanyDashboard />} />
-            <Route path="/company/roles" element={<CompanyDashboard />} />
-            <Route path="/company/documents" element={<CompanyDashboard />} />
-            <Route path="/company/settings" element={<CompanyDashboard />} />
+            <Route path="/company/team" element={<CompanyDashboard />} />
             <Route path="/company/reports" element={<CompanyDashboard />} />
+            <Route path="/company/crm" element={<CompanyDashboard />} />
+            <Route path="/company/documents" element={<CompanyDashboard />} />
+            <Route path="/company/calendar" element={<CompanyDashboard />} />
+            <Route path="/company/settings" element={<CompanyDashboard />} />
+            <Route path="/company/referrals" element={<CompanyDashboard />} />
             <Route path="/company/help" element={<CompanyDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

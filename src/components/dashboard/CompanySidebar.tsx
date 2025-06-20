@@ -9,7 +9,6 @@ import {
   Building2,
   Users,
   FileText,
-  UserCheck,
   Settings,
   BarChart3,
   DollarSign,
@@ -18,19 +17,26 @@ import {
   LogOut,
   Home,
   Users2,
+  Handshake,
+  Calendar,
+  FolderOpen,
+  Gift,
+  TrendingUp,
 } from 'lucide-react';
 
 const sidebarItems = [
   { icon: Home, label: 'Dashboard', path: '/company/dashboard' },
-  { icon: Building2, label: 'Projects', path: '/company/projects' },
+  { icon: Building2, label: 'Project Sites', path: '/company/projects' },
   { icon: Users, label: 'Clients', path: '/company/clients' },
-  { icon: UserCheck, label: 'Marketers', path: '/company/marketers' },
+  { icon: Handshake, label: 'Sales & Allocation', path: '/company/sales' },
+  { icon: DollarSign, label: 'Accounting', path: '/company/accounting' },
+  { icon: Users2, label: 'Team & Roles', path: '/company/team' },
   { icon: BarChart3, label: 'Reports', path: '/company/reports' },
-  { icon: DollarSign, label: 'Accounting & Expenses', path: '/company/accounting' },
-  { icon: Users2, label: 'Staff & Payroll', path: '/company/staff' },
-  { icon: Shield, label: 'Roles & Permissions', path: '/company/roles' },
-  { icon: FileText, label: 'Documents & Media', path: '/company/documents' },
+  { icon: TrendingUp, label: 'CRM Pipelines', path: '/company/crm' },
+  { icon: FolderOpen, label: 'Document Manager', path: '/company/documents' },
+  { icon: Calendar, label: 'Calendar & Scheduling', path: '/company/calendar' },
   { icon: Settings, label: 'Settings', path: '/company/settings' },
+  { icon: Gift, label: 'Referral Program', path: '/company/referrals' },
 ];
 
 interface CompanySidebarProps {
@@ -48,6 +54,11 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
     return location.pathname.startsWith(path);
   };
 
+  const handleLogout = () => {
+    // Add logout logic here
+    navigate('/login');
+  };
+
   return (
     <div className={cn('pb-12 w-64', className)}>
       <div className="space-y-4 py-4">
@@ -63,7 +74,7 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
           </div>
         </div>
         <div className="px-3">
-          <ScrollArea className="h-[calc(100vh-120px)]">
+          <ScrollArea className="h-[calc(100vh-160px)]">
             <div className="space-y-1">
               {sidebarItems.map((item) => (
                 <Button
@@ -82,13 +93,17 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
             </div>
             <div className="mt-8 pt-4 border-t">
               <div className="space-y-1">
-                <Button variant="ghost" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/company/help')}>
                   <HelpCircle className="mr-2 h-4 w-4" />
-                  Help & Support
+                  Support / Help Center
                 </Button>
-                <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={handleLogout}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
+                  Logout
                 </Button>
               </div>
             </div>
