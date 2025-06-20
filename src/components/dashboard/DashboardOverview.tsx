@@ -58,7 +58,7 @@ const kpiData = [
     iconColor: 'text-white',
   },
   {
-    title: 'Monthly Collections',
+    title: 'Installment Collections',
     value: '₦450M',
     subtitle: '92% Collection Rate',
     icon: Calculator,
