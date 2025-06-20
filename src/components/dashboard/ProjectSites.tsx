@@ -1,13 +1,13 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers } from 'lucide-react';
+import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Building, House, DollarSign, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
+import { ProjectKpiCard } from './projects/ProjectKpiCard';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const mockProjectSites = [
@@ -107,6 +107,9 @@ export function ProjectSites() {
   const totalSold = mockProjectSites.reduce((sum, project) => sum + project.soldUnits, 0);
   const totalReserved = mockProjectSites.reduce((sum, project) => sum + project.reservedUnits, 0);
   const totalAvailable = mockProjectSites.reduce((sum, project) => sum + project.availableUnits, 0);
+  
+  // Calculate total revenue (mock calculation)
+  const totalRevenue = totalSold * 25000000; // Mock average unit price
 
   const handleNewProject = () => {
     setEditingProject(null);
@@ -130,33 +133,40 @@ export function ProjectSites() {
         </Button>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Total Projects</div>
-          <div className="text-2xl font-bold">{totalProjects}</div>
-          <div className="text-xs opacity-75">Active projects</div>
-        </div>
-        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Total Units</div>
-          <div className="text-2xl font-bold">{totalUnits.toLocaleString()}</div>
-          <div className="text-xs opacity-75">All project units</div>
-        </div>
-        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Units Sold</div>
-          <div className="text-2xl font-bold">{totalSold.toLocaleString()}</div>
-          <div className="text-xs opacity-75">{((totalSold / totalUnits) * 100).toFixed(1)}% of total</div>
-        </div>
-        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Reserved</div>
-          <div className="text-2xl font-bold">{totalReserved.toLocaleString()}</div>
-          <div className="text-xs opacity-75">{((totalReserved / totalUnits) * 100).toFixed(1)}% of total</div>
-        </div>
-        <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Available</div>
-          <div className="text-2xl font-bold">{totalAvailable.toLocaleString()}</div>
-          <div className="text-xs opacity-75">{((totalAvailable / totalUnits) * 100).toFixed(1)}% of total</div>
-        </div>
+      {/* Updated KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <ProjectKpiCard
+          title="Total Projects"
+          value={totalProjects.toString()}
+          subtitle="All registered"
+          icon={Building}
+          bgColor="bg-gradient-to-br from-purple-50 to-purple-100/50"
+          iconColor="text-purple-400"
+        />
+        <ProjectKpiCard
+          title="Total Units"
+          value={totalUnits.toLocaleString()}
+          subtitle="Across all projects"
+          icon={House}
+          bgColor="bg-gradient-to-br from-green-50 to-green-100/50"
+          iconColor="text-green-400"
+        />
+        <ProjectKpiCard
+          title="Units Sold"
+          value={totalSold.toLocaleString()}
+          subtitle="Successfully closed"
+          icon={DollarSign}
+          bgColor="bg-gradient-to-br from-blue-50 to-blue-100/50"
+          iconColor="text-blue-400"
+        />
+        <ProjectKpiCard
+          title="Total Revenue"
+          value={`₦${(totalRevenue / 1000000000).toFixed(1)}B`}
+          subtitle="All time earnings"
+          icon={BarChart3}
+          bgColor="bg-gradient-to-br from-yellow-50 to-yellow-100/50"
+          iconColor="text-yellow-500"
+        />
       </div>
 
       {/* Enhanced Filters */}
