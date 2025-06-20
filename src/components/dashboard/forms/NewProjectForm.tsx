@@ -9,27 +9,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
-interface NewProjectFormProps {
+interface NewDevelopmentFormProps {
   onClose: () => void;
 }
 
-interface ProjectFormData {
+interface DevelopmentFormData {
   name: string;
   location: string;
   description: string;
   category: string;
-  projectType: string;
+  developmentType: string;
   totalUnits: number;
 }
 
-export function NewProjectForm({ onClose }: NewProjectFormProps) {
-  const form = useForm<ProjectFormData>({
+export function NewProjectForm({ onClose }: NewDevelopmentFormProps) {
+  const form = useForm<DevelopmentFormData>({
     defaultValues: {
       name: '',
       location: '',
       description: '',
       category: '',
-      projectType: '',
+      developmentType: '',
       totalUnits: 0,
     },
   });
@@ -49,9 +49,9 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
     }
   };
 
-  const onSubmit = (data: ProjectFormData) => {
-    console.log('Creating new project:', data);
-    toast.success(`Project "${data.name}" created successfully!`);
+  const onSubmit = (data: DevelopmentFormData) => {
+    console.log('Creating new development:', data);
+    toast.success(`Development "${data.name}" created successfully!`);
     onClose();
   };
 
@@ -62,12 +62,12 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
           <FormField
             control={form.control}
             name="name"
-            rules={{ required: 'Project name is required' }}
+            rules={{ required: 'Development name is required' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Project Name</FormLabel>
+                <FormLabel>Development Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter project name" {...field} />
+                  <Input placeholder="Enter development name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,7 +82,7 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
               <FormItem>
                 <FormLabel>Location</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter project location" {...field} />
+                  <Input placeholder="Enter development location" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,7 +97,7 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="Enter project description" {...field} />
+                <Textarea placeholder="Enter development description" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -131,11 +131,11 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
 
           <FormField
             control={form.control}
-            name="projectType"
-            rules={{ required: 'Project type is required' }}
+            name="developmentType"
+            rules={{ required: 'Development type is required' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Project Type</FormLabel>
+                <FormLabel>Development Type</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -192,7 +192,7 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
             Cancel
           </Button>
           <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
-            Create Project
+            Create Development
           </Button>
         </div>
       </form>

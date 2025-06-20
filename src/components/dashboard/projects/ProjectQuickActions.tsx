@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Eye, Edit, MoreHorizontal, Archive, Share, Copy, FileText, Users, BarChart3 } from 'lucide-react';
 
-interface ProjectQuickActionsProps {
+interface DevelopmentQuickActionsProps {
   project: any;
   onView: () => void;
   onEdit: () => void;
 }
 
-export function ProjectQuickActions({ project, onView, onEdit }: ProjectQuickActionsProps) {
+export function ProjectQuickActions({ project, onView, onEdit }: DevelopmentQuickActionsProps) {
   const handleAction = (action: string, e: React.MouseEvent) => {
     e.stopPropagation();
     
@@ -22,13 +22,13 @@ export function ProjectQuickActions({ project, onView, onEdit }: ProjectQuickAct
         onEdit();
         break;
       case 'duplicate':
-        console.log('Duplicating project:', project.name);
+        console.log('Duplicating development:', project.name);
         break;
       case 'archive':
-        console.log('Archiving project:', project.name);
+        console.log('Archiving development:', project.name);
         break;
       case 'share':
-        console.log('Sharing project:', project.name);
+        console.log('Sharing development:', project.name);
         break;
       case 'reports':
         console.log('Generating reports for:', project.name);
@@ -66,17 +66,17 @@ export function ProjectQuickActions({ project, onView, onEdit }: ProjectQuickAct
         <DropdownMenuContent align="end" className="w-56 bg-white/95 backdrop-blur-sm border-gray-200 shadow-xl">
           <DropdownMenuItem onClick={(e) => handleAction('edit', e)} className="cursor-pointer hover:bg-indigo-50">
             <Edit className="h-4 w-4 mr-3 text-gray-500" />
-            Edit Project
+            Edit Development
           </DropdownMenuItem>
           
           <DropdownMenuItem onClick={(e) => handleAction('duplicate', e)} className="cursor-pointer hover:bg-blue-50">
             <Copy className="h-4 w-4 mr-3 text-gray-500" />
-            Duplicate Project
+            Duplicate Development
           </DropdownMenuItem>
           
           <DropdownMenuItem onClick={(e) => handleAction('share', e)} className="cursor-pointer hover:bg-green-50">
             <Share className="h-4 w-4 mr-3 text-gray-500" />
-            Share Project
+            Share Development
           </DropdownMenuItem>
           
           <DropdownMenuSeparator className="bg-gray-200" />
@@ -100,7 +100,7 @@ export function ProjectQuickActions({ project, onView, onEdit }: ProjectQuickAct
           
           <DropdownMenuItem onClick={(e) => handleAction('archive', e)} className="cursor-pointer hover:bg-red-50 text-red-600">
             <Archive className="h-4 w-4 mr-3" />
-            Archive Project
+            Archive Development
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface ProjectDetailViewProps {
+interface DevelopmentDetailViewProps {
   project: {
     id: number;
     name: string;
@@ -39,7 +39,7 @@ interface ProjectDetailViewProps {
   };
 }
 
-const mockProjectDetails = {
+const mockDevelopmentDetails = {
   description: 'A premium residential estate featuring modern amenities and strategic location.',
   startDate: '2024-01-15',
   expectedCompletion: '2025-12-31',
@@ -67,7 +67,7 @@ const mockProjectDetails = {
   ]
 };
 
-export function ProjectDetailView({ project }: ProjectDetailViewProps) {
+export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
   const [activeTab, setActiveTab] = useState('overview');
 
   const getStatusColor = (status: string) => {
@@ -88,7 +88,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
 
   return (
     <div className="space-y-6">
-      {/* Project Header */}
+      {/* Development Header */}
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center space-x-3 mb-2">
@@ -105,12 +105,12 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
             <FileText className="h-4 w-4 mr-1" />
             {project.documentTitle}
           </div>
-          <p className="text-gray-600">{mockProjectDetails.description}</p>
+          <p className="text-gray-600">{mockDevelopmentDetails.description}</p>
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" size="sm">
             <Edit className="h-4 w-4 mr-2" />
-            Edit Project
+            Edit Development
           </Button>
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
@@ -228,7 +228,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Project Information</CardTitle>
+                <CardTitle className="text-lg">Development Information</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">

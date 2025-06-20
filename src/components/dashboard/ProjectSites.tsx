@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import { ProjectSiteForm } from './projects/ProjectSiteForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ProjectStatsCard } from './projects/ProjectStatsCard';
 
-const mockProjectSites = [
+const mockDevelopmentSites = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
@@ -80,8 +79,8 @@ export function ProjectSites() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [activeTab, setActiveTab] = useState('all');
-  const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<any>(null);
+  const [isDevelopmentFormOpen, setIsDevelopmentFormOpen] = useState(false);
+  const [editingDevelopment, setEditingDevelopment] = useState<any>(null);
   const navigate = useNavigate();
 
   const getStatusConfig = (status: string) => {
@@ -106,36 +105,36 @@ export function ProjectSites() {
     }
   };
 
-  const filteredProjects = mockProjectSites.filter(project => {
-    const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
+  const filteredDevelopments = mockDevelopmentSites.filter(development => {
+    const matchesSearch = development.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         development.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || development.status === statusFilter;
     const matchesTab = activeTab === 'all' || 
-                      (activeTab === 'active' && project.status === 'active') ||
-                      (activeTab === 'completed' && project.status === 'completed');
+                      (activeTab === 'active' && development.status === 'active') ||
+                      (activeTab === 'completed' && development.status === 'completed');
     
     return matchesSearch && matchesStatus && matchesTab;
   });
 
   // Calculate KPIs
-  const totalProjects = mockProjectSites.length;
-  const activeProjects = mockProjectSites.filter(p => p.status === 'active').length;
-  const totalUnits = mockProjectSites.reduce((sum, project) => sum + project.totalUnits, 0);
-  const totalSold = mockProjectSites.reduce((sum, project) => sum + project.soldUnits, 0);
-  const totalRevenue = mockProjectSites.reduce((sum, project) => sum + (project.soldUnits * 25000000), 0);
+  const totalDevelopments = mockDevelopmentSites.length;
+  const activeDevelopments = mockDevelopmentSites.filter(p => p.status === 'active').length;
+  const totalUnits = mockDevelopmentSites.reduce((sum, development) => sum + development.totalUnits, 0);
+  const totalSold = mockDevelopmentSites.reduce((sum, development) => sum + development.soldUnits, 0);
+  const totalRevenue = mockDevelopmentSites.reduce((sum, development) => sum + (development.soldUnits * 25000000), 0);
 
-  const handleNewProject = () => {
-    setEditingProject(null);
-    setIsProjectFormOpen(true);
+  const handleNewDevelopment = () => {
+    setEditingDevelopment(null);
+    setIsDevelopmentFormOpen(true);
   };
 
-  const handleEditProject = (project: any) => {
-    setEditingProject(project);
-    setIsProjectFormOpen(true);
+  const handleEditDevelopment = (development: any) => {
+    setEditingDevelopment(development);
+    setIsDevelopmentFormOpen(true);
   };
 
-  const handleCardClick = (projectId: number) => {
-    navigate(`/company/projects/${projectId}`);
+  const handleCardClick = (developmentId: number) => {
+    navigate(`/company/projects/${developmentId}`);
   };
 
   return (
@@ -143,21 +142,21 @@ export function ProjectSites() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Project Sites</h1>
-          <p className="text-gray-600">Manage your real estate projects</p>
+          <h1 className="text-3xl font-bold text-gray-900">Development Sites</h1>
+          <p className="text-gray-600">Manage your real estate developments</p>
         </div>
-        <Button onClick={handleNewProject} className="bg-indigo-600 hover:bg-indigo-700">
+        <Button onClick={handleNewDevelopment} className="bg-indigo-600 hover:bg-indigo-700">
           <Plus className="h-4 w-4 mr-2" />
-          New Project
+          New Development
         </Button>
       </div>
 
       {/* KPI Cards - maintaining background colors */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <ProjectStatsCard
-          title="Total Projects"
-          value={totalProjects.toString()}
-          subtitle={`${activeProjects} active`}
+          title="Total Developments"
+          value={totalDevelopments.toString()}
+          subtitle={`${activeDevelopments} active`}
           icon={Building}
           trend="+12%"
           trendUp={true}
@@ -166,7 +165,7 @@ export function ProjectSites() {
         <ProjectStatsCard
           title="Total Units"
           value={totalUnits.toLocaleString()}
-          subtitle="Across all projects"
+          subtitle="Across all developments"
           icon={House}
           trend="+8%"
           trendUp={true}
@@ -200,7 +199,7 @@ export function ProjectSites() {
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search projects..."
+                  placeholder="Search developments..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -243,48 +242,48 @@ export function ProjectSites() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all">All Projects ({totalProjects})</TabsTrigger>
-          <TabsTrigger value="active">Active ({activeProjects})</TabsTrigger>
-          <TabsTrigger value="completed">Completed ({mockProjectSites.filter(p => p.status === 'completed').length})</TabsTrigger>
+          <TabsTrigger value="all">All Developments ({totalDevelopments})</TabsTrigger>
+          <TabsTrigger value="active">Active ({activeDevelopments})</TabsTrigger>
+          <TabsTrigger value="completed">Completed ({mockDevelopmentSites.filter(p => p.status === 'completed').length})</TabsTrigger>
         </TabsList>
       </Tabs>
 
-      {/* Projects Display */}
+      {/* Developments Display */}
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredProjects.map((project) => {
-            const statusConfig = getStatusConfig(project.status);
+          {filteredDevelopments.map((development) => {
+            const statusConfig = getStatusConfig(development.status);
             const StatusIcon = statusConfig.icon;
-            const salesProgress = (project.soldUnits / project.totalUnits) * 100;
+            const salesProgress = (development.soldUnits / development.totalUnits) * 100;
             
             return (
               <Card 
-                key={project.id} 
+                key={development.id} 
                 className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => handleCardClick(project.id)}
+                onClick={() => handleCardClick(development.id)}
               >
                 <div className="relative h-48">
                   <img 
-                    src={project.imageUrl} 
-                    alt={project.name}
+                    src={development.imageUrl} 
+                    alt={development.name}
                     className="w-full h-full object-cover rounded-t-lg"
                   />
                   <div className="absolute top-4 left-4 flex space-x-2">
                     <Badge className={statusConfig.color}>
                       <StatusIcon className="h-3 w-3 mr-1" />
-                      {project.status}
+                      {development.status}
                     </Badge>
-                    <Badge className={getPropertyTypeColor(project.propertyType)}>
-                      {project.propertyType}
+                    <Badge className={getPropertyTypeColor(development.propertyType)}>
+                      {development.propertyType}
                     </Badge>
                   </div>
                 </div>
                 
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{project.name}</h3>
+                  <h3 className="text-xl font-bold mb-2">{development.name}</h3>
                   <div className="flex items-center text-gray-600 mb-4">
                     <MapPin className="h-4 w-4 mr-1" />
-                    {project.location}
+                    {development.location}
                   </div>
 
                   {/* Blocks and Units Info */}
@@ -292,14 +291,14 @@ export function ProjectSites() {
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-1">
                         <Building2 className="h-4 w-4 mr-1 text-gray-600" />
-                        <span className="text-lg font-bold text-gray-900">{project.totalBlocks}</span>
+                        <span className="text-lg font-bold text-gray-900">{development.totalBlocks}</span>
                       </div>
                       <div className="text-xs text-gray-500">Blocks</div>
                     </div>
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-1">
                         <House className="h-4 w-4 mr-1 text-gray-600" />
-                        <span className="text-lg font-bold text-gray-900">{project.totalUnits}</span>
+                        <span className="text-lg font-bold text-gray-900">{development.totalUnits}</span>
                       </div>
                       <div className="text-xs text-gray-500">Units</div>
                     </div>
@@ -320,15 +319,15 @@ export function ProjectSites() {
 
                   <div className="grid grid-cols-3 gap-2 mt-4 text-center text-sm">
                     <div>
-                      <div className="font-bold text-emerald-600">{project.soldUnits}</div>
+                      <div className="font-bold text-emerald-600">{development.soldUnits}</div>
                       <div className="text-gray-500">Sold</div>
                     </div>
                     <div>
-                      <div className="font-bold text-amber-600">{project.reservedUnits}</div>
+                      <div className="font-bold text-amber-600">{development.reservedUnits}</div>
                       <div className="text-gray-500">Reserved</div>
                     </div>
                     <div>
-                      <div className="font-bold text-blue-600">{project.availableUnits}</div>
+                      <div className="font-bold text-blue-600">{development.availableUnits}</div>
                       <div className="text-gray-500">Available</div>
                     </div>
                   </div>
@@ -337,16 +336,16 @@ export function ProjectSites() {
                     <div className="text-xs text-gray-500">
                       <div className="flex items-center">
                         <Users className="h-3 w-3 mr-1" />
-                        {project.projectManager}
+                        {development.projectManager}
                       </div>
                     </div>
                     
                     <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
-                      <Button variant="outline" size="sm" onClick={() => handleCardClick(project.id)}>
+                      <Button variant="outline" size="sm" onClick={() => handleCardClick(development.id)}>
                         <Eye className="h-3 w-3 mr-1" />
                         View
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleEditProject(project)}>
+                      <Button variant="outline" size="sm" onClick={() => handleEditDevelopment(development)}>
                         <Edit className="h-3 w-3 mr-1" />
                         Edit
                       </Button>
@@ -359,47 +358,47 @@ export function ProjectSites() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredProjects.map((project) => {
-            const statusConfig = getStatusConfig(project.status);
+          {filteredDevelopments.map((development) => {
+            const statusConfig = getStatusConfig(development.status);
             const StatusIcon = statusConfig.icon;
-            const salesProgress = (project.soldUnits / project.totalUnits) * 100;
+            const salesProgress = (development.soldUnits / development.totalUnits) * 100;
             
             return (
               <Card 
-                key={project.id} 
+                key={development.id} 
                 className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => handleCardClick(project.id)}
+                onClick={() => handleCardClick(development.id)}
               >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
                       <img 
-                        src={project.imageUrl} 
-                        alt={project.name}
+                        src={development.imageUrl} 
+                        alt={development.name}
                         className="w-16 h-16 object-cover rounded"
                       />
                       
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="text-lg font-bold">{project.name}</h3>
+                          <h3 className="text-lg font-bold">{development.name}</h3>
                           <Badge className={statusConfig.color}>
                             <StatusIcon className="h-3 w-3 mr-1" />
-                            {project.status}
+                            {development.status}
                           </Badge>
-                          <Badge className={getPropertyTypeColor(project.propertyType)}>
-                            {project.propertyType}
+                          <Badge className={getPropertyTypeColor(development.propertyType)}>
+                            {development.propertyType}
                           </Badge>
                         </div>
                         
                         <div className="flex items-center text-gray-600 text-sm space-x-4">
                           <div className="flex items-center">
                             <MapPin className="h-4 w-4 mr-1" />
-                            {project.location}
+                            {development.location}
                           </div>
-                          <div>{project.developmentStage}</div>
+                          <div>{development.developmentStage}</div>
                           <div className="flex items-center">
                             <Users className="h-4 w-4 mr-1" />
-                            {project.projectManager}
+                            {development.projectManager}
                           </div>
                         </div>
                       </div>
@@ -407,15 +406,15 @@ export function ProjectSites() {
                     
                     <div className="flex items-center space-x-6 text-sm">
                       <div className="text-center">
-                        <div className="font-bold">{project.totalBlocks}</div>
+                        <div className="font-bold">{development.totalBlocks}</div>
                         <div className="text-gray-500">Blocks</div>
                       </div>
                       <div className="text-center">
-                        <div className="font-bold">{project.totalUnits}</div>
+                        <div className="font-bold">{development.totalUnits}</div>
                         <div className="text-gray-500">Units</div>
                       </div>
                       <div className="text-center">
-                        <div className="font-bold text-emerald-600">{project.soldUnits}</div>
+                        <div className="font-bold text-emerald-600">{development.soldUnits}</div>
                         <div className="text-gray-500">Sold</div>
                       </div>
                       <div className="text-center">
@@ -424,11 +423,11 @@ export function ProjectSites() {
                       </div>
                       
                       <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="outline" size="sm" onClick={() => handleCardClick(project.id)}>
+                        <Button variant="outline" size="sm" onClick={() => handleCardClick(development.id)}>
                           <Eye className="h-3 w-3 mr-1" />
                           View
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => handleEditProject(project)}>
+                        <Button variant="outline" size="sm" onClick={() => handleEditDevelopment(development)}>
                           <Edit className="h-3 w-3 mr-1" />
                           Edit
                         </Button>
@@ -443,41 +442,41 @@ export function ProjectSites() {
       )}
 
       {/* Empty State */}
-      {filteredProjects.length === 0 && (
+      {filteredDevelopments.length === 0 && (
         <Card>
           <CardContent className="p-16 text-center">
             <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No projects found</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">No developments found</h3>
             <p className="text-gray-600 mb-6">
               {searchTerm || statusFilter !== 'all'
                 ? 'Try adjusting your search criteria or filters.'
-                : 'Get started by creating your first project site.'}
+                : 'Get started by creating your first development site.'}
             </p>
-            <Button onClick={handleNewProject} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button onClick={handleNewDevelopment} className="bg-indigo-600 hover:bg-indigo-700">
               <Plus className="h-4 w-4 mr-2" />
-              Create Your First Project
+              Create Your First Development
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* Project Form Modal */}
-      <Dialog open={isProjectFormOpen} onOpenChange={setIsProjectFormOpen}>
+      {/* Development Form Modal */}
+      <Dialog open={isDevelopmentFormOpen} onOpenChange={setIsDevelopmentFormOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingProject ? 'Edit Project Site' : 'Create New Project Site'}
+              {editingDevelopment ? 'Edit Development Site' : 'Create New Development Site'}
             </DialogTitle>
             <DialogDescription>
-              {editingProject 
-                ? 'Update project information and settings' 
-                : 'Set up a new real estate project site'
+              {editingDevelopment 
+                ? 'Update development information and settings' 
+                : 'Set up a new real estate development site'
               }
             </DialogDescription>
           </DialogHeader>
           <ProjectSiteForm 
-            project={editingProject}
-            onClose={() => setIsProjectFormOpen(false)}
+            project={editingDevelopment}
+            onClose={() => setIsDevelopmentFormOpen(false)}
           />
         </DialogContent>
       </Dialog>

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { NewProjectForm } from './forms/NewProjectForm';
 import { ProjectDocumentsView } from './projects/ProjectDocumentsView';
 
-const mockProjects = [
+const mockDevelopments = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
@@ -154,9 +154,9 @@ const mockProjects = [
 
 export function ProjectsUnits() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
-  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
+  const [isNewDevelopmentOpen, setIsNewDevelopmentOpen] = useState(false);
   const [isDocumentsModalOpen, setIsDocumentsModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedDevelopment, setSelectedDevelopment] = useState<any>(null);
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
@@ -185,24 +185,24 @@ export function ProjectsUnits() {
     }
   };
 
-  const handleProjectClick = (projectId: number) => {
-    navigate(`/company/projects/${projectId}`);
+  const handleDevelopmentClick = (developmentId: number) => {
+    navigate(`/company/projects/${developmentId}`);
   };
 
-  const handleManageBlocks = (e: React.MouseEvent, projectId: number) => {
+  const handleManageBlocks = (e: React.MouseEvent, developmentId: number) => {
     e.stopPropagation();
-    navigate(`/company/projects/${projectId}/blocks`);
+    navigate(`/company/projects/${developmentId}/blocks`);
   };
 
-  const handleViewDocuments = (e: React.MouseEvent, project: any) => {
+  const handleViewDocuments = (e: React.MouseEvent, development: any) => {
     e.stopPropagation();
-    setSelectedProject(project);
+    setSelectedDevelopment(development);
     setIsDocumentsModalOpen(true);
   };
 
   const kpiData = [
     {
-      title: 'Total Projects',
+      title: 'Total Developments',
       value: '12',
       subtitle: 'All registered',
       icon: Building,
@@ -213,7 +213,7 @@ export function ProjectsUnits() {
     {
       title: 'Total Units',
       value: '1,247',
-      subtitle: 'Across all projects',
+      subtitle: 'Across all developments',
       icon: Home,
       color: 'text-emerald-700',
       bgColor: 'bg-emerald-100',
@@ -243,19 +243,19 @@ export function ProjectsUnits() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units</p>
+          <h1 className="text-3xl font-bold text-gray-900">Developments</h1>
+          <p className="text-gray-600 mt-1">Manage your real estate developments, blocks, and units</p>
         </div>
         <Button 
           className="bg-purple-600 hover:bg-purple-700"
-          onClick={() => setIsNewProjectOpen(true)}
+          onClick={() => setIsNewDevelopmentOpen(true)}
         >
           <Plus className="h-4 w-4 mr-2" />
-          New Project
+          New Development
         </Button>
       </div>
 
-      {/* Project Summary Cards */}
+      {/* Development Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
           <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
@@ -295,33 +295,33 @@ export function ProjectsUnits() {
         </Button>
       </div>
 
-      {/* Projects Display */}
+      {/* Developments Display */}
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {mockProjects.map((project) => (
+          {mockDevelopments.map((development) => (
             <Card 
-              key={project.id} 
+              key={development.id} 
               className="hover:shadow-lg transition-shadow cursor-pointer bg-white"
-              onClick={() => handleProjectClick(project.id)}
+              onClick={() => handleDevelopmentClick(development.id)}
             >
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{project.name}</CardTitle>
+                  <CardTitle className="text-lg">{development.name}</CardTitle>
                   <div className="flex gap-2">
-                    <Badge className={getCategoryColor(project.category)}>
-                      {project.category}
+                    <Badge className={getCategoryColor(development.category)}>
+                      {development.category}
                     </Badge>
-                    <Badge className={getStatusColor(project.status)}>
-                      {project.status}
+                    <Badge className={getStatusColor(development.status)}>
+                      {development.status}
                     </Badge>
                   </div>
                 </div>
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin className="h-4 w-4 mr-1" />
-                  {project.location}
+                  {development.location}
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>{project.type}</span>
+                  <span>{development.type}</span>
                 </div>
               </CardHeader>
               <CardContent>
@@ -329,40 +329,40 @@ export function ProjectsUnits() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="flex justify-between">
                       <span>Blocks:</span>
-                      <span className="font-medium">{project.totalBlocks || 0}</span>
+                      <span className="font-medium">{development.totalBlocks || 0}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Total Units:</span>
-                      <span className="font-medium">{project.totalUnits}</span>
+                      <span className="font-medium">{development.totalUnits}</span>
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Sold:</span>
-                      <span className="font-medium text-green-600">{project.soldUnits}</span>
+                      <span className="font-medium text-green-600">{development.soldUnits}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Reserved:</span>
-                      <span className="font-medium text-orange-600">{project.reservedUnits}</span>
+                      <span className="font-medium text-orange-600">{development.reservedUnits}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Available:</span>
-                      <span className="font-medium text-blue-600">{project.availableUnits}</span>
+                      <span className="font-medium text-blue-600">{development.availableUnits}</span>
                     </div>
                   </div>
                   
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
                     <div 
                       className="bg-green-600 h-2 rounded-full"
-                      style={{ width: `${(project.soldUnits / project.totalUnits) * 100}%` }}
+                      style={{ width: `${(development.soldUnits / development.totalUnits) * 100}%` }}
                     ></div>
                   </div>
 
                   <div className="pt-2 border-t">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-500">Revenue:</span>
-                      <span className="font-bold text-purple-600">{project.revenue}</span>
+                      <span className="font-bold text-purple-600">{development.revenue}</span>
                     </div>
                   </div>
                   
@@ -371,7 +371,7 @@ export function ProjectsUnits() {
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={(e) => handleManageBlocks(e, project.id)}
+                      onClick={(e) => handleManageBlocks(e, development.id)}
                     >
                       <Building className="h-3 w-3 mr-1" />
                       Manage Blocks
@@ -381,7 +381,7 @@ export function ProjectsUnits() {
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={(e) => handleViewDocuments(e, project)}
+                      onClick={(e) => handleViewDocuments(e, development)}
                     >
                       <FileText className="h-3 w-3 mr-1" />
                       Documents
@@ -398,7 +398,7 @@ export function ProjectsUnits() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Project</TableHead>
+                  <TableHead>Development</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Location</TableHead>
                   <TableHead>Blocks/Units</TableHead>
@@ -408,51 +408,51 @@ export function ProjectsUnits() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockProjects.map((project) => (
+                {mockDevelopments.map((development) => (
                   <TableRow 
-                    key={project.id} 
+                    key={development.id} 
                     className="hover:bg-gray-50 cursor-pointer"
-                    onClick={() => handleProjectClick(project.id)}
+                    onClick={() => handleDevelopmentClick(development.id)}
                   >
                     <TableCell>
                       <div>
-                        <div className="font-medium">{project.name}</div>
-                        <div className="text-sm text-gray-500">{project.type}</div>
+                        <div className="font-medium">{development.name}</div>
+                        <div className="text-sm text-gray-500">{development.type}</div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getCategoryColor(project.category)}>
-                        {project.category}
+                      <Badge className={getCategoryColor(development.category)}>
+                        {development.category}
                       </Badge>
                     </TableCell>
-                    <TableCell>{project.location}</TableCell>
+                    <TableCell>{development.location}</TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div>{project.totalBlocks || 0} blocks</div>
-                        <div className="text-gray-500">{project.totalUnits} units</div>
+                        <div>{development.totalBlocks || 0} blocks</div>
+                        <div className="text-gray-500">{development.totalUnits} units</div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(project.status)}>
-                        {project.status}
+                      <Badge className={getStatusColor(development.status)}>
+                        {development.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-medium text-purple-600">
-                      {project.revenue}
+                      {development.revenue}
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={(e) => handleManageBlocks(e, project.id)}
+                          onClick={(e) => handleManageBlocks(e, development.id)}
                         >
                           <Building className="h-3 w-3" />
                         </Button>
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={(e) => handleViewDocuments(e, project)}
+                          onClick={(e) => handleViewDocuments(e, development)}
                         >
                           <FileText className="h-3 w-3" />
                         </Button>
@@ -466,16 +466,16 @@ export function ProjectsUnits() {
         </Card>
       )}
 
-      {/* New Project Modal */}
-      <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
+      {/* New Development Modal */}
+      <Dialog open={isNewDevelopmentOpen} onOpenChange={setIsNewDevelopmentOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Create New Project</DialogTitle>
+            <DialogTitle>Create New Development</DialogTitle>
             <DialogDescription>
-              Add a new real estate project to your portfolio
+              Add a new real estate development to your portfolio
             </DialogDescription>
           </DialogHeader>
-          <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
+          <NewProjectForm onClose={() => setIsNewDevelopmentOpen(false)} />
         </DialogContent>
       </Dialog>
 
@@ -483,12 +483,12 @@ export function ProjectsUnits() {
       <Dialog open={isDocumentsModalOpen} onOpenChange={setIsDocumentsModalOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Project Documents - {selectedProject?.name}</DialogTitle>
+            <DialogTitle>Development Documents - {selectedDevelopment?.name}</DialogTitle>
             <DialogDescription>
-              View and manage documents for this project
+              View and manage documents for this development
             </DialogDescription>
           </DialogHeader>
-          <ProjectDocumentsView project={selectedProject} />
+          <ProjectDocumentsView project={selectedDevelopment} />
         </DialogContent>
       </Dialog>
     </div>

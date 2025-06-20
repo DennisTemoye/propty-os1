@@ -8,7 +8,7 @@ import { ProjectDetailView } from '@/components/dashboard/projects/ProjectDetail
 import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
 import { toast } from 'sonner';
 
-const mockProjects = [
+const mockDevelopments = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
@@ -53,15 +53,15 @@ const mockProjects = [
   }
 ];
 
-export default function ProjectDetailPage() {
+export default function DevelopmentDetailPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [isEditOpen, setIsEditOpen] = useState(false);
   
-  const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
+  const development = mockDevelopments.find(p => p.id === parseInt(projectId || '1'));
 
-  if (!project) {
-    return <div>Project not found</div>;
+  if (!development) {
+    return <div>Development not found</div>;
   };
 
   const handleEdit = () => {
@@ -69,27 +69,27 @@ export default function ProjectDetailPage() {
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-      console.log('Deleting project:', project.id);
-      toast.success('Project deleted successfully');
+    if (window.confirm('Are you sure you want to delete this development? This action cannot be undone.')) {
+      console.log('Deleting development:', development.id);
+      toast.success('Development deleted successfully');
       navigate('/company/projects');
     }
   };
 
   const handleManageBlocks = () => {
-    navigate(`/company/projects/${project.id}/blocks`);
+    navigate(`/company/projects/${development.id}/blocks`);
   };
 
   const handleViewDocuments = () => {
-    navigate('/company/documents', { state: { projectId: project.id } });
+    navigate('/company/documents', { state: { developmentId: development.id } });
   };
 
   const handleViewClients = () => {
-    navigate('/company/clients', { state: { projectId: project.id } });
+    navigate('/company/clients', { state: { developmentId: development.id } });
   };
 
   const handleViewReports = () => {
-    navigate('/company/reports', { state: { projectId: project.id } });
+    navigate('/company/reports', { state: { developmentId: development.id } });
   };
 
   return (
@@ -103,7 +103,7 @@ export default function ProjectDetailPage() {
               className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Projects
+              Back to Developments
             </Button>
             
             <div className="flex gap-2">
@@ -112,7 +112,7 @@ export default function ProjectDetailPage() {
                 onClick={handleEdit}
               >
                 <Edit className="h-4 w-4 mr-2" />
-                Edit Project
+                Edit Development
               </Button>
               <Button 
                 variant="outline"
@@ -120,7 +120,7 @@ export default function ProjectDetailPage() {
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete Project
+                Delete Development
               </Button>
             </div>
           </div>
@@ -161,15 +161,15 @@ export default function ProjectDetailPage() {
           </Button>
         </div>
         
-        <ProjectDetailView project={project} />
+        <ProjectDetailView project={development} />
 
-        {/* Edit Project Modal */}
+        {/* Edit Development Modal */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Edit Project</DialogTitle>
+              <DialogTitle>Edit Development</DialogTitle>
               <DialogDescription>
-                Update project information and settings
+                Update development information and settings
               </DialogDescription>
             </DialogHeader>
             <NewProjectForm onClose={() => setIsEditOpen(false)} />

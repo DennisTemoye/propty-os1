@@ -20,14 +20,14 @@ interface Document {
   category: string;
 }
 
-const mockProjectDocuments: Document[] = [
+const mockDevelopmentDocuments: Document[] = [
   {
     id: 1,
-    name: 'Project Layout.pdf',
+    name: 'Development Layout.pdf',
     type: 'PDF',
     size: '2.3 MB',
     uploadDate: '2024-01-15',
-    description: 'Main project layout and site plan',
+    description: 'Main development layout and site plan',
     status: 'approved',
     category: 'Layout'
   },
@@ -53,12 +53,12 @@ const mockProjectDocuments: Document[] = [
   }
 ];
 
-interface ProjectDocumentsViewProps {
+interface DevelopmentDocumentsViewProps {
   project: any;
 }
 
-export function ProjectDocumentsView({ project }: ProjectDocumentsViewProps) {
-  const [documents, setDocuments] = useState<Document[]>(mockProjectDocuments);
+export function ProjectDocumentsView({ project }: DevelopmentDocumentsViewProps) {
+  const [documents, setDocuments] = useState<Document[]>(mockDevelopmentDocuments);
   const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
   const [viewDocument, setViewDocument] = useState<Document | null>(null);
 

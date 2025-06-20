@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { BlocksUnitsManager } from '@/components/dashboard/projects/BlocksUnitsManager';
 import { AssignUnitModal } from '@/components/dashboard/projects/AssignUnitModal';
 
-const mockProjects = [
+const mockDevelopments = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
@@ -19,16 +19,16 @@ const mockProjects = [
   }
 ];
 
-export default function ProjectBlocksPage() {
+export default function DevelopmentBlocksPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [selectedUnit, setSelectedUnit] = useState<any>(null);
   const [isAssignUnitOpen, setIsAssignUnitOpen] = useState(false);
   
-  const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
+  const development = mockDevelopments.find(p => p.id === parseInt(projectId || '1'));
 
-  if (!project) {
-    return <div>Project not found</div>;
+  if (!development) {
+    return <div>Development not found</div>;
   }
 
   const handleAssignUnit = (unit: any) => {
@@ -46,18 +46,18 @@ export default function ProjectBlocksPage() {
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Projects
+            Back to Developments
           </Button>
           <h1 className="text-3xl font-bold text-gray-900">
-            Manage Blocks & Units - {project.name}
+            Manage Blocks & Units - {development.name}
           </h1>
           <p className="text-gray-600 mt-1">
-            Structure your project by blocks and units, and assign units to clients
+            Structure your development by blocks and units, and assign units to clients
           </p>
         </div>
         
         <BlocksUnitsManager 
-          project={project} 
+          project={development} 
           onAssignUnit={handleAssignUnit}
         />
 
