@@ -1,21 +1,20 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers } from 'lucide-react';
+import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Users, Home, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 const mockProjectSites = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
     location: 'Lekki, Lagos',
-    type: 'Residential',
     totalBlocks: 8,
     totalUnits: 150,
     soldUnits: 89,
@@ -36,7 +35,6 @@ const mockProjectSites = [
     id: 2,
     name: 'Mainland Commercial Plaza',
     location: 'Ikeja, Lagos',
-    type: 'Commercial',
     totalBlocks: 3,
     totalUnits: 75,
     soldUnits: 45,
@@ -56,7 +54,6 @@ const mockProjectSites = [
     id: 3,
     name: 'Sunset Land Development',
     location: 'Abuja FCT',
-    type: 'Residential',
     totalBlocks: 12,
     totalUnits: 200,
     soldUnits: 196,
@@ -77,7 +74,6 @@ const mockProjectSites = [
 
 export function ProjectSites() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
@@ -97,27 +93,20 @@ export function ProjectSites() {
     }
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'Residential':
-        return 'bg-green-100 text-green-800';
-      case 'Commercial':
-        return 'bg-indigo-100 text-indigo-800';
-      case 'Mixed-Use':
-        return 'bg-pink-100 text-pink-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   const filteredProjects = mockProjectSites.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          project.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === 'all' || project.type === typeFilter;
     const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
     
-    return matchesSearch && matchesType && matchesStatus;
+    return matchesSearch && matchesStatus;
   });
+
+  // Calculate KPI totals
+  const totalProjects = mockProjectSites.length;
+  const totalUnits = mockProjectSites.reduce((sum, project) => sum + project.totalUnits, 0);
+  const totalSold = mockProjectSites.reduce((sum, project) => sum + project.soldUnits, 0);
+  const totalReserved = mockProjectSites.reduce((sum, project) => sum + project.reservedUnits, 0);
+  const totalAvailable = mockProjectSites.reduce((sum, project) => sum + project.availableUnits, 0);
 
   const handleNewProject = () => {
     setEditingProject(null);
@@ -141,6 +130,60 @@ export function ProjectSites() {
         </Button>
       </div>
 
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <GradientKpiCard
+          title="Total Projects"
+          value={totalProjects.toString()}
+          subtitle="Active projects"
+          icon={Building2}
+          gradientFrom="from-blue-500"
+          gradientTo="to-blue-600"
+          iconBgColor="bg-blue-100"
+          iconColor="text-blue-600"
+        />
+        <GradientKpiCard
+          title="Total Units"
+          value={totalUnits.toLocaleString()}
+          subtitle="All project units"
+          icon={Home}
+          gradientFrom="from-purple-500"
+          gradientTo="to-purple-600"
+          iconBgColor="bg-purple-100"
+          iconColor="text-purple-600"
+        />
+        <GradientKpiCard
+          title="Units Sold"
+          value={totalSold.toLocaleString()}
+          subtitle={`${((totalSold / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={TrendingUp}
+          gradientFrom="from-green-500"
+          gradientTo="to-green-600"
+          iconBgColor="bg-green-100"
+          iconColor="text-green-600"
+        />
+        <GradientKpiCard
+          title="Reserved"
+          value={totalReserved.toLocaleString()}
+          subtitle={`${((totalReserved / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={Users}
+          gradientFrom="from-yellow-500"
+          gradientTo="to-yellow-600"
+          iconBgColor="bg-yellow-100"
+          iconColor="text-yellow-600"
+        />
+        <GradientKpiCard
+          title="Available"
+          value={totalAvailable.toLocaleString()}
+          subtitle={`${((totalAvailable / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={MapPin}
+          gradientFrom="from-indigo-500"
+          gradientTo="to-indigo-600"
+          iconBgColor="bg-indigo-100"
+          iconColor="text-indigo-600"
+        />
+      </div>
+
       {/* Enhanced Filters */}
       <Card>
         <CardContent className="p-4">
@@ -157,17 +200,6 @@ export function ProjectSites() {
                   />
                 </div>
               </div>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="Residential">Residential</SelectItem>
-                  <SelectItem value="Commercial">Commercial</SelectItem>
-                  <SelectItem value="Mixed-Use">Mixed-Use</SelectItem>
-                </SelectContent>
-              </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Status" />
@@ -229,9 +261,6 @@ export function ProjectSites() {
                       <Badge className={getStatusColor(project.status)}>
                         {project.status}
                       </Badge>
-                      <Badge className={getTypeColor(project.type)}>
-                        {project.type}
-                      </Badge>
                     </div>
                   </div>
                 </div>
@@ -260,6 +289,21 @@ export function ProjectSites() {
                       <div className="font-medium">{project.totalUnits}</div>
                     </div>
                   </div>
+
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="bg-green-50 p-2 rounded">
+                      <div className="text-lg font-bold text-green-600">{project.soldUnits}</div>
+                      <div className="text-xs text-green-700">Sold</div>
+                    </div>
+                    <div className="bg-yellow-50 p-2 rounded">
+                      <div className="text-lg font-bold text-yellow-600">{project.reservedUnits}</div>
+                      <div className="text-xs text-yellow-700">Reserved</div>
+                    </div>
+                    <div className="bg-blue-50 p-2 rounded">
+                      <div className="text-lg font-bold text-blue-600">{project.availableUnits}</div>
+                      <div className="text-xs text-blue-700">Available</div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -286,7 +330,6 @@ export function ProjectSites() {
                       </div>
                       <div className="flex flex-wrap gap-1">
                         <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
-                        <Badge className={getTypeColor(project.type)}>{project.type}</Badge>
                       </div>
                     </div>
                   </div>
@@ -325,7 +368,7 @@ export function ProjectSites() {
             <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No project sites found</h3>
             <p className="text-gray-600 mb-4">
-              {searchTerm || typeFilter !== 'all' || statusFilter !== 'all'
+              {searchTerm || statusFilter !== 'all'
                 ? 'Try adjusting your search criteria.'
                 : 'Get started by creating your first project site.'}
             </p>
