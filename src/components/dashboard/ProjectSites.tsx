@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Home, DollarSign } from 'lucide-react';
+import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Home, DollarSign, CheckCircle, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -109,10 +108,6 @@ export function ProjectSites() {
   const totalReserved = mockProjectSites.reduce((sum, project) => sum + project.reservedUnits, 0);
   const totalAvailable = mockProjectSites.reduce((sum, project) => sum + project.availableUnits, 0);
 
-  // Calculate total revenue (assuming average price per unit for demo)
-  const averagePricePerUnit = 25000000; // 25M Naira average
-  const totalRevenue = totalSold * averagePricePerUnit;
-
   const handleNewProject = () => {
     setEditingProject(null);
     setIsProjectFormOpen(true);
@@ -120,15 +115,6 @@ export function ProjectSites() {
 
   const handleCardClick = (projectId: number) => {
     navigate(`/company/projects/${projectId}`);
-  };
-
-  const formatCurrency = (amount: number) => {
-    if (amount >= 1000000000) {
-      return `₦${(amount / 1000000000).toFixed(1)}B`;
-    } else if (amount >= 1000000) {
-      return `₦${(amount / 1000000).toFixed(1)}M`;
-    }
-    return `₦${amount.toLocaleString()}`;
   };
 
   return (
@@ -144,8 +130,8 @@ export function ProjectSites() {
         </Button>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* KPI Cards with Subtle Gradients */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <GradientKpiCard
           title="Total Projects"
           value={totalProjects.toString()}
@@ -153,7 +139,8 @@ export function ProjectSites() {
           icon={Building2}
           gradientFrom="from-purple-50"
           gradientTo="to-purple-100"
-          iconColor="text-purple-400"
+          iconBgColor="bg-purple-500"
+          iconColor="text-white"
         />
         <GradientKpiCard
           title="Total Units"
@@ -162,25 +149,38 @@ export function ProjectSites() {
           icon={Home}
           gradientFrom="from-green-50"
           gradientTo="to-green-100"
-          iconColor="text-green-400"
+          iconBgColor="bg-green-500"
+          iconColor="text-white"
         />
         <GradientKpiCard
           title="Units Sold"
           value={totalSold.toLocaleString()}
           subtitle="Successfully closed"
-          icon={DollarSign}
+          icon={CheckCircle}
           gradientFrom="from-blue-50"
           gradientTo="to-blue-100"
-          iconColor="text-blue-400"
+          iconBgColor="bg-blue-500"
+          iconColor="text-white"
         />
         <GradientKpiCard
-          title="Total Revenue"
-          value={formatCurrency(totalRevenue)}
-          subtitle="All time earnings"
-          icon={DollarSign}
+          title="Reserved"
+          value={totalReserved.toLocaleString()}
+          subtitle={`${((totalReserved / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={Clock}
           gradientFrom="from-yellow-50"
           gradientTo="to-yellow-100"
-          iconColor="text-yellow-500"
+          iconBgColor="bg-yellow-500"
+          iconColor="text-white"
+        />
+        <GradientKpiCard
+          title="Available"
+          value={totalAvailable.toLocaleString()}
+          subtitle={`${((totalAvailable / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={DollarSign}
+          gradientFrom="from-indigo-50"
+          gradientTo="to-indigo-100"
+          iconBgColor="bg-indigo-500"
+          iconColor="text-white"
         />
       </div>
 
