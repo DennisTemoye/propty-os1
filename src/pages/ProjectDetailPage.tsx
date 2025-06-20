@@ -13,11 +13,43 @@ const mockProjects = [
     id: 1,
     name: 'Victoria Gardens Estate',
     location: 'Lekki, Lagos',
+    type: 'Residential',
     totalUnits: 150,
     soldUnits: 89,
     reservedUnits: 23,
     availableUnits: 38,
-    status: 'active'
+    status: 'active',
+    documentTitle: 'Certificate of Occupancy',
+    projectSize: '50 hectares',
+    developmentStage: 'Construction'
+  },
+  {
+    id: 2,
+    name: 'Mainland Commercial Plaza',
+    location: 'Ikeja, Lagos',
+    type: 'Commercial',
+    totalUnits: 75,
+    soldUnits: 45,
+    reservedUnits: 12,
+    availableUnits: 18,
+    status: 'paused',
+    documentTitle: 'Approved Survey Plan',
+    projectSize: '15 hectares',
+    developmentStage: 'Marketing'
+  },
+  {
+    id: 3,
+    name: 'Sunset Land Development',
+    location: 'Abuja FCT',
+    type: 'Residential',
+    totalUnits: 200,
+    soldUnits: 196,
+    reservedUnits: 4,
+    availableUnits: 0,
+    status: 'sold out',
+    documentTitle: 'Family Receipt & Layout Plan',
+    projectSize: '100 hectares',
+    developmentStage: 'Handover'
   }
 ];
 

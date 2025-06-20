@@ -32,6 +32,10 @@ interface ProjectDetailViewProps {
     reservedUnits: number;
     availableUnits: number;
     status: string;
+    type: string;
+    documentTitle?: string;
+    projectSize?: string;
+    developmentStage?: string;
   };
 }
 
@@ -40,6 +44,7 @@ const mockProjectDetails = {
   startDate: '2024-01-15',
   expectedCompletion: '2025-12-31',
   totalRevenue: '₦2,340,000,000',
+  totalBudget: '₦1,800,000,000',
   avgUnitPrice: '₦15,600,000',
   recentSales: [
     { id: 1, unit: 'Unit A-15', client: 'John Doe', amount: '₦15,600,000', date: '2024-01-10' },
@@ -54,6 +59,11 @@ const mockProjectDetails = {
     { name: 'Alice Johnson', role: 'Project Manager', sales: 12 },
     { name: 'Bob Williams', role: 'Sales Agent', sales: 8 },
     { name: 'Carol Davis', role: 'Marketing Lead', sales: 15 },
+  ],
+  blocks: [
+    { id: 'A', prototype: 'Duplex', units: 30, status: 'completed', sold: 25, reserved: 3, available: 2 },
+    { id: 'B', prototype: 'Bungalow', units: 25, status: 'construction', sold: 18, reserved: 4, available: 3 },
+    { id: 'C', prototype: 'Duplex', units: 30, status: 'planning', sold: 0, reserved: 0, available: 30 },
   ]
 };
 
@@ -64,9 +74,9 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800';
-      case 'planning':
+      case 'paused':
         return 'bg-yellow-100 text-yellow-800';
-      case 'completed':
+      case 'sold out':
         return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -74,6 +84,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
   };
 
   const salesProgress = (project.soldUnits / project.totalUnits) * 100;
+  const budgetProgress = 65; // Example budget utilization
 
   return (
     <div className="space-y-6">
@@ -90,6 +101,10 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
             <MapPin className="h-4 w-4 mr-1" />
             {project.location}
           </div>
+          <div className="flex items-center text-blue-600 mb-2">
+            <FileText className="h-4 w-4 mr-1" />
+            {project.documentTitle}
+          </div>
           <p className="text-gray-600">{mockProjectDetails.description}</p>
         </div>
         <div className="flex space-x-2">
@@ -105,7 +120,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -150,31 +165,60 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
             </div>
           </CardContent>
         </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-red-600">{mockProjectDetails.totalBudget}</div>
+                <div className="text-sm text-gray-500">Total Budget</div>
+              </div>
+              <DollarSign className="h-8 w-8 text-red-600" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Sales Progress Bar */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Sales Progress</span>
-              <span>{salesProgress.toFixed(1)}% Complete</span>
+      {/* Progress Bars */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Sales Progress</span>
+                <span>{salesProgress.toFixed(1)}% Complete</span>
+              </div>
+              <Progress value={salesProgress} className="h-3" />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>{project.soldUnits} sold</span>
+                <span>{project.reservedUnits} reserved</span>
+                <span>{project.availableUnits} available</span>
+              </div>
             </div>
-            <Progress value={salesProgress} className="h-3" />
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>{project.soldUnits} sold</span>
-              <span>{project.reservedUnits} reserved</span>
-              <span>{project.availableUnits} available</span>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Budget Utilization</span>
+                <span>{budgetProgress}% Used</span>
+              </div>
+              <Progress value={budgetProgress} className="h-3" />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>₦1,170,000,000 spent</span>
+                <span>₦630,000,000 remaining</span>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Detailed Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="sales">Recent Sales</TabsTrigger>
+          <TabsTrigger value="blocks">Blocks</TabsTrigger>
+          <TabsTrigger value="sales">Sales</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
@@ -189,6 +233,18 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between">
+                    <span className="text-gray-600">Type:</span>
+                    <span>{project.type}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Size:</span>
+                    <span>{project.projectSize}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Development Stage:</span>
+                    <span>{project.developmentStage}</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-gray-600">Start Date:</span>
                     <span>{mockProjectDetails.startDate}</span>
                   </div>
@@ -197,12 +253,8 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                     <span>{mockProjectDetails.expectedCompletion}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Average Unit Price:</span>
-                    <span>{mockProjectDetails.avgUnitPrice}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Total Units:</span>
-                    <span>{project.totalUnits}</span>
+                    <span className="text-gray-600">Document:</span>
+                    <span className="text-blue-600">{project.documentTitle}</span>
                   </div>
                 </div>
               </CardContent>
@@ -234,6 +286,45 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="blocks" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Block Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {mockProjectDetails.blocks.map((block) => (
+                  <div key={block.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <span className="font-bold text-blue-600">Block {block.id}</span>
+                      </div>
+                      <div>
+                        <div className="font-medium">{block.prototype}</div>
+                        <div className="text-sm text-gray-500">{block.units} units • {block.status}</div>
+                      </div>
+                    </div>
+                    <div className="flex space-x-4 text-sm">
+                      <div className="text-center">
+                        <div className="font-medium text-green-600">{block.sold}</div>
+                        <div className="text-gray-500">Sold</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-medium text-yellow-600">{block.reserved}</div>
+                        <div className="text-gray-500">Reserved</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-medium text-blue-600">{block.available}</div>
+                        <div className="text-gray-500">Available</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="sales" className="space-y-4">

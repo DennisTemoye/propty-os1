@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { MapPin, Building2, Layers, Info, Plus, Trash2 } from 'lucide-react';
+import { MapPin, Building2, Layers, Info, Plus, Trash2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProjectSiteFormProps {
@@ -26,9 +26,9 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
       name: project?.name || '',
       location: project?.location || '',
       description: project?.description || '',
-      category: project?.category || '',
+      documentTitle: project?.documentTitle || '',
       type: project?.type || '',
-      status: project?.status || 'planning',
+      status: project?.status || 'active',
       projectSize: project?.projectSize || '',
       developmentStage: project?.developmentStage || '',
       startDate: project?.startDate || '',
@@ -134,30 +134,21 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Project Category *</FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Land Sales">Land Sales</SelectItem>
-                              <SelectItem value="Housing Sales">Housing Sales</SelectItem>
-                              <SelectItem value="Mixed">Mixed</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="documentTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Document Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Certificate of Occupancy, Family Receipt, Approved Survey" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="type"
@@ -193,10 +184,9 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
                               <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="planning">Planning</SelectItem>
                               <SelectItem value="active">Active</SelectItem>
                               <SelectItem value="paused">Paused</SelectItem>
-                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="sold out">Sold Out</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>
