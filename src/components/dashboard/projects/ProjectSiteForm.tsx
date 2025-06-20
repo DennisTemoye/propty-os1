@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { MapPin, Building2, Layers, Info, Plus, Trash2 } from 'lucide-react';
+import { MapPin, Building2, Layers, Info, Plus, Trash2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProjectSiteFormProps {
@@ -28,7 +27,7 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
       description: project?.description || '',
       category: project?.category || '',
       type: project?.type || '',
-      status: project?.status || 'planning',
+      status: project?.status || 'active',
       projectSize: project?.projectSize || '',
       developmentStage: project?.developmentStage || '',
       startDate: project?.startDate || '',
@@ -36,7 +35,8 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
       totalBudget: project?.totalBudget || '',
       contactPerson: project?.contactPerson || '',
       contactPhone: project?.contactPhone || '',
-      contactEmail: project?.contactEmail || ''
+      contactEmail: project?.contactEmail || '',
+      documentTitle: project?.documentTitle || ''
     }
   });
 
@@ -118,6 +118,23 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
 
                 <FormField
                   control={form.control}
+                  name="documentTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Document Title</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g., Victoria Gardens Master Plan 2024"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
@@ -147,9 +164,9 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
                               <SelectValue placeholder="Select category" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Land Sales">Land Sales</SelectItem>
-                              <SelectItem value="Housing Sales">Housing Sales</SelectItem>
-                              <SelectItem value="Mixed">Mixed</SelectItem>
+                              <SelectItem value="Housing">Housing</SelectItem>
+                              <SelectItem value="Lands">Lands</SelectItem>
+                              <SelectItem value="Both">Both</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -193,10 +210,9 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
                               <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="planning">Planning</SelectItem>
                               <SelectItem value="active">Active</SelectItem>
                               <SelectItem value="paused">Paused</SelectItem>
-                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="sold out">Sold Out</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -253,6 +269,7 @@ export function ProjectSiteForm({ project, onClose }: ProjectSiteFormProps) {
                               <SelectItem value="Marketing">Marketing</SelectItem>
                               <SelectItem value="Sales">Sales</SelectItem>
                               <SelectItem value="Handover">Handover</SelectItem>
+                              <SelectItem value="Completed">Completed</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>

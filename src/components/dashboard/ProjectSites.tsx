@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Building2, MapPin, Plus, Search, Eye, Edit, LayoutGrid, Map, Grid3X3, Layers, Filter } from 'lucide-react';
+import { Building2, MapPin, Plus, Search, LayoutGrid, Layers, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -16,7 +16,7 @@ const mockProjectSites = [
     id: 1,
     name: 'Victoria Gardens Estate',
     location: 'Lekki, Lagos',
-    category: 'Housing Sales',
+    category: 'Housing',
     type: 'Residential',
     totalBlocks: 8,
     totalUnits: 150,
@@ -27,6 +27,7 @@ const mockProjectSites = [
     description: 'Premium residential estate with modern amenities',
     projectSize: '50 hectares',
     developmentStage: 'Construction',
+    documentTitle: 'Victoria Gardens Master Plan 2024',
     blocks: [
       { id: 'A', prototype: 'Duplex', units: 30, status: 'completed' },
       { id: 'B', prototype: 'Bungalow', units: 25, status: 'construction' },
@@ -37,7 +38,7 @@ const mockProjectSites = [
     id: 2,
     name: 'Mainland Commercial Plaza',
     location: 'Ikeja, Lagos',
-    category: 'Mixed',
+    category: 'Both',
     type: 'Commercial',
     totalBlocks: 3,
     totalUnits: 75,
@@ -48,6 +49,7 @@ const mockProjectSites = [
     description: 'Modern commercial spaces and offices',
     projectSize: '15 hectares',
     developmentStage: 'Marketing',
+    documentTitle: 'Mainland Plaza Development Guide',
     blocks: [
       { id: 'Alpha', prototype: 'Office Towers', units: 40, status: 'completed' },
       { id: 'Beta', prototype: 'Retail Spaces', units: 35, status: 'completed' }
@@ -57,21 +59,44 @@ const mockProjectSites = [
     id: 3,
     name: 'Sunset Land Development',
     location: 'Abuja FCT',
-    category: 'Land Sales',
+    category: 'Lands',
     type: 'Residential',
     totalBlocks: 12,
     totalUnits: 200,
-    soldUnits: 156,
-    reservedUnits: 28,
-    availableUnits: 16,
-    status: 'planning',
+    soldUnits: 200,
+    reservedUnits: 0,
+    availableUnits: 0,
+    status: 'sold out',
     description: 'Prime land plots for residential development',
     projectSize: '100 hectares',
-    developmentStage: 'Subdivision',
+    developmentStage: 'Completed',
+    documentTitle: 'Sunset Subdivision Layout Plan',
     blocks: [
-      { id: '1', prototype: 'Standard Plots', units: 50, status: 'surveyed' },
-      { id: '2', prototype: 'Premium Plots', units: 30, status: 'surveyed' },
-      { id: '3', prototype: 'Corner Plots', units: 20, status: 'planning' }
+      { id: '1', prototype: 'Standard Plots', units: 50, status: 'completed' },
+      { id: '2', prototype: 'Premium Plots', units: 30, status: 'completed' },
+      { id: '3', prototype: 'Corner Plots', units: 20, status: 'completed' }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Green Valley Estate',
+    location: 'Ibadan, Oyo',
+    category: 'Housing',
+    type: 'Residential',
+    totalBlocks: 6,
+    totalUnits: 120,
+    soldUnits: 45,
+    reservedUnits: 15,
+    availableUnits: 60,
+    status: 'paused',
+    description: 'Eco-friendly residential development',
+    projectSize: '30 hectares',
+    developmentStage: 'Planning',
+    documentTitle: 'Green Valley Environmental Impact Study',
+    blocks: [
+      { id: 'A', prototype: 'Eco Homes', units: 40, status: 'planning' },
+      { id: 'B', prototype: 'Green Apartments', units: 40, status: 'planning' },
+      { id: 'C', prototype: 'Solar Villas', units: 40, status: 'planning' }
     ]
   }
 ];
@@ -90,12 +115,10 @@ export function ProjectSites() {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800';
-      case 'planning':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800';
       case 'paused':
-        return 'bg-red-100 text-red-800';
+        return 'bg-yellow-100 text-yellow-800';
+      case 'sold out':
+        return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -103,11 +126,11 @@ export function ProjectSites() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Housing Sales':
+      case 'Housing':
         return 'bg-purple-100 text-purple-800';
-      case 'Land Sales':
+      case 'Lands':
         return 'bg-orange-100 text-orange-800';
-      case 'Mixed':
+      case 'Both':
         return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -137,7 +160,8 @@ export function ProjectSites() {
     return matchesSearch && matchesCategory && matchesType && matchesStatus;
   });
 
-  const handleEditProject = (project: any) => {
+  const handleEditProject = (project: any, e: React.MouseEvent) => {
+    e.stopPropagation();
     setEditingProject(project);
     setIsProjectFormOpen(true);
   };
@@ -145,6 +169,10 @@ export function ProjectSites() {
   const handleNewProject = () => {
     setEditingProject(null);
     setIsProjectFormOpen(true);
+  };
+
+  const handleProjectClick = (projectId: number) => {
+    navigate(`/company/projects/${projectId}`);
   };
 
   return (
@@ -182,9 +210,9 @@ export function ProjectSites() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="Housing Sales">Housing Sales</SelectItem>
-                  <SelectItem value="Land Sales">Land Sales</SelectItem>
-                  <SelectItem value="Mixed">Mixed</SelectItem>
+                  <SelectItem value="Housing">Housing</SelectItem>
+                  <SelectItem value="Lands">Lands</SelectItem>
+                  <SelectItem value="Both">Both</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -205,9 +233,8 @@ export function ProjectSites() {
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="planning">Planning</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="paused">Paused</SelectItem>
+                  <SelectItem value="sold out">Sold Out</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -243,7 +270,11 @@ export function ProjectSites() {
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((project) => (
-            <Card key={project.id} className="hover:shadow-lg transition-shadow">
+            <Card 
+              key={project.id} 
+              className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => handleProjectClick(project.id)}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -266,6 +297,12 @@ export function ProjectSites() {
                   </div>
                 </div>
                 <p className="text-sm text-gray-600">{project.description}</p>
+                {project.documentTitle && (
+                  <div className="mt-2">
+                    <span className="text-xs text-gray-500">Document:</span>
+                    <p className="text-sm font-medium text-blue-600">{project.documentTitle}</p>
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-3">
@@ -305,34 +342,6 @@ export function ProjectSites() {
                       <div className="text-xs text-blue-700">Available</div>
                     </div>
                   </div>
-
-                  <div className="flex space-x-2 pt-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex-1"
-                      onClick={() => navigate(`/company/projects/${project.id}`)}
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      View
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex-1"
-                      onClick={() => navigate(`/company/projects/${project.id}/blocks`)}
-                    >
-                      <Grid3X3 className="h-4 w-4 mr-2" />
-                      Blocks
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleEditProject(project)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -341,22 +350,29 @@ export function ProjectSites() {
       ) : (
         <div className="space-y-4">
           {filteredProjects.map((project) => (
-            <Card key={project.id} className="hover:shadow-md transition-shadow">
+            <Card 
+              key={project.id} 
+              className="hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => handleProjectClick(project.id)}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-4">
-                      <div>
+                      <div className="flex-1">
                         <h3 className="font-semibold text-lg">{project.name}</h3>
-                        <div className="flex items-center text-gray-600 text-sm">
+                        <div className="flex items-center text-gray-600 text-sm mb-1">
                           <MapPin className="h-3 w-3 mr-1" />
                           {project.location} • {project.projectSize} • {project.developmentStage}
                         </div>
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
-                        <Badge className={getCategoryColor(project.category)}>{project.category}</Badge>
-                        <Badge className={getTypeColor(project.type)}>{project.type}</Badge>
+                        {project.documentTitle && (
+                          <div className="text-xs text-blue-600 mb-2">{project.documentTitle}</div>
+                        )}
+                        <div className="flex flex-wrap gap-1">
+                          <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
+                          <Badge className={getCategoryColor(project.category)}>{project.category}</Badge>
+                          <Badge className={getTypeColor(project.type)}>{project.type}</Badge>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -372,19 +388,6 @@ export function ProjectSites() {
                     <div className="text-center">
                       <div className="font-medium text-green-600">{project.soldUnits}</div>
                       <div className="text-gray-500">Sold</div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => navigate(`/company/projects/${project.id}`)}>
-                        <Eye className="h-3 w-3 mr-1" />
-                        View
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => navigate(`/company/projects/${project.id}/blocks`)}>
-                        <Grid3X3 className="h-3 w-3 mr-1" />
-                        Blocks
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleEditProject(project)}>
-                        <Edit className="h-3 w-3" />
-                      </Button>
                     </div>
                   </div>
                 </div>
