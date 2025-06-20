@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Lock, User, Phone, Building, Eye, EyeOff, Check, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, Phone, Building, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const SignupPage = () => {
@@ -184,30 +184,6 @@ const SignupPage = () => {
                 </button>
               </div>
             </div>
-
-            {/* What you'll get section */}
-            <Card className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
-              <CardHeader>
-                <h3 className="font-semibold text-purple-900 dark:text-purple-100">What you'll get:</h3>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[
-                    '14-day free trial',
-                    'Full access to all features',
-                    'Unlimited projects and units',
-                    'Customer support',
-                    'Mobile app access',
-                    'Data export capabilities'
-                  ].map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <Check className="h-4 w-4 text-emerald-500" />
-                      <span className="text-slate-700 dark:text-slate-300">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
             
             <Button
               type="submit"
