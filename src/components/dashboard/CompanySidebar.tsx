@@ -78,7 +78,7 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
           </div>
           <div className="flex items-center text-sm text-blue-200">
             <Badge variant="outline" className="text-xs border-blue-300 text-blue-200">
-              Real Estate CRM
+              Built for Africa
             </Badge>
           </div>
         </div>
