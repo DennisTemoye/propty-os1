@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Home, DollarSign, CheckCircle, Clock } from 'lucide-react';
+import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Home, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -130,57 +130,57 @@ export function ProjectSites() {
         </Button>
       </div>
 
-      {/* KPI Cards with Subtle Gradients */}
+      {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <GradientKpiCard
           title="Total Projects"
           value={totalProjects.toString()}
-          subtitle="All registered"
+          subtitle="Active projects"
           icon={Building2}
           gradientFrom="from-purple-50"
           gradientTo="to-purple-100"
-          iconBgColor="bg-purple-500"
-          iconColor="text-white"
+          iconBgColor="bg-purple-200"
+          iconColor="text-purple-600"
         />
         <GradientKpiCard
           title="Total Units"
           value={totalUnits.toLocaleString()}
-          subtitle="Across all projects"
+          subtitle="All project units"
           icon={Home}
           gradientFrom="from-green-50"
           gradientTo="to-green-100"
-          iconBgColor="bg-green-500"
-          iconColor="text-white"
+          iconBgColor="bg-green-200"
+          iconColor="text-green-600"
         />
         <GradientKpiCard
           title="Units Sold"
           value={totalSold.toLocaleString()}
-          subtitle="Successfully closed"
-          icon={CheckCircle}
+          subtitle={`${((totalSold / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={DollarSign}
           gradientFrom="from-blue-50"
           gradientTo="to-blue-100"
-          iconBgColor="bg-blue-500"
-          iconColor="text-white"
+          iconBgColor="bg-blue-200"
+          iconColor="text-blue-600"
         />
         <GradientKpiCard
           title="Reserved"
           value={totalReserved.toLocaleString()}
           subtitle={`${((totalReserved / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={Clock}
+          icon={MapPin}
           gradientFrom="from-yellow-50"
           gradientTo="to-yellow-100"
-          iconBgColor="bg-yellow-500"
-          iconColor="text-white"
+          iconBgColor="bg-yellow-200"
+          iconColor="text-yellow-600"
         />
         <GradientKpiCard
           title="Available"
           value={totalAvailable.toLocaleString()}
           subtitle={`${((totalAvailable / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={DollarSign}
+          icon={Building2}
           gradientFrom="from-indigo-50"
           gradientTo="to-indigo-100"
-          iconBgColor="bg-indigo-500"
-          iconColor="text-white"
+          iconBgColor="bg-indigo-200"
+          iconColor="text-indigo-600"
         />
       </div>
 
