@@ -1,15 +1,16 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Building, Users, DollarSign, FileText, AlertTriangle, Plus } from 'lucide-react';
+import { Building, Users, DollarSign, FileText, UserCheck, Calculator, Truck, Plus } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 const kpiData = [
   {
     title: 'Total Sales',
-    value: '₦15.2B',
-    subtitle: '845 Units Sold',
+    value: '₦2.4B',
+    subtitle: '156 Units Sold',
     icon: DollarSign,
     gradientFrom: 'from-purple-500',
     gradientTo: 'to-blue-400',
@@ -17,9 +18,9 @@ const kpiData = [
     iconColor: 'text-white',
   },
   {
-    title: 'Project Sites',
-    value: '24',
-    subtitle: '12 Active Sites',
+    title: 'Ongoing Projects',
+    value: '12',
+    subtitle: '3 New This Month',
     icon: Building,
     gradientFrom: 'from-green-400',
     gradientTo: 'to-teal-300',
@@ -28,8 +29,8 @@ const kpiData = [
   },
   {
     title: 'Total Clients',
-    value: '1,847',
-    subtitle: '156 New This Month',
+    value: '1,247',
+    subtitle: '89 Active',
     icon: Users,
     gradientFrom: 'from-orange-400',
     gradientTo: 'to-amber-300',
@@ -37,9 +38,9 @@ const kpiData = [
     iconColor: 'text-white',
   },
   {
-    title: 'Units Allocated',
-    value: '1,267',
-    subtitle: '89% Allocation Rate',
+    title: 'Pending Allocations',
+    value: '23',
+    subtitle: 'Awaiting Approval',
     icon: FileText,
     gradientFrom: 'from-indigo-400',
     gradientTo: 'to-pink-300',
@@ -47,12 +48,32 @@ const kpiData = [
     iconColor: 'text-white',
   },
   {
-    title: 'Overdue Payments',
+    title: 'Active Marketers',
+    value: '45',
+    subtitle: '8 Top Performers',
+    icon: UserCheck,
+    gradientFrom: 'from-violet-400',
+    gradientTo: 'to-purple-300',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
+  },
+  {
+    title: 'Commissions Paid',
     value: '₦45.2M',
-    subtitle: '23 Outstanding',
-    icon: AlertTriangle,
-    gradientFrom: 'from-red-400',
-    gradientTo: 'to-rose-300',
+    subtitle: 'This Month',
+    icon: Calculator,
+    gradientFrom: 'from-emerald-400',
+    gradientTo: 'to-cyan-300',
+    iconBgColor: 'bg-white/20',
+    iconColor: 'text-white',
+  },
+  {
+    title: 'Monthly Expenses',
+    value: '₦12.8M',
+    subtitle: 'Operational Costs',
+    icon: Truck,
+    gradientFrom: 'from-rose-400',
+    gradientTo: 'to-pink-300',
     iconBgColor: 'bg-white/20',
     iconColor: 'text-white',
   },
@@ -80,8 +101,8 @@ export function DashboardOverview() {
       <div className="bg-white border-b px-6 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Business Overview</h1>
-            <p className="text-gray-600 mt-1">Real-time insights for your real estate business</p>
+            <h1 className="text-3xl font-bold text-gray-900">Company Dashboard</h1>
+            <p className="text-gray-600 mt-1">Welcome back! Here's your business overview</p>
           </div>
           <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
             <Plus className="h-5 w-5 mr-2" />
@@ -92,7 +113,7 @@ export function DashboardOverview() {
 
       <div className="p-6 space-y-8">
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {kpiData.map((kpi, index) => (
             <GradientKpiCard
               key={index}
@@ -190,8 +211,8 @@ export function DashboardOverview() {
                 <div className="flex items-center space-x-4 p-3 bg-white/60 rounded-xl">
                   <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Unit allocated</p>
-                    <p className="text-xs text-gray-600">Block A, Unit 5 - Emerald Heights</p>
+                    <p className="text-sm font-medium text-gray-800">Commission approved</p>
+                    <p className="text-xs text-gray-600">Agent Smith - ₦125K</p>
                   </div>
                   <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">3 hours ago</span>
                 </div>
@@ -201,53 +222,53 @@ export function DashboardOverview() {
 
           <Card className="bg-white border shadow-sm rounded-xl">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800">Top Performing Projects</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-800">Top Performing Agents</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-sm font-bold text-white">VG</span>
+                      <span className="text-sm font-bold text-white">JS</span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Victoria Gardens</p>
-                      <p className="text-xs text-gray-600">89 units sold</p>
+                      <p className="text-sm font-semibold text-gray-800">Jane Smith</p>
+                      <p className="text-xs text-gray-600">16 sales this month</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-emerald-600">₦2.5B</span>
-                    <div className="text-xs text-gray-500">Revenue</div>
+                    <span className="text-sm font-bold text-emerald-600">₦4.2M</span>
+                    <div className="text-xs text-gray-500">Commission</div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-sm font-bold text-white">EH</span>
+                      <span className="text-sm font-bold text-white">MD</span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Emerald Heights</p>
-                      <p className="text-xs text-gray-600">156 units sold</p>
+                      <p className="text-sm font-semibold text-gray-800">Mike Davis</p>
+                      <p className="text-xs text-gray-600">8 sales this month</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-emerald-600">₦4.2B</span>
-                    <div className="text-xs text-gray-500">Revenue</div>
+                    <span className="text-sm font-bold text-emerald-600">₦3.1M</span>
+                    <div className="text-xs text-gray-500">Commission</div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-sm font-bold text-white">GV</span>
+                      <span className="text-sm font-bold text-white">SJ</span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Golden View</p>
-                      <p className="text-xs text-gray-600">245 units sold</p>
+                      <p className="text-sm font-semibold text-gray-800">Sarah Johnson</p>
+                      <p className="text-xs text-gray-600">6 sales this month</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-emerald-600">₦6.8B</span>
-                    <div className="text-xs text-gray-500">Revenue</div>
+                    <span className="text-sm font-bold text-emerald-600">₦2.8M</span>
+                    <div className="text-xs text-gray-500">Commission</div>
                   </div>
                 </div>
               </div>
