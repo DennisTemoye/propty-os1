@@ -1,10 +1,16 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle } from 'lucide-react';
+import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const kpiData = [
   {
@@ -115,19 +121,84 @@ const financialData = [
 ];
 
 export function DashboardOverview() {
+  const [showNotification, setShowNotification] = useState(true);
+
+  const handleNewAction = (action: string) => {
+    console.log(`Creating new ${action}`);
+    // Here you would implement the actual navigation or modal opening logic
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Notification Bar */}
+      {showNotification && (
+        <div className="bg-blue-600 dark:bg-blue-700 text-white px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Bell className="h-5 w-5" />
+            <span className="font-medium">🎉 Referral program is now live! Earn rewards for every successful referral.</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowNotification(false)}
+            className="text-white hover:bg-blue-700 dark:hover:bg-blue-600 h-8 w-8"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
       {/* Header Section */}
-      <div className="bg-white border-b px-6 py-6">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600 mt-1">Real Estate Sales & Project Management Overview</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Real Estate Sales & Project Management Overview</p>
           </div>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-            <Plus className="h-5 w-5 mr-2" />
-            New Project Site
-          </Button>
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                  <Plus className="h-5 w-5 mr-2" />
+                  New
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl"
+                align="end"
+              >
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('project')}
+                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <Building className="h-5 w-5 text-purple-600" />
+                  <span className="font-medium">New Project Site</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('client')}
+                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <Users className="h-5 w-5 text-blue-600" />
+                  <span className="font-medium">New Client</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('allocation')}
+                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <MapPin className="h-5 w-5 text-green-600" />
+                  <span className="font-medium">New Allocation</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('expense')}
+                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <DollarSign className="h-5 w-5 text-red-600" />
+                  <span className="font-medium">New Expense</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
@@ -151,9 +222,9 @@ export function DashboardOverview() {
 
         {/* Main Analytics Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-white border shadow-sm rounded-xl">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Sales & Allocations Performance</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Sales & Allocations Performance</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -176,9 +247,9 @@ export function DashboardOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border shadow-sm rounded-xl">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Financial Overview (₦M)</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Financial Overview (₦M)</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -205,9 +276,9 @@ export function DashboardOverview() {
 
         {/* Secondary Analytics */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="bg-white border shadow-sm rounded-xl">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800">Project Status Distribution</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Project Status Distribution</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={250}>
@@ -231,43 +302,43 @@ export function DashboardOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border shadow-sm rounded-xl lg:col-span-2">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl lg:col-span-2">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800">Recent Activity Log</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Recent Activity Log</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center space-x-4 p-3 bg-green-50 rounded-xl border-l-4 border-green-500">
+                <div className="flex items-center space-x-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border-l-4 border-green-500">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">New client allocation completed</p>
-                    <p className="text-xs text-gray-600">John Doe - Victoria Gardens Block A, Unit 12</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">New client allocation completed</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">John Doe - Victoria Gardens Block A, Unit 12</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">5 min ago</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">5 min ago</span>
                 </div>
-                <div className="flex items-center space-x-4 p-3 bg-blue-50 rounded-xl border-l-4 border-blue-500">
+                <div className="flex items-center space-x-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border-l-4 border-blue-500">
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Payment received</p>
-                    <p className="text-xs text-gray-600">₦2.5M initial payment - Lagos Estate Project</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Payment received</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">₦2.5M initial payment - Lagos Estate Project</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">1 hour ago</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">1 hour ago</span>
                 </div>
-                <div className="flex items-center space-x-4 p-3 bg-purple-50 rounded-xl border-l-4 border-purple-500">
+                <div className="flex items-center space-x-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl border-l-4 border-purple-500">
                   <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Site inspection scheduled</p>
-                    <p className="text-xs text-gray-600">Sunrise Estate - Tomorrow 10:00 AM</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Site inspection scheduled</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">Sunrise Estate - Tomorrow 10:00 AM</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">2 hours ago</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">2 hours ago</span>
                 </div>
-                <div className="flex items-center space-x-4 p-3 bg-orange-50 rounded-xl border-l-4 border-orange-500">
+                <div className="flex items-center space-x-4 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-xl border-l-4 border-orange-500">
                   <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Document uploaded</p>
-                    <p className="text-xs text-gray-600">Survey plan - Greenfield Heights</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Document uploaded</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">Survey plan - Greenfield Heights</p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg">4 hours ago</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">4 hours ago</span>
                 </div>
               </div>
             </CardContent>
@@ -276,103 +347,103 @@ export function DashboardOverview() {
 
         {/* Quick Actions & Performance Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="bg-white border shadow-sm rounded-xl">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800">Top Performing Projects</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Top Performing Projects</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-100 dark:border-green-800">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Victoria Gardens</p>
-                      <p className="text-xs text-gray-600">85% units sold • 127 allocations</p>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-white">Victoria Gardens</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">85% units sold • 127 allocations</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-bold text-green-600">₦1.2B</span>
-                    <div className="text-xs text-gray-500">Revenue</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Lagos Estate</p>
-                      <p className="text-xs text-gray-600">72% units sold • 98 allocations</p>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-white">Lagos Estate</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">72% units sold • 98 allocations</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-bold text-blue-600">₦890M</span>
-                    <div className="text-xs text-gray-500">Revenue</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-100 dark:border-purple-800">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Sunrise Estate</p>
-                      <p className="text-xs text-gray-600">68% units sold • 76 allocations</p>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-white">Sunrise Estate</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">68% units sold • 76 allocations</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-bold text-purple-600">₦650M</span>
-                    <div className="text-xs text-gray-500">Revenue</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white border shadow-sm rounded-xl">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800">Client Allocation Summary</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Client Allocation Summary</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-600">Total Allocated Units</span>
-                  <span className="text-2xl font-bold text-gray-900">456</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Allocated Units</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white">456</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Fully Paid</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Fully Paid</span>
                     <div className="flex items-center space-x-2">
-                      <div className="w-24 bg-gray-200 rounded-full h-2">
+                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div className="bg-green-500 h-2 rounded-full" style={{ width: '65%' }}></div>
                       </div>
-                      <span className="text-sm font-medium">298</span>
+                      <span className="text-sm font-medium dark:text-white">298</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">On Payment Plan</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">On Payment Plan</span>
                     <div className="flex items-center space-x-2">
-                      <div className="w-24 bg-gray-200 rounded-full h-2">
+                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div className="bg-blue-500 h-2 rounded-full" style={{ width: '25%' }}></div>
                       </div>
-                      <span className="text-sm font-medium">134</span>
+                      <span className="text-sm font-medium dark:text-white">134</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Pending Documentation</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Pending Documentation</span>
                     <div className="flex items-center space-x-2">
-                      <div className="w-24 bg-gray-200 rounded-full h-2">
+                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div className="bg-orange-500 h-2 rounded-full" style={{ width: '10%' }}></div>
                       </div>
-                      <span className="text-sm font-medium">24</span>
+                      <span className="text-sm font-medium dark:text-white">24</span>
                     </div>
                   </div>
                 </div>
-                <div className="pt-4 border-t">
+                <div className="pt-4 border-t dark:border-gray-700">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-600">Collection Rate</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Collection Rate</span>
                     <span className="text-xl font-bold text-green-600">92.3%</span>
                   </div>
                 </div>
