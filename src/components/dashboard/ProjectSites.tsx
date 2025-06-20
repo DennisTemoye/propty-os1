@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers } from 'lucide-react';
+import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Home, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 const mockProjectSites = [
   {
@@ -132,31 +132,56 @@ export function ProjectSites() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Total Projects</div>
-          <div className="text-2xl font-bold">{totalProjects}</div>
-          <div className="text-xs opacity-75">Active projects</div>
-        </div>
-        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Total Units</div>
-          <div className="text-2xl font-bold">{totalUnits.toLocaleString()}</div>
-          <div className="text-xs opacity-75">All project units</div>
-        </div>
-        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Units Sold</div>
-          <div className="text-2xl font-bold">{totalSold.toLocaleString()}</div>
-          <div className="text-xs opacity-75">{((totalSold / totalUnits) * 100).toFixed(1)}% of total</div>
-        </div>
-        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Reserved</div>
-          <div className="text-2xl font-bold">{totalReserved.toLocaleString()}</div>
-          <div className="text-xs opacity-75">{((totalReserved / totalUnits) * 100).toFixed(1)}% of total</div>
-        </div>
-        <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg p-6 text-white">
-          <div className="text-sm font-medium opacity-90 mb-2">Available</div>
-          <div className="text-2xl font-bold">{totalAvailable.toLocaleString()}</div>
-          <div className="text-xs opacity-75">{((totalAvailable / totalUnits) * 100).toFixed(1)}% of total</div>
-        </div>
+        <GradientKpiCard
+          title="Total Projects"
+          value={totalProjects.toString()}
+          subtitle="Active projects"
+          icon={Building2}
+          gradientFrom="from-blue-500"
+          gradientTo="to-blue-600"
+          iconBgColor="bg-blue-200"
+          iconColor="text-blue-700"
+        />
+        <GradientKpiCard
+          title="Total Units"
+          value={totalUnits.toLocaleString()}
+          subtitle="All project units"
+          icon={Home}
+          gradientFrom="from-purple-500"
+          gradientTo="to-purple-600"
+          iconBgColor="bg-purple-200"
+          iconColor="text-purple-700"
+        />
+        <GradientKpiCard
+          title="Units Sold"
+          value={totalSold.toLocaleString()}
+          subtitle={`${((totalSold / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={DollarSign}
+          gradientFrom="from-green-500"
+          gradientTo="to-green-600"
+          iconBgColor="bg-green-200"
+          iconColor="text-green-700"
+        />
+        <GradientKpiCard
+          title="Reserved"
+          value={totalReserved.toLocaleString()}
+          subtitle={`${((totalReserved / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={MapPin}
+          gradientFrom="from-yellow-500"
+          gradientTo="to-yellow-600"
+          iconBgColor="bg-yellow-200"
+          iconColor="text-yellow-700"
+        />
+        <GradientKpiCard
+          title="Available"
+          value={totalAvailable.toLocaleString()}
+          subtitle={`${((totalAvailable / totalUnits) * 100).toFixed(1)}% of total`}
+          icon={Building2}
+          gradientFrom="from-indigo-500"
+          gradientTo="to-indigo-600"
+          iconBgColor="bg-indigo-200"
+          iconColor="text-indigo-700"
+        />
       </div>
 
       {/* Enhanced Filters */}
