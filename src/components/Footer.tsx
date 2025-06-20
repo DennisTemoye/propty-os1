@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Separator } from '@/components/ui/separator';
+import { Shield } from 'lucide-react';
 
 const Footer = () => {
   const scrollToSection = (sectionId: string) => {
@@ -20,6 +21,15 @@ const Footer = () => {
             <p className="text-gray-300 leading-relaxed">
               The all-in-one property and real estate management platform built for Africa.
             </p>
+            
+            {/* NDPC Certification */}
+            <div className="flex items-center space-x-2 pt-4">
+              <Shield className="w-6 h-6 text-green-400" />
+              <div className="text-sm">
+                <div className="text-green-400 font-semibold">NDPC Certified</div>
+                <div className="text-gray-400">Nigeria Data Protection Commission</div>
+              </div>
+            </div>
           </div>
 
           {/* Quick Links */}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
@@ -6,8 +7,8 @@ const PricingSection = () => {
   const plans = [
     {
       name: "Starter",
-      price: "₦20,000",
-      period: "/month",
+      price: "₦199,000",
+      period: "/year",
       description: "Perfect for small real estate companies",
       features: [
         "Up to 2 projects",
@@ -22,8 +23,8 @@ const PricingSection = () => {
     },
     {
       name: "Pro",
-      price: "₦50,000",
-      period: "/month",
+      price: "₦499,000",
+      period: "/year",
       description: "Complete solution for growing companies",
       features: [
         "Up to 200 projects",
@@ -62,10 +63,10 @@ const PricingSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-            Flexible Pricing for Real Estate Companies
+            Flexible Annual Pricing for Real Estate Companies
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Choose the plan that fits your needs, whether you're developing properties, selling land, or managing real estate sales teams across Africa
+            Choose the annual plan that fits your needs, whether you're developing properties, selling land, or managing real estate sales teams across Africa
           </p>
         </div>
 
