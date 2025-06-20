@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Eye, EyeOff, Building, Home, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
@@ -25,14 +25,8 @@ const LoginPage = () => {
       // Simulate login API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock user type detection - in real app, this would come from API
-      const userType = email.includes('company') ? 'company' : 'landlord';
-      
-      if (userType === 'company') {
-        window.location.href = '/company/dashboard';
-      } else {
-        window.location.href = '/landlord/dashboard';
-      }
+      // Redirect to company dashboard
+      window.location.href = '/company/dashboard';
     } catch (err) {
       setError('Invalid credentials. Please try again.');
     } finally {
@@ -40,7 +34,7 @@ const LoginPage = () => {
     }
   };
 
-  const handleQuickLogin = async (userType: 'company' | 'landlord') => {
+  const handleQuickLogin = async () => {
     setIsLoading(true);
     setError('');
 
@@ -48,11 +42,7 @@ const LoginPage = () => {
       // Simulate quick login
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      if (userType === 'company') {
-        window.location.href = '/company/dashboard';
-      } else {
-        window.location.href = '/landlord/dashboard';
-      }
+      window.location.href = '/company/dashboard';
     } catch (err) {
       setError('Quick login failed. Please try again.');
     } finally {
@@ -149,32 +139,19 @@ const LoginPage = () => {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or quick login as</span>
+                <span className="bg-background px-2 text-muted-foreground">Or</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleQuickLogin('company')}
-                disabled={isLoading}
-                className="flex items-center gap-2"
-              >
-                <Building className="h-4 w-4" />
-                Company
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleQuickLogin('landlord')}
-                disabled={isLoading}
-                className="flex items-center gap-2"
-              >
-                <Home className="h-4 w-4" />
-                Landlord
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleQuickLogin}
+              disabled={isLoading}
+              className="w-full"
+            >
+              Quick Login
+            </Button>
             
             <div className="text-center">
               <span className="text-sm text-gray-600 dark:text-gray-400">
