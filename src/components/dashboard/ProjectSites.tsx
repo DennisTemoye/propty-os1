@@ -1,14 +1,14 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers, Home, DollarSign, CheckCircle, Clock } from 'lucide-react';
+import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, Layers } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 const mockProjectSites = [
   {
@@ -130,58 +130,33 @@ export function ProjectSites() {
         </Button>
       </div>
 
-      {/* KPI Cards with Subtle Gradients */}
+      {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <GradientKpiCard
-          title="Total Projects"
-          value={totalProjects.toString()}
-          subtitle="All registered"
-          icon={Building2}
-          gradientFrom="from-purple-50"
-          gradientTo="to-purple-100"
-          iconBgColor="bg-purple-500"
-          iconColor="text-white"
-        />
-        <GradientKpiCard
-          title="Total Units"
-          value={totalUnits.toLocaleString()}
-          subtitle="Across all projects"
-          icon={Home}
-          gradientFrom="from-green-50"
-          gradientTo="to-green-100"
-          iconBgColor="bg-green-500"
-          iconColor="text-white"
-        />
-        <GradientKpiCard
-          title="Units Sold"
-          value={totalSold.toLocaleString()}
-          subtitle="Successfully closed"
-          icon={CheckCircle}
-          gradientFrom="from-blue-50"
-          gradientTo="to-blue-100"
-          iconBgColor="bg-blue-500"
-          iconColor="text-white"
-        />
-        <GradientKpiCard
-          title="Reserved"
-          value={totalReserved.toLocaleString()}
-          subtitle={`${((totalReserved / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={Clock}
-          gradientFrom="from-yellow-50"
-          gradientTo="to-yellow-100"
-          iconBgColor="bg-yellow-500"
-          iconColor="text-white"
-        />
-        <GradientKpiCard
-          title="Available"
-          value={totalAvailable.toLocaleString()}
-          subtitle={`${((totalAvailable / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={DollarSign}
-          gradientFrom="from-indigo-50"
-          gradientTo="to-indigo-100"
-          iconBgColor="bg-indigo-500"
-          iconColor="text-white"
-        />
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Total Projects</div>
+          <div className="text-2xl font-bold">{totalProjects}</div>
+          <div className="text-xs opacity-75">Active projects</div>
+        </div>
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Total Units</div>
+          <div className="text-2xl font-bold">{totalUnits.toLocaleString()}</div>
+          <div className="text-xs opacity-75">All project units</div>
+        </div>
+        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Units Sold</div>
+          <div className="text-2xl font-bold">{totalSold.toLocaleString()}</div>
+          <div className="text-xs opacity-75">{((totalSold / totalUnits) * 100).toFixed(1)}% of total</div>
+        </div>
+        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Reserved</div>
+          <div className="text-2xl font-bold">{totalReserved.toLocaleString()}</div>
+          <div className="text-xs opacity-75">{((totalReserved / totalUnits) * 100).toFixed(1)}% of total</div>
+        </div>
+        <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg p-6 text-white">
+          <div className="text-sm font-medium opacity-90 mb-2">Available</div>
+          <div className="text-2xl font-bold">{totalAvailable.toLocaleString()}</div>
+          <div className="text-xs opacity-75">{((totalAvailable / totalUnits) * 100).toFixed(1)}% of total</div>
+        </div>
       </div>
 
       {/* Enhanced Filters */}
