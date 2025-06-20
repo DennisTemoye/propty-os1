@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -108,6 +109,10 @@ export function ProjectSites() {
   const totalReserved = mockProjectSites.reduce((sum, project) => sum + project.reservedUnits, 0);
   const totalAvailable = mockProjectSites.reduce((sum, project) => sum + project.availableUnits, 0);
 
+  // Calculate total revenue (assuming average price per unit for demo)
+  const averagePricePerUnit = 25000000; // 25M Naira average
+  const totalRevenue = totalSold * averagePricePerUnit;
+
   const handleNewProject = () => {
     setEditingProject(null);
     setIsProjectFormOpen(true);
@@ -115,6 +120,15 @@ export function ProjectSites() {
 
   const handleCardClick = (projectId: number) => {
     navigate(`/company/projects/${projectId}`);
+  };
+
+  const formatCurrency = (amount: number) => {
+    if (amount >= 1000000000) {
+      return `₦${(amount / 1000000000).toFixed(1)}B`;
+    } else if (amount >= 1000000) {
+      return `₦${(amount / 1000000).toFixed(1)}M`;
+    }
+    return `₦${amount.toLocaleString()}`;
   };
 
   return (
@@ -131,56 +145,42 @@ export function ProjectSites() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <GradientKpiCard
           title="Total Projects"
           value={totalProjects.toString()}
-          subtitle="Active projects"
+          subtitle="All registered"
           icon={Building2}
-          gradientFrom="from-blue-500"
-          gradientTo="to-blue-600"
-          iconBgColor="bg-blue-200"
-          iconColor="text-blue-700"
+          gradientFrom="from-purple-50"
+          gradientTo="to-purple-100"
+          iconColor="text-purple-400"
         />
         <GradientKpiCard
           title="Total Units"
           value={totalUnits.toLocaleString()}
-          subtitle="All project units"
+          subtitle="Across all projects"
           icon={Home}
-          gradientFrom="from-purple-500"
-          gradientTo="to-purple-600"
-          iconBgColor="bg-purple-200"
-          iconColor="text-purple-700"
+          gradientFrom="from-green-50"
+          gradientTo="to-green-100"
+          iconColor="text-green-400"
         />
         <GradientKpiCard
           title="Units Sold"
           value={totalSold.toLocaleString()}
-          subtitle={`${((totalSold / totalUnits) * 100).toFixed(1)}% of total`}
+          subtitle="Successfully closed"
           icon={DollarSign}
-          gradientFrom="from-green-500"
-          gradientTo="to-green-600"
-          iconBgColor="bg-green-200"
-          iconColor="text-green-700"
+          gradientFrom="from-blue-50"
+          gradientTo="to-blue-100"
+          iconColor="text-blue-400"
         />
         <GradientKpiCard
-          title="Reserved"
-          value={totalReserved.toLocaleString()}
-          subtitle={`${((totalReserved / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={MapPin}
-          gradientFrom="from-yellow-500"
-          gradientTo="to-yellow-600"
-          iconBgColor="bg-yellow-200"
-          iconColor="text-yellow-700"
-        />
-        <GradientKpiCard
-          title="Available"
-          value={totalAvailable.toLocaleString()}
-          subtitle={`${((totalAvailable / totalUnits) * 100).toFixed(1)}% of total`}
-          icon={Building2}
-          gradientFrom="from-indigo-500"
-          gradientTo="to-indigo-600"
-          iconBgColor="bg-indigo-200"
-          iconColor="text-indigo-700"
+          title="Total Revenue"
+          value={formatCurrency(totalRevenue)}
+          subtitle="All time earnings"
+          icon={DollarSign}
+          gradientFrom="from-yellow-50"
+          gradientTo="to-yellow-100"
+          iconColor="text-yellow-500"
         />
       </div>
 
