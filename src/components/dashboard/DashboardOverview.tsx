@@ -118,11 +118,11 @@ export function DashboardOverview() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
-      <div className="bg-white border-b px-6 py-6">
+      <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b px-6 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Company Dashboard</h1>
-            <p className="text-gray-600 mt-1">Real Estate Sales & Project Management Overview</p>
+            <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+            <p className="text-gray-300 mt-1">Real Estate Sales & Project Management Overview</p>
           </div>
           <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
             <Plus className="h-5 w-5 mr-2" />
