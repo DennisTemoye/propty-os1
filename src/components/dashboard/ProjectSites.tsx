@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Building2, MapPin, Plus, Search, Filter, LayoutGrid, List, Building, House, DollarSign, BarChart3, Calendar, Users, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectSiteForm } from './projects/ProjectSiteForm';
-import { ProjectKpiCard } from './projects/ProjectKpiCard';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const mockProjectSites = [
@@ -173,40 +172,79 @@ export function ProjectSites() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {/* KPI Cards */}
+        {/* Enhanced KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <ProjectKpiCard
-            title="Total Projects"
-            value={totalProjects.toString()}
-            subtitle="All registered"
-            icon={Building}
-            bgColor="bg-gradient-to-br from-violet-50 to-violet-100/50"
-            iconColor="text-violet-400"
-          />
-          <ProjectKpiCard
-            title="Total Units"
-            value={totalUnits.toLocaleString()}
-            subtitle="Across all projects"
-            icon={House}
-            bgColor="bg-gradient-to-br from-emerald-50 to-emerald-100/50"
-            iconColor="text-emerald-400"
-          />
-          <ProjectKpiCard
-            title="Units Sold"
-            value={totalSold.toLocaleString()}
-            subtitle="Successfully closed"
-            icon={DollarSign}
-            bgColor="bg-gradient-to-br from-blue-50 to-blue-100/50"
-            iconColor="text-blue-400"
-          />
-          <ProjectKpiCard
-            title="Total Revenue"
-            value={`₦${(totalRevenue / 1000000000).toFixed(1)}B`}
-            subtitle="All time earnings"
-            icon={BarChart3}
-            bgColor="bg-gradient-to-br from-amber-50 to-amber-100/50"
-            iconColor="text-amber-500"
-          />
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-500 mb-2">Total Projects</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-1">
+                    {totalProjects}
+                  </div>
+                  <div className="text-xs text-gray-500">All registered</div>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-violet-100 to-purple-100 rounded-xl">
+                  <Building className="h-6 w-6 text-violet-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-600 to-green-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-500 mb-2">Total Units</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent mb-1">
+                    {totalUnits.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-gray-500">Across all projects</div>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl">
+                  <House className="h-6 w-6 text-emerald-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-500 mb-2">Units Sold</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-1">
+                    {totalSold.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-gray-500">Successfully closed</div>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl">
+                  <DollarSign className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-orange-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-500 mb-2">Total Revenue</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-1">
+                    ₦{(totalRevenue / 1000000000).toFixed(1)}B
+                  </div>
+                  <div className="text-xs text-gray-500">All time earnings</div>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl">
+                  <BarChart3 className="h-6 w-6 text-amber-600" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Filters and Controls */}
