@@ -43,6 +43,7 @@ const overdueAlerts = [
     client: 'John Doe',
     project: 'Victoria Gardens',
     amount: '₦1,200,000',
+    amountValue: 1200000,
     daysOverdue: 15,
     feeType: 'Infrastructure Fee'
   },
@@ -50,6 +51,7 @@ const overdueAlerts = [
     client: 'Jane Smith',
     project: 'Emerald Heights',
     amount: '₦50,000',
+    amountValue: 50000,
     daysOverdue: 8,
     feeType: 'Service Charge'
   },
@@ -57,6 +59,7 @@ const overdueAlerts = [
     client: 'Mike Johnson',
     project: 'Sunset Heights',
     amount: '₦800,000',
+    amountValue: 800000,
     daysOverdue: 22,
     feeType: 'Infrastructure Fee'
   }
@@ -148,7 +151,7 @@ export function FeeMonitoringDashboard() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip formatter={(value) => `₦${(value / 1000000).toFixed(1)}M`} />
+                <Tooltip formatter={(value) => `₦${(Number(value) / 1000000).toFixed(1)}M`} />
                 <Bar dataKey="collected" fill="#10b981" name="Collected" />
                 <Bar dataKey="outstanding" fill="#f59e0b" name="Outstanding" />
                 <Bar dataKey="overdue" fill="#ef4444" name="Overdue" />
