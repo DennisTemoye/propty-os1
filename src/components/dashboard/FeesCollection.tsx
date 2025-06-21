@@ -1,23 +1,19 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   Plus, 
   Download, 
   Receipt,
   Mail,
-  BarChart3,
-  CreditCard,
-  Activity
+  DollarSign
 } from 'lucide-react';
 import { FeeSetupModal } from './fees/FeeSetupModal';
-import { PaymentCollectionModal } from './fees/PaymentCollectionModal';
+import { SimplePaymentModal } from './fees/SimplePaymentModal';
 import { RecordFeeModal } from './fees/RecordFeeModal';
 import { FeeDetailsModal } from './fees/FeeDetailsModal';
-import { FeesOverviewTab } from './fees/FeesOverviewTab';
-import { PaymentCollectionTab } from './fees/PaymentCollectionTab';
-import { EnhancedMonitoringDashboard } from './fees/EnhancedMonitoringDashboard';
+import { SimplifiedFeesOverview } from './fees/SimplifiedFeesOverview';
 import { DownloadService } from '@/services/downloadService';
 import { toast } from 'sonner';
 
@@ -64,7 +60,6 @@ const mockFeeData = [
 ];
 
 export function FeesCollection() {
-  const [selectedTab, setSelectedTab] = useState('overview');
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isRecordFeeModalOpen, setIsRecordFeeModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -94,15 +89,16 @@ export function FeesCollection() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Fees Collection</h1>
-          <p className="text-gray-600 mt-1">Comprehensive fee management and collection system</p>
+          <p className="text-gray-600 mt-1">Manage and track fee collections efficiently</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button variant="outline" onClick={handleExportFeeStatement} size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Export Statement
+            Export
           </Button>
           <Button variant="outline" onClick={handleSendBulkReminders} className="text-orange-600 border-orange-200 hover:bg-orange-50" size="sm">
             <Mail className="h-4 w-4 mr-2" />
@@ -118,7 +114,7 @@ export function FeesCollection() {
           </Dialog>
           <Dialog open={isSetupModalOpen} onOpenChange={setIsSetupModalOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-purple-600 hover:bg-purple-700" size="sm">
+              <Button className="bg-blue-600 hover:bg-blue-700" size="sm">
                 <Plus className="h-4 w-4 mr-2" />
                 Setup Fee
               </Button>
@@ -127,41 +123,12 @@ export function FeesCollection() {
         </div>
       </div>
 
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview" className="flex items-center space-x-2">
-            <BarChart3 className="h-4 w-4" />
-            <span>Overview</span>
-          </TabsTrigger>
-          <TabsTrigger value="collection" className="flex items-center space-x-2">
-            <CreditCard className="h-4 w-4" />
-            <span>Payment Collection</span>
-          </TabsTrigger>
-          <TabsTrigger value="monitoring" className="flex items-center space-x-2">
-            <Activity className="h-4 w-4" />
-            <span>Analytics Dashboard</span>
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview">
-          <FeesOverviewTab 
-            mockFeeData={mockFeeData}
-            onRecordPayment={handleRecordPayment}
-            onViewDetails={handleViewDetails}
-          />
-        </TabsContent>
-
-        <TabsContent value="collection">
-          <PaymentCollectionTab 
-            mockFeeData={mockFeeData}
-            onRecordPayment={handleRecordPayment}
-          />
-        </TabsContent>
-
-        <TabsContent value="monitoring">
-          <EnhancedMonitoringDashboard />
-        </TabsContent>
-      </Tabs>
+      {/* Main Content */}
+      <SimplifiedFeesOverview 
+        mockFeeData={mockFeeData}
+        onRecordPayment={handleRecordPayment}
+        onViewDetails={handleViewDetails}
+      />
 
       {/* Modals */}
       <FeeSetupModal 
@@ -184,14 +151,14 @@ export function FeesCollection() {
       </Dialog>
 
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Record Payment - {selectedFee?.clientName}</DialogTitle>
+            <DialogTitle>Record Payment</DialogTitle>
             <DialogDescription>
-              Record a payment for {selectedFee?.feeType} - {selectedFee?.project}
+              Record a payment for {selectedFee?.feeType}
             </DialogDescription>
           </DialogHeader>
-          <PaymentCollectionModal 
+          <SimplePaymentModal 
             fee={selectedFee}
             onClose={() => setIsPaymentModalOpen(false)}
           />
