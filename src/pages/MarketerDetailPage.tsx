@@ -160,7 +160,7 @@ const MarketerDetailPage = () => {
   };
 
   const handleDownloadCommissionReport = () => {
-    DownloadService.generateMarketerCommissionReport(marketer, commissions);
+    DownloadService.generateCommissionReport(marketer, commissions);
     toast.success('Commission report downloaded successfully');
   };
 
