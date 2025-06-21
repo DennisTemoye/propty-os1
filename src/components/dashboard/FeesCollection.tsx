@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -71,6 +70,7 @@ const mockFeeData = [
 export function FeesCollection() {
   const [selectedTab, setSelectedTab] = useState('overview');
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+  const [isRecordFeeModalOpen, setIsRecordFeeModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedFee, setSelectedFee] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -141,6 +141,14 @@ export function FeesCollection() {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
+          <Dialog open={isRecordFeeModalOpen} onOpenChange={setIsRecordFeeModalOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="bg-green-600 hover:bg-green-700 text-white">
+                <Receipt className="h-4 w-4 mr-2" />
+                Record Fee
+              </Button>
+            </DialogTrigger>
+          </Dialog>
           <Dialog open={isSetupModalOpen} onOpenChange={setIsSetupModalOpen}>
             <DialogTrigger asChild>
               <Button className="bg-purple-600 hover:bg-purple-700">
@@ -205,7 +213,6 @@ export function FeesCollection() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="collection">Payment Collection</TabsTrigger>
           <TabsTrigger value="monitoring">Monitoring Dashboard</TabsTrigger>
-          <TabsTrigger value="setup">Fee Setup</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -330,19 +337,6 @@ export function FeesCollection() {
         <TabsContent value="monitoring">
           <FeeMonitoringDashboard />
         </TabsContent>
-
-        <TabsContent value="setup">
-          <div className="space-y-4">
-            <Button 
-              onClick={() => setIsSetupModalOpen(true)}
-              className="bg-purple-600 hover:bg-purple-700"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Setup New Fee Type
-            </Button>
-            {/* Fee setup content will be handled by the modal */}
-          </div>
-        </TabsContent>
       </Tabs>
 
       {/* Fee Setup Modal */}
@@ -350,6 +344,22 @@ export function FeesCollection() {
         isOpen={isSetupModalOpen}
         onClose={() => setIsSetupModalOpen(false)}
       />
+
+      {/* Record Fee Modal */}
+      <Dialog open={isRecordFeeModalOpen} onOpenChange={setIsRecordFeeModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Record New Fee</DialogTitle>
+            <DialogDescription>
+              Record a new fee for a client
+            </DialogDescription>
+          </DialogHeader>
+          <FeeSetupModal 
+            isOpen={false}
+            onClose={() => setIsRecordFeeModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Payment Collection Modal */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
