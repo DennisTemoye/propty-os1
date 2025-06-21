@@ -1,14 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RolesList } from './roles/RolesList';
 import { UserManagement } from './roles/UserManagement';
+import { CreateRoleModal } from './roles/CreateRoleModal';
 import { Shield, Plus, Users, Settings } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 
 export function RolesPermissions() {
+  const [isCreateRoleOpen, setIsCreateRoleOpen] = useState(false);
+
   const kpiData = [
     {
       title: 'User Roles',
@@ -58,7 +61,10 @@ export function RolesPermissions() {
         <h1 className="text-3xl font-bold text-gray-900">Roles & Permissions</h1>
         <div className="flex space-x-2">
           <Button variant="outline">Invite User</Button>
-          <Button className="bg-purple-600 hover:bg-purple-700">
+          <Button 
+            className="bg-purple-600 hover:bg-purple-700"
+            onClick={() => setIsCreateRoleOpen(true)}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Create Role
           </Button>
@@ -89,13 +95,18 @@ export function RolesPermissions() {
         </TabsList>
 
         <TabsContent value="roles">
-          <RolesList />
+          <RolesList onCreateRole={() => setIsCreateRoleOpen(true)} />
         </TabsContent>
 
         <TabsContent value="users">
           <UserManagement />
         </TabsContent>
       </Tabs>
+
+      <CreateRoleModal 
+        isOpen={isCreateRoleOpen}
+        onClose={() => setIsCreateRoleOpen(false)}
+      />
     </div>
   );
 }

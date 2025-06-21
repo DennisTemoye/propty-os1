@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Users, Mail, Shield, Edit, Trash2 } from 'lucide-react';
+import { InviteUserModal } from './InviteUserModal';
+import { Users, Mail, Shield, Edit, Trash2, Plus } from 'lucide-react';
 
 interface User {
   id: number;
@@ -13,6 +14,7 @@ interface User {
   role: string;
   status: 'active' | 'pending' | 'inactive';
   lastLogin: string;
+  permissions: string[];
 }
 
 const mockUsers: User[] = [
@@ -22,7 +24,8 @@ const mockUsers: User[] = [
     email: 'john@proptyos.com',
     role: 'Super Admin',
     status: 'active',
-    lastLogin: '2 hours ago'
+    lastLogin: '2 hours ago',
+    permissions: ['all']
   },
   {
     id: 2,
@@ -30,7 +33,8 @@ const mockUsers: User[] = [
     email: 'sarah@proptyos.com',
     role: 'Project Manager',
     status: 'active',
-    lastLogin: '1 day ago'
+    lastLogin: '1 day ago',
+    permissions: ['projects.manage', 'clients.view', 'reports.view']
   },
   {
     id: 3,
@@ -38,11 +42,14 @@ const mockUsers: User[] = [
     email: 'mike@proptyos.com',
     role: 'Sales Agent',
     status: 'pending',
-    lastLogin: 'Never'
+    lastLogin: 'Never',
+    permissions: ['clients.manage', 'sales.create']
   }
 ];
 
 export function UserManagement() {
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800';
@@ -54,6 +61,15 @@ export function UserManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Header with invite button */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium">Team Members</h3>
+        <Button onClick={() => setIsInviteModalOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Invite User
+        </Button>
+      </div>
+
       {/* Pending Invitations */}
       <Card>
         <CardHeader>
@@ -93,7 +109,7 @@ export function UserManagement() {
         <CardContent>
           <div className="space-y-4">
             {mockUsers.map((user) => (
-              <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow">
                 <div className="flex items-center space-x-4">
                   <Avatar>
                     <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
@@ -118,10 +134,10 @@ export function UserManagement() {
                     </Badge>
                   </div>
                   <div className="flex gap-1">
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" title="Edit user">
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" title="Remove user">
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -131,6 +147,11 @@ export function UserManagement() {
           </div>
         </CardContent>
       </Card>
+
+      <InviteUserModal
+        isOpen={isInviteModalOpen}
+        onClose={() => setIsInviteModalOpen(false)}
+      />
     </div>
   );
 }
