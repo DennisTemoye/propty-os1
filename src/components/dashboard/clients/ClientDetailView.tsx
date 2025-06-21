@@ -1,12 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard, Filter } from 'lucide-react';
 import { ClientDocumentsView } from './ClientDocumentsView';
 import { ClientDownloadActions } from './ClientDownloadActions';
 
@@ -15,6 +16,8 @@ interface ClientDetailViewProps {
 }
 
 export function ClientDetailView({ client }: ClientDetailViewProps) {
+  const [selectedProperty, setSelectedProperty] = useState('all');
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -44,11 +47,11 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
   };
 
   const mockPaymentHistory = [
-    { id: 1, date: '2024-01-10', amount: '₦5M', type: 'Initial Payment', status: 'completed' },
-    { id: 2, date: '2024-01-25', amount: '₦5M', type: 'Milestone 1', status: 'completed' },
-    { id: 3, date: '2024-02-10', amount: '₦5M', type: 'Milestone 2', status: 'completed' },
-    { id: 4, date: '2024-02-15', amount: '₦5M', type: 'Milestone 3', status: 'pending' },
-    { id: 5, date: '2024-03-01', amount: '₦5M', type: 'Final Payment', status: 'pending' }
+    { id: 1, date: '2024-01-10', amount: '₦5M', type: 'Initial Payment', status: 'completed', property: 'Victoria Gardens' },
+    { id: 2, date: '2024-01-25', amount: '₦5M', type: 'Milestone 1', status: 'completed', property: 'Victoria Gardens' },
+    { id: 3, date: '2024-02-10', amount: '₦5M', type: 'Milestone 2', status: 'completed', property: 'Victoria Gardens' },
+    { id: 4, date: '2024-02-15', amount: '₦5M', type: 'Milestone 3', status: 'pending', property: 'Victoria Gardens' },
+    { id: 5, date: '2024-03-01', amount: '₦5M', type: 'Final Payment', status: 'pending', property: 'Victoria Gardens' }
   ];
 
   const mockBillingHistory = [
@@ -64,11 +67,22 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
     { id: 3, date: '2024-01-10', action: 'Client created', details: 'Profile created in system' }
   ];
 
-  // Calculate financial summary
+  // Calculate financial summary based on selected property
+  const getFilteredPayments = () => {
+    if (selectedProperty === 'all') {
+      return mockPaymentHistory;
+    }
+    return mockPaymentHistory.filter(payment => payment.property === selectedProperty);
+  };
+
+  const filteredPayments = getFilteredPayments();
   const totalUnitPrice = 25000000; // ₦25M - example total unit price
   const amountPaid = parseInt(client.totalPaid.replace(/[₦,M]/g, '')) * 1000000; // Convert ₦15M to 15000000
   const balanceLeft = totalUnitPrice - amountPaid;
   const paymentProgress = (amountPaid / totalUnitPrice) * 100;
+
+  // Get unique properties for filter
+  const availableProperties = ['all', ...new Set(mockPaymentHistory.map(payment => payment.property))];
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', {
@@ -125,55 +139,154 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
         </CardContent>
       </Card>
 
-      {/* Contact Information */}
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl">Contact Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Mail className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="font-medium">{client.email}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <Phone className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium">{client.phone}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-orange-50 rounded-lg">
-                <MapPin className="h-5 w-5 text-orange-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Address</p>
-                <p className="font-medium">{client.address}</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Main Content Tabs */}
-      <Tabs defaultValue="properties" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 h-12">
+      <Tabs defaultValue="client-details" className="w-full">
+        <TabsList className="grid w-full grid-cols-6 h-12">
+          <TabsTrigger value="client-details" className="text-base">Client Details</TabsTrigger>
           <TabsTrigger value="properties" className="text-base">Properties</TabsTrigger>
           <TabsTrigger value="payments" className="text-base">Payments</TabsTrigger>
           <TabsTrigger value="billing" className="text-base">Billing</TabsTrigger>
           <TabsTrigger value="documents" className="text-base">Documents</TabsTrigger>
           <TabsTrigger value="activity" className="text-base">Activity</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="client-details" className="mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Personal Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <User className="h-5 w-5" />
+                  <span>Personal Information</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-gray-500">Full Name</label>
+                    <p className="font-medium">{client.name}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Date of Birth</label>
+                    <p className="font-medium">March 15, 1985</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Gender</label>
+                    <p className="font-medium">Male</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Marital Status</label>
+                    <p className="font-medium">Married</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Nationality</label>
+                    <p className="font-medium">Nigerian</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">State of Origin</label>
+                    <p className="font-medium">Lagos</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Contact Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Phone className="h-5 w-5" />
+                  <span>Contact Information</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm text-gray-500">Primary Phone</label>
+                  <p className="font-medium">{client.phone}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Alternative Phone</label>
+                  <p className="font-medium">+234 802 345 6789</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Email Address</label>
+                  <p className="font-medium">{client.email}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Residential Address</label>
+                  <p className="font-medium">{client.address}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Office Address</label>
+                  <p className="font-medium">456 Business District, Victoria Island, Lagos</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Identification */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <CreditCard className="h-5 w-5" />
+                  <span>Identification</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm text-gray-500">ID Type</label>
+                  <p className="font-medium">National ID Card</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">ID Number</label>
+                  <p className="font-medium">{client.nationalId}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">BVN</label>
+                  <p className="font-medium">22345678901</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Next of Kin</label>
+                  <p className="font-medium">Mrs. Jane Doe (Spouse)</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Next of Kin Phone</label>
+                  <p className="font-medium">+234 803 456 7890</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Employment Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Building className="h-5 w-5" />
+                  <span>Employment Information</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm text-gray-500">Occupation</label>
+                  <p className="font-medium">Software Engineer</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Employer</label>
+                  <p className="font-medium">Tech Solutions Ltd</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Monthly Income</label>
+                  <p className="font-medium">₦500,000 - ₦1,000,000</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Years of Experience</label>
+                  <p className="font-medium">8 years</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Source of Investment</label>
+                  <p className="font-medium">Personal Savings</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
         <TabsContent value="properties" className="mt-6">
           {client.projects && client.projects.length > 0 ? (
@@ -233,10 +346,38 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
 
         <TabsContent value="payments" className="mt-6">
           <div className="space-y-6">
+            {/* Property Filter */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Payment Overview</span>
+                  <div className="flex items-center space-x-2">
+                    <Filter className="h-4 w-4 text-gray-500" />
+                    <Select value={selectedProperty} onValueChange={setSelectedProperty}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Select property" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Properties</SelectItem>
+                        {availableProperties.filter(prop => prop !== 'all').map((property) => (
+                          <SelectItem key={property} value={property}>
+                            {property}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+
             {/* Financial Summary */}
             <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-0 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-xl">Payment Summary</CardTitle>
+                {selectedProperty !== 'all' && (
+                  <p className="text-sm text-gray-600">Showing data for: {selectedProperty}</p>
+                )}
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
@@ -293,15 +434,17 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                     <TableRow>
                       <TableHead className="text-base">Date</TableHead>
                       <TableHead className="text-base">Type</TableHead>
+                      <TableHead className="text-base">Property</TableHead>
                       <TableHead className="text-base">Amount</TableHead>
                       <TableHead className="text-base">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockPaymentHistory.map((payment) => (
+                    {filteredPayments.map((payment) => (
                       <TableRow key={payment.id} className="h-14">
                         <TableCell className="text-base">{payment.date}</TableCell>
                         <TableCell className="text-base">{payment.type}</TableCell>
+                        <TableCell className="text-base">{payment.property}</TableCell>
                         <TableCell className="font-semibold text-base">{payment.amount}</TableCell>
                         <TableCell>
                           <Badge className={payment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
