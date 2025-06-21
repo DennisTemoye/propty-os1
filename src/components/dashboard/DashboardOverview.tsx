@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell, CreditCard } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
@@ -12,6 +13,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
+import { NewDevelopmentForm } from '@/components/dashboard/forms/NewDevelopmentForm';
+import { NewProjectSiteForm } from '@/components/dashboard/forms/NewProjectSiteForm';
+import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
+import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
+import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
 
 const kpiData = [
   {
@@ -124,13 +130,19 @@ const financialData = [
 export function DashboardOverview() {
   const [showNotification, setShowNotification] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [activeSheet, setActiveSheet] = useState<string | null>(null);
 
   const handleNewAction = (action: string) => {
     console.log(`Creating new ${action}`);
     if (action === 'payment') {
       setShowPaymentModal(true);
+    } else {
+      setActiveSheet(action);
     }
-    // Here you would implement the actual navigation or modal opening logic for other actions
+  };
+
+  const closeSheet = () => {
+    setActiveSheet(null);
   };
 
   // Mock client data for payment modal (in real app, this would come from props or context)
@@ -138,6 +150,45 @@ export function DashboardOverview() {
     id: '1',
     name: 'General Payment Entry',
     email: 'payment@company.com'
+  };
+
+  const getSheetTitle = (action: string) => {
+    switch (action) {
+      case 'project': return 'Create New Development';
+      case 'project_site': return 'Create New Project Site';
+      case 'client': return 'Create New Client';
+      case 'allocation': return 'Create New Allocation';
+      case 'expense': return 'Record New Expense';
+      default: return 'Create New';
+    }
+  };
+
+  const getSheetDescription = (action: string) => {
+    switch (action) {
+      case 'project': return 'Add a new real estate development to your portfolio';
+      case 'project_site': return 'Add a new project site to track development progress';
+      case 'client': return 'Add a new client to your database';
+      case 'allocation': return 'Allocate a unit to a client';
+      case 'expense': return 'Record a new business expense';
+      default: return '';
+    }
+  };
+
+  const renderSheetContent = (action: string) => {
+    switch (action) {
+      case 'project':
+        return <NewDevelopmentForm onClose={closeSheet} />;
+      case 'project_site':
+        return <NewProjectSiteForm onClose={closeSheet} />;
+      case 'client':
+        return <NewClientForm onClose={closeSheet} />;
+      case 'allocation':
+        return <NewAllocationForm onClose={closeSheet} />;
+      case 'expense':
+        return <NewExpenseForm onClose={closeSheet} />;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -177,15 +228,15 @@ export function DashboardOverview() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
-                className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl"
+                className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl z-50"
                 align="end"
               >
                 <DropdownMenuItem 
-                  onClick={() => handleNewAction('project')}
+                  onClick={() => handleNewAction('project_site')}
                   className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
                   <Building className="h-5 w-5 text-purple-600" />
-                  <span className="font-medium">New Development</span>
+                  <span className="font-medium">New Project Site</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('client')}
@@ -478,6 +529,21 @@ export function DashboardOverview() {
         onClose={() => setShowPaymentModal(false)}
         client={mockClient}
       />
+
+      {/* Side Sheet for Forms */}
+      <Sheet open={!!activeSheet} onOpenChange={closeSheet}>
+        <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>{activeSheet ? getSheetTitle(activeSheet) : ''}</SheetTitle>
+            <SheetDescription>
+              {activeSheet ? getSheetDescription(activeSheet) : ''}
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-6">
+            {activeSheet && renderSheetContent(activeSheet)}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
