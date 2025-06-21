@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,10 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, MapPin, FileText, Building, Home, DollarSign, Search } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Plus, MapPin, FileText, Building, Home, DollarSign, Search, Edit, UserPlus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NewProjectForm } from './forms/NewProjectForm';
 import { ProjectDocumentsView } from './projects/ProjectDocumentsView';
+import { toast } from 'sonner';
 
 const mockProjects = [
   {
@@ -19,6 +20,8 @@ const mockProjects = [
     category: 'Housing',
     type: 'Residential',
     location: 'Lekki, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
     totalBlocks: 5,
     totalUnits: 150,
     soldUnits: 89,
@@ -29,8 +32,9 @@ const mockProjects = [
     allocatedUnits: 69,
     revokedUnits: 0,
     status: 'ongoing',
-    projectStage: 'Construction',
-    revenue: '₦2.5B'
+    developmentStage: 'Construction',
+    revenue: '₦2.5B',
+    image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'
   },
   {
     id: 2,
@@ -38,6 +42,8 @@ const mockProjects = [
     category: 'Mixed',
     type: 'Commercial',
     location: 'Abuja, FCT',
+    city: 'Abuja',
+    state: 'Federal Capital Territory',
     totalBlocks: 8,
     totalUnits: 200,
     soldUnits: 156,
@@ -48,8 +54,9 @@ const mockProjects = [
     allocatedUnits: 123,
     revokedUnits: 2,
     status: 'ongoing',
-    projectStage: 'Marketing',
-    revenue: '₦4.2B'
+    developmentStage: 'Marketing',
+    revenue: '₦4.2B',
+    image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=450&fit=crop'
   },
   {
     id: 3,
@@ -57,14 +64,17 @@ const mockProjects = [
     category: 'Housing',
     type: 'Residential',
     location: 'Victoria Island, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
     totalBlocks: 12,
     totalUnits: 300,
     soldUnits: 245,
     reservedUnits: 18,
     availableUnits: 37,
     status: 'ongoing',
-    projectStage: 'Pre-Launch',
-    revenue: '₦6.8B'
+    developmentStage: 'Pre-Launch',
+    revenue: '₦6.8B',
+    image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'
   },
   {
     id: 4,
@@ -72,14 +82,17 @@ const mockProjects = [
     category: 'Housing',
     type: 'Residential',
     location: 'Ikoyi, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
     totalBlocks: 6,
     totalUnits: 180,
     soldUnits: 167,
     reservedUnits: 8,
     availableUnits: 5,
     status: 'completed',
-    projectStage: 'Handover',
-    revenue: '₦3.9B'
+    developmentStage: 'Handover',
+    revenue: '₦3.9B',
+    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=450&fit=crop'
   },
   {
     id: 5,
@@ -87,14 +100,17 @@ const mockProjects = [
     category: 'Mixed',
     type: 'Mixed-Use',
     location: 'Marina, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
     totalBlocks: 10,
     totalUnits: 250,
     soldUnits: 198,
     reservedUnits: 25,
     availableUnits: 27,
     status: 'ongoing',
-    projectStage: 'Planning',
-    revenue: '₦5.5B'
+    developmentStage: 'Planning',
+    revenue: '₦5.5B',
+    image: 'https://images.unsplash.com/photo-1503602642458-232114445914?w=800&h=450&fit=crop'
   },
   {
     id: 6,
@@ -102,14 +118,17 @@ const mockProjects = [
     category: 'Housing',
     type: 'Residential',
     location: 'Ajah, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
     totalBlocks: 15,
     totalUnits: 400,
     soldUnits: 280,
     reservedUnits: 45,
     availableUnits: 75,
     status: 'ongoing',
-    projectStage: 'Construction',
-    revenue: '₦7.2B'
+    developmentStage: 'Construction',
+    revenue: '₦7.2B',
+    image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=450&fit=crop'
   },
   {
     id: 7,
@@ -117,14 +136,17 @@ const mockProjects = [
     category: 'Land',
     type: 'Land Project',
     location: 'Epe, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
     totalBlocks: 20,
     totalUnits: 500,
     soldUnits: 320,
     reservedUnits: 80,
     availableUnits: 100,
     status: 'ongoing',
-    projectStage: 'Marketing',
-    revenue: '₦4.8B'
+    developmentStage: 'Marketing',
+    revenue: '₦4.8B',
+    image: 'https://images.unsplash.com/photo-1501127122-970c479ebc57?w=800&h=450&fit=crop'
   },
   {
     id: 8,
@@ -132,14 +154,17 @@ const mockProjects = [
     category: 'Housing',
     type: 'Waterfront',
     location: 'Banana Island, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
     totalBlocks: 4,
     totalUnits: 80,
     soldUnits: 65,
     reservedUnits: 10,
     availableUnits: 5,
     status: 'ongoing',
-    projectStage: 'Marketing',
-    revenue: '₦8.5B'
+    developmentStage: 'Marketing',
+    revenue: '₦8.5B',
+    image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=450&fit=crop'
   },
   {
     id: 9,
@@ -147,14 +172,17 @@ const mockProjects = [
     category: 'Mixed',
     type: 'Commercial',
     location: 'Ikeja, Lagos',
+    city: 'Lagos',
+    state: 'Lagos State',
     totalBlocks: 7,
     totalUnits: 220,
     soldUnits: 180,
     reservedUnits: 15,
     availableUnits: 25,
     status: 'ongoing',
-    projectStage: 'Construction',
-    revenue: '₦3.8B'
+    developmentStage: 'Construction',
+    revenue: '₦3.8B',
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&h=450&fit=crop'
   },
   {
     id: 10,
@@ -162,14 +190,17 @@ const mockProjects = [
     category: 'Housing',
     type: 'Residential',
     location: 'Ibadan, Oyo',
+    city: 'Ibadan',
+    state: 'Oyo State',
     totalBlocks: 8,
     totalUnits: 160,
     soldUnits: 45,
     reservedUnits: 20,
     availableUnits: 95,
     status: 'upcoming',
-    projectStage: 'Pre-Launch',
-    revenue: '₦1.2B'
+    developmentStage: 'Pre-Launch',
+    revenue: '₦1.2B',
+    image: 'https://images.unsplash.com/photo-1560185893-a55cbc9701bc?w=800&h=450&fit=crop'
   }
 ];
 
@@ -182,7 +213,7 @@ export function ProjectsUnits() {
   const [stageFilter, setStageFilter] = useState('all');
   const navigate = useNavigate();
 
-  const getProjectStageColor = (stage: string) => {
+  const getDevelopmentStageColor = (stage: string) => {
     switch (stage) {
       case 'Planning':
         return 'bg-gray-100 text-gray-800';
@@ -194,6 +225,8 @@ export function ProjectsUnits() {
         return 'bg-yellow-100 text-yellow-800';
       case 'Handover':
         return 'bg-green-100 text-green-800';
+      case 'Completed':
+        return 'bg-emerald-100 text-emerald-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -204,7 +237,7 @@ export function ProjectsUnits() {
                          project.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          project.type.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesStage = stageFilter === 'all' || project.projectStage === stageFilter;
+    const matchesStage = stageFilter === 'all' || project.developmentStage === stageFilter;
     
     return matchesSearch && matchesStage;
   });
@@ -213,9 +246,19 @@ export function ProjectsUnits() {
     navigate(`/company/projects/${projectId}`);
   };
 
-  const handleManageBlocks = (e: React.MouseEvent, projectId: number) => {
+  const handleEditProject = (e: React.MouseEvent, projectId: number) => {
     e.stopPropagation();
-    navigate(`/company/projects/${projectId}/blocks`);
+    navigate(`/company/projects/${projectId}/settings`);
+  };
+
+  const handleAllocateUnit = (e: React.MouseEvent, projectId: number) => {
+    e.stopPropagation();
+    navigate(`/company/sales-allocation?project=${projectId}`);
+  };
+
+  const handleDeleteProject = (e: React.MouseEvent, project: any) => {
+    e.stopPropagation();
+    toast.success(`Project "${project.name}" has been deleted successfully.`);
   };
 
   const handleViewDocuments = (e: React.MouseEvent, project: any) => {
@@ -224,7 +267,7 @@ export function ProjectsUnits() {
     setIsDocumentsModalOpen(true);
   };
 
-  const projectStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover'];
+  const developmentStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover', 'Completed'];
 
   const kpiData = [
     {
@@ -320,11 +363,11 @@ export function ProjectsUnits() {
               <div className="w-full md:w-48">
                 <Select value={stageFilter} onValueChange={setStageFilter}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Project stage" />
+                    <SelectValue placeholder="Development stage" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Stages</SelectItem>
-                    {projectStages.map((stage) => (
+                    {developmentStages.map((stage) => (
                       <SelectItem key={stage} value={stage}>{stage}</SelectItem>
                     ))}
                   </SelectContent>
@@ -351,101 +394,140 @@ export function ProjectsUnits() {
 
       {/* Projects Display */}
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredProjects.map((project) => (
             <Card 
               key={project.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer bg-white"
+              className="hover:shadow-lg transition-all duration-300 cursor-pointer bg-white overflow-hidden group"
               onClick={() => handleProjectClick(project.id)}
             >
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{project.name}</CardTitle>
-                  <Badge className={getProjectStageColor(project.projectStage)}>
-                    {project.projectStage}
+              {/* Project Image */}
+              <div className="relative w-full h-48 bg-gray-200 overflow-hidden">
+                {project.image ? (
+                  <img 
+                    src={project.image} 
+                    alt={project.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
+                    <Building className="h-16 w-16 text-gray-400" />
+                  </div>
+                )}
+                {/* Development Stage Badge */}
+                <div className="absolute top-3 left-3">
+                  <Badge className={getDevelopmentStageColor(project.developmentStage)}>
+                    {project.developmentStage}
                   </Badge>
                 </div>
-                <div className="flex items-center text-sm text-gray-500">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  {project.location}
-                </div>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>{project.type}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex justify-between">
-                      <span>Blocks:</span>
-                      <span className="font-medium">{project.totalBlocks || 0}</span>
+              </div>
+
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {/* Project Info */}
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{project.name}</h3>
+                    <div className="flex items-center text-gray-600 mb-2">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <span>{project.city}, {project.state}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Total Units:</span>
-                      <span className="font-medium">{project.totalUnits}</span>
+                    <div className="text-sm text-gray-500">{project.type}</div>
+                  </div>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-3 gap-3 py-3 border-t border-b border-gray-100">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-gray-900">{project.totalBlocks}</div>
+                      <div className="text-xs text-gray-500">Blocks</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-gray-900">{project.totalUnits}</div>
+                      <div className="text-xs text-gray-500">Total Units</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-green-600">{project.allocatedUnits || project.soldUnits}</div>
+                      <div className="text-xs text-gray-500">Allocated</div>
                     </div>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Unit Status:</div>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="flex justify-between">
-                        <span>Interested:</span>
-                        <span className="font-medium text-blue-600">{project.interestedUnits || 0}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Offered:</span>
-                        <span className="font-medium text-yellow-600">{project.offeredUnits || 0}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Allocated:</span>
-                        <span className="font-medium text-green-600">{project.allocatedUnits || project.soldUnits}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Available:</span>
-                        <span className="font-medium text-gray-600">{project.availableUnits}</span>
-                      </div>
+
+                  {/* Unit Status Summary */}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Offered:</span>
+                      <span className="font-medium text-yellow-600">{project.offeredUnits || 0}</span>
                     </div>
-                    {project.revokedUnits > 0 && (
-                      <div className="flex justify-between text-xs">
-                        <span>Revoked:</span>
-                        <span className="font-medium text-red-600">{project.revokedUnits}</span>
-                      </div>
-                    )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Available:</span>
+                      <span className="font-medium text-blue-600">{project.availableUnits}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Reserved:</span>
+                      <span className="font-medium text-purple-600">{project.reservedUnits}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Revenue:</span>
+                      <span className="font-medium text-green-600">{project.revenue}</span>
+                    </div>
                   </div>
-                  
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-green-600 h-2 rounded-full"
+                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${((project.allocatedUnits || project.soldUnits) / project.totalUnits) * 100}%` }}
                     ></div>
                   </div>
 
-                  <div className="pt-2 border-t">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">Revenue:</span>
-                      <span className="font-bold text-purple-600">{project.revenue}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-2 mt-4">
+                  {/* CTA Buttons */}
+                  <div className="flex gap-2 pt-2">
                     <Button 
                       variant="outline" 
+                      size="sm"
                       className="flex-1"
-                      onClick={(e) => handleManageBlocks(e, project.id)}
+                      onClick={(e) => handleEditProject(e, project.id)}
                     >
-                      <Building className="h-3 w-3 mr-1" />
-                      Manage Blocks
+                      <Edit className="h-3 w-3 mr-1" />
+                      Edit
                     </Button>
                     
                     <Button 
                       variant="outline" 
+                      size="sm"
                       className="flex-1"
-                      onClick={(e) => handleViewDocuments(e, project)}
+                      onClick={(e) => handleAllocateUnit(e, project.id)}
                     >
-                      <FileText className="h-3 w-3 mr-1" />
-                      Documents
+                      <UserPlus className="h-3 w-3 mr-1" />
+                      Allocate
                     </Button>
+                    
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            className="bg-red-600 hover:bg-red-700"
+                            onClick={(e) => handleDeleteProject(e, project)}
+                          >
+                            Delete Project
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </CardContent>
@@ -480,8 +562,8 @@ export function ProjectsUnits() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getProjectStageColor(project.projectStage)}>
-                        {project.projectStage}
+                      <Badge className={getDevelopmentStageColor(project.developmentStage)}>
+                        {project.developmentStage}
                       </Badge>
                     </TableCell>
                     <TableCell>{project.location}</TableCell>
@@ -505,16 +587,43 @@ export function ProjectsUnits() {
                       <div className="flex space-x-2">
                         <Button 
                           variant="outline" 
-                          onClick={(e) => handleManageBlocks(e, project.id)}
+                          onClick={(e) => handleEditProject(e, project.id)}
                         >
-                          <Building className="h-3 w-3" />
+                          <Edit className="h-3 w-3" />
                         </Button>
                         <Button 
                           variant="outline" 
-                          onClick={(e) => handleViewDocuments(e, project)}
+                          onClick={(e) => handleAllocateUnit(e, project.id)}
                         >
-                          <FileText className="h-3 w-3" />
+                          <UserPlus className="h-3 w-3" />
                         </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction 
+                                className="bg-red-600 hover:bg-red-700"
+                                onClick={(e) => handleDeleteProject(e, project)}
+                              >
+                                Delete Project
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>
