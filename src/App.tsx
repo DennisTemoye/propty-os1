@@ -9,6 +9,7 @@ import { Toaster as SonnerToaster } from 'sonner';
 // Pages
 import Index from './pages/Index';
 import LoginPage from './pages/LoginPage';
+import SuperAdminLoginPage from './pages/SuperAdminLoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetCodePage from './pages/ResetCodePage';
@@ -18,6 +19,7 @@ import NotFound from './pages/NotFound';
 
 // Dashboard Pages
 import CompanyDashboard from './pages/CompanyDashboard';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import ProjectBlocksPage from './pages/ProjectBlocksPage';
 import ClientDetailPage from './pages/ClientDetailPage';
@@ -45,6 +47,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/superadmin-login" element={<SuperAdminLoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-code" element={<ResetCodePage />} />
@@ -59,6 +62,9 @@ function App() {
             <Route path="/company/clients/new" element={<NewClientPage />} />
             <Route path="/company/marketers-commission" element={<MarketersCommissionPage />} />
             <Route path="/company/marketers/:marketerId" element={<MarketerDetailPage />} />
+
+            {/* Super Admin Routes */}
+            <Route path="/superadmin/*" element={<SuperAdminDashboard />} />
 
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />

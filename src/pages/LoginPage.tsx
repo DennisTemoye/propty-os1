@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
@@ -155,6 +155,26 @@ const LoginPage = () => {
             >
               Quick Login
             </Button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Admin Access</span>
+              </div>
+            </div>
+
+            <Link to="/superadmin-login">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+              >
+                <Shield className="h-4 w-4 mr-2" />
+                Super Admin Login
+              </Button>
+            </Link>
             
             <div className="text-center">
               <span className="text-sm text-gray-600 dark:text-gray-400">
