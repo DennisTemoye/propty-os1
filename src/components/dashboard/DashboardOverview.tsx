@@ -19,6 +19,7 @@ import { NewProjectSiteForm } from '@/components/dashboard/forms/NewProjectSiteF
 import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
 import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
 import { SendNoticeForm } from '@/components/dashboard/notices/SendNoticeForm';
+import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
 import { useNavigate } from 'react-router-dom';
 
 const salesData = [
