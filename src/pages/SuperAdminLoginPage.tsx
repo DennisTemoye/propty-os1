@@ -39,6 +39,22 @@ const SuperAdminLoginPage = () => {
     }
   };
 
+  const handleQuickLogin = async () => {
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      // Simulate quick login (bypass normal validation)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      // Redirect directly to super admin dashboard
+      window.location.href = '/superadmin';
+    } catch (err) {
+      setError('Quick login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md mb-6">
@@ -134,6 +150,17 @@ const SuperAdminLoginPage = () => {
               disabled={isLoading}
             >
               {isLoading ? 'Authenticating...' : show2FA ? 'Verify & Access' : 'Continue'}
+            </Button>
+            
+            {/* Quick Login Button */}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+              onClick={handleQuickLogin}
+              disabled={isLoading}
+            >
+              Quick Login (Dev)
             </Button>
             
             <div className="text-center">
