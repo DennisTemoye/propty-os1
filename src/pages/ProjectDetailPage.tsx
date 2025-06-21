@@ -1,180 +1,144 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Edit, Trash2, FileText, Building, Users, BarChart3 } from 'lucide-react';
-import { ProjectDetailView } from '@/components/dashboard/projects/ProjectDetailView';
-import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
-import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowLeft, Edit, Settings, MapPin, Calendar, User } from 'lucide-react';
+import { ProjectHeader } from '@/components/dashboard/projects/ProjectHeader';
+import { ProjectKPIGrid } from '@/components/dashboard/projects/ProjectKPIGrid';
+import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
+import { ProjectLayoutTab } from '@/components/dashboard/projects/ProjectLayoutTab';
+import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksTab';
+import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
+import { ProjectSettingsTab } from '@/components/dashboard/projects/ProjectSettingsTab';
 
 const mockProjects = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
     location: 'Lekki, Lagos',
+    category: 'Housing',
     type: 'Residential',
-    totalUnits: 150,
-    soldUnits: 89,
-    reservedUnits: 23,
-    availableUnits: 38,
     status: 'active',
-    documentTitle: 'Certificate of Occupancy',
-    projectSize: '50 hectares',
-    projectStage: 'Construction'
-  },
-  {
-    id: 2,
-    name: 'Mainland Commercial Plaza',
-    location: 'Ikeja, Lagos',
-    type: 'Commercial',
-    totalUnits: 75,
-    soldUnits: 45,
-    reservedUnits: 12,
-    availableUnits: 18,
-    status: 'paused',
-    documentTitle: 'Approved Survey Plan',
-    projectSize: '15 hectares',
-    projectStage: 'Marketing'
-  },
-  {
-    id: 3,
-    name: 'Sunset Land Project',
-    location: 'Abuja FCT',
-    type: 'Residential',
-    totalUnits: 200,
-    soldUnits: 196,
-    reservedUnits: 4,
-    availableUnits: 0,
-    status: 'sold out',
-    documentTitle: 'Family Receipt & Layout Plan',
-    projectSize: '100 hectares',
-    projectStage: 'Handover'
+    totalBlocks: 3,
+    totalUnits: 150,
+    availableUnits: 38,
+    allocatedUnits: 89,
+    reservedUnits: 23,
+    totalClients: 112,
+    totalRevenue: '₦2,340,000,000',
+    allocationRate: 75,
+    lastUpdated: '2024-01-15',
+    description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
+    projectManager: 'Alice Johnson',
+    internalNotes: 'Focus on completing Block A before marketing Block C units.',
+    tags: ['Premium', 'Residential', 'Lekki']
   }
 ];
 
 export default function ProjectDetailPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  const [isEditOpen, setIsEditOpen] = useState(false);
   
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
   if (!project) {
-    return <div>Project not found</div>;
-  };
-
-  const handleEdit = () => {
-    setIsEditOpen(true);
-  };
-
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-      console.log('Deleting project:', project.id);
-      toast.success('Project deleted successfully');
-      navigate('/company/projects');
-    }
-  };
-
-  const handleManageBlocks = () => {
-    navigate(`/company/projects/${project.id}/blocks`);
-  };
-
-  const handleViewDocuments = () => {
-    navigate('/company/documents', { state: { projectId: project.id } });
-  };
-
-  const handleViewClients = () => {
-    navigate('/company/clients', { state: { projectId: project.id } });
-  };
-
-  const handleViewReports = () => {
-    navigate('/company/reports', { state: { projectId: project.id } });
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/company/projects')}
-              className="mb-4"
-            >
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
+            <Button onClick={() => navigate('/company/projects')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Projects
             </Button>
-            
-            <div className="flex gap-2">
-              <Button 
-                variant="outline"
-                onClick={handleEdit}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Project
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={handleDelete}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Project
-              </Button>
-            </div>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto p-6">
+        {/* Breadcrumb Navigation */}
+        <div className="mb-6">
           <Button 
-            onClick={handleManageBlocks}
-            className="h-16 bg-blue-600 hover:bg-blue-700"
+            variant="outline" 
+            onClick={() => navigate('/company/projects')}
+            className="mb-4"
           >
-            <Building className="h-5 w-5 mr-2" />
-            Manage Blocks & Units
-          </Button>
-          <Button 
-            onClick={handleViewDocuments}
-            variant="outline"
-            className="h-16"
-          >
-            <FileText className="h-5 w-5 mr-2" />
-            View Documents
-          </Button>
-          <Button 
-            onClick={handleViewClients}
-            variant="outline"
-            className="h-16"
-          >
-            <Users className="h-5 w-5 mr-2" />
-            View Clients
-          </Button>
-          <Button 
-            onClick={handleViewReports}
-            variant="outline"
-            className="h-16"
-          >
-            <BarChart3 className="h-5 w-5 mr-2" />
-            Generate Reports
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Projects
           </Button>
         </div>
-        
-        <ProjectDetailView project={project} />
 
-        {/* Edit Project Modal */}
-        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Edit Project</DialogTitle>
-              <DialogDescription>
-                Update project information and settings
-              </DialogDescription>
-            </DialogHeader>
-            <NewProjectForm onClose={() => setIsEditOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        {/* Project Header */}
+        <ProjectHeader project={project} />
+
+        {/* KPI Quick Stats */}
+        <ProjectKPIGrid project={project} />
+
+        {/* Project Navigation Tabs */}
+        <div className="bg-white rounded-lg shadow-sm border">
+          <Tabs defaultValue="overview" className="w-full">
+            <div className="border-b px-6">
+              <TabsList className="grid w-full grid-cols-5 bg-transparent h-12">
+                <TabsTrigger 
+                  value="overview" 
+                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="layout"
+                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                >
+                  Layout Designer
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="blocks"
+                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                >
+                  Blocks & Units
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="documents"
+                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                >
+                  Documents
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="settings"
+                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                >
+                  Settings
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="overview" className="p-6">
+              <ProjectOverviewContent project={project} />
+            </TabsContent>
+
+            <TabsContent value="layout" className="p-6">
+              <ProjectLayoutTab project={project} />
+            </TabsContent>
+
+            <TabsContent value="blocks" className="p-6">
+              <ProjectBlocksTab project={project} />
+            </TabsContent>
+
+            <TabsContent value="documents" className="p-6">
+              <ProjectDocumentsTab project={project} />
+            </TabsContent>
+
+            <TabsContent value="settings" className="p-6">
+              <ProjectSettingsTab project={project} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
