@@ -12,7 +12,7 @@ import { Plus, User, Building, DollarSign, MessageSquare, Calendar, TrendingUp, 
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useResponsive } from '@/hooks/use-responsive';
 
 interface Lead {
   id: string;
@@ -180,7 +180,7 @@ const stages = [
 
 export function CRMPipelinesPage() {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const { isMobile, isTablet } = useResponsive();
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
   const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -306,7 +306,7 @@ export function CRMPipelinesPage() {
   };
 
   const renderKanbanView = () => (
-    <div className={`${isMobile ? 'flex gap-4 overflow-x-auto pb-4' : 'grid grid-cols-1 lg:grid-cols-5 gap-6'} min-h-[600px]`}>
+    <div className={`${isMobile ? 'flex gap-3 overflow-x-auto pb-4' : 'grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6'} min-h-[400px] sm:min-h-[600px]`}>
       {stages.map((stage) => {
         const stageLeads = getLeadsByStage(stage.id);
         const StageIcon = stage.icon;
@@ -314,67 +314,69 @@ export function CRMPipelinesPage() {
         return (
           <div
             key={stage.id}
-            className={`bg-white rounded-xl border border-gray-200 p-4 ${isMobile ? 'min-w-[280px] flex-shrink-0' : ''}`}
+            className={`bg-white rounded-xl border border-gray-200 p-3 sm:p-4 ${isMobile ? 'min-w-[260px] flex-shrink-0' : ''}`}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, stage.id)}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="flex items-center gap-2">
-                <div className={`p-1.5 rounded-lg ${stage.color}`}>
-                  <StageIcon className="h-4 w-4" />
+                <div className={`p-1 sm:p-1.5 rounded-lg ${stage.color}`}>
+                  <StageIcon className="h-3 w-3 sm:h-4 sm:w-4" />
                 </div>
-                <h3 className="font-semibold text-gray-900 text-sm">{stage.name}</h3>
+                <h3 className={`font-semibold text-gray-900 ${isMobile ? 'text-xs' : 'text-sm'}`}>{stage.name}</h3>
               </div>
-              <Badge variant="outline" className="text-xs font-medium">
+              <Badge variant="outline" className={`font-medium ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs'}`}>
                 {stageLeads.length}
               </Badge>
             </div>
 
-            <div className="space-y-3 max-h-[500px] overflow-y-auto">
+            <div className={`space-y-2 sm:space-y-3 ${isMobile ? 'max-h-[400px]' : 'max-h-[500px]'} overflow-y-auto`}>
               {stageLeads.map((lead) => (
                 <Card
                   key={lead.id}
                   className="cursor-move hover:shadow-lg transition-all duration-200 border-0 shadow-sm bg-white group"
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, lead)}
+                  draggable={!isMobile}
+                  onDragStart={(e) => !isMobile && handleDragStart(e, lead)}
                   onClick={() => setSelectedLead(lead)}
                 >
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
+                  <CardContent className={`${isMobile ? 'p-3' : 'p-4'}`}>
+                    <div className={`space-y-${isMobile ? '2' : '3'}`}>
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-semibold text-sm text-gray-900 leading-tight line-clamp-1">
+                        <h4 className={`font-semibold text-gray-900 leading-tight line-clamp-1 ${isMobile ? 'text-xs' : 'text-sm'}`}>
                           {lead.clientName}
                         </h4>
                         <Badge 
-                          className={`text-xs font-medium border ${getPriorityColor(lead.priority)}`}
+                          className={`font-medium border ${getPriorityColor(lead.priority)} ${isMobile ? 'text-xs px-1.5 py-0.5' : ''}`}
                           variant="outline"
                         >
-                          {lead.priority}
+                          {isMobile ? lead.priority.charAt(0).toUpperCase() : lead.priority}
                         </Badge>
                       </div>
                       
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
-                          <Building className="h-3 w-3" />
+                      <div className={`space-y-${isMobile ? '1.5' : '2'}`}>
+                        <div className={`flex items-center gap-1.5 text-gray-600 ${isMobile ? 'text-xs' : 'text-xs'}`}>
+                          <Building className={`${isMobile ? 'h-2.5 w-2.5' : 'h-3 w-3'}`} />
                           <span className="line-clamp-1">{lead.development}</span>
                         </div>
                         
-                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
-                          <DollarSign className="h-3 w-3" />
-                          <span className="font-semibold text-gray-900">
-                            {formatCurrency(lead.dealValue)}
+                        <div className={`flex items-center gap-1.5 text-gray-600 ${isMobile ? 'text-xs' : 'text-xs'}`}>
+                          <DollarSign className={`${isMobile ? 'h-2.5 w-2.5' : 'h-3 w-3'}`} />
+                          <span className={`font-semibold text-gray-900 ${isMobile ? 'text-xs' : ''}`}>
+                            {isMobile ? `₦${(lead.dealValue / 1000000).toFixed(0)}M` : formatCurrency(lead.dealValue)}
                           </span>
                         </div>
                         
-                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                          <User className="h-3 w-3" />
-                          <span>{lead.assignedTo}</span>
-                        </div>
+                        {!isMobile && (
+                          <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                            <User className="h-3 w-3" />
+                            <span>{lead.assignedTo}</span>
+                          </div>
+                        )}
                       </div>
                       
-                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                        <span className="text-xs text-gray-500">{lead.source}</span>
-                        <span className="text-xs text-gray-400">
+                      <div className={`flex items-center justify-between pt-${isMobile ? '1.5' : '2'} border-t border-gray-100`}>
+                        <span className={`text-gray-500 ${isMobile ? 'text-xs' : 'text-xs'}`}>{lead.source}</span>
+                        <span className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-xs'}`}>
                           {new Date(lead.lastActivity).toLocaleDateString()}
                         </span>
                       </div>
@@ -384,11 +386,11 @@ export function CRMPipelinesPage() {
               ))}
               
               {stageLeads.length === 0 && (
-                <div className="text-center py-8 text-gray-400">
-                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
-                    <StageIcon className="h-6 w-6" />
+                <div className="text-center py-6 sm:py-8 text-gray-400">
+                  <div className={`mx-auto mb-2 sm:mb-3 rounded-full bg-gray-100 flex items-center justify-center ${isMobile ? 'w-8 h-8' : 'w-12 h-12'}`}>
+                    <StageIcon className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'}`} />
                   </div>
-                  <p className="text-sm">No leads in this stage</p>
+                  <p className={`${isMobile ? 'text-xs' : 'text-sm'}`}>No leads in this stage</p>
                 </div>
               )}
             </div>
@@ -405,15 +407,19 @@ export function CRMPipelinesPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-gray-200">
-                <TableHead className="font-semibold text-gray-900">Client</TableHead>
-                <TableHead className="font-semibold text-gray-900">Development</TableHead>
-                <TableHead className="font-semibold text-gray-900">Stage</TableHead>
-                <TableHead className="font-semibold text-gray-900">Deal Value</TableHead>
-                <TableHead className="font-semibold text-gray-900">Priority</TableHead>
-                <TableHead className="font-semibold text-gray-900">Assigned To</TableHead>
-                <TableHead className="font-semibold text-gray-900">Source</TableHead>
-                <TableHead className="font-semibold text-gray-900">Last Activity</TableHead>
-                <TableHead className="w-12"></TableHead>
+                <TableHead className={`font-semibold text-gray-900 ${isMobile ? 'text-xs px-2' : ''}`}>Client</TableHead>
+                {!isMobile && <TableHead className="font-semibold text-gray-900">Development</TableHead>}
+                <TableHead className={`font-semibold text-gray-900 ${isMobile ? 'text-xs px-2' : ''}`}>Stage</TableHead>
+                <TableHead className={`font-semibold text-gray-900 ${isMobile ? 'text-xs px-2' : ''}`}>Value</TableHead>
+                {!isMobile && (
+                  <>
+                    <TableHead className="font-semibold text-gray-900">Priority</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Assigned To</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Source</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Last Activity</TableHead>
+                  </>
+                )}
+                <TableHead className="w-8 sm:w-12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -423,30 +429,38 @@ export function CRMPipelinesPage() {
                   className="cursor-pointer hover:bg-gray-50 border-gray-100 transition-colors"
                   onClick={() => setSelectedLead(lead)}
                 >
-                  <TableCell className="font-medium text-gray-900">{lead.clientName}</TableCell>
-                  <TableCell className="text-gray-600">{lead.development}</TableCell>
+                  <TableCell className={`font-medium text-gray-900 ${isMobile ? 'text-xs px-2' : ''}`}>
+                    {isMobile ? lead.clientName.split(' ')[0] : lead.clientName}
+                  </TableCell>
+                  {!isMobile && <TableCell className="text-gray-600">{lead.development}</TableCell>}
                   <TableCell>
                     <Badge 
-                      className={`${stages.find(s => s.id === lead.stage)?.color} border font-medium`} 
+                      className={`${stages.find(s => s.id === lead.stage)?.color} border font-medium ${isMobile ? 'text-xs px-1.5 py-0.5' : ''}`} 
                       variant="outline"
                     >
-                      {stages.find(s => s.id === lead.stage)?.name}
+                      {isMobile ? stages.find(s => s.id === lead.stage)?.name.substring(0, 3) : stages.find(s => s.id === lead.stage)?.name}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-semibold">{formatCurrency(lead.dealValue)}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      className={`border font-medium ${getPriorityColor(lead.priority)}`}
-                      variant="outline"
-                    >
-                      {lead.priority}
-                    </Badge>
+                  <TableCell className={`font-semibold ${isMobile ? 'text-xs px-2' : ''}`}>
+                    {isMobile ? `₦${(lead.dealValue / 1000000).toFixed(0)}M` : formatCurrency(lead.dealValue)}
                   </TableCell>
-                  <TableCell className="text-gray-600">{lead.assignedTo}</TableCell>
-                  <TableCell className="text-gray-600">{lead.source}</TableCell>
-                  <TableCell className="text-gray-600">{new Date(lead.lastActivity).toLocaleDateString()}</TableCell>
+                  {!isMobile && (
+                    <>
+                      <TableCell>
+                        <Badge 
+                          className={`border font-medium ${getPriorityColor(lead.priority)}`}
+                          variant="outline"
+                        >
+                          {lead.priority}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-600">{lead.assignedTo}</TableCell>
+                      <TableCell className="text-gray-600">{lead.source}</TableCell>
+                      <TableCell className="text-gray-600">{new Date(lead.lastActivity).toLocaleDateString()}</TableCell>
+                    </>
+                  )}
                   <TableCell>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button variant="ghost" size="icon" className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`}>
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </TableCell>
@@ -460,55 +474,71 @@ export function CRMPipelinesPage() {
   );
 
   const renderListView = () => (
-    <div className="space-y-4">
+    <div className={`space-y-${isMobile ? '3' : '4'}`}>
       {getFilteredLeads().map((lead) => (
         <Card 
           key={lead.id} 
           className="cursor-pointer hover:shadow-lg transition-all duration-200 border-0 shadow-sm bg-white"
           onClick={() => setSelectedLead(lead)}
         >
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
+            <div className={`grid ${isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'}`}>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 mb-2">
-                  <h4 className="font-semibold text-gray-900">{lead.clientName}</h4>
+                  <h4 className={`font-semibold text-gray-900 ${isMobile ? 'text-sm' : ''}`}>{lead.clientName}</h4>
                   <Badge 
-                    className={`border font-medium ${getPriorityColor(lead.priority)}`}
+                    className={`border font-medium ${getPriorityColor(lead.priority)} ${isMobile ? 'text-xs px-1.5 py-0.5' : ''}`}
                     variant="outline"
                   >
                     {lead.priority}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                <div className={`flex items-center gap-1.5 text-gray-600 ${isMobile ? 'text-sm' : 'text-sm'}`}>
                   <Building className="h-4 w-4" />
                   <span>{lead.development}</span>
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <div className="text-sm font-medium text-gray-500">Stage</div>
-                <Badge 
-                  className={`${stages.find(s => s.id === lead.stage)?.color} border font-medium`}
-                  variant="outline"
-                >
-                  {stages.find(s => s.id === lead.stage)?.name}
-                </Badge>
-              </div>
+              {!isMobile && (
+                <>
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-gray-500">Stage</div>
+                    <Badge 
+                      className={`${stages.find(s => s.id === lead.stage)?.color} border font-medium`}
+                      variant="outline"
+                    >
+                      {stages.find(s => s.id === lead.stage)?.name}
+                    </Badge>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-gray-500">Deal Value</div>
+                    <div className="font-semibold text-lg text-gray-900">{formatCurrency(lead.dealValue)}</div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-gray-500">Assigned To</div>
+                    <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                      <User className="h-4 w-4" />
+                      <span>{lead.assignedTo}</span>
+                    </div>
+                    <div className="text-xs text-gray-500">Source: {lead.source}</div>
+                    <div className="text-xs text-gray-500">Last: {new Date(lead.lastActivity).toLocaleDateString()}</div>
+                  </div>
+                </>
+              )}
               
-              <div className="space-y-2">
-                <div className="text-sm font-medium text-gray-500">Deal Value</div>
-                <div className="font-semibold text-lg text-gray-900">{formatCurrency(lead.dealValue)}</div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="text-sm font-medium text-gray-500">Assigned To</div>
-                <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                  <User className="h-4 w-4" />
-                  <span>{lead.assignedTo}</span>
+              {isMobile && (
+                <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                  <div className="text-sm font-semibold text-gray-900">{formatCurrency(lead.dealValue)}</div>
+                  <Badge 
+                    className={`${stages.find(s => s.id === lead.stage)?.color} border font-medium text-xs`}
+                    variant="outline"
+                  >
+                    {stages.find(s => s.id === lead.stage)?.name}
+                  </Badge>
                 </div>
-                <div className="text-xs text-gray-500">Source: {lead.source}</div>
-                <div className="text-xs text-gray-500">Last: {new Date(lead.lastActivity).toLocaleDateString()}</div>
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -518,52 +548,55 @@ export function CRMPipelinesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className={`max-w-7xl mx-auto py-4 sm:py-8 space-y-6 sm:space-y-8 ${isMobile ? 'px-3' : 'px-4 sm:px-6 lg:px-8'}`}>
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Sales Pipeline</h1>
-            <p className="text-gray-600 mt-1">Track and manage your sales leads through every stage</p>
+            <h1 className={`font-bold text-gray-900 ${isMobile ? 'text-xl' : 'text-3xl'}`}>Sales Pipeline</h1>
+            <p className={`text-gray-600 mt-1 ${isMobile ? 'text-sm' : ''}`}>Track and manage your sales leads through every stage</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex bg-white rounded-lg border border-gray-200 p-1 shadow-sm">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <div className={`flex bg-white rounded-lg border border-gray-200 p-1 shadow-sm ${isMobile ? 'flex-1' : ''}`}>
               <Button
                 variant={viewType === 'kanban' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewType('kanban')}
-                className="px-3"
+                className={`${isMobile ? 'px-2 flex-1 text-xs' : 'px-3'}`}
               >
-                <LayoutGrid className="h-4 w-4 mr-1" />
+                <LayoutGrid className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4 mr-1'}`} />
                 {!isMobile && 'Kanban'}
               </Button>
               <Button
                 variant={viewType === 'table' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewType('table')}
-                className="px-3"
+                className={`${isMobile ? 'px-2 flex-1 text-xs' : 'px-3'}`}
               >
-                <TableIcon className="h-4 w-4 mr-1" />
+                <TableIcon className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4 mr-1'}`} />
                 {!isMobile && 'Table'}
               </Button>
               <Button
                 variant={viewType === 'list' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewType('list')}
-                className="px-3"
+                className={`${isMobile ? 'px-2 flex-1 text-xs' : 'px-3'}`}
               >
-                <List className="h-4 w-4 mr-1" />
+                <List className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4 mr-1'}`} />
                 {!isMobile && 'List'}
               </Button>
             </div>
-            <Button onClick={() => setIsAddLeadOpen(true)} className="bg-indigo-600 hover:bg-indigo-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Lead
+            <Button 
+              onClick={() => setIsAddLeadOpen(true)} 
+              className={`bg-indigo-600 hover:bg-indigo-700 ${isMobile ? 'px-3 py-2 text-sm' : ''}`}
+            >
+              <Plus className={`${isMobile ? 'h-3 w-3 mr-1' : 'h-4 w-4 mr-2'}`} />
+              {isMobile ? 'Add' : 'Add Lead'}
             </Button>
           </div>
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className={`grid gap-3 sm:gap-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'}`}>
           <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -651,28 +684,28 @@ export function CRMPipelinesPage() {
 
         {/* Filters */}
         <Card className="border-0 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-              <Tabs value={activeFilter} onValueChange={setActiveFilter} className="w-full lg:w-auto">
-                <TabsList className="grid w-full lg:w-auto grid-cols-3 bg-gray-100">
+          <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
+            <div className="flex flex-col gap-3 sm:gap-4 items-start">
+              <Tabs value={activeFilter} onValueChange={setActiveFilter} className="w-full">
+                <TabsList className={`grid w-full grid-cols-3 bg-gray-100 ${isMobile ? 'text-xs' : ''}`}>
                   <TabsTrigger value="all" className="data-[state=active]:bg-white">All Leads</TabsTrigger>
                   <TabsTrigger value="high-priority" className="data-[state=active]:bg-white">High Priority</TabsTrigger>
                   <TabsTrigger value="recent" className="data-[state=active]:bg-white">Recent</TabsTrigger>
                 </TabsList>
               </Tabs>
-              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <div className="flex flex-col sm:flex-row gap-3 w-full">
+                <div className="relative flex-1">
+                  <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
                   <Input
                     placeholder="Search leads..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 w-full sm:w-64 border-gray-200"
+                    className={`border-gray-200 ${isMobile ? 'pl-8 text-sm' : 'pl-10'}`}
                   />
                 </div>
                 <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
-                  <SelectTrigger className="w-full sm:w-48 border-gray-200">
-                    <Filter className="h-4 w-4 mr-2" />
+                  <SelectTrigger className={`border-gray-200 ${isMobile ? 'text-sm' : 'w-48'}`}>
+                    <Filter className={`${isMobile ? 'h-3 w-3 mr-1' : 'h-4 w-4 mr-2'}`} />
                     <SelectValue placeholder="Filter by team member" />
                   </SelectTrigger>
                   <SelectContent>
@@ -688,7 +721,7 @@ export function CRMPipelinesPage() {
         </Card>
 
         {/* Views */}
-        <div className="pb-8">
+        <div className="pb-4 sm:pb-8">
           {viewType === 'kanban' && renderKanbanView()}
           {viewType === 'table' && renderTableView()}
           {viewType === 'list' && renderListView()}

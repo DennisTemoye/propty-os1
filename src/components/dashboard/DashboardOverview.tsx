@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,7 @@ import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationFor
 import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
 import { SendNoticeForm } from '@/components/dashboard/notices/SendNoticeForm';
 import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
+import { useResponsive } from '@/hooks/use-responsive';
 import { useNavigate } from 'react-router-dom';
 
 const salesData = [
@@ -49,6 +49,7 @@ const financialData = [
 
 export function DashboardOverview() {
   const navigate = useNavigate();
+  const { isMobile, isTablet } = useResponsive();
   const [showNotification, setShowNotification] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -214,16 +215,18 @@ export function DashboardOverview() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Notification Bar */}
       {showNotification && (
-        <div className="bg-blue-600 dark:bg-blue-700 text-white px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Bell className="h-5 w-5" />
-            <span className="font-medium">🎉 Referral program is now live! Earn rewards for every successful referral.</span>
+        <div className="bg-blue-600 dark:bg-blue-700 text-white px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <Bell className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+            <span className={`font-medium ${isMobile ? 'text-sm' : ''} truncate`}>
+              {isMobile ? 'Referral program live! Earn rewards.' : '🎉 Referral program is now live! Earn rewards for every successful referral.'}
+            </span>
           </div>
           <Button
             variant="ghost"
-            size="icon"
+            size={isMobile ? "sm" : "icon"}
             onClick={() => setShowNotification(false)}
-            className="text-white hover:bg-blue-700 dark:hover:bg-blue-600 h-8 w-8"
+            className="text-white hover:bg-blue-700 dark:hover:bg-blue-600 flex-shrink-0"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -231,65 +234,65 @@ export function DashboardOverview() {
       )}
 
       {/* Header Section */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Real Estate Sales & Project Management Overview</p>
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-6 py-4 sm:py-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className={`font-bold text-gray-900 dark:text-white ${isMobile ? 'text-xl' : 'text-3xl'}`}>Dashboard</h1>
+            <p className={`text-gray-600 dark:text-gray-300 mt-1 ${isMobile ? 'text-sm' : ''}`}>Real Estate Sales & Project Management Overview</p>
           </div>
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
+          <div className="flex items-center space-x-3 w-full sm:w-auto">
+            {!isMobile && <ThemeToggle />}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                  <Plus className="h-5 w-5 mr-2" />
-                  New
+                <Button className={`bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${isMobile ? 'flex-1 text-sm py-2' : 'px-6 py-3'}`}>
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
+                  {isMobile ? 'New' : 'New'}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
-                className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl z-50"
+                className="w-48 sm:w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl z-50"
                 align="end"
               >
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('development')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
-                  <Building className="h-5 w-5 text-purple-600" />
-                  <span className="font-medium">New Project</span>
+                  <Building className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
+                  <span className="font-medium text-sm">New Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('client')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
-                  <Users className="h-5 w-5 text-blue-600" />
+                  <Users className="h-4 w-4 text-blue-600" />
                   <span className="font-medium">New Client</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('allocation')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
-                  <MapPin className="h-5 w-5 text-green-600" />
+                  <MapPin className="h-4 w-4 text-green-600" />
                   <span className="font-medium">New Allocation</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('expense')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
-                  <DollarSign className="h-5 w-5 text-red-600" />
+                  <DollarSign className="h-4 w-4 text-red-600" />
                   <span className="font-medium">New Expense</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('payment')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
-                  <CreditCard className="h-5 w-5 text-emerald-600" />
+                  <CreditCard className="h-4 w-4 text-emerald-600" />
                   <span className="font-medium">New Payment</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('notice')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
-                  <Send className="h-5 w-5 text-orange-600" />
+                  <Send className="h-4 w-4 text-orange-600" />
                   <span className="font-medium">New Notice</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -298,9 +301,15 @@ export function DashboardOverview() {
         </div>
       </div>
 
-      <div className="p-6 space-y-8">
-        {/* KPI Cards - Now clickable and connected to their respective modules */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="p-3 sm:p-6 space-y-6 sm:space-y-8">
+        {/* KPI Cards - Responsive Grid */}
+        <div className={`grid gap-3 sm:gap-4 lg:gap-6 ${
+          isMobile 
+            ? 'grid-cols-2' 
+            : isTablet 
+              ? 'grid-cols-2 lg:grid-cols-3' 
+              : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+        }`}>
           {kpiData.map((kpi, index) => (
             <div
               key={index}
@@ -310,7 +319,7 @@ export function DashboardOverview() {
               <GradientKpiCard
                 title={kpi.title}
                 value={kpi.value}
-                subtitle={kpi.subtitle}
+                subtitle={isMobile ? kpi.value : kpi.subtitle}
                 icon={kpi.icon}
                 gradientFrom={kpi.gradientFrom}
                 gradientTo={kpi.gradientTo}
@@ -321,25 +330,33 @@ export function DashboardOverview() {
           ))}
         </div>
 
-        {/* Main Analytics Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Main Analytics Charts - Responsive Layout */}
+        <div className={`grid gap-4 sm:gap-6 ${isMobile || isTablet ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
           <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Sales & Allocations Performance</CardTitle>
+            <CardHeader className="pb-2 sm:pb-4">
+              <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
+                Sales & Allocations Performance
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
                 <BarChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="month" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
+                  <XAxis dataKey="month" stroke="#64748b" fontSize={isMobile ? 10 : 12} />
+                  <YAxis stroke="#64748b" fontSize={isMobile ? 10 : 12} />
                   <Tooltip 
                     formatter={(value, name) => [
                       value, 
                       name === 'sales' ? 'Units Sold' : 
                       name === 'allocations' ? 'Allocations' : 'Revenue (₦M)'
                     ]}
-                    contentStyle={{ backgroundColor: 'white', border: 'none', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: 'none', 
+                      borderRadius: '12px', 
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                      fontSize: isMobile ? '12px' : '14px'
+                    }}
                   />
                   <Bar dataKey="sales" fill="#8b5cf6" radius={[2, 2, 0, 0]} />
                   <Bar dataKey="allocations" fill="#06b6d4" radius={[2, 2, 0, 0]} />
@@ -349,22 +366,30 @@ export function DashboardOverview() {
           </Card>
 
           <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Financial Overview (₦M)</CardTitle>
+            <CardHeader className="pb-2 sm:pb-4">
+              <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
+                Financial Overview (₦M)
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
                 <AreaChart data={financialData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="month" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
+                  <XAxis dataKey="month" stroke="#64748b" fontSize={isMobile ? 10 : 12} />
+                  <YAxis stroke="#64748b" fontSize={isMobile ? 10 : 12} />
                   <Tooltip 
                     formatter={(value, name) => [
                       `₦${value}M`, 
                       name === 'income' ? 'Income' : 
                       name === 'expenses' ? 'Expenses' : 'Profit'
                     ]}
-                    contentStyle={{ backgroundColor: 'white', border: 'none', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: 'none', 
+                      borderRadius: '12px', 
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                      fontSize: isMobile ? '12px' : '14px'
+                    }}
                   />
                   <Area type="monotone" dataKey="income" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} />
                   <Area type="monotone" dataKey="expenses" stackId="2" stroke="#ef4444" fill="#ef4444" fillOpacity={0.6} />
@@ -375,29 +400,39 @@ export function DashboardOverview() {
           </Card>
         </div>
 
-        {/* Secondary Analytics */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Secondary Analytics - Responsive Grid */}
+        <div className={`grid gap-4 sm:gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
           <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Project Status Distribution</CardTitle>
+            <CardHeader className="pb-2 sm:pb-4">
+              <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
+                Project Status Distribution
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={isMobile ? 200 : 250}>
                 <PieChart>
                   <Pie
                     data={projectStatusData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
+                    outerRadius={isMobile ? 60 : 80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}%`}
+                    label={isMobile ? false : ({ name, value }) => `${name}: ${value}%`}
                   >
                     {projectStatusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: 'white', border: 'none', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: 'none', 
+                      borderRadius: '12px', 
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                      fontSize: isMobile ? '12px' : '14px'
+                    }} 
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
