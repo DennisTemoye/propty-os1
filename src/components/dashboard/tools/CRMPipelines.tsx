@@ -8,10 +8,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, User, Building, DollarSign, MessageSquare, Calendar, TrendingUp, Users, Target, Clock, LayoutGrid, List, Table as TableIcon } from 'lucide-react';
+import { Plus, User, Building, DollarSign, MessageSquare, Calendar, TrendingUp, Users, Target, Clock, LayoutGrid, List, Table as TableIcon, Search, Filter, MoreVertical, Phone, Mail, MapPin, Eye } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Lead {
   id: string;
@@ -170,15 +171,16 @@ const mockLeads: Lead[] = [
 ];
 
 const stages = [
-  { id: 'contacted', name: 'Contacted', color: 'bg-blue-100 text-blue-800' },
-  { id: 'inspection', name: 'Inspection', color: 'bg-yellow-100 text-yellow-800' },
-  { id: 'offer', name: 'Offer', color: 'bg-purple-100 text-purple-800' },
-  { id: 'payment', name: 'Payment', color: 'bg-orange-100 text-orange-800' },
-  { id: 'closed', name: 'Closed', color: 'bg-green-100 text-green-800' }
+  { id: 'contacted', name: 'Contacted', color: 'bg-blue-50 text-blue-700 border-blue-200', count: 0, icon: MessageSquare },
+  { id: 'inspection', name: 'Inspection', color: 'bg-amber-50 text-amber-700 border-amber-200', count: 0, icon: Eye },
+  { id: 'offer', name: 'Offer', color: 'bg-purple-50 text-purple-700 border-purple-200', count: 0, icon: Target },
+  { id: 'payment', name: 'Payment', color: 'bg-orange-50 text-orange-700 border-orange-200', count: 0, icon: DollarSign },
+  { id: 'closed', name: 'Closed', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', count: 0, icon: TrendingUp }
 ];
 
 export function CRMPipelinesPage() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
   const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -294,115 +296,165 @@ export function CRMPipelinesPage() {
   const kpis = calculateKPIs();
   const teamMembers = ['Sarah Wilson', 'Mike Johnson', 'David Brown'];
 
-  const renderKanbanView = () => (
-    <div className="flex gap-4 overflow-x-auto pb-4">
-      {stages.map((stage) => (
-        <div
-          key={stage.id}
-          className="bg-gray-50 rounded-lg p-4 min-h-[600px] w-80 flex-shrink-0"
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, stage.id)}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">{stage.name}</h3>
-            <Badge variant="outline">{getLeadsByStage(stage.id).length}</Badge>
-          </div>
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'bg-red-50 text-red-700 border-red-200';
+      case 'medium': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+      case 'low': return 'bg-gray-50 text-gray-700 border-gray-200';
+      default: return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
+  };
 
-          <div className="space-y-3">
-            {getLeadsByStage(stage.id).map((lead) => (
-              <Card
-                key={lead.id}
-                className="cursor-move hover:shadow-md transition-shadow"
-                draggable
-                onDragStart={(e) => handleDragStart(e, lead)}
-                onClick={() => setSelectedLead(lead)}
-              >
-                <CardContent className="p-4">
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="font-medium text-sm leading-tight">{lead.clientName}</h4>
-                      <Badge 
-                        className={`text-xs flex-shrink-0 ${
-                          lead.priority === 'high' ? 'bg-red-100 text-red-800' :
-                          lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`} 
-                        variant="secondary"
-                      >
-                        {lead.priority}
-                      </Badge>
+  const renderKanbanView = () => (
+    <div className={`${isMobile ? 'flex gap-4 overflow-x-auto pb-4' : 'grid grid-cols-1 lg:grid-cols-5 gap-6'} min-h-[600px]`}>
+      {stages.map((stage) => {
+        const stageLeads = getLeadsByStage(stage.id);
+        const StageIcon = stage.icon;
+        
+        return (
+          <div
+            key={stage.id}
+            className={`bg-white rounded-xl border border-gray-200 p-4 ${isMobile ? 'min-w-[280px] flex-shrink-0' : ''}`}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, stage.id)}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className={`p-1.5 rounded-lg ${stage.color}`}>
+                  <StageIcon className="h-4 w-4" />
+                </div>
+                <h3 className="font-semibold text-gray-900 text-sm">{stage.name}</h3>
+              </div>
+              <Badge variant="outline" className="text-xs font-medium">
+                {stageLeads.length}
+              </Badge>
+            </div>
+
+            <div className="space-y-3 max-h-[500px] overflow-y-auto">
+              {stageLeads.map((lead) => (
+                <Card
+                  key={lead.id}
+                  className="cursor-move hover:shadow-lg transition-all duration-200 border-0 shadow-sm bg-white group"
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, lead)}
+                  onClick={() => setSelectedLead(lead)}
+                >
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="font-semibold text-sm text-gray-900 leading-tight line-clamp-1">
+                          {lead.clientName}
+                        </h4>
+                        <Badge 
+                          className={`text-xs font-medium border ${getPriorityColor(lead.priority)}`}
+                          variant="outline"
+                        >
+                          {lead.priority}
+                        </Badge>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <Building className="h-3 w-3" />
+                          <span className="line-clamp-1">{lead.development}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <DollarSign className="h-3 w-3" />
+                          <span className="font-semibold text-gray-900">
+                            {formatCurrency(lead.dealValue)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <User className="h-3 w-3" />
+                          <span>{lead.assignedTo}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                        <span className="text-xs text-gray-500">{lead.source}</span>
+                        <span className="text-xs text-gray-400">
+                          {new Date(lead.lastActivity).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-600">{lead.development}</p>
-                    <div className="space-y-2">
-                      <Badge className={`${stage.color} text-xs w-fit`} variant="secondary">
-                        {formatCurrency(lead.dealValue)}
-                      </Badge>
-                      <div className="text-xs text-gray-500">{lead.source}</div>
-                    </div>
-                    <div className="text-xs text-gray-500 border-t pt-2 space-y-1">
-                      <div>Assigned: {lead.assignedTo}</div>
-                      <div>Last: {new Date(lead.lastActivity).toLocaleDateString()}</div>
-                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              {stageLeads.length === 0 && (
+                <div className="text-center py-8 text-gray-400">
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
+                    <StageIcon className="h-6 w-6" />
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <p className="text-sm">No leads in this stage</p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 
   const renderTableView = () => (
-    <Card>
+    <Card className="border-0 shadow-sm">
       <CardContent className="p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Client</TableHead>
-              <TableHead>Development</TableHead>
-              <TableHead>Stage</TableHead>
-              <TableHead>Deal Value</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Assigned To</TableHead>
-              <TableHead>Source</TableHead>
-              <TableHead>Last Activity</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {getFilteredLeads().map((lead) => (
-              <TableRow 
-                key={lead.id} 
-                className="cursor-pointer hover:bg-gray-50"
-                onClick={() => setSelectedLead(lead)}
-              >
-                <TableCell className="font-medium">{lead.clientName}</TableCell>
-                <TableCell>{lead.development}</TableCell>
-                <TableCell>
-                  <Badge className={stages.find(s => s.id === lead.stage)?.color} variant="secondary">
-                    {stages.find(s => s.id === lead.stage)?.name}
-                  </Badge>
-                </TableCell>
-                <TableCell>{formatCurrency(lead.dealValue)}</TableCell>
-                <TableCell>
-                  <Badge 
-                    className={`${
-                      lead.priority === 'high' ? 'bg-red-100 text-red-800' :
-                      lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`} 
-                    variant="secondary"
-                  >
-                    {lead.priority}
-                  </Badge>
-                </TableCell>
-                <TableCell>{lead.assignedTo}</TableCell>
-                <TableCell>{lead.source}</TableCell>
-                <TableCell>{new Date(lead.lastActivity).toLocaleDateString()}</TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-gray-200">
+                <TableHead className="font-semibold text-gray-900">Client</TableHead>
+                <TableHead className="font-semibold text-gray-900">Development</TableHead>
+                <TableHead className="font-semibold text-gray-900">Stage</TableHead>
+                <TableHead className="font-semibold text-gray-900">Deal Value</TableHead>
+                <TableHead className="font-semibold text-gray-900">Priority</TableHead>
+                <TableHead className="font-semibold text-gray-900">Assigned To</TableHead>
+                <TableHead className="font-semibold text-gray-900">Source</TableHead>
+                <TableHead className="font-semibold text-gray-900">Last Activity</TableHead>
+                <TableHead className="w-12"></TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {getFilteredLeads().map((lead) => (
+                <TableRow 
+                  key={lead.id} 
+                  className="cursor-pointer hover:bg-gray-50 border-gray-100 transition-colors"
+                  onClick={() => setSelectedLead(lead)}
+                >
+                  <TableCell className="font-medium text-gray-900">{lead.clientName}</TableCell>
+                  <TableCell className="text-gray-600">{lead.development}</TableCell>
+                  <TableCell>
+                    <Badge 
+                      className={`${stages.find(s => s.id === lead.stage)?.color} border font-medium`} 
+                      variant="outline"
+                    >
+                      {stages.find(s => s.id === lead.stage)?.name}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="font-semibold">{formatCurrency(lead.dealValue)}</TableCell>
+                  <TableCell>
+                    <Badge 
+                      className={`border font-medium ${getPriorityColor(lead.priority)}`}
+                      variant="outline"
+                    >
+                      {lead.priority}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-gray-600">{lead.assignedTo}</TableCell>
+                  <TableCell className="text-gray-600">{lead.source}</TableCell>
+                  <TableCell className="text-gray-600">{new Date(lead.lastActivity).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
@@ -412,40 +464,48 @@ export function CRMPipelinesPage() {
       {getFilteredLeads().map((lead) => (
         <Card 
           key={lead.id} 
-          className="cursor-pointer hover:shadow-md transition-shadow"
+          className="cursor-pointer hover:shadow-lg transition-all duration-200 border-0 shadow-sm bg-white"
           onClick={() => setSelectedLead(lead)}
         >
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="space-y-2">
                 <div className="flex items-center gap-2 mb-2">
-                  <h4 className="font-semibold">{lead.clientName}</h4>
+                  <h4 className="font-semibold text-gray-900">{lead.clientName}</h4>
                   <Badge 
-                    className={`${
-                      lead.priority === 'high' ? 'bg-red-100 text-red-800' :
-                      lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`} 
-                    variant="secondary"
+                    className={`border font-medium ${getPriorityColor(lead.priority)}`}
+                    variant="outline"
                   >
                     {lead.priority}
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-600">{lead.development}</p>
+                <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                  <Building className="h-4 w-4" />
+                  <span>{lead.development}</span>
+                </div>
               </div>
-              <div>
-                <div className="text-sm text-gray-500 mb-1">Stage</div>
-                <Badge className={stages.find(s => s.id === lead.stage)?.color} variant="secondary">
+              
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-gray-500">Stage</div>
+                <Badge 
+                  className={`${stages.find(s => s.id === lead.stage)?.color} border font-medium`}
+                  variant="outline"
+                >
                   {stages.find(s => s.id === lead.stage)?.name}
                 </Badge>
               </div>
-              <div>
-                <div className="text-sm text-gray-500 mb-1">Deal Value</div>
-                <div className="font-semibold">{formatCurrency(lead.dealValue)}</div>
+              
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-gray-500">Deal Value</div>
+                <div className="font-semibold text-lg text-gray-900">{formatCurrency(lead.dealValue)}</div>
               </div>
-              <div>
-                <div className="text-sm text-gray-500 mb-1">Assigned To</div>
-                <div className="text-sm">{lead.assignedTo}</div>
+              
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-gray-500">Assigned To</div>
+                <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                  <User className="h-4 w-4" />
+                  <span>{lead.assignedTo}</span>
+                </div>
                 <div className="text-xs text-gray-500">Source: {lead.source}</div>
                 <div className="text-xs text-gray-500">Last: {new Date(lead.lastActivity).toLocaleDateString()}</div>
               </div>
@@ -457,139 +517,162 @@ export function CRMPipelinesPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">CRM Pipelines</h1>
-          <p className="text-gray-600 mt-1">Manage leads across stages: Contacted → Inspection → Offer → Payment → Closed</p>
-        </div>
-        <div className="flex gap-2">
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            <Button
-              variant={viewType === 'kanban' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setViewType('kanban')}
-              className="px-3"
-            >
-              <LayoutGrid className="h-4 w-4 mr-1" />
-              Kanban
-            </Button>
-            <Button
-              variant={viewType === 'table' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setViewType('table')}
-              className="px-3"
-            >
-              <TableIcon className="h-4 w-4 mr-1" />
-              Table
-            </Button>
-            <Button
-              variant={viewType === 'list' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setViewType('list')}
-              className="px-3"
-            >
-              <List className="h-4 w-4 mr-1" />
-              List
+    <div className="min-h-screen bg-gray-50/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Sales Pipeline</h1>
+            <p className="text-gray-600 mt-1">Track and manage your sales leads through every stage</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex bg-white rounded-lg border border-gray-200 p-1 shadow-sm">
+              <Button
+                variant={viewType === 'kanban' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewType('kanban')}
+                className="px-3"
+              >
+                <LayoutGrid className="h-4 w-4 mr-1" />
+                {!isMobile && 'Kanban'}
+              </Button>
+              <Button
+                variant={viewType === 'table' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewType('table')}
+                className="px-3"
+              >
+                <TableIcon className="h-4 w-4 mr-1" />
+                {!isMobile && 'Table'}
+              </Button>
+              <Button
+                variant={viewType === 'list' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewType('list')}
+                className="px-3"
+              >
+                <List className="h-4 w-4 mr-1" />
+                {!isMobile && 'List'}
+              </Button>
+            </div>
+            <Button onClick={() => setIsAddLeadOpen(true)} className="bg-indigo-600 hover:bg-indigo-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Lead
             </Button>
           </div>
-          <Button onClick={() => setIsAddLeadOpen(true)} className="bg-purple-600 hover:bg-purple-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Lead
-          </Button>
         </div>
-      </div>
 
-      {/* KPI Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-blue-600">{kpis.totalLeads}</div>
-                <div className="text-sm text-gray-500">Total Leads</div>
+        {/* KPI Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-2xl font-bold text-blue-700">{kpis.totalLeads}</div>
+                  <div className="text-sm text-blue-600 font-medium">Total Leads</div>
+                </div>
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Users className="h-5 w-5 text-blue-600" />
+                </div>
               </div>
-              <Users className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-green-600">{kpis.activeLeads}</div>
-                <div className="text-sm text-gray-500">Active Leads</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-emerald-50 to-emerald-100/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-2xl font-bold text-emerald-700">{kpis.activeLeads}</div>
+                  <div className="text-sm text-emerald-600 font-medium">Active</div>
+                </div>
+                <div className="p-2 bg-emerald-100 rounded-lg">
+                  <Target className="h-5 w-5 text-emerald-600" />
+                </div>
               </div>
-              <Target className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg font-bold text-purple-600">{formatCurrency(kpis.totalValue)}</div>
-                <div className="text-sm text-gray-500">Total Pipeline</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-lg font-bold text-purple-700">₦{(kpis.totalValue / 1000000).toFixed(0)}M</div>
+                  <div className="text-sm text-purple-600 font-medium">Pipeline</div>
+                </div>
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-purple-600" />
+                </div>
               </div>
-              <DollarSign className="h-8 w-8 text-purple-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg font-bold text-orange-600">{formatCurrency(kpis.closedValue)}</div>
-                <div className="text-sm text-gray-500">Closed Deals</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-orange-50 to-orange-100/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-lg font-bold text-orange-700">₦{(kpis.closedValue / 1000000).toFixed(0)}M</div>
+                  <div className="text-sm text-orange-600 font-medium">Closed</div>
+                </div>
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-orange-600" />
+                </div>
               </div>
-              <TrendingUp className="h-8 w-8 text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-red-600">{kpis.conversionRate.toFixed(1)}%</div>
-                <div className="text-sm text-gray-500">Conversion</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-red-50 to-red-100/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-2xl font-bold text-red-700">{kpis.conversionRate.toFixed(1)}%</div>
+                  <div className="text-sm text-red-600 font-medium">Conversion</div>
+                </div>
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Target className="h-5 w-5 text-red-600" />
+                </div>
               </div>
-              <Target className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg font-bold text-indigo-600">{formatCurrency(kpis.avgDealSize)}</div>
-                <div className="text-sm text-gray-500">Avg Deal Size</div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-indigo-50 to-indigo-100/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-lg font-bold text-indigo-700">₦{(kpis.avgDealSize / 1000000).toFixed(0)}M</div>
+                  <div className="text-sm text-indigo-600 font-medium">Avg Deal</div>
+                </div>
+                <div className="p-2 bg-indigo-100 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-indigo-600" />
+                </div>
               </div>
-              <DollarSign className="h-8 w-8 text-indigo-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Filter Tabs and Search */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-            <Tabs value={activeFilter} onValueChange={setActiveFilter} className="w-full lg:w-auto">
-              <TabsList className="grid w-full lg:w-auto grid-cols-3">
-                <TabsTrigger value="all">All Leads</TabsTrigger>
-                <TabsTrigger value="high-priority">High Priority</TabsTrigger>
-                <TabsTrigger value="recent">Recent Activity</TabsTrigger>
-              </TabsList>
-            </Tabs>
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-              <div className="w-full sm:w-48">
+        {/* Filters */}
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-6">
+            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+              <Tabs value={activeFilter} onValueChange={setActiveFilter} className="w-full lg:w-auto">
+                <TabsList className="grid w-full lg:w-auto grid-cols-3 bg-gray-100">
+                  <TabsTrigger value="all" className="data-[state=active]:bg-white">All Leads</TabsTrigger>
+                  <TabsTrigger value="high-priority" className="data-[state=active]:bg-white">High Priority</TabsTrigger>
+                  <TabsTrigger value="recent" className="data-[state=active]:bg-white">Recent</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search leads..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 w-full sm:w-64 border-gray-200"
+                  />
+                </div>
                 <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full sm:w-48 border-gray-200">
+                    <Filter className="h-4 w-4 mr-2" />
                     <SelectValue placeholder="Filter by team member" />
                   </SelectTrigger>
                   <SelectContent>
@@ -600,194 +683,184 @@ export function CRMPipelinesPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full sm:w-64">
-                <Input
-                  placeholder="Search leads..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full"
-                />
-              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Pipeline Views */}
-      {viewType === 'kanban' && renderKanbanView()}
-      {viewType === 'table' && renderTableView()}
-      {viewType === 'list' && renderListView()}
+        {/* Views */}
+        <div className="pb-8">
+          {viewType === 'kanban' && renderKanbanView()}
+          {viewType === 'table' && renderTableView()}
+          {viewType === 'list' && renderListView()}
+        </div>
 
-      {/* Add Lead Modal */}
-      <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Add New Lead</DialogTitle>
-            <DialogDescription>
-              Create a new lead in your sales pipeline
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmitLead)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Client Name</label>
-                <Input {...form.register('clientName', { required: true })} placeholder="Enter client name" />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Development</label>
-                <Input {...form.register('development', { required: true })} placeholder="Enter development name" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Deal Value (₦)</label>
-                <Input {...form.register('dealValue', { required: true })} type="number" placeholder="25000000" />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Stage</label>
-                <Select onValueChange={(value) => form.setValue('stage', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select stage" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stages.map((stage) => (
-                      <SelectItem key={stage.id} value={stage.id}>{stage.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="text-sm font-medium">Lead Source</label>
-                <Select onValueChange={(value) => form.setValue('source', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select source" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Website">Website</SelectItem>
-                    <SelectItem value="Referral">Referral</SelectItem>
-                    <SelectItem value="Social Media">Social Media</SelectItem>
-                    <SelectItem value="Advertisement">Advertisement</SelectItem>
-                    <SelectItem value="Walk-in">Walk-in</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Assigned To</label>
-                <Select onValueChange={(value) => form.setValue('assignedTo', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select team member" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Sarah Wilson">Sarah Wilson</SelectItem>
-                    <SelectItem value="Mike Johnson">Mike Johnson</SelectItem>
-                    <SelectItem value="David Brown">David Brown</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Priority</label>
-                <Select onValueChange={(value) => form.setValue('priority', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Notes</label>
-              <Textarea {...form.register('notes')} placeholder="Add initial notes..." />
-            </div>
-            <div className="flex gap-2">
-              <Button type="submit" className="flex-1">Add Lead</Button>
-              <Button type="button" variant="outline" onClick={() => setIsAddLeadOpen(false)}>
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Lead Details Modal */}
-      <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {selectedLead?.clientName}
-              <Badge 
-                className={`${
-                  selectedLead?.priority === 'high' ? 'bg-red-100 text-red-800' :
-                  selectedLead?.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-gray-100 text-gray-800'
-                }`} 
-                variant="secondary"
-              >
-                {selectedLead?.priority} priority
-              </Badge>
-            </DialogTitle>
-            <DialogDescription>Lead details and activity</DialogDescription>
-          </DialogHeader>
-          {selectedLead && (
-            <div className="space-y-4">
+        {/* Add Lead Modal */}
+        <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Add New Lead</DialogTitle>
+              <DialogDescription>
+                Create a new lead in your sales pipeline
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={form.handleSubmit(onSubmitLead)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="font-medium">Development:</span>
-                  <p className="text-gray-600">{selectedLead.development}</p>
+                  <label className="text-sm font-medium">Client Name</label>
+                  <Input {...form.register('clientName', { required: true })} placeholder="Enter client name" />
                 </div>
                 <div>
-                  <span className="font-medium">Deal Value:</span>
-                  <p className="text-gray-600">{formatCurrency(selectedLead.dealValue)}</p>
+                  <label className="text-sm font-medium">Development</label>
+                  <Input {...form.register('development', { required: true })} placeholder="Enter development name" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Deal Value (₦)</label>
+                  <Input {...form.register('dealValue', { required: true })} type="number" placeholder="25000000" />
                 </div>
                 <div>
-                  <span className="font-medium">Source:</span>
-                  <p className="text-gray-600">{selectedLead.source}</p>
+                  <label className="text-sm font-medium">Stage</label>
+                  <Select onValueChange={(value) => form.setValue('stage', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select stage" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {stages.map((stage) => (
+                        <SelectItem key={stage.id} value={stage.id}>{stage.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Lead Source</label>
+                  <Select onValueChange={(value) => form.setValue('source', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Website">Website</SelectItem>
+                      <SelectItem value="Referral">Referral</SelectItem>
+                      <SelectItem value="Social Media">Social Media</SelectItem>
+                      <SelectItem value="Advertisement">Advertisement</SelectItem>
+                      <SelectItem value="Walk-in">Walk-in</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <span className="font-medium">Assigned To:</span>
-                  <p className="text-gray-600">{selectedLead.assignedTo}</p>
+                  <label className="text-sm font-medium">Assigned To</label>
+                  <Select onValueChange={(value) => form.setValue('assignedTo', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select team member" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Sarah Wilson">Sarah Wilson</SelectItem>
+                      <SelectItem value="Mike Johnson">Mike Johnson</SelectItem>
+                      <SelectItem value="David Brown">David Brown</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <span className="font-medium">Created:</span>
-                  <p className="text-gray-600">{new Date(selectedLead.createdAt).toLocaleDateString()}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Last Activity:</span>
-                  <p className="text-gray-600">{new Date(selectedLead.lastActivity).toLocaleDateString()}</p>
+                  <label className="text-sm font-medium">Priority</label>
+                  <Select onValueChange={(value) => form.setValue('priority', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div>
-                <span className="font-medium">Notes & Activity:</span>
-                <div className="mt-2 space-y-2">
-                  {selectedLead.notes.map((note, index) => (
-                    <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm">{note.text}</p>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {note.author} • {new Date(note.timestamp).toLocaleString()}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <label className="text-sm font-medium">Notes</label>
+                <Textarea {...form.register('notes')} placeholder="Add initial notes..." />
               </div>
               <div className="flex gap-2">
-                <Button onClick={() => navigate(`/clients/${selectedLead.clientId}`)}>
-                  <User className="h-4 w-4 mr-2" />
-                  View Client
-                </Button>
-                <Button variant="outline" onClick={() => navigate(`/developments/${selectedLead.developmentId}`)}>
-                  <Building className="h-4 w-4 mr-2" />
-                  View Development
+                <Button type="submit" className="flex-1">Add Lead</Button>
+                <Button type="button" variant="outline" onClick={() => setIsAddLeadOpen(false)}>
+                  Cancel
                 </Button>
               </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Lead Details Modal */}
+        <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                {selectedLead?.clientName}
+                <Badge 
+                  className={`border font-medium ${getPriorityColor(selectedLead?.priority || 'medium')}`}
+                  variant="outline"
+                >
+                  {selectedLead?.priority} priority
+                </Badge>
+              </DialogTitle>
+              <DialogDescription>Lead details and activity</DialogDescription>
+            </DialogHeader>
+            {selectedLead && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="font-medium">Development:</span>
+                    <p className="text-gray-600">{selectedLead.development}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Deal Value:</span>
+                    <p className="text-gray-600">{formatCurrency(selectedLead.dealValue)}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Source:</span>
+                    <p className="text-gray-600">{selectedLead.source}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Assigned To:</span>
+                    <p className="text-gray-600">{selectedLead.assignedTo}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Created:</span>
+                    <p className="text-gray-600">{new Date(selectedLead.createdAt).toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Last Activity:</span>
+                    <p className="text-gray-600">{new Date(selectedLead.lastActivity).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <div>
+                  <span className="font-medium">Notes & Activity:</span>
+                  <div className="mt-2 space-y-2">
+                    {selectedLead.notes.map((note, index) => (
+                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                        <p className="text-sm">{note.text}</p>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {note.author} • {new Date(note.timestamp).toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={() => navigate(`/clients/${selectedLead.clientId}`)}>
+                    <User className="h-4 w-4 mr-2" />
+                    View Client
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate(`/developments/${selectedLead.developmentId}`)}>
+                    <Building className="h-4 w-4 mr-2" />
+                    View Development
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
