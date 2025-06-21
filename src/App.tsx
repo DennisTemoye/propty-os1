@@ -16,6 +16,7 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import ProjectBlocksPage from "./pages/ProjectBlocksPage";
 import ClientDetailPage from "./pages/ClientDetailPage";
+import MarketerDetailPage from "./pages/MarketerDetailPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +54,11 @@ const App = () => (
             <Route path="/company/clients" element={<CompanyDashboard />} />
             <Route path="/company/clients/new" element={<CompanyDashboard />} />
             <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
+            
+            {/* Marketer Routes */}
+            <Route path="/company/marketers" element={<CompanyDashboard />} />
+            <Route path="/company/marketers/new" element={<CompanyDashboard />} />
+            <Route path="/company/marketers/:marketerId" element={<MarketerDetailPage />} />
             
             {/* Sales & Allocation Routes */}
             <Route path="/company/sales" element={<CompanyDashboard />} />

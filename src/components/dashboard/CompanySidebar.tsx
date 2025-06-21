@@ -25,12 +25,14 @@ import {
   TrendingUp,
   ChevronDown,
   Wrench,
+  UserCheck,
 } from 'lucide-react';
 
 const sidebarItems = [
   { icon: Home, label: 'Dashboard', path: '/company/dashboard' },
   { icon: Building2, label: 'Projects', path: '/company/projects' },
   { icon: Users, label: 'Clients', path: '/company/clients' },
+  { icon: UserCheck, label: 'Marketers', path: '/company/marketers' },
   { icon: Handshake, label: 'Sales & Allocation', path: '/company/sales' },
   { icon: DollarSign, label: 'Accounting', path: '/company/accounting' },
   { icon: Users2, label: 'Team & Roles', path: '/company/team' },
