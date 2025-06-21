@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,7 +17,6 @@ import ProjectDetailPage from "./pages/ProjectDetailPage";
 import ProjectBlocksPage from "./pages/ProjectBlocksPage";
 import ClientDetailPage from "./pages/ClientDetailPage";
 import MarketerDetailPage from "./pages/MarketerDetailPage";
-import SendNoticePage from "./pages/SendNoticePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -89,7 +89,6 @@ const App = () => (
             <Route path="/company/tools/crm-pipelines" element={<CompanyDashboard />} />
             <Route path="/company/tools/calendar" element={<CompanyDashboard />} />
             <Route path="/company/tools/document-manager" element={<CompanyDashboard />} />
-            <Route path="/company/tools/send-notice" element={<SendNoticePage />} />
             
             {/* Other Routes */}
             <Route path="/company/settings" element={<CompanyDashboard />} />
