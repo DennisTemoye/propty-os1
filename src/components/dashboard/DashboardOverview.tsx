@@ -207,6 +207,10 @@ export function DashboardOverview() {
     }
   };
 
+  const newClientAction = () => {
+    navigate('/company/clients/new');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Notification Bar */}
