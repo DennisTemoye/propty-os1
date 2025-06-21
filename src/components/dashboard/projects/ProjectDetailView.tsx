@@ -56,7 +56,7 @@ const mockDevelopmentDetails = {
     { id: 2, client: 'David Brown', amount: '₦7,800,000', dueDate: '2024-01-30', type: 'Balance Payment' },
   ],
   team: [
-    { name: 'Alice Johnson', role: 'Project Manager', sales: 12 },
+    { name: 'Alice Johnson', role: 'Development Manager', sales: 12 },
     { name: 'Bob Williams', role: 'Sales Agent', sales: 8 },
     { name: 'Carol Davis', role: 'Marketing Lead', sales: 15 },
   ],
@@ -136,7 +136,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-blue-600">{mockProjectDetails.totalRevenue}</div>
+                <div className="text-2xl font-bold text-blue-600">{mockDevelopmentDetails.totalRevenue}</div>
                 <div className="text-sm text-gray-500">Total Revenue</div>
               </div>
               <DollarSign className="h-8 w-8 text-blue-600" />
@@ -169,7 +169,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-red-600">{mockProjectDetails.totalBudget}</div>
+                <div className="text-2xl font-bold text-red-600">{mockDevelopmentDetails.totalBudget}</div>
                 <div className="text-sm text-gray-500">Total Budget</div>
               </div>
               <DollarSign className="h-8 w-8 text-red-600" />
@@ -246,11 +246,11 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Start Date:</span>
-                    <span>{mockProjectDetails.startDate}</span>
+                    <span>{mockDevelopmentDetails.startDate}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Expected Completion:</span>
-                    <span>{mockProjectDetails.expectedCompletion}</span>
+                    <span>{mockDevelopmentDetails.expectedCompletion}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Document:</span>
@@ -295,7 +295,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockProjectDetails.blocks.map((block) => (
+                {mockDevelopmentDetails.blocks.map((block) => (
                   <div key={block.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -334,7 +334,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockProjectDetails.recentSales.map((sale) => (
+                {mockDevelopmentDetails.recentSales.map((sale) => (
                   <div key={sale.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <div className="font-medium">{sale.unit}</div>
@@ -358,7 +358,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockProjectDetails.upcomingPayments.map((payment) => (
+                {mockDevelopmentDetails.upcomingPayments.map((payment) => (
                   <div key={payment.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <div className="font-medium">{payment.client}</div>
@@ -378,11 +378,11 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         <TabsContent value="team" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Project Team Performance</CardTitle>
+              <CardTitle className="text-lg">Development Team Performance</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockProjectDetails.team.map((member, index) => (
+                {mockDevelopmentDetails.team.map((member, index) => (
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <div className="font-medium">{member.name}</div>
@@ -402,15 +402,15 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         <TabsContent value="timeline" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Project Timeline</CardTitle>
+              <CardTitle className="text-lg">Development Timeline</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full mt-1"></div>
                   <div>
-                    <div className="font-medium">Project Started</div>
-                    <div className="text-sm text-gray-500">{mockProjectDetails.startDate}</div>
+                    <div className="font-medium">Development Started</div>
+                    <div className="text-sm text-gray-500">{mockDevelopmentDetails.startDate}</div>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -430,8 +430,8 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
                 <div className="flex items-start space-x-3">
                   <div className="w-3 h-3 bg-gray-300 rounded-full mt-1"></div>
                   <div>
-                    <div className="font-medium">Project Completion</div>
-                    <div className="text-sm text-gray-500">{mockProjectDetails.expectedCompletion}</div>
+                    <div className="font-medium">Development Completion</div>
+                    <div className="text-sm text-gray-500">{mockDevelopmentDetails.expectedCompletion}</div>
                   </div>
                 </div>
               </div>
