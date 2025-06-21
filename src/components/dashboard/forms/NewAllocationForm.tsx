@@ -15,7 +15,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
   const form = useForm({
     defaultValues: {
       clientId: '',
-      developmentId: '',
+      projectId: '',
       blockId: '',
       unitId: '',
       allocationType: 'sale',
@@ -51,15 +51,15 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium">Development *</label>
-          <Select onValueChange={(value) => form.setValue('developmentId', value)}>
+          <label className="text-sm font-medium">Project *</label>
+          <Select onValueChange={(value) => form.setValue('projectId', value)}>
             <SelectTrigger>
-              <SelectValue placeholder="Select development" />
+              <SelectValue placeholder="Select project" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="dev1">Victoria Gardens Estate</SelectItem>
-              <SelectItem value="dev2">Emerald Heights</SelectItem>
-              <SelectItem value="dev3">Golden View Towers</SelectItem>
+              <SelectItem value="proj1">Victoria Gardens Estate</SelectItem>
+              <SelectItem value="proj2">Emerald Heights</SelectItem>
+              <SelectItem value="proj3">Golden View Towers</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -25,7 +25,7 @@ const CompanyDashboard = () => {
     
     if (path === '/company/dashboard') {
       return <DashboardOverview />;
-    } else if (path.startsWith('/company/developments')) {
+    } else if (path.startsWith('/company/projects')) {
       return <ProjectSites />;
     } else if (path.startsWith('/company/clients')) {
       return <Clients />;

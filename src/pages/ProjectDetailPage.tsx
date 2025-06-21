@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Edit, Trash2, FileText, Building, Users, BarChart3 } from 'lucide-react';
 import { ProjectDetailView } from '@/components/dashboard/projects/ProjectDetailView';
-import { NewDevelopmentForm } from '@/components/dashboard/forms/NewDevelopmentForm';
+import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
 import { toast } from 'sonner';
 
-const mockDevelopments = [
+const mockProjects = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
@@ -21,7 +21,7 @@ const mockDevelopments = [
     status: 'active',
     documentTitle: 'Certificate of Occupancy',
     projectSize: '50 hectares',
-    developmentStage: 'Construction'
+    projectStage: 'Construction'
   },
   {
     id: 2,
@@ -35,11 +35,11 @@ const mockDevelopments = [
     status: 'paused',
     documentTitle: 'Approved Survey Plan',
     projectSize: '15 hectares',
-    developmentStage: 'Marketing'
+    projectStage: 'Marketing'
   },
   {
     id: 3,
-    name: 'Sunset Land Development',
+    name: 'Sunset Land Project',
     location: 'Abuja FCT',
     type: 'Residential',
     totalUnits: 200,
@@ -49,19 +49,19 @@ const mockDevelopments = [
     status: 'sold out',
     documentTitle: 'Family Receipt & Layout Plan',
     projectSize: '100 hectares',
-    developmentStage: 'Handover'
+    projectStage: 'Handover'
   }
 ];
 
-export default function DevelopmentDetailPage() {
+export default function ProjectDetailPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [isEditOpen, setIsEditOpen] = useState(false);
   
-  const development = mockDevelopments.find(p => p.id === parseInt(projectId || '1'));
+  const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
-  if (!development) {
-    return <div>Development not found</div>;
+  if (!project) {
+    return <div>Project not found</div>;
   };
 
   const handleEdit = () => {
@@ -69,27 +69,27 @@ export default function DevelopmentDetailPage() {
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this development? This action cannot be undone.')) {
-      console.log('Deleting development:', development.id);
-      toast.success('Development deleted successfully');
-      navigate('/company/developments');
+    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      console.log('Deleting project:', project.id);
+      toast.success('Project deleted successfully');
+      navigate('/company/projects');
     }
   };
 
   const handleManageBlocks = () => {
-    navigate(`/company/developments/${development.id}/blocks`);
+    navigate(`/company/projects/${project.id}/blocks`);
   };
 
   const handleViewDocuments = () => {
-    navigate('/company/documents', { state: { developmentId: development.id } });
+    navigate('/company/documents', { state: { projectId: project.id } });
   };
 
   const handleViewClients = () => {
-    navigate('/company/clients', { state: { developmentId: development.id } });
+    navigate('/company/clients', { state: { projectId: project.id } });
   };
 
   const handleViewReports = () => {
-    navigate('/company/reports', { state: { developmentId: development.id } });
+    navigate('/company/reports', { state: { projectId: project.id } });
   };
 
   return (
@@ -99,11 +99,11 @@ export default function DevelopmentDetailPage() {
           <div className="flex items-center justify-between">
             <Button 
               variant="outline" 
-              onClick={() => navigate('/company/developments')}
+              onClick={() => navigate('/company/projects')}
               className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Developments
+              Back to Projects
             </Button>
             
             <div className="flex gap-2">
@@ -112,7 +112,7 @@ export default function DevelopmentDetailPage() {
                 onClick={handleEdit}
               >
                 <Edit className="h-4 w-4 mr-2" />
-                Edit Development
+                Edit Project
               </Button>
               <Button 
                 variant="outline"
@@ -120,7 +120,7 @@ export default function DevelopmentDetailPage() {
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete Development
+                Delete Project
               </Button>
             </div>
           </div>
@@ -161,18 +161,18 @@ export default function DevelopmentDetailPage() {
           </Button>
         </div>
         
-        <ProjectDetailView project={development} />
+        <ProjectDetailView project={project} />
 
-        {/* Edit Development Modal */}
+        {/* Edit Project Modal */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Edit Development</DialogTitle>
+              <DialogTitle>Edit Project</DialogTitle>
               <DialogDescription>
-                Update development information and settings
+                Update project information and settings
               </DialogDescription>
             </DialogHeader>
-            <NewDevelopmentForm onClose={() => setIsEditOpen(false)} />
+            <NewProjectForm onClose={() => setIsEditOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>

@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { BlocksUnitsManager } from '@/components/dashboard/projects/BlocksUnitsManager';
 import { AssignUnitModal } from '@/components/dashboard/projects/AssignUnitModal';
 
-const mockDevelopments = [
+const mockProjects = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
@@ -19,16 +19,16 @@ const mockDevelopments = [
   }
 ];
 
-export default function DevelopmentBlocksPage() {
+export default function ProjectBlocksPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [selectedUnit, setSelectedUnit] = useState<any>(null);
   const [isAssignUnitOpen, setIsAssignUnitOpen] = useState(false);
   
-  const development = mockDevelopments.find(p => p.id === parseInt(projectId || '1'));
+  const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
-  if (!development) {
-    return <div>Development not found</div>;
+  if (!project) {
+    return <div>Project not found</div>;
   }
 
   const handleAssignUnit = (unit: any) => {
@@ -42,22 +42,22 @@ export default function DevelopmentBlocksPage() {
         <div className="mb-6">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/company/developments')}
+            onClick={() => navigate('/company/projects')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Developments
+            Back to Projects
           </Button>
           <h1 className="text-3xl font-bold text-gray-900">
-            Manage Blocks & Units - {development.name}
+            Manage Blocks & Units - {project.name}
           </h1>
           <p className="text-gray-600 mt-1">
-            Structure your development by blocks and units, and assign units to clients
+            Structure your project by blocks and units, and assign units to clients
           </p>
         </div>
         
         <BlocksUnitsManager 
-          project={development} 
+          project={project} 
           onAssignUnit={handleAssignUnit}
         />
 

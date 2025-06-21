@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -38,15 +39,15 @@ const App = () => (
             {/* Dashboard Routes */}
             <Route path="/company/dashboard" element={<CompanyDashboard />} />
             
-            {/* Development Routes */}
-            <Route path="/company/developments" element={<CompanyDashboard />} />
-            <Route path="/company/developments/new" element={<CompanyDashboard />} />
-            <Route path="/company/developments/:projectId" element={<ProjectDetailPage />} />
-            <Route path="/company/developments/:projectId/blocks" element={<ProjectBlocksPage />} />
-            <Route path="/company/developments/:projectId/overview" element={<ProjectDetailPage />} />
-            <Route path="/company/developments/:projectId/layout" element={<ProjectDetailPage />} />
-            <Route path="/company/developments/:projectId/documents" element={<ProjectDetailPage />} />
-            <Route path="/company/developments/:projectId/settings" element={<ProjectDetailPage />} />
+            {/* Project Routes */}
+            <Route path="/company/projects" element={<CompanyDashboard />} />
+            <Route path="/company/projects/new" element={<CompanyDashboard />} />
+            <Route path="/company/projects/:projectId" element={<ProjectDetailPage />} />
+            <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
+            <Route path="/company/projects/:projectId/overview" element={<ProjectDetailPage />} />
+            <Route path="/company/projects/:projectId/layout" element={<ProjectDetailPage />} />
+            <Route path="/company/projects/:projectId/documents" element={<ProjectDetailPage />} />
+            <Route path="/company/projects/:projectId/settings" element={<ProjectDetailPage />} />
             
             {/* Client Routes */}
             <Route path="/company/clients" element={<CompanyDashboard />} />

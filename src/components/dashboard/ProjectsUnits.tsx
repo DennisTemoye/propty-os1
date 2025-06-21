@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,10 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, MapPin, FileText, Building, Home, DollarSign, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { NewDevelopmentForm } from './forms/NewDevelopmentForm';
+import { NewProjectForm } from './forms/NewProjectForm';
 import { ProjectDocumentsView } from './projects/ProjectDocumentsView';
 
-const mockDevelopments = [
+const mockProjects = [
   {
     id: 1,
     name: 'Victoria Gardens Estate',
@@ -24,7 +25,7 @@ const mockDevelopments = [
     reservedUnits: 23,
     availableUnits: 38,
     status: 'ongoing',
-    developmentStage: 'Construction',
+    projectStage: 'Construction',
     revenue: '₦2.5B'
   },
   {
@@ -39,7 +40,7 @@ const mockDevelopments = [
     reservedUnits: 12,
     availableUnits: 32,
     status: 'ongoing',
-    developmentStage: 'Marketing',
+    projectStage: 'Marketing',
     revenue: '₦4.2B'
   },
   {
@@ -54,7 +55,7 @@ const mockDevelopments = [
     reservedUnits: 18,
     availableUnits: 37,
     status: 'ongoing',
-    developmentStage: 'Pre-Launch',
+    projectStage: 'Pre-Launch',
     revenue: '₦6.8B'
   },
   {
@@ -69,7 +70,7 @@ const mockDevelopments = [
     reservedUnits: 8,
     availableUnits: 5,
     status: 'completed',
-    developmentStage: 'Handover',
+    projectStage: 'Handover',
     revenue: '₦3.9B'
   },
   {
@@ -84,7 +85,7 @@ const mockDevelopments = [
     reservedUnits: 25,
     availableUnits: 27,
     status: 'ongoing',
-    developmentStage: 'Planning',
+    projectStage: 'Planning',
     revenue: '₦5.5B'
   },
   {
@@ -99,14 +100,14 @@ const mockDevelopments = [
     reservedUnits: 45,
     availableUnits: 75,
     status: 'ongoing',
-    developmentStage: 'Construction',
+    projectStage: 'Construction',
     revenue: '₦7.2B'
   },
   {
     id: 7,
     name: 'Royal Gardens',
     category: 'Land',
-    type: 'Land Development',
+    type: 'Land Project',
     location: 'Epe, Lagos',
     totalBlocks: 20,
     totalUnits: 500,
@@ -114,7 +115,7 @@ const mockDevelopments = [
     reservedUnits: 80,
     availableUnits: 100,
     status: 'ongoing',
-    developmentStage: 'Marketing',
+    projectStage: 'Marketing',
     revenue: '₦4.8B'
   },
   {
@@ -129,7 +130,7 @@ const mockDevelopments = [
     reservedUnits: 10,
     availableUnits: 5,
     status: 'ongoing',
-    developmentStage: 'Marketing',
+    projectStage: 'Marketing',
     revenue: '₦8.5B'
   },
   {
@@ -144,7 +145,7 @@ const mockDevelopments = [
     reservedUnits: 15,
     availableUnits: 25,
     status: 'ongoing',
-    developmentStage: 'Construction',
+    projectStage: 'Construction',
     revenue: '₦3.8B'
   },
   {
@@ -159,21 +160,21 @@ const mockDevelopments = [
     reservedUnits: 20,
     availableUnits: 95,
     status: 'upcoming',
-    developmentStage: 'Pre-Launch',
+    projectStage: 'Pre-Launch',
     revenue: '₦1.2B'
   }
 ];
 
 export function ProjectsUnits() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
-  const [isNewDevelopmentOpen, setIsNewDevelopmentOpen] = useState(false);
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const [isDocumentsModalOpen, setIsDocumentsModalOpen] = useState(false);
-  const [selectedDevelopment, setSelectedDevelopment] = useState<any>(null);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
   const navigate = useNavigate();
 
-  const getDevelopmentStageColor = (stage: string) => {
+  const getProjectStageColor = (stage: string) => {
     switch (stage) {
       case 'Planning':
         return 'bg-gray-100 text-gray-800';
@@ -190,37 +191,37 @@ export function ProjectsUnits() {
     }
   };
 
-  // Filter developments based on search and stage
-  const filteredDevelopments = mockDevelopments.filter(development => {
-    const matchesSearch = development.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         development.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         development.type.toLowerCase().includes(searchQuery.toLowerCase());
+  // Filter projects based on search and stage
+  const filteredProjects = mockProjects.filter(project => {
+    const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         project.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         project.type.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesStage = stageFilter === 'all' || development.developmentStage === stageFilter;
+    const matchesStage = stageFilter === 'all' || project.projectStage === stageFilter;
     
     return matchesSearch && matchesStage;
   });
 
-  const handleDevelopmentClick = (developmentId: number) => {
-    navigate(`/company/developments/${developmentId}`);
+  const handleProjectClick = (projectId: number) => {
+    navigate(`/company/projects/${projectId}`);
   };
 
-  const handleManageBlocks = (e: React.MouseEvent, developmentId: number) => {
+  const handleManageBlocks = (e: React.MouseEvent, projectId: number) => {
     e.stopPropagation();
-    navigate(`/company/developments/${developmentId}/blocks`);
+    navigate(`/company/projects/${projectId}/blocks`);
   };
 
-  const handleViewDocuments = (e: React.MouseEvent, development: any) => {
+  const handleViewDocuments = (e: React.MouseEvent, project: any) => {
     e.stopPropagation();
-    setSelectedDevelopment(development);
+    setSelectedProject(project);
     setIsDocumentsModalOpen(true);
   };
 
-  const developmentStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover'];
+  const projectStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover'];
 
   const kpiData = [
     {
-      title: 'Total Developments',
+      title: 'Total Projects',
       value: '12',
       subtitle: 'All registered',
       icon: Building,
@@ -231,7 +232,7 @@ export function ProjectsUnits() {
     {
       title: 'Total Units',
       value: '1,247',
-      subtitle: 'Across all developments',
+      subtitle: 'Across all projects',
       icon: Home,
       color: 'text-emerald-700',
       bgColor: 'bg-emerald-100',
@@ -261,19 +262,19 @@ export function ProjectsUnits() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Developments</h1>
-          <p className="text-gray-600 mt-1">Manage your real estate developments, blocks, and units</p>
+          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
+          <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units</p>
         </div>
         <Button 
           className="bg-purple-600 hover:bg-purple-700"
-          onClick={() => setIsNewDevelopmentOpen(true)}
+          onClick={() => setIsNewProjectOpen(true)}
         >
           <Plus className="h-4 w-4 mr-2" />
-          New Development
+          New Project
         </Button>
       </div>
 
-      {/* Development Summary Cards */}
+      {/* Project Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
           <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
@@ -303,7 +304,7 @@ export function ProjectsUnits() {
               <div className="relative w-full md:w-80">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search developments, locations, types..."
+                  placeholder="Search projects, locations, types..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -312,11 +313,11 @@ export function ProjectsUnits() {
               <div className="w-full md:w-48">
                 <Select value={stageFilter} onValueChange={setStageFilter}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Development stage" />
+                    <SelectValue placeholder="Project stage" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Stages</SelectItem>
-                    {developmentStages.map((stage) => (
+                    {projectStages.map((stage) => (
                       <SelectItem key={stage} value={stage}>{stage}</SelectItem>
                     ))}
                   </SelectContent>
@@ -343,28 +344,28 @@ export function ProjectsUnits() {
         </CardContent>
       </Card>
 
-      {/* Developments Display */}
+      {/* Projects Display */}
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {filteredDevelopments.map((development) => (
+          {filteredProjects.map((project) => (
             <Card 
-              key={development.id} 
+              key={project.id} 
               className="hover:shadow-lg transition-shadow cursor-pointer bg-white"
-              onClick={() => handleDevelopmentClick(development.id)}
+              onClick={() => handleProjectClick(project.id)}
             >
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{development.name}</CardTitle>
-                  <Badge className={getDevelopmentStageColor(development.developmentStage)}>
-                    {development.developmentStage}
+                  <CardTitle className="text-lg">{project.name}</CardTitle>
+                  <Badge className={getProjectStageColor(project.projectStage)}>
+                    {project.projectStage}
                   </Badge>
                 </div>
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin className="h-4 w-4 mr-1" />
-                  {development.location}
+                  {project.location}
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>{development.type}</span>
+                  <span>{project.type}</span>
                 </div>
               </CardHeader>
               <CardContent>
@@ -372,40 +373,40 @@ export function ProjectsUnits() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="flex justify-between">
                       <span>Blocks:</span>
-                      <span className="font-medium">{development.totalBlocks || 0}</span>
+                      <span className="font-medium">{project.totalBlocks || 0}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Total Units:</span>
-                      <span className="font-medium">{development.totalUnits}</span>
+                      <span className="font-medium">{project.totalUnits}</span>
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Sold:</span>
-                      <span className="font-medium text-green-600">{development.soldUnits}</span>
+                      <span className="font-medium text-green-600">{project.soldUnits}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Reserved:</span>
-                      <span className="font-medium text-orange-600">{development.reservedUnits}</span>
+                      <span className="font-medium text-orange-600">{project.reservedUnits}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Available:</span>
-                      <span className="font-medium text-blue-600">{development.availableUnits}</span>
+                      <span className="font-medium text-blue-600">{project.availableUnits}</span>
                     </div>
                   </div>
                   
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
                     <div 
                       className="bg-green-600 h-2 rounded-full"
-                      style={{ width: `${(development.soldUnits / development.totalUnits) * 100}%` }}
+                      style={{ width: `${(project.soldUnits / project.totalUnits) * 100}%` }}
                     ></div>
                   </div>
 
                   <div className="pt-2 border-t">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-500">Revenue:</span>
-                      <span className="font-bold text-purple-600">{development.revenue}</span>
+                      <span className="font-bold text-purple-600">{project.revenue}</span>
                     </div>
                   </div>
                   
@@ -414,7 +415,7 @@ export function ProjectsUnits() {
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={(e) => handleManageBlocks(e, development.id)}
+                      onClick={(e) => handleManageBlocks(e, project.id)}
                     >
                       <Building className="h-3 w-3 mr-1" />
                       Manage Blocks
@@ -424,7 +425,7 @@ export function ProjectsUnits() {
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={(e) => handleViewDocuments(e, development)}
+                      onClick={(e) => handleViewDocuments(e, project)}
                     >
                       <FileText className="h-3 w-3 mr-1" />
                       Documents
@@ -441,7 +442,7 @@ export function ProjectsUnits() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Development</TableHead>
+                  <TableHead>Project</TableHead>
                   <TableHead>Stage</TableHead>
                   <TableHead>Location</TableHead>
                   <TableHead>Blocks/Units</TableHead>
@@ -450,46 +451,46 @@ export function ProjectsUnits() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredDevelopments.map((development) => (
+                {filteredProjects.map((project) => (
                   <TableRow 
-                    key={development.id} 
+                    key={project.id} 
                     className="hover:bg-gray-50 cursor-pointer"
-                    onClick={() => handleDevelopmentClick(development.id)}
+                    onClick={() => handleProjectClick(project.id)}
                   >
                     <TableCell>
                       <div>
-                        <div className="font-medium">{development.name}</div>
-                        <div className="text-sm text-gray-500">{development.type}</div>
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-sm text-gray-500">{project.type}</div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getDevelopmentStageColor(development.developmentStage)}>
-                        {development.developmentStage}
+                      <Badge className={getProjectStageColor(project.projectStage)}>
+                        {project.projectStage}
                       </Badge>
                     </TableCell>
-                    <TableCell>{development.location}</TableCell>
+                    <TableCell>{project.location}</TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div>{development.totalBlocks || 0} blocks</div>
-                        <div className="text-gray-500">{development.totalUnits} units</div>
+                        <div>{project.totalBlocks || 0} blocks</div>
+                        <div className="text-gray-500">{project.totalUnits} units</div>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-purple-600">
-                      {development.revenue}
+                      {project.revenue}
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={(e) => handleManageBlocks(e, development.id)}
+                          onClick={(e) => handleManageBlocks(e, project.id)}
                         >
                           <Building className="h-3 w-3" />
                         </Button>
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={(e) => handleViewDocuments(e, development)}
+                          onClick={(e) => handleViewDocuments(e, project)}
                         >
                           <FileText className="h-3 w-3" />
                         </Button>
@@ -503,16 +504,16 @@ export function ProjectsUnits() {
         </Card>
       )}
 
-      {/* New Development Modal */}
-      <Dialog open={isNewDevelopmentOpen} onOpenChange={setIsNewDevelopmentOpen}>
+      {/* New Project Modal */}
+      <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Create New Development</DialogTitle>
+            <DialogTitle>Create New Project</DialogTitle>
             <DialogDescription>
-              Add a new real estate development to your portfolio
+              Add a new real estate project to your portfolio
             </DialogDescription>
           </DialogHeader>
-          <NewDevelopmentForm onClose={() => setIsNewDevelopmentOpen(false)} />
+          <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
         </DialogContent>
       </Dialog>
 
@@ -520,12 +521,12 @@ export function ProjectsUnits() {
       <Dialog open={isDocumentsModalOpen} onOpenChange={setIsDocumentsModalOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Development Documents - {selectedDevelopment?.name}</DialogTitle>
+            <DialogTitle>Project Documents - {selectedProject?.name}</DialogTitle>
             <DialogDescription>
-              View and manage documents for this development
+              View and manage documents for this project
             </DialogDescription>
           </DialogHeader>
-          <ProjectDocumentsView project={selectedDevelopment} />
+          <ProjectDocumentsView project={selectedProject} />
         </DialogContent>
       </Dialog>
     </div>

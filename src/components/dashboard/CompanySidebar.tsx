@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -28,7 +29,7 @@ import {
 
 const sidebarItems = [
   { icon: Home, label: 'Dashboard', path: '/company/dashboard' },
-  { icon: Building2, label: 'Development', path: '/company/developments' },
+  { icon: Building2, label: 'Projects', path: '/company/projects' },
   { icon: Users, label: 'Clients', path: '/company/clients' },
   { icon: Handshake, label: 'Sales & Allocation', path: '/company/sales' },
   { icon: DollarSign, label: 'Accounting', path: '/company/accounting' },
