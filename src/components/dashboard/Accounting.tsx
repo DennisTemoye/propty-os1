@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,11 +18,13 @@ import {
   Eye,
   Edit,
   CheckCircle,
-  Clock
+  Clock,
+  CreditCard
 } from 'lucide-react';
 import { ExpenseForm } from './accounting/ExpenseForm';
 import { IncomeForm } from './accounting/IncomeForm';
 import { AnalyticsCharts } from './accounting/AnalyticsCharts';
+import { PaymentsManagement } from './accounting/PaymentsManagement';
 
 // Mock data
 const mockExpenses = [
@@ -212,8 +213,9 @@ export function Accounting() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="income">Income</TabsTrigger>
           <TabsTrigger value="expenses">Expenses</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -259,6 +261,10 @@ export function Accounting() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="payments">
+          <PaymentsManagement />
         </TabsContent>
 
         <TabsContent value="income" className="space-y-4">

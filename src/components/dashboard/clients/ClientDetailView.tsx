@@ -50,6 +50,13 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
     { id: 5, date: '2024-03-01', amount: '₦5M', type: 'Final Payment', status: 'pending' }
   ];
 
+  const mockBillingHistory = [
+    { id: 1, date: '2024-01-15', type: 'Infrastructure Fee', amount: '₦2.5M', status: 'paid', project: 'Victoria Gardens' },
+    { id: 2, date: '2024-02-01', type: 'Service Charge - Estate Management', amount: '₦50K', status: 'paid', project: 'Victoria Gardens' },
+    { id: 3, date: '2024-03-01', type: 'Service Charge - Estate Management', amount: '₦50K', status: 'overdue', project: 'Victoria Gardens' },
+    { id: 4, date: '2024-02-15', type: 'Infrastructure Fee (Milestone 2)', amount: '₦1.25M', status: 'pending', project: 'Victoria Gardens' }
+  ];
+
   const mockActivityLog = [
     { id: 1, date: '2024-01-20', action: 'Property assigned', details: 'Assigned Block A - Plot 02' },
     { id: 2, date: '2024-01-15', action: 'KYC approved', details: 'All documents verified' },
@@ -141,10 +148,11 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="properties" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 h-12">
+        <TabsList className="grid w-full grid-cols-6 h-12">
           <TabsTrigger value="properties" className="text-base">Properties</TabsTrigger>
           <TabsTrigger value="instalments" className="text-base">Instalments</TabsTrigger>
           <TabsTrigger value="payments" className="text-base">Payments</TabsTrigger>
+          <TabsTrigger value="billing" className="text-base">Billing</TabsTrigger>
           <TabsTrigger value="documents" className="text-base">Documents</TabsTrigger>
           <TabsTrigger value="activity" className="text-base">Activity</TabsTrigger>
         </TabsList>
@@ -239,6 +247,69 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                   ))}
                 </TableBody>
               </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="billing" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Billing History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <Card className="p-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">₦3.75M</div>
+                      <div className="text-sm text-gray-500">Infrastructure Fees</div>
+                    </div>
+                  </Card>
+                  <Card className="p-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">₦100K</div>
+                      <div className="text-sm text-gray-500">Service Charges</div>
+                    </div>
+                  </Card>
+                  <Card className="p-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-red-600">₦50K</div>
+                      <div className="text-sm text-gray-500">Outstanding</div>
+                    </div>
+                  </Card>
+                </div>
+
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-base">Date</TableHead>
+                      <TableHead className="text-base">Type</TableHead>
+                      <TableHead className="text-base">Project</TableHead>
+                      <TableHead className="text-base">Amount</TableHead>
+                      <TableHead className="text-base">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {mockBillingHistory.map((billing) => (
+                      <TableRow key={billing.id} className="h-14">
+                        <TableCell className="text-base">{billing.date}</TableCell>
+                        <TableCell className="text-base">{billing.type}</TableCell>
+                        <TableCell className="text-base">{billing.project}</TableCell>
+                        <TableCell className="font-semibold text-base">{billing.amount}</TableCell>
+                        <TableCell>
+                          <Badge className={
+                            billing.status === 'paid' ? 'bg-green-100 text-green-800' : 
+                            billing.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }>
+                            {billing.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
