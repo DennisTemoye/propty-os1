@@ -13,10 +13,12 @@ import {
   TrendingUp,
   Building,
   Users,
-  Calculator
+  Calculator,
+  History
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
-import { ActiveAllocationsTab } from './sales-allocation/ActiveAllocationsTab';
+import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
+import { AllocationHistoryTab } from './sales-allocation/AllocationHistoryTab';
 import { TransferHistoryTab } from './sales-allocation/TransferHistoryTab';
 import { RevokedAllocationsTab } from './sales-allocation/RevokedAllocationsTab';
 import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
@@ -109,25 +111,30 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="active">Active Allocations</TabsTrigger>
-          <TabsTrigger value="transfers">Transfer History</TabsTrigger>
-          <TabsTrigger value="revoked">Revoked Allocations</TabsTrigger>
+          <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
+          <TabsTrigger value="allocations">Allocation History</TabsTrigger>
+          <TabsTrigger value="reallocations">Re-allocation History</TabsTrigger>
+          <TabsTrigger value="revoked">Revoked History</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <OverviewTab />
         </TabsContent>
 
-        <TabsContent value="active" className="space-y-6">
-          <ActiveAllocationsTab onRevoke={(allocation) => {
+        <TabsContent value="pipeline" className="space-y-6">
+          <SalesPipelineTab />
+        </TabsContent>
+
+        <TabsContent value="allocations" className="space-y-6">
+          <AllocationHistoryTab onRevoke={(allocation) => {
             setSelectedAllocation(allocation);
             setShowRevokeModal(true);
           }} />
         </TabsContent>
 
-        <TabsContent value="transfers" className="space-y-6">
+        <TabsContent value="reallocations" className="space-y-6">
           <TransferHistoryTab />
         </TabsContent>
 
