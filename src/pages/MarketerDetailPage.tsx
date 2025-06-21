@@ -160,11 +160,12 @@ const MarketerDetailPage = () => {
   };
 
   const handleDownloadCommissionReport = () => {
-    DownloadService.generateMarketerCommissionReport(marketer, commissions);
+    DownloadService.generateCommissionReport(marketer, commissions);
     toast.success('Commission report downloaded successfully');
   };
 
   const handleExportSalesReport = () => {
+    DownloadService.generateSalesReport(propertySales);
     toast.success('Sales report export started. Download will begin shortly.');
   };
 
