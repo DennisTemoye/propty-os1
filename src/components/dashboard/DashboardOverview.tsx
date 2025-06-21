@@ -49,7 +49,7 @@ const financialData = [
 
 export function DashboardOverview() {
   const navigate = useNavigate();
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile, isTablet, isSmallScreen, isLargeDesktop } = useResponsive();
   const [showNotification, setShowNotification] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -215,7 +215,7 @@ export function DashboardOverview() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Notification Bar */}
       {showNotification && (
-        <div className="bg-blue-600 dark:bg-blue-700 text-white px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between">
+        <div className="bg-blue-600 dark:bg-blue-700 text-white px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between rounded-lg mb-4">
           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
             <Bell className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
             <span className={`font-medium ${isMobile ? 'text-sm' : ''} truncate`}>
@@ -234,11 +234,15 @@ export function DashboardOverview() {
       )}
 
       {/* Header Section */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-6 py-4 sm:py-6">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 sm:px-6 py-4 sm:py-6 mb-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div className="min-w-0 flex-1">
-            <h1 className={`font-bold text-gray-900 dark:text-white ${isMobile ? 'text-xl' : 'text-3xl'}`}>Dashboard</h1>
-            <p className={`text-gray-600 dark:text-gray-300 mt-1 ${isMobile ? 'text-sm' : ''}`}>Real Estate Sales & Project Management Overview</p>
+            <h1 className={`font-bold text-gray-900 dark:text-white ${isMobile ? 'text-xl' : isTablet ? 'text-2xl' : 'text-3xl'}`}>
+              Dashboard
+            </h1>
+            <p className={`text-gray-600 dark:text-gray-300 mt-1 ${isMobile ? 'text-sm' : ''}`}>
+              Real Estate Sales & Project Management Overview
+            </p>
           </div>
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             {!isMobile && <ThemeToggle />}
@@ -301,25 +305,30 @@ export function DashboardOverview() {
         </div>
       </div>
 
-      <div className="p-3 sm:p-6 space-y-6 sm:space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         {/* KPI Cards - Responsive Grid */}
         <div className={`grid gap-3 sm:gap-4 lg:gap-6 ${
           isMobile 
             ? 'grid-cols-2' 
             : isTablet 
               ? 'grid-cols-2 lg:grid-cols-3' 
-              : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+              : isLargeDesktop
+                ? 'grid-cols-4'
+                : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
         }`}>
           {kpiData.map((kpi, index) => (
             <div
               key={index}
               onClick={kpi.onClick}
-              className="cursor-pointer transform hover:scale-105 transition-all duration-300"
+              className="cursor-pointer transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-xl"
+              tabIndex={0}
+              role="button"
+              aria-label={`Navigate to ${kpi.title}`}
             >
               <GradientKpiCard
                 title={kpi.title}
                 value={kpi.value}
-                subtitle={isMobile ? kpi.value : kpi.subtitle}
+                subtitle={isMobile ? '' : kpi.subtitle}
                 icon={kpi.icon}
                 gradientFrom={kpi.gradientFrom}
                 gradientTo={kpi.gradientTo}
@@ -331,15 +340,19 @@ export function DashboardOverview() {
         </div>
 
         {/* Main Analytics Charts - Responsive Layout */}
-        <div className={`grid gap-4 sm:gap-6 ${isMobile || isTablet ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
-          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
+        <div className={`grid gap-4 sm:gap-6 ${
+          isMobile || isTablet 
+            ? 'grid-cols-1' 
+            : 'grid-cols-1 lg:grid-cols-2'
+        }`}>
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl overflow-hidden">
             <CardHeader className="pb-2 sm:pb-4">
               <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
                 Sales & Allocations Performance
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
+            <CardContent className="p-2 sm:p-6">
+              <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 250 : 300}>
                 <BarChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="month" stroke="#64748b" fontSize={isMobile ? 10 : 12} />
@@ -365,14 +378,14 @@ export function DashboardOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl overflow-hidden">
             <CardHeader className="pb-2 sm:pb-4">
               <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
                 Financial Overview (₦M)
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
+            <CardContent className="p-2 sm:p-6">
+              <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 250 : 300}>
                 <AreaChart data={financialData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="month" stroke="#64748b" fontSize={isMobile ? 10 : 12} />
@@ -401,7 +414,7 @@ export function DashboardOverview() {
         </div>
 
         {/* Secondary Analytics - Responsive Grid */}
-        <div className={`grid gap-4 sm:gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
+        <div className={`grid gap-4 sm:gap-6 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 lg:grid-cols-3'}`}>
           <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
             <CardHeader className="pb-2 sm:pb-4">
               <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
@@ -409,13 +422,13 @@ export function DashboardOverview() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={isMobile ? 200 : 250}>
+              <ResponsiveContainer width="100%" height={isMobile ? 180 : isTablet ? 200 : 250}>
                 <PieChart>
                   <Pie
                     data={projectStatusData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={isMobile ? 60 : 80}
+                    outerRadius={isMobile ? 60 : isTablet ? 80 : 100}
                     fill="#8884d8"
                     dataKey="value"
                     label={isMobile ? false : ({ name, value }) => `${name}: ${value}%`}
@@ -438,12 +451,16 @@ export function DashboardOverview() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl lg:col-span-2">
+          <Card className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl ${
+            isMobile ? '' : 'lg:col-span-2'
+          }`}>
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Recent Activity Log</CardTitle>
+              <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
+                Recent Activity Log
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4 max-h-80 overflow-y-auto">
                 <div className="flex items-center space-x-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border-l-4 border-green-500">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <div className="flex-1">
@@ -482,7 +499,13 @@ export function DashboardOverview() {
         </div>
 
         {/* Quick Actions & Performance Metrics */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className={`grid gap-4 sm:gap-6 ${
+          isMobile 
+            ? 'grid-cols-1' 
+            : isTablet 
+              ? 'grid-cols-1' 
+              : 'grid-cols-1 lg:grid-cols-2'
+        }`}>
           <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
             <CardHeader>
               <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Top Performing Projects</CardTitle>
@@ -598,14 +621,20 @@ export function DashboardOverview() {
 
       {/* Centered Modal for Forms */}
       <Dialog open={!!activeModal} onOpenChange={closeModal}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className={`${
+          isMobile 
+            ? 'max-w-[95vw] max-h-[90vh] m-2' 
+            : 'max-w-2xl max-h-[90vh]'
+        } overflow-y-auto`}>
           <DialogHeader>
-            <DialogTitle>{activeModal ? getModalTitle(activeModal) : ''}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className={isMobile ? 'text-lg' : 'text-xl'}>
+              {activeModal ? getModalTitle(activeModal) : ''}
+            </DialogTitle>
+            <DialogDescription className={isMobile ? 'text-sm' : ''}>
               {activeModal ? getModalDescription(activeModal) : ''}
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-6">
+          <div className="mt-4 sm:mt-6">
             {activeModal && renderModalContent(activeModal)}
           </div>
         </DialogContent>

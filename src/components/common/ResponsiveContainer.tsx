@@ -7,14 +7,16 @@ interface ResponsiveContainerProps {
   children: React.ReactNode;
   className?: string;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  padding?: 'none' | 'sm' | 'md' | 'lg';
 }
 
 export function ResponsiveContainer({ 
   children, 
   className,
-  maxWidth = '2xl'
+  maxWidth = '2xl',
+  padding = 'md'
 }: ResponsiveContainerProps) {
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile, isTablet, isSmallScreen } = useResponsive();
 
   const maxWidthClasses = {
     sm: 'max-w-screen-sm',
@@ -25,11 +27,20 @@ export function ResponsiveContainer({
     full: 'max-w-full'
   };
 
+  const paddingClasses = {
+    none: '',
+    sm: isMobile ? 'px-2 py-1' : isTablet ? 'px-3 py-2' : 'px-4 py-2',
+    md: isMobile ? 'px-3 py-2' : isTablet ? 'px-4 py-3' : 'px-6 py-4',
+    lg: isMobile ? 'px-4 py-3' : isTablet ? 'px-6 py-4' : 'px-8 py-6'
+  };
+
   return (
     <div className={cn(
       'w-full mx-auto',
       maxWidthClasses[maxWidth],
-      isMobile ? 'px-3 py-2' : isTablet ? 'px-4 py-3' : 'px-6 py-4',
+      paddingClasses[padding],
+      // Prevent horizontal scroll on small screens
+      isSmallScreen && 'overflow-x-hidden',
       className
     )}>
       {children}
