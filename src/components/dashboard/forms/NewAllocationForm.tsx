@@ -6,6 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { AllocationStatus } from '@/types/allocation';
+import { AllocationStatusBadge } from '../allocation/AllocationStatusBadge';
 
 interface NewAllocationFormProps {
   onClose: () => void;
@@ -19,12 +21,15 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
       blockId: '',
       unitId: '',
       allocationType: 'sale',
+      status: 'interested' as AllocationStatus,
       allocationDate: new Date().toISOString().split('T')[0],
       price: '',
       paymentPlan: '',
       notes: ''
     }
   });
+
+  const selectedStatus = form.watch('status');
 
   const onSubmit = (data: any) => {
     console.log('Creating new allocation:', data);
@@ -97,17 +102,25 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Allocation Type</label>
-          <Select onValueChange={(value) => form.setValue('allocationType', value)}>
+          <label className="text-sm font-medium">Initial Status *</label>
+          <Select 
+            value={selectedStatus}
+            onValueChange={(value: AllocationStatus) => form.setValue('status', value)}
+          >
             <SelectTrigger>
-              <SelectValue placeholder="Select type" />
+              <SelectValue placeholder="Select initial status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="sale">Sale</SelectItem>
-              <SelectItem value="reservation">Reservation</SelectItem>
-              <SelectItem value="lease">Lease</SelectItem>
+              <SelectItem value="interested">Interested</SelectItem>
+              <SelectItem value="offered">Offered</SelectItem>
+              <SelectItem value="allocated">Allocated</SelectItem>
             </SelectContent>
           </Select>
+          {selectedStatus && (
+            <div className="mt-2">
+              <AllocationStatusBadge status={selectedStatus} />
+            </div>
+          )}
         </div>
 
         <div>
