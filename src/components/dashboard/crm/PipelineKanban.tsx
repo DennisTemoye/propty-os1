@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Phone, Mail, Building, User, Globe } from 'lucide-react';
+import { Phone, Mail, Building, User, Globe, AlertCircle } from 'lucide-react';
 import { useResponsive } from '@/hooks/use-responsive';
 import { Lead, PipelineStage } from './types';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -56,11 +56,11 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  // Calculate card width based on screen size
+  // Calculate card width based on screen size - reduced for better fit
   const getCardWidth = () => {
-    if (isMobile) return 'min-w-[260px]';
-    if (isTablet) return 'min-w-[240px]';
-    return 'min-w-[260px]';
+    if (isMobile) return 'min-w-[220px]';
+    if (isTablet) return 'min-w-[200px]';
+    return 'min-w-[220px]';
   };
 
   const getPriorityColor = (priority: string) => {
@@ -110,23 +110,24 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
                         >
                           <CardContent className="p-3">
                             <div className="space-y-2">
-                              {/* Client Name and Priority */}
-                              <div className="flex items-start justify-between">
-                                <div className="flex items-center gap-2 flex-1 min-w-0">
-                                  <Avatar className="h-6 w-6 flex-shrink-0">
-                                    <AvatarFallback className="bg-gray-100 text-gray-600 text-xs font-medium">
-                                      {getInitials(lead.clientName)}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="min-w-0 flex-1">
-                                    <div className="font-medium text-gray-900 text-xs truncate">
-                                      {lead.clientName}
-                                    </div>
-                                  </div>
+                              {/* Client Name */}
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-6 w-6 flex-shrink-0">
+                                  <AvatarFallback className="bg-gray-100 text-gray-600 text-xs font-medium">
+                                    {getInitials(lead.clientName)}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="font-medium text-gray-900 text-xs truncate">
+                                  {lead.clientName}
                                 </div>
+                              </div>
+                              
+                              {/* Priority */}
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <AlertCircle className="h-3 w-3 flex-shrink-0" />
                                 <Badge 
                                   variant={getPriorityColor(lead.priority)} 
-                                  className="text-xs h-5 px-1.5 ml-1 flex-shrink-0"
+                                  className="text-xs h-5 px-1.5 flex-shrink-0"
                                 >
                                   {lead.priority}
                                 </Badge>
