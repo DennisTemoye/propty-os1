@@ -159,7 +159,7 @@ export function SalesAllocationOverview() {
       <ReallocationModal 
         isOpen={showReallocationModal}
         onClose={() => setShowReallocationModal(false)}
-        onReallocation={handleReallocation}
+        onReallocate={handleReallocation}
       />
 
       <RevokeAllocationModal 

@@ -374,7 +374,7 @@ export function SalesAllocation() {
       <ReallocationModal 
         isOpen={showReallocationModal}
         onClose={() => setShowReallocationModal(false)}
-        onReallocation={handleReallocation}
+        onReallocate={handleReallocation}
       />
 
       {/* Update Status Modal */}
