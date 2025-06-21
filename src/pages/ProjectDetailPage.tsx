@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Edit, Settings, MapPin, Calendar, User } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { ArrowLeft, Edit, MapPin, Calendar, User, UserPlus, Trash2 } from 'lucide-react';
 import { ProjectHeader } from '@/components/dashboard/projects/ProjectHeader';
 import { ProjectKPIGrid } from '@/components/dashboard/projects/ProjectKPIGrid';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
@@ -12,6 +12,10 @@ import { ProjectLayoutTab } from '@/components/dashboard/projects/ProjectLayoutT
 import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksTab';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSettingsTab } from '@/components/dashboard/projects/ProjectSettingsTab';
+import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
+import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
+import { useResponsive } from '@/hooks/use-responsive';
+import { toast } from 'sonner';
 
 const mockProjects = [
   {
@@ -33,7 +37,9 @@ const mockProjects = [
     description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
     projectManager: 'Alice Johnson',
     internalNotes: 'Focus on completing Block A before marketing Block C units.',
-    tags: ['Premium', 'Residential', 'Lekki']
+    tags: ['Premium', 'Residential', 'Lekki'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Planning'
   },
   {
     id: 2,
@@ -54,7 +60,9 @@ const mockProjects = [
     description: 'Mixed-use commercial development strategically located in the business district of Abuja.',
     projectManager: 'David Chen',
     internalNotes: 'High demand for commercial units, consider increasing prices for remaining inventory.',
-    tags: ['Commercial', 'Mixed-Use', 'Abuja']
+    tags: ['Commercial', 'Mixed-Use', 'Abuja'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Pre-Launch'
   },
   {
     id: 3,
@@ -75,7 +83,9 @@ const mockProjects = [
     description: 'Luxury high-rise towers offering panoramic views of Victoria Island waterfront.',
     projectManager: 'Sarah Williams',
     internalNotes: 'Penthouse units showing strong interest, focus marketing on premium features.',
-    tags: ['Luxury', 'High-rise', 'Victoria Island']
+    tags: ['Luxury', 'High-rise', 'Victoria Island'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Marketing'
   },
   {
     id: 4,
@@ -96,7 +106,9 @@ const mockProjects = [
     description: 'Completed residential project in the prestigious Ikoyi neighborhood.',
     projectManager: 'Michael Brown',
     internalNotes: 'Project successfully completed. Focus on handover process for remaining units.',
-    tags: ['Completed', 'Prestigious', 'Ikoyi']
+    tags: ['Completed', 'Prestigious', 'Ikoyi'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Construction'
   },
   {
     id: 5,
@@ -117,7 +129,9 @@ const mockProjects = [
     description: 'Modern mixed-use development combining residential and commercial spaces in Marina.',
     projectManager: 'Emily Davis',
     internalNotes: 'Commercial spaces selling faster than residential. Adjust marketing strategy.',
-    tags: ['Mixed-Use', 'Modern', 'Marina']
+    tags: ['Mixed-Use', 'Modern', 'Marina'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Handover'
   },
   {
     id: 6,
@@ -138,7 +152,9 @@ const mockProjects = [
     description: 'Large-scale residential estate offering affordable luxury in the rapidly developing Ajah corridor.',
     projectManager: 'James Wilson',
     internalNotes: 'Strong interest from young professionals. Consider flexible payment plans.',
-    tags: ['Large-scale', 'Affordable Luxury', 'Ajah']
+    tags: ['Large-scale', 'Affordable Luxury', 'Ajah'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Completed'
   },
   {
     id: 7,
@@ -159,7 +175,9 @@ const mockProjects = [
     description: 'Premium land project offering investment opportunities in the emerging Epe axis.',
     projectManager: 'Lisa Thompson',
     internalNotes: 'Land banking opportunity attracting investors. Highlight future development potential.',
-    tags: ['Land Investment', 'Premium', 'Epe']
+    tags: ['Land Investment', 'Premium', 'Epe'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Planning'
   },
   {
     id: 8,
@@ -180,7 +198,9 @@ const mockProjects = [
     description: 'Ultra-luxury waterfront development on the exclusive Banana Island.',
     projectManager: 'Robert Garcia',
     internalNotes: 'Ultra-high-net-worth clients. Maintain exclusivity and premium service standards.',
-    tags: ['Ultra-luxury', 'Waterfront', 'Exclusive']
+    tags: ['Ultra-luxury', 'Waterfront', 'Exclusive'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Pre-Launch'
   },
   {
     id: 9,
@@ -201,7 +221,9 @@ const mockProjects = [
     description: 'Strategic commercial development in the heart of Lagos business district.',
     projectManager: 'Amanda Rodriguez',
     internalNotes: 'High demand from SMEs and startups. Consider co-working space configurations.',
-    tags: ['Commercial', 'Business District', 'Strategic']
+    tags: ['Commercial', 'Business District', 'Strategic'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Marketing'
   },
   {
     id: 10,
@@ -222,13 +244,16 @@ const mockProjects = [
     description: 'Upcoming residential development bringing modern living to Ibadan.',
     projectManager: 'Kevin Martinez',
     internalNotes: 'Pre-launch phase. Focus on early bird promotions and market education.',
-    tags: ['Upcoming', 'Pre-launch', 'Ibadan']
+    tags: ['Upcoming', 'Pre-launch', 'Ibadan'],
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop',
+    developmentStage: 'Construction'
   }
 ];
 
 export default function ProjectDetailPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
+  const { isMobile, isTablet } = useResponsive();
   
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
@@ -248,87 +273,213 @@ export default function ProjectDetailPage() {
     );
   }
 
+  const handleEditProject = () => {
+    navigate(`/company/projects/${project.id}/settings`);
+  };
+
+  const handleAllocateUnit = () => {
+    navigate(`/company/sales-allocation?project=${project.id}`);
+  };
+
+  const handleDeleteProject = () => {
+    toast.success(`Project ${project.name} deleted successfully`);
+    navigate('/company/projects');
+  };
+
+  const getStageColor = (stage: string) => {
+    switch (stage) {
+      case 'Planning':
+        return 'bg-gray-100 text-gray-800';
+      case 'Pre-Launch':
+        return 'bg-blue-100 text-blue-800';
+      case 'Marketing':
+        return 'bg-orange-100 text-orange-800';
+      case 'Construction':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Handover':
+        return 'bg-green-100 text-green-800';
+      case 'Completed':
+        return 'bg-emerald-100 text-emerald-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Breadcrumb Navigation */}
-        <div className="mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/company/projects')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Projects
-          </Button>
-        </div>
+    <ResponsiveContainer>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto p-6">
+          {/* Breadcrumb Navigation */}
+          <div className="mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/company/projects')}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Projects
+            </Button>
+          </div>
 
-        {/* Project Header */}
-        <ProjectHeader project={project} />
+          {/* Enhanced Project Banner */}
+          <div className="bg-white rounded-lg shadow-sm border overflow-hidden mb-6">
+            {/* Project Banner Image */}
+            <div className="relative h-64 md:h-80 w-full">
+              <img 
+                src={project.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=400&fit=crop'} 
+                alt={project.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+              
+              {/* Project Info Overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <h1 className="text-3xl md:text-4xl font-bold">{project.name}</h1>
+                      <Badge className={`${getStageColor(project.developmentStage)} text-gray-900`}>
+                        {project.developmentStage}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-gray-200">
+                      <div className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-1" />
+                        {project.location}
+                      </div>
+                      <div className="flex items-center">
+                        <User className="h-4 w-4 mr-1" />
+                        {project.projectManager}
+                      </div>
+                      <div className="flex items-center">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        Updated {project.lastUpdated}
+                      </div>
+                    </div>
+                  </div>
 
-        {/* KPI Quick Stats */}
-        <ProjectKPIGrid project={project} />
-
-        {/* Project Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border">
-          <Tabs defaultValue="overview" className="w-full">
-            <div className="border-b px-6">
-              <TabsList className="grid w-full grid-cols-5 bg-transparent h-12">
-                <TabsTrigger 
-                  value="overview" 
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="layout"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Layout Designer
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="blocks"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Blocks & Units
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="documents"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Documents
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="settings"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Settings
-                </TabsTrigger>
-              </TabsList>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Button 
+                      onClick={handleAllocateUnit}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Allocate Unit
+                    </Button>
+                    <Button 
+                      onClick={handleEditProject}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Project
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            className="bg-red-600 hover:bg-red-700"
+                            onClick={handleDeleteProject}
+                          >
+                            Delete Project
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <TabsContent value="overview" className="p-6">
-              <ProjectOverviewContent project={project} />
-            </TabsContent>
+          {/* Enhanced KPI Grid */}
+          <ProjectKPIGrid project={project} />
 
-            <TabsContent value="layout" className="p-6">
-              <ProjectLayoutTab project={project} />
-            </TabsContent>
+          {/* Project Navigation Tabs */}
+          <div className="bg-white rounded-lg shadow-sm border">
+            <Tabs defaultValue="overview" className="w-full">
+              <div className="border-b px-6">
+                <TabsList className={`grid w-full ${isMobile ? 'grid-cols-3' : 'grid-cols-6'} bg-transparent h-12`}>
+                  <TabsTrigger 
+                    value="overview" 
+                    className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                  >
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="layout"
+                    className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                  >
+                    {isMobile ? 'Layout' : 'Layout Designer'}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="blocks"
+                    className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                  >
+                    {isMobile ? 'Blocks' : 'Blocks & Units'}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="sales"
+                    className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                  >
+                    {isMobile ? 'Sales' : 'Sales History'}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="documents"
+                    className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                  >
+                    Documents
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="settings"
+                    className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+                  >
+                    Settings
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
-            <TabsContent value="blocks" className="p-6">
-              <ProjectBlocksTab project={project} />
-            </TabsContent>
+              <TabsContent value="overview" className="p-6">
+                <ProjectOverviewContent project={project} />
+              </TabsContent>
 
-            <TabsContent value="documents" className="p-6">
-              <ProjectDocumentsTab project={project} />
-            </TabsContent>
+              <TabsContent value="layout" className="p-6">
+                <ProjectLayoutTab project={project} />
+              </TabsContent>
 
-            <TabsContent value="settings" className="p-6">
-              <ProjectSettingsTab project={project} />
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="blocks" className="p-6">
+                <ProjectBlocksTab project={project} />
+              </TabsContent>
+
+              <TabsContent value="sales" className="p-6">
+                <ProjectSalesHistoryTab project={project} />
+              </TabsContent>
+
+              <TabsContent value="documents" className="p-6">
+                <ProjectDocumentsTab project={project} />
+              </TabsContent>
+
+              <TabsContent value="settings" className="p-6">
+                <ProjectSettingsTab project={project} />
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </div>
-    </div>
+    </ResponsiveContainer>
   );
 }
