@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { ProjectSites } from '@/components/dashboard/ProjectSites';
 import { Clients } from '@/components/dashboard/Clients';
@@ -62,9 +64,14 @@ const CompanyDashboard = () => {
   };
 
   return (
-    <div className="p-6">
-      {renderActiveModule()}
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gray-50">
+        <CompanySidebar />
+        <main className="flex-1 p-6">
+          {renderActiveModule()}
+        </main>
+      </div>
+    </SidebarProvider>
   );
 };
 

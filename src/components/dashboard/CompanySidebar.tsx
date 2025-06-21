@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSidebar } from '@/components/ui/sidebar';
 import {
   Building2,
   Users,
@@ -29,7 +27,6 @@ import {
   UserCheck,
   Receipt,
   Send,
-  Menu,
 } from 'lucide-react';
 
 const sidebarItems = [
@@ -59,7 +56,6 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isAdvancedToolsOpen, setIsAdvancedToolsOpen] = useState(false);
-  const { state, isMobile, setOpenMobile } = useSidebar();
 
   const isActivePath = (path: string) => {
     if (path === '/company/dashboard') {
@@ -77,15 +73,8 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
     navigate('/login');
   };
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
-    if (isMobile) {
-      setOpenMobile(false);
-    }
-  };
-
   return (
-    <div className={cn('pb-12 w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 fixed h-full z-20', className)}>
+    <div className={cn('pb-12 w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900', className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="flex items-center mb-2">
@@ -109,7 +98,7 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
                     'w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
                     isActivePath(item.path) && 'bg-blue-700 text-white shadow-lg'
                   )}
-                  onClick={() => handleNavigation(item.path)}
+                  onClick={() => navigate(item.path)}
                 >
                   <item.icon className="mr-2 h-4 w-4" />
                   {item.label}
@@ -149,7 +138,7 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
                         'w-full justify-start pl-8 text-sm text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
                         isActivePath(item.path) && 'bg-blue-700 text-white shadow-lg'
                       )}
-                      onClick={() => handleNavigation(item.path)}
+                      onClick={() => navigate(item.path)}
                     >
                       <item.icon className="mr-2 h-3 w-3" />
                       {item.label}
@@ -158,18 +147,18 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
                 </CollapsibleContent>
               </Collapsible>
 
-              <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none" onClick={() => handleNavigation('/company/settings')}>
+              <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none" onClick={() => navigate('/company/settings')}>
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </Button>
-              <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none" onClick={() => handleNavigation('/company/referrals')}>
+              <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none" onClick={() => navigate('/company/referrals')}>
                 <Gift className="mr-2 h-4 w-4" />
                 Referral Program
               </Button>
             </div>
             <div className="mt-8 pt-4 border-t border-blue-700">
               <div className="space-y-1">
-                <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none" onClick={() => handleNavigation('/company/help')}>
+                <Button variant="ghost" className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none" onClick={() => navigate('/company/help')}>
                   <HelpCircle className="mr-2 h-4 w-4" />
                   Support / Help Center
                 </Button>
