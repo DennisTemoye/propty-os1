@@ -24,6 +24,7 @@ import {
 import { FeeSetupModal } from './fees/FeeSetupModal';
 import { PaymentCollectionModal } from './fees/PaymentCollectionModal';
 import { FeeMonitoringDashboard } from './fees/FeeMonitoringDashboard';
+import { RecordFeeModal } from './fees/RecordFeeModal';
 
 const mockFeeData = [
   {
@@ -354,8 +355,7 @@ export function FeesCollection() {
               Record a new fee for a client
             </DialogDescription>
           </DialogHeader>
-          <FeeSetupModal 
-            isOpen={false}
+          <RecordFeeModal 
             onClose={() => setIsRecordFeeModalOpen(false)}
           />
         </DialogContent>
