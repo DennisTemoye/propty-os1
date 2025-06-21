@@ -22,7 +22,6 @@ import {
   FileText,
   Receipt,
 } from 'lucide-react';
-import { ProjectKPIGrid } from './projects/ProjectKPIGrid';
 
 export function DashboardOverview() {
   const navigate = useNavigate();
@@ -174,9 +173,6 @@ export function DashboardOverview() {
           </Card>
         ))}
       </div>
-
-      {/* Project KPI Grid */}
-      <ProjectKPIGrid />
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

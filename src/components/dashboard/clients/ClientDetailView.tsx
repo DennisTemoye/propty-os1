@@ -253,11 +253,11 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
         </TabsContent>
 
         <TabsContent value="payments">
-          <InstalmentTracking clientId={client.id} />
+          <InstalmentTracking client={client} />
         </TabsContent>
 
         <TabsContent value="documents">
-          <ClientDocumentsView clientId={client.id} documents={client.documents} />
+          <ClientDocumentsView client={client} />
         </TabsContent>
 
         <TabsContent value="notices">
