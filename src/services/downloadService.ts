@@ -1,5 +1,6 @@
 
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { formatCurrency, formatDate, addWatermarkToPDF, downloadFile, generateCSV, generateExcel } from '@/utils/downloadUtils';
 
 export class DownloadService {
@@ -72,7 +73,7 @@ export class DownloadService {
       formatCurrency(tx.balance || 0)
     ]);
     
-    doc.autoTable({
+    autoTable(doc, {
       head: [['Date', 'Description', 'Payment', 'Charges', 'Balance']],
       body: tableData,
       startY: 60,
@@ -171,7 +172,7 @@ export class DownloadService {
       comm.status
     ]);
     
-    doc.autoTable({
+    autoTable(doc, {
       head: [['Date', 'Client', 'Project', 'Sale Amount', 'Rate', 'Commission', 'Status']],
       body: tableData,
       startY: 60,
