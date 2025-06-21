@@ -20,6 +20,8 @@ interface DevelopmentFormData {
   category: string;
   developmentType: string;
   totalUnits: number;
+  developmentSize: string;
+  developmentStage: string;
 }
 
 export function NewProjectForm({ onClose }: NewDevelopmentFormProps) {
@@ -31,6 +33,8 @@ export function NewProjectForm({ onClose }: NewDevelopmentFormProps) {
       category: '',
       developmentType: '',
       totalUnits: 0,
+      developmentSize: '',
+      developmentStage: '',
     },
   });
 
@@ -161,6 +165,50 @@ export function NewProjectForm({ onClose }: NewDevelopmentFormProps) {
                 <FormLabel>Total Units</FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="Enter total units" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="developmentSize"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Development Size</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., 50 hectares" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="developmentStage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Development Stage</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select stage" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Land Acquisition">Land Acquisition</SelectItem>
+                      <SelectItem value="Planning & Approvals">Planning & Approvals</SelectItem>
+                      <SelectItem value="Subdivision">Subdivision</SelectItem>
+                      <SelectItem value="Infrastructure">Infrastructure</SelectItem>
+                      <SelectItem value="Construction">Construction</SelectItem>
+                      <SelectItem value="Marketing">Marketing</SelectItem>
+                      <SelectItem value="Sales">Sales</SelectItem>
+                      <SelectItem value="Handover">Handover</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
