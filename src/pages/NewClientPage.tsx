@@ -1,11 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -21,20 +23,55 @@ import {
   Link, 
   Copy,
   Share2,
-  ExternalLink
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Camera,
+  IdCard,
+  Heart
 } from 'lucide-react';
 
 export default function NewClientPage() {
   const navigate = useNavigate();
+  const [openSections, setOpenSections] = useState({
+    personal: true,
+    identification: false,
+    address: false,
+    nextOfKin: false,
+    notes: false
+  });
+
   const form = useForm({
     defaultValues: {
+      // Personal Information
       firstName: '',
       lastName: '',
+      otherName: '',
+      gender: '',
+      maritalStatus: '',
       email: '',
       phone: '',
-      address: '',
-      clientType: 'individual',
-      source: '',
+      nationality: '',
+      occupation: '',
+      employer: '',
+      
+      // Identification
+      idType: '',
+      idNumber: '',
+      
+      // Residential Address
+      fullAddress: '',
+      city: '',
+      state: '',
+      
+      // Next of Kin
+      nokFullName: '',
+      nokRelationship: '',
+      nokAddress: '',
+      nokEmail: '',
+      nokPhone: '',
+      
+      // Additional Notes
       notes: ''
     }
   });
@@ -52,6 +89,31 @@ export default function NewClientPage() {
     navigator.clipboard.writeText(formLink);
     toast.success('Form link copied to clipboard!');
   };
+
+  const toggleSection = (section: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  const SectionHeader = ({ icon: Icon, title, isOpen, onToggle, color }: any) => (
+    <CollapsibleTrigger asChild>
+      <Button
+        variant="ghost"
+        onClick={onToggle}
+        className="w-full justify-between p-4 h-auto hover:bg-gray-50"
+      >
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${color}`}>
+            <Icon className="h-5 w-5 text-white" />
+          </div>
+          <span className="text-lg font-semibold text-gray-900">{title}</span>
+        </div>
+        {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+      </Button>
+    </CollapsibleTrigger>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -73,7 +135,7 @@ export default function NewClientPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Add New Client</h1>
-              <p className="text-gray-600">Create a new client profile with their information</p>
+              <p className="text-gray-600">Create a comprehensive client profile with detailed information</p>
             </div>
           </div>
         </div>
@@ -81,150 +143,353 @@ export default function NewClientPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Form */}
           <div className="lg:col-span-3">
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Personal Information */}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              
+              {/* Personal Information Section */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <User className="h-5 w-5 text-purple-600" />
-                    Personal Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        First Name *
-                      </label>
-                      <Input 
-                        {...form.register('firstName', { required: true })}
-                        placeholder="Enter first name"
-                        className="h-11" 
-                      />
-                    </div>
+                <Collapsible open={openSections.personal} onOpenChange={() => toggleSection('personal')}>
+                  <SectionHeader 
+                    icon={User}
+                    title="Personal Information"
+                    isOpen={openSections.personal}
+                    onToggle={() => toggleSection('personal')}
+                    color="bg-gradient-to-br from-purple-500 to-purple-600"
+                  />
+                  <CollapsibleContent>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                          <Camera className="h-4 w-4" />
+                          Passport Photograph
+                        </Label>
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                          <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-500">Click to upload passport photograph</p>
+                        </div>
+                      </div>
 
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        Last Name *
-                      </label>
-                      <Input 
-                        {...form.register('lastName', { required: true })}
-                        placeholder="Enter last name"
-                        className="h-11" 
-                      />
-                    </div>
-                  </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="firstName">First Name *</Label>
+                          <Input 
+                            id="firstName"
+                            {...form.register('firstName', { required: true })}
+                            placeholder="Enter first name"
+                            className="h-11" 
+                          />
+                        </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Mail className="h-4 w-4" />
-                        Email Address *
-                      </label>
-                      <Input 
-                        type="email"
-                        {...form.register('email', { required: true })}
-                        placeholder="Enter email address"
-                        className="h-11" 
-                      />
-                    </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="lastName">Last Name *</Label>
+                          <Input 
+                            id="lastName"
+                            {...form.register('lastName', { required: true })}
+                            placeholder="Enter last name"
+                            className="h-11" 
+                          />
+                        </div>
 
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
-                        Phone Number *
-                      </label>
-                      <Input 
-                        {...form.register('phone', { required: true })}
-                        placeholder="Enter phone number"
-                        className="h-11" 
-                      />
-                    </div>
-                  </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="otherName">Other Name</Label>
+                          <Input 
+                            id="otherName"
+                            {...form.register('otherName')}
+                            placeholder="Enter other name (optional)"
+                            className="h-11" 
+                          />
+                        </div>
+                      </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      Address
-                    </label>
-                    <Input 
-                      {...form.register('address')}
-                      placeholder="Enter full address"
-                      className="h-11" 
-                    />
-                  </div>
-                </CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Gender *</Label>
+                          <Select onValueChange={(value) => form.setValue('gender', value)}>
+                            <SelectTrigger className="h-11">
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Marital Status *</Label>
+                          <Select onValueChange={(value) => form.setValue('maritalStatus', value)}>
+                            <SelectTrigger className="h-11">
+                              <SelectValue placeholder="Select marital status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="single">Single</SelectItem>
+                              <SelectItem value="married">Married</SelectItem>
+                              <SelectItem value="divorced">Divorced</SelectItem>
+                              <SelectItem value="widowed">Widowed</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="flex items-center gap-2">
+                            <Mail className="h-4 w-4" />
+                            Email Address *
+                          </Label>
+                          <Input 
+                            id="email"
+                            type="email"
+                            {...form.register('email', { required: true })}
+                            placeholder="Enter email address"
+                            className="h-11" 
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="phone" className="flex items-center gap-2">
+                            <Phone className="h-4 w-4" />
+                            Phone Number *
+                          </Label>
+                          <Input 
+                            id="phone"
+                            {...form.register('phone', { required: true })}
+                            placeholder="Enter phone number"
+                            className="h-11" 
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="nationality">Nationality</Label>
+                          <Input 
+                            id="nationality"
+                            {...form.register('nationality')}
+                            placeholder="Enter nationality"
+                            className="h-11" 
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="occupation">Occupation</Label>
+                          <Input 
+                            id="occupation"
+                            {...form.register('occupation')}
+                            placeholder="Enter occupation"
+                            className="h-11" 
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="employer" className="flex items-center gap-2">
+                          <Building className="h-4 w-4" />
+                          Employer or Business Name
+                        </Label>
+                        <Input 
+                          id="employer"
+                          {...form.register('employer')}
+                          placeholder="Enter employer or business name"
+                          className="h-11" 
+                        />
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
               </Card>
 
-              {/* Client Details */}
+              {/* Identification Section */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Building className="h-5 w-5 text-blue-600" />
-                    Client Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Users className="h-4 w-4" />
-                        Client Type
-                      </label>
-                      <Select onValueChange={(value) => form.setValue('clientType', value)}>
-                        <SelectTrigger className="h-11">
-                          <SelectValue placeholder="Select client type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="individual">Individual</SelectItem>
-                          <SelectItem value="corporate">Corporate</SelectItem>
-                          <SelectItem value="investor">Investor</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                <Collapsible open={openSections.identification} onOpenChange={() => toggleSection('identification')}>
+                  <SectionHeader 
+                    icon={IdCard}
+                    title="Identification"
+                    isOpen={openSections.identification}
+                    onToggle={() => toggleSection('identification')}
+                    color="bg-gradient-to-br from-blue-500 to-blue-600"
+                  />
+                  <CollapsibleContent>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>ID Type *</Label>
+                          <Select onValueChange={(value) => form.setValue('idType', value)}>
+                            <SelectTrigger className="h-11">
+                              <SelectValue placeholder="Select ID type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="national_id">National ID</SelectItem>
+                              <SelectItem value="passport">International Passport</SelectItem>
+                              <SelectItem value="drivers_license">Driver's License</SelectItem>
+                              <SelectItem value="voters_card">Voter's Card</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <FileText className="h-4 w-4" />
-                        Lead Source
-                      </label>
-                      <Select onValueChange={(value) => form.setValue('source', value)}>
-                        <SelectTrigger className="h-11">
-                          <SelectValue placeholder="Select source" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="referral">Referral</SelectItem>
-                          <SelectItem value="website">Website</SelectItem>
-                          <SelectItem value="social_media">Social Media</SelectItem>
-                          <SelectItem value="advertisement">Advertisement</SelectItem>
-                          <SelectItem value="walk_in">Walk-in</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </CardContent>
+                        <div className="space-y-2">
+                          <Label htmlFor="idNumber">ID Number *</Label>
+                          <Input 
+                            id="idNumber"
+                            {...form.register('idNumber', { required: true })}
+                            placeholder="Enter ID number"
+                            className="h-11" 
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
               </Card>
 
-              {/* Additional Notes */}
+              {/* Residential Address Section */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <FileText className="h-5 w-5 text-green-600" />
-                    Additional Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Notes</label>
-                    <Textarea 
-                      {...form.register('notes')}
-                      placeholder="Additional notes about the client..."
-                      className="min-h-[100px] resize-none"
-                    />
-                  </div>
-                </CardContent>
+                <Collapsible open={openSections.address} onOpenChange={() => toggleSection('address')}>
+                  <SectionHeader 
+                    icon={MapPin}
+                    title="Residential Address"
+                    isOpen={openSections.address}
+                    onToggle={() => toggleSection('address')}
+                    color="bg-gradient-to-br from-green-500 to-green-600"
+                  />
+                  <CollapsibleContent>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="fullAddress">Full Address *</Label>
+                        <Textarea 
+                          id="fullAddress"
+                          {...form.register('fullAddress', { required: true })}
+                          placeholder="Enter complete residential address"
+                          className="min-h-[80px] resize-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="city">City *</Label>
+                          <Input 
+                            id="city"
+                            {...form.register('city', { required: true })}
+                            placeholder="Enter city"
+                            className="h-11" 
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="state">State *</Label>
+                          <Input 
+                            id="state"
+                            {...form.register('state', { required: true })}
+                            placeholder="Enter state"
+                            className="h-11" 
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
+              </Card>
+
+              {/* Next of Kin Section */}
+              <Card>
+                <Collapsible open={openSections.nextOfKin} onOpenChange={() => toggleSection('nextOfKin')}>
+                  <SectionHeader 
+                    icon={Heart}
+                    title="Next of Kin Information"
+                    isOpen={openSections.nextOfKin}
+                    onToggle={() => toggleSection('nextOfKin')}
+                    color="bg-gradient-to-br from-orange-500 to-orange-600"
+                  />
+                  <CollapsibleContent>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="nokFullName">Full Name *</Label>
+                        <Input 
+                          id="nokFullName"
+                          {...form.register('nokFullName', { required: true })}
+                          placeholder="Enter next of kin full name"
+                          className="h-11" 
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="nokRelationship">Relationship *</Label>
+                        <Select onValueChange={(value) => form.setValue('nokRelationship', value)}>
+                          <SelectTrigger className="h-11">
+                            <SelectValue placeholder="Select relationship" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="spouse">Spouse</SelectItem>
+                            <SelectItem value="parent">Parent</SelectItem>
+                            <SelectItem value="child">Child</SelectItem>
+                            <SelectItem value="sibling">Sibling</SelectItem>
+                            <SelectItem value="friend">Friend</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="nokAddress">Address</Label>
+                        <Textarea 
+                          id="nokAddress"
+                          {...form.register('nokAddress')}
+                          placeholder="Enter next of kin address"
+                          className="min-h-[80px] resize-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="nokEmail">Email Address</Label>
+                          <Input 
+                            id="nokEmail"
+                            type="email"
+                            {...form.register('nokEmail')}
+                            placeholder="Enter email address"
+                            className="h-11" 
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="nokPhone">Phone Number</Label>
+                          <Input 
+                            id="nokPhone"
+                            {...form.register('nokPhone')}
+                            placeholder="Enter phone number"
+                            className="h-11" 
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
+              </Card>
+
+              {/* Additional Notes Section */}
+              <Card>
+                <Collapsible open={openSections.notes} onOpenChange={() => toggleSection('notes')}>
+                  <SectionHeader 
+                    icon={FileText}
+                    title="Additional Notes"
+                    isOpen={openSections.notes}
+                    onToggle={() => toggleSection('notes')}
+                    color="bg-gradient-to-br from-indigo-500 to-indigo-600"
+                  />
+                  <CollapsibleContent>
+                    <CardContent className="p-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="notes">Notes</Label>
+                        <Textarea 
+                          id="notes"
+                          {...form.register('notes')}
+                          placeholder="Additional notes about the client..."
+                          className="min-h-[120px] resize-none"
+                        />
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
               </Card>
 
               <Separator />
@@ -253,20 +518,20 @@ export default function NewClientPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Share2 className="h-5 w-5 text-blue-600" />
-                  Share Form
+                  Send Form to Client
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
                   <p className="text-sm text-gray-600 mb-3">
-                    Send this form link to clients so they can fill out their information directly.
+                    You can copy and send this form link to clients to fill in their details remotely.
                   </p>
                   
                   <div className="space-y-3">
                     <div className="p-3 bg-gray-50 rounded-lg border">
                       <div className="flex items-center gap-2 mb-2">
                         <Link className="h-4 w-4 text-gray-500" />
-                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Form Link</span>
+                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Client Intake Form</span>
                       </div>
                       <p className="text-sm text-gray-700 break-all font-mono bg-white p-2 rounded border">
                         {formLink}
@@ -314,6 +579,10 @@ export default function NewClientPage() {
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                       <span>Professional client onboarding experience</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>Self-filled entries are marked for review</span>
                     </li>
                   </ul>
                 </div>
