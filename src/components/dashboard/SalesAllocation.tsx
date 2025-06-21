@@ -1,11 +1,53 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Handshake, DollarSign, FileText, Users, TrendingUp } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export function SalesAllocation() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [showNewAllocationForm, setShowNewAllocationForm] = useState(false);
+
+  // Check if we're on the /new route
+  useEffect(() => {
+    if (location.pathname.includes('/new')) {
+      setShowNewAllocationForm(true);
+    }
+  }, [location.pathname]);
+
+  const handleNewAllocation = () => {
+    navigate('/company/sales-allocations/new');
+    setShowNewAllocationForm(true);
+  };
+
+  if (showNewAllocationForm) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">New Allocation</h1>
+            <p className="text-gray-600 mt-1">Allocate a unit to a client</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              setShowNewAllocationForm(false);
+              navigate('/company/sales');
+            }}
+          >
+            Back to Sales
+          </Button>
+        </div>
+        <NewAllocationForm onClose={() => {
+          setShowNewAllocationForm(false);
+          navigate('/company/sales');
+        }} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -13,7 +55,7 @@ export function SalesAllocation() {
           <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation</h1>
           <p className="text-gray-600 mt-1">Manage your sales pipeline, allocations, and contracts</p>
         </div>
-        <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+        <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={handleNewAllocation}>
           <Handshake className="h-4 w-4 mr-2" />
           New Allocation
         </Button>
@@ -91,21 +133,27 @@ export function SalesAllocation() {
         </CardContent>
       </Card>
 
-      {/* Recent Activity */}
+      {/* Recent Activity with clickable items */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Sales Activity</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+            <div 
+              className="flex items-center justify-between p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100"
+              onClick={() => navigate('/company/clients/1')}
+            >
               <div>
                 <div className="font-medium">Unit A-15 Allocated</div>
                 <div className="text-sm text-gray-600">Client: John Doe - Victoria Gardens</div>
               </div>
               <Badge className="bg-green-100 text-green-800">Completed</Badge>
             </div>
-            <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+            <div 
+              className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100"
+              onClick={() => navigate('/company/clients/2')}
+            >
               <div>
                 <div className="font-medium">Payment Pending</div>
                 <div className="text-sm text-gray-600">Client: Jane Smith - ₦3.2M due</div>

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -35,27 +34,55 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-code" element={<ResetCodePage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            
+            {/* Dashboard Routes */}
             <Route path="/company/dashboard" element={<CompanyDashboard />} />
+            
+            {/* Development Routes */}
             <Route path="/company/developments" element={<CompanyDashboard />} />
+            <Route path="/company/developments/new" element={<CompanyDashboard />} />
             <Route path="/company/developments/:projectId" element={<ProjectDetailPage />} />
             <Route path="/company/developments/:projectId/blocks" element={<ProjectBlocksPage />} />
             <Route path="/company/developments/:projectId/overview" element={<ProjectDetailPage />} />
             <Route path="/company/developments/:projectId/layout" element={<ProjectDetailPage />} />
             <Route path="/company/developments/:projectId/documents" element={<ProjectDetailPage />} />
             <Route path="/company/developments/:projectId/settings" element={<ProjectDetailPage />} />
+            
+            {/* Client Routes */}
             <Route path="/company/clients" element={<CompanyDashboard />} />
+            <Route path="/company/clients/new" element={<CompanyDashboard />} />
             <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
+            
+            {/* Sales & Allocation Routes */}
             <Route path="/company/sales" element={<CompanyDashboard />} />
+            <Route path="/company/sales-allocations" element={<CompanyDashboard />} />
+            <Route path="/company/sales-allocations/new" element={<CompanyDashboard />} />
+            
+            {/* Accounting Routes */}
             <Route path="/company/accounting" element={<CompanyDashboard />} />
+            <Route path="/company/accounting/summary" element={<CompanyDashboard />} />
+            <Route path="/company/accounting/expense/new" element={<CompanyDashboard />} />
+            <Route path="/company/accounting/payment/new" element={<CompanyDashboard />} />
+            <Route path="/company/accounting/invoice/:id" element={<CompanyDashboard />} />
+            
+            {/* Team & Roles Routes */}
             <Route path="/company/team" element={<CompanyDashboard />} />
+            <Route path="/company/settings/team" element={<CompanyDashboard />} />
+            
+            {/* Reports Routes */}
             <Route path="/company/reports" element={<CompanyDashboard />} />
-            <Route path="/company/crm" element={<CompanyDashboard />} />
-            <Route path="/company/documents" element={<CompanyDashboard />} />
-            <Route path="/company/calendar" element={<CompanyDashboard />} />
+            
+            {/* Advanced Tools Routes */}
+            <Route path="/company/tools/crm-pipelines" element={<CompanyDashboard />} />
+            <Route path="/company/tools/calendar" element={<CompanyDashboard />} />
+            <Route path="/company/tools/document-manager" element={<CompanyDashboard />} />
+            
+            {/* Other Routes */}
             <Route path="/company/settings" element={<CompanyDashboard />} />
             <Route path="/company/referrals" element={<CompanyDashboard />} />
             <Route path="/company/help" element={<CompanyDashboard />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            
+            {/* Catch-all route - MUST be last */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

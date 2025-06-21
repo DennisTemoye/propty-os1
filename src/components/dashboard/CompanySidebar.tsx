@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -38,9 +37,9 @@ const sidebarItems = [
 ];
 
 const advancedToolsItems = [
-  { icon: TrendingUp, label: 'CRM Pipelines', path: '/company/crm', description: 'Manage leads across stages: Contacted → Inspection → Offer → Payment → Closed' },
-  { icon: FolderOpen, label: 'Document Manager', path: '/company/documents', description: 'Store and manage signed documents, survey plans, allocation letters, and related files' },
-  { icon: Calendar, label: 'Calendar & Scheduling', path: '/company/calendar', description: 'Track inspections, scheduled meetings, follow-up deadlines, and important project dates' },
+  { icon: TrendingUp, label: 'CRM Pipelines', path: '/company/tools/crm-pipelines', description: 'Manage leads across stages: Contacted → Inspection → Offer → Payment → Closed' },
+  { icon: FolderOpen, label: 'Document Manager', path: '/company/tools/document-manager', description: 'Store and manage signed documents, survey plans, allocation letters, and related files' },
+  { icon: Calendar, label: 'Calendar & Scheduling', path: '/company/tools/calendar', description: 'Track inspections, scheduled meetings, follow-up deadlines, and important project dates' },
 ];
 
 interface CompanySidebarProps {

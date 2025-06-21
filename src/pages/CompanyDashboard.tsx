@@ -37,11 +37,11 @@ const CompanyDashboard = () => {
       return <TeamRoles />;
     } else if (path.startsWith('/company/reports')) {
       return <Reports />;
-    } else if (path.startsWith('/company/crm')) {
+    } else if (path.startsWith('/company/tools/crm-pipelines')) {
       return <CRMPipelines />;
-    } else if (path.startsWith('/company/documents')) {
+    } else if (path.startsWith('/company/tools/document-manager')) {
       return <DocumentManager />;
-    } else if (path.startsWith('/company/calendar')) {
+    } else if (path.startsWith('/company/tools/calendar')) {
       return <CalendarScheduling />;
     } else if (path.startsWith('/company/settings')) {
       return <Settings />;
