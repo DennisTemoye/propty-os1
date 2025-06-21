@@ -24,6 +24,10 @@ const mockProjects = [
     soldUnits: 89,
     reservedUnits: 23,
     availableUnits: 38,
+    interestedUnits: 12,
+    offeredUnits: 8,
+    allocatedUnits: 69,
+    revokedUnits: 0,
     status: 'ongoing',
     projectStage: 'Construction',
     revenue: '₦2.5B'
@@ -39,6 +43,10 @@ const mockProjects = [
     soldUnits: 156,
     reservedUnits: 12,
     availableUnits: 32,
+    interestedUnits: 18,
+    offeredUnits: 15,
+    allocatedUnits: 123,
+    revokedUnits: 2,
     status: 'ongoing',
     projectStage: 'Marketing',
     revenue: '₦4.2B'
@@ -191,7 +199,6 @@ export function ProjectsUnits() {
     }
   };
 
-  // Filter projects based on search and stage
   const filteredProjects = mockProjects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          project.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -239,9 +246,9 @@ export function ProjectsUnits() {
       cardBg: 'from-emerald-50 to-emerald-100',
     },
     {
-      title: 'Units Sold',
+      title: 'Units Allocated',
       value: '845',
-      subtitle: 'Successfully closed',
+      subtitle: 'Successfully allocated',
       icon: DollarSign,
       color: 'text-blue-700',
       bgColor: 'bg-blue-100',
@@ -263,7 +270,7 @@ export function ProjectsUnits() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units</p>
+          <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units with allocation tracking</p>
         </div>
         <Button 
           className="bg-purple-600 hover:bg-purple-700"
@@ -327,14 +334,12 @@ export function ProjectsUnits() {
             <div className="flex items-center gap-2">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="sm"
                 onClick={() => setViewMode('grid')}
               >
                 Grid View
               </Button>
               <Button
                 variant={viewMode === 'table' ? 'default' : 'outline'}
-                size="sm"
                 onClick={() => setViewMode('table')}
               >
                 Table View
@@ -382,24 +387,37 @@ export function ProjectsUnits() {
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Sold:</span>
-                      <span className="font-medium text-green-600">{project.soldUnits}</span>
+                    <div className="text-sm font-medium text-gray-700 mb-2">Unit Status:</div>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="flex justify-between">
+                        <span>Interested:</span>
+                        <span className="font-medium text-blue-600">{project.interestedUnits || 0}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Offered:</span>
+                        <span className="font-medium text-yellow-600">{project.offeredUnits || 0}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Allocated:</span>
+                        <span className="font-medium text-green-600">{project.allocatedUnits || project.soldUnits}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Available:</span>
+                        <span className="font-medium text-gray-600">{project.availableUnits}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Reserved:</span>
-                      <span className="font-medium text-orange-600">{project.reservedUnits}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Available:</span>
-                      <span className="font-medium text-blue-600">{project.availableUnits}</span>
-                    </div>
+                    {project.revokedUnits > 0 && (
+                      <div className="flex justify-between text-xs">
+                        <span>Revoked:</span>
+                        <span className="font-medium text-red-600">{project.revokedUnits}</span>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
                     <div 
                       className="bg-green-600 h-2 rounded-full"
-                      style={{ width: `${(project.soldUnits / project.totalUnits) * 100}%` }}
+                      style={{ width: `${((project.allocatedUnits || project.soldUnits) / project.totalUnits) * 100}%` }}
                     ></div>
                   </div>
 
@@ -413,7 +431,6 @@ export function ProjectsUnits() {
                   <div className="grid grid-cols-2 gap-2 mt-4">
                     <Button 
                       variant="outline" 
-                      size="sm" 
                       className="flex-1"
                       onClick={(e) => handleManageBlocks(e, project.id)}
                     >
@@ -423,7 +440,6 @@ export function ProjectsUnits() {
                     
                     <Button 
                       variant="outline" 
-                      size="sm" 
                       className="flex-1"
                       onClick={(e) => handleViewDocuments(e, project)}
                     >
@@ -445,7 +461,7 @@ export function ProjectsUnits() {
                   <TableHead>Project</TableHead>
                   <TableHead>Stage</TableHead>
                   <TableHead>Location</TableHead>
-                  <TableHead>Blocks/Units</TableHead>
+                  <TableHead>Units Status</TableHead>
                   <TableHead>Revenue</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -470,9 +486,16 @@ export function ProjectsUnits() {
                     </TableCell>
                     <TableCell>{project.location}</TableCell>
                     <TableCell>
-                      <div className="text-sm">
-                        <div>{project.totalBlocks || 0} blocks</div>
-                        <div className="text-gray-500">{project.totalUnits} units</div>
+                      <div className="text-sm space-y-1">
+                        <div className="flex justify-between">
+                          <span>Total:</span>
+                          <span className="font-medium">{project.totalUnits}</span>
+                        </div>
+                        <div className="text-xs text-gray-500 space-y-0.5">
+                          <div>Allocated: {project.allocatedUnits || project.soldUnits}</div>
+                          <div>Available: {project.availableUnits}</div>
+                          <div>Interested: {project.interestedUnits || 0}</div>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-purple-600">
@@ -482,14 +505,12 @@ export function ProjectsUnits() {
                       <div className="flex space-x-2">
                         <Button 
                           variant="outline" 
-                          size="sm"
                           onClick={(e) => handleManageBlocks(e, project.id)}
                         >
                           <Building className="h-3 w-3" />
                         </Button>
                         <Button 
                           variant="outline" 
-                          size="sm"
                           onClick={(e) => handleViewDocuments(e, project)}
                         >
                           <FileText className="h-3 w-3" />

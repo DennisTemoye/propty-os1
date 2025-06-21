@@ -22,6 +22,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
       allocationDate: new Date().toISOString().split('T')[0],
       price: '',
       paymentPlan: '',
+      status: 'interested',
       notes: ''
     }
   });
@@ -111,15 +112,29 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
+          <label className="text-sm font-medium">Initial Status</label>
+          <Select onValueChange={(value) => form.setValue('status', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="interested">Interested</SelectItem>
+              <SelectItem value="offered">Offered</SelectItem>
+              <SelectItem value="allocated">Allocated</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
           <label className="text-sm font-medium">Allocation Date</label>
           <Input 
             type="date"
             {...form.register('allocationDate', { required: true })}
           />
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium">Price *</label>
           <Input 
@@ -127,21 +142,21 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
             placeholder="e.g., ₦15,000,000" 
           />
         </div>
+      </div>
 
-        <div>
-          <label className="text-sm font-medium">Payment Plan</label>
-          <Select onValueChange={(value) => form.setValue('paymentPlan', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select payment plan" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="full">Full Payment</SelectItem>
-              <SelectItem value="installments_6">6 Months Installment</SelectItem>
-              <SelectItem value="installments_12">12 Months Installment</SelectItem>
-              <SelectItem value="installments_24">24 Months Installment</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <label className="text-sm font-medium">Payment Plan</label>
+        <Select onValueChange={(value) => form.setValue('paymentPlan', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select payment plan" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="full">Full Payment</SelectItem>
+            <SelectItem value="installments_6">6 Months Installment</SelectItem>
+            <SelectItem value="installments_12">12 Months Installment</SelectItem>
+            <SelectItem value="installments_24">24 Months Installment</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div>

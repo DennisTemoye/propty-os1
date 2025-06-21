@@ -6,9 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard, Filter, Users } from 'lucide-react';
+import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard, Filter, Users, Edit, Ban } from 'lucide-react';
 import { ClientDocumentsView } from './ClientDocumentsView';
 import { ClientDownloadActions } from './ClientDownloadActions';
+import { UpdateAllocationStatusModal } from '../forms/UpdateAllocationStatusModal';
+import { RevokeAllocationModal } from '../forms/RevokeAllocationModal';
 
 interface ClientDetailViewProps {
   client: any;
@@ -16,6 +18,9 @@ interface ClientDetailViewProps {
 
 export function ClientDetailView({ client }: ClientDetailViewProps) {
   const [selectedProperty, setSelectedProperty] = useState('all');
+  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
+  const [showRevokeModal, setShowRevokeModal] = useState(false);
+  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -27,6 +32,14 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
         return 'bg-blue-100 text-blue-800';
       case 'unassigned':
         return 'bg-gray-100 text-gray-800';
+      case 'interested':
+        return 'bg-blue-100 text-blue-800';
+      case 'offered':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'allocated':
+        return 'bg-green-100 text-green-800';
+      case 'revoked':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -45,6 +58,27 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
     }
   };
 
+  const handleUpdateStatus = (allocation: any) => {
+    setSelectedAllocation(allocation);
+    setShowUpdateStatusModal(true);
+  };
+
+  const handleRevokeAllocation = (allocation: any) => {
+    setSelectedAllocation(allocation);
+    setShowRevokeModal(true);
+  };
+
+  const handleStatusUpdate = (updatedAllocation: any) => {
+    console.log('Status updated:', updatedAllocation);
+    // Update the allocation in your state/backend
+  };
+
+  const handleRevocation = (revocationData: any) => {
+    console.log('Processing revocation:', revocationData);
+    // Process revocation and refund
+  };
+
+  // Mock data for demonstration
   const mockPaymentHistory = [
     { id: 1, date: '2024-01-10', amount: '₦5M', type: 'Initial Payment', status: 'completed', property: 'Victoria Gardens' },
     { id: 2, date: '2024-01-25', amount: '₦5M', type: 'Milestone 1', status: 'completed', property: 'Victoria Gardens' },
@@ -66,7 +100,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
     { id: 3, date: '2024-01-10', action: 'Client created', details: 'Profile created in system' }
   ];
 
-  // Calculate financial summary based on selected property
+  // Calculate financial summary
   const getFilteredPayments = () => {
     if (selectedProperty === 'all') {
       return mockPaymentHistory;
@@ -75,12 +109,11 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
   };
 
   const filteredPayments = getFilteredPayments();
-  const totalUnitPrice = 25000000; // ₦25M - example total unit price
-  const amountPaid = parseInt(client.totalPaid.replace(/[₦,M]/g, '')) * 1000000; // Convert ₦15M to 15000000
+  const totalUnitPrice = 25000000;
+  const amountPaid = parseInt(client.totalPaid.replace(/[₦,M]/g, '')) * 1000000;
   const balanceLeft = totalUnitPrice - amountPaid;
   const paymentProgress = (amountPaid / totalUnitPrice) * 100;
 
-  // Get unique properties for filter
   const availableProperties = ['all', ...new Set(mockPaymentHistory.map(payment => payment.property))];
 
   const formatCurrency = (amount: number) => {
@@ -123,7 +156,6 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
               </div>
             </div>
 
-            {/* Quick Stats and Download Actions */}
             <div className="text-right space-y-4">
               <div>
                 <div className="text-sm text-gray-600">Total Investment</div>
@@ -323,7 +355,6 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
           </div>
         </TabsContent>
 
-        
         <TabsContent value="properties" className="mt-6">
           {client.projects && client.projects.length > 0 ? (
             <div className="space-y-4">
@@ -335,22 +366,49 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                         <h3 className="font-semibold text-lg">{project.name}</h3>
                         <p className="text-gray-600">{project.unit}</p>
                         <p className="text-sm text-gray-500">Assigned: {project.assignedDate}</p>
+                        <Badge className={getStatusColor(project.status || 'allocated')}>
+                          {project.status || 'Allocated'}
+                        </Badge>
                       </div>
                       
-                      {index === 0 && (
-                        <div className="text-right space-y-2">
-                          <div className="text-sm text-gray-500">Payment Progress</div>
-                          <div className="flex items-center space-x-3">
-                            <div className="w-32 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-green-600 h-2 rounded-full"
-                                style={{ width: `${client.paymentProgress}%` }}
-                              ></div>
+                      <div className="flex items-center space-x-2">
+                        {index === 0 && (
+                          <div className="text-right space-y-2 mr-4">
+                            <div className="text-sm text-gray-500">Payment Progress</div>
+                            <div className="flex items-center space-x-3">
+                              <div className="w-32 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-green-600 h-2 rounded-full"
+                                  style={{ width: `${client.paymentProgress}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium">{client.paymentProgress}%</span>
                             </div>
-                            <span className="text-sm font-medium">{client.paymentProgress}%</span>
                           </div>
+                        )}
+                        
+                        <div className="flex flex-col space-y-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleUpdateStatus({...project, id: index + 1})}
+                          >
+                            <Edit className="h-3 w-3 mr-1" />
+                            Update
+                          </Button>
+                          {(project.status === 'allocated' || !project.status) && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleRevokeAllocation({...project, id: index + 1})}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Ban className="h-3 w-3 mr-1" />
+                              Revoke
+                            </Button>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -585,6 +643,22 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Update Status Modal */}
+      <UpdateAllocationStatusModal 
+        isOpen={showUpdateStatusModal}
+        onClose={() => setShowUpdateStatusModal(false)}
+        allocation={selectedAllocation}
+        onUpdate={handleStatusUpdate}
+      />
+
+      {/* Revoke Allocation Modal */}
+      <RevokeAllocationModal 
+        isOpen={showRevokeModal}
+        onClose={() => setShowRevokeModal(false)}
+        allocation={selectedAllocation}
+        onRevoke={handleRevocation}
+      />
     </div>
   );
 }
