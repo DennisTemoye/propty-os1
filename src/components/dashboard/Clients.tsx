@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, FileText, DollarSign, User, Building, Search } from 'lucide-react';
@@ -589,25 +589,6 @@ export function Clients() {
           </CardContent>
         </Card>
       )}
-
-      {/* New Client Modal */}
-      <Dialog open={isNewClientOpen} onOpenChange={setIsNewClientOpen}>
-        <DialogTrigger asChild>
-          <Button className="bg-purple-600 hover:bg-purple-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Client
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Add New Client</DialogTitle>
-            <DialogDescription>
-              Create a new client profile and manage their information
-            </DialogDescription>
-          </DialogHeader>
-          <ClientForm onClose={() => setIsNewClientOpen(false)} />
-        </DialogContent>
-      </Dialog>
 
       {/* Assign Property Modal */}
       <AssignPropertyModal 
