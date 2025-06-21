@@ -17,6 +17,8 @@ import { ProjectSettingsTab } from '@/components/dashboard/projects/ProjectSetti
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
 import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
+import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
+import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
 import { toast } from 'sonner';
 
 const mockProjects = [
@@ -246,6 +248,7 @@ export default function ProjectDetailPage() {
   const [isReallocateOpen, setIsReallocateOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
+  const [reallocateData, setReallocateData] = useState<any>(null);
   
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
@@ -266,22 +269,19 @@ export default function ProjectDetailPage() {
   }
 
   const handleAllocateUnit = () => {
-    console.log('Fetching allocation form data...');
     setIsAllocateUnitOpen(true);
   };
 
   const handleEditProject = () => {
-    console.log('Fetching project edit form data...');
     setIsEditProjectOpen(true);
   };
 
   const handleReallocate = (unitId: string, clientName: string) => {
-    console.log('Fetching reallocation form data for:', unitId);
+    setReallocateData({ unitId, clientName });
     setIsReallocateOpen(true);
   };
 
   const handleRevoke = (allocation: any) => {
-    console.log('Fetching revoke form data for:', allocation);
     setSelectedAllocation(allocation);
     setIsRevokeOpen(true);
   };
@@ -289,6 +289,26 @@ export default function ProjectDetailPage() {
   const handleDeleteProject = () => {
     toast.success(`Project "${project.name}" has been deleted successfully.`);
     navigate('/company/projects');
+  };
+
+  const handleAllocateSubmit = (data: any) => {
+    console.log('Unit allocated:', data);
+    toast.success('Unit allocated successfully!');
+    setIsAllocateUnitOpen(false);
+  };
+
+  const handleReallocateSubmit = (data: any) => {
+    console.log('Unit reallocated:', data);
+    toast.success('Unit reallocated successfully!');
+    setIsReallocateOpen(false);
+    setReallocateData(null);
+  };
+
+  const handleRevokeSubmit = (data: any) => {
+    console.log('Allocation revoked:', data);
+    toast.success('Allocation revoked successfully!');
+    setIsRevokeOpen(false);
+    setSelectedAllocation(null);
   };
 
   const getDevelopmentStageColor = (stage: string) => {
@@ -515,41 +535,34 @@ export default function ProjectDetailPage() {
           <DialogHeader>
             <DialogTitle>Edit Project</DialogTitle>
           </DialogHeader>
-          <NewProjectForm onClose={() => setIsEditProjectOpen(false)} />
+          <NewProjectForm 
+            onClose={() => setIsEditProjectOpen(false)}
+            initialData={project}
+          />
         </DialogContent>
       </Dialog>
 
-      {/* Allocate Unit Modal */}
-      <Dialog open={isAllocateUnitOpen} onOpenChange={setIsAllocateUnitOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Allocate Unit</DialogTitle>
-          </DialogHeader>
-          <div className="p-4">
-            <p>Allocation form will be loaded here...</p>
-            <div className="flex justify-end mt-4">
-              <Button onClick={() => setIsAllocateUnitOpen(false)}>Close</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Allocate Unit Modal - Using the same form from Sales & Allocations */}
+      <AllocateUnitModal
+        isOpen={isAllocateUnitOpen}
+        onClose={() => setIsAllocateUnitOpen(false)}
+        onSubmit={handleAllocateSubmit}
+      />
 
-      {/* Reallocate Modal */}
-      <Dialog open={isReallocateOpen} onOpenChange={setIsReallocateOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Reallocate Unit</DialogTitle>
-          </DialogHeader>
-          <div className="p-4">
-            <p>Reallocation form will be loaded here...</p>
-            <div className="flex justify-end mt-4">
-              <Button onClick={() => setIsReallocateOpen(false)}>Close</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Reallocate Modal - Using the same form from Sales & Allocations */}
+      {reallocateData && (
+        <ReallocationModal
+          isOpen={isReallocateOpen}
+          onClose={() => {
+            setIsReallocateOpen(false);
+            setReallocateData(null);
+          }}
+          allocation={reallocateData}
+          onReallocate={handleReallocateSubmit}
+        />
+      )}
 
-      {/* Revoke Allocation Modal */}
+      {/* Revoke Allocation Modal - Using the same form from Sales & Allocations */}
       {selectedAllocation && (
         <RevokeAllocationModal
           isOpen={isRevokeOpen}
@@ -558,12 +571,7 @@ export default function ProjectDetailPage() {
             setSelectedAllocation(null);
           }}
           allocation={selectedAllocation}
-          onRevoke={(data) => {
-            console.log('Revoke allocation:', data);
-            toast.success('Allocation revoked successfully');
-            setIsRevokeOpen(false);
-            setSelectedAllocation(null);
-          }}
+          onRevoke={handleRevokeSubmit}
         />
       )}
     </div>
