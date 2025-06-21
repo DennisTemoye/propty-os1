@@ -30,8 +30,7 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
       description: '',
       linkedToMilestones: false,
       milestones: [''],
-      autoAssign: true,
-      assignAtStage: 'interested' // New field for Application Form
+      autoAssign: true
     }
   });
 
@@ -41,7 +40,6 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
   const scope = watch('scope');
   const linkedToMilestones = watch('linkedToMilestones');
   const milestones = watch('milestones');
-  const autoAssign = watch('autoAssign');
 
   const addMilestone = () => {
     setValue('milestones', [...milestones, '']);
@@ -89,7 +87,6 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
                       <SelectValue placeholder="Select fee type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="application">Application Form Fee</SelectItem>
                       <SelectItem value="infrastructure">Infrastructure Development Fee</SelectItem>
                       <SelectItem value="service">Service Charge</SelectItem>
                       <SelectItem value="maintenance">Maintenance Fee</SelectItem>
@@ -114,7 +111,7 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
               <Label htmlFor="feeName">Fee Name *</Label>
               <Input 
                 {...form.register('feeName', { required: true })}
-                placeholder={feeType === 'application' ? 'e.g., Property Application Form Fee' : 'e.g., Q1 2024 Infrastructure Fee'} 
+                placeholder="e.g., Q1 2024 Infrastructure Fee" 
               />
             </div>
 
@@ -122,21 +119,10 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
               <Label htmlFor="amount">Amount *</Label>
               <Input 
                 {...form.register('amount', { required: true })}
-                placeholder={feeType === 'application' ? 'e.g., ₦50,000' : 'e.g., ₦5,000,000'} 
+                placeholder="e.g., ₦5,000,000" 
               />
             </div>
           </div>
-
-          {/* Application Form specific description */}
-          {feeType === 'application' && (
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">Application Form Fee</h4>
-              <p className="text-sm text-blue-700">
-                This fee is charged to initiate the property application process. It's typically a one-time fee 
-                that can be automatically assigned when a client shows interest in a property.
-              </p>
-            </div>
-          )}
 
           <div>
             <Label>Frequency *</Label>
@@ -153,18 +139,14 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
                     <RadioGroupItem value="one-time" id="one-time" />
                     <Label htmlFor="one-time">One-time</Label>
                   </div>
-                  {feeType !== 'application' && (
-                    <>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="monthly" id="monthly" />
-                        <Label htmlFor="monthly">Monthly</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yearly" id="yearly" />
-                        <Label htmlFor="yearly">Yearly</Label>
-                      </div>
-                    </>
-                  )}
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="monthly" id="monthly" />
+                    <Label htmlFor="monthly">Monthly</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yearly" id="yearly" />
+                    <Label htmlFor="yearly">Yearly</Label>
+                  </div>
                 </RadioGroup>
               )}
             />
@@ -205,48 +187,6 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-
-          {/* Auto-assignment settings for Application Form */}
-          {feeType === 'application' && (
-            <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <Controller
-                  name="autoAssign"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox 
-                      id="autoAssign"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  )}
-                />
-                <Label htmlFor="autoAssign">Auto-assign when client shows interest</Label>
-              </div>
-              
-              {autoAssign && (
-                <div>
-                  <Label>Assign at Stage</Label>
-                  <Controller
-                    name="assignAtStage"
-                    control={control}
-                    render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue placeholder="Select stage" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="interested">When marked as Interested</SelectItem>
-                          <SelectItem value="offered">When offered property</SelectItem>
-                          <SelectItem value="onboarding">During client onboarding</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-              )}
             </div>
           )}
 
@@ -306,28 +246,26 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
             </div>
           )}
 
-          {feeType !== 'application' && (
-            <div className="flex items-center space-x-2">
-              <Controller
-                name="autoAssign"
-                control={control}
-                render={({ field }) => (
-                  <Checkbox 
-                    id="autoAssign"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                )}
-              />
-              <Label htmlFor="autoAssign">Auto-assign to new clients upon allocation</Label>
-            </div>
-          )}
+          <div className="flex items-center space-x-2">
+            <Controller
+              name="autoAssign"
+              control={control}
+              render={({ field }) => (
+                <Checkbox 
+                  id="autoAssign"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+            <Label htmlFor="autoAssign">Auto-assign to new clients upon allocation</Label>
+          </div>
 
           <div>
             <Label htmlFor="description">Description</Label>
             <Textarea 
               {...form.register('description')}
-              placeholder={feeType === 'application' ? 'Payable to initiate your property application process...' : 'Additional details about this fee...'}
+              placeholder="Additional details about this fee..."
             />
           </div>
 
