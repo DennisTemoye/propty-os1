@@ -8,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard } from 'lucide-react';
 import { ClientDocumentsView } from './ClientDocumentsView';
 import { InstalmentTracking } from './InstalmentTracking';
-import { ClientDownloadActions } from './ClientDownloadActions';
 
 interface ClientDetailViewProps {
   client: any;
@@ -95,16 +94,13 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
               </div>
             </div>
 
-            {/* Quick Stats and Download Actions */}
-            <div className="text-right space-y-4">
-              <div>
-                <div className="text-sm text-gray-600">Total Investment</div>
-                <div className="text-2xl font-bold text-green-600">{client.totalPaid}</div>
-                <div className="text-sm text-gray-600">
-                  {client.projects?.length || 0} Properties
-                </div>
+            {/* Quick Stats */}
+            <div className="text-right space-y-2">
+              <div className="text-sm text-gray-600">Total Investment</div>
+              <div className="text-2xl font-bold text-green-600">{client.totalPaid}</div>
+              <div className="text-sm text-gray-600">
+                {client.projects?.length || 0} Properties
               </div>
-              <ClientDownloadActions client={client} />
             </div>
           </div>
         </CardContent>

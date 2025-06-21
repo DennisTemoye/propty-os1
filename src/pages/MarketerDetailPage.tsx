@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -8,8 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Phone, Mail, Building, Users, DollarSign, TrendingUp, Calendar, FileText } from 'lucide-react';
-import { DownloadService } from '@/services/downloadService';
-import { toast } from 'sonner';
 
 const MarketerDetailPage = () => {
   const { marketerId } = useParams();
@@ -51,16 +50,6 @@ const MarketerDetailPage = () => {
       default:
         return 'bg-gray-100 text-gray-800';
     }
-  };
-
-  const handleDownloadCommissionReport = () => {
-    const commissions = [
-      { date: '2024-01-15', clientName: 'John Doe', project: 'Victoria Gardens', saleAmount: 25000000, rate: 3, commission: 750000, status: 'Paid' },
-      { date: '2024-01-10', clientName: 'Sarah Johnson', project: 'Emerald Heights', saleAmount: 30000000, rate: 3, commission: 900000, status: 'Pending' }
-    ];
-    
-    DownloadService.generateMarketerCommissionReport(marketer, commissions);
-    toast.success('Commission report downloaded successfully');
   };
 
   return (
@@ -107,10 +96,6 @@ const MarketerDetailPage = () => {
                     <Badge className={getStatusColor(marketer.status)}>
                       {marketer.status}
                     </Badge>
-                    <Button variant="outline" onClick={handleDownloadCommissionReport}>
-                      <FileText className="h-4 w-4 mr-2" />
-                      Download Report
-                    </Button>
                     <Button>Edit Profile</Button>
                   </div>
                 </div>
