@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,6 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
 import { NewDevelopmentForm } from '@/components/dashboard/forms/NewDevelopmentForm';
 import { NewProjectSiteForm } from '@/components/dashboard/forms/NewProjectSiteForm';
-import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
 import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
 import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
 import { SendNoticeForm } from '@/components/dashboard/notices/SendNoticeForm';
@@ -148,6 +148,8 @@ export function DashboardOverview() {
     console.log(`Creating new ${action}`);
     if (action === 'payment') {
       setShowPaymentModal(true);
+    } else if (action === 'client') {
+      navigate('/company/clients/new');
     } else {
       setActiveModal(action);
     }
