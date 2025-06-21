@@ -65,6 +65,12 @@ const App = () => (
             <Route path="/company/sales-allocations" element={<CompanyDashboard />} />
             <Route path="/company/sales-allocations/new" element={<CompanyDashboard />} />
             
+            {/* Fees Collection Routes */}
+            <Route path="/company/fees" element={<CompanyDashboard />} />
+            <Route path="/company/fees/setup" element={<CompanyDashboard />} />
+            <Route path="/company/fees/collection" element={<CompanyDashboard />} />
+            <Route path="/company/fees/monitoring" element={<CompanyDashboard />} />
+            
             {/* Accounting Routes */}
             <Route path="/company/accounting" element={<CompanyDashboard />} />
             <Route path="/company/accounting/summary" element={<CompanyDashboard />} />

@@ -7,6 +7,7 @@ import { ProjectSites } from '@/components/dashboard/ProjectSites';
 import { Clients } from '@/components/dashboard/Clients';
 import { MarketersCommission } from '@/components/dashboard/MarketersCommission';
 import { SalesAllocation } from '@/components/dashboard/SalesAllocation';
+import { FeesCollection } from '@/components/dashboard/FeesCollection';
 import { Accounting } from '@/components/dashboard/Accounting';
 import { TeamRoles } from '@/components/dashboard/TeamRoles';
 import { Reports } from '@/components/dashboard/Reports';
@@ -34,6 +35,8 @@ const CompanyDashboard = () => {
       return <MarketersCommission />;
     } else if (path.startsWith('/company/sales')) {
       return <SalesAllocation />;
+    } else if (path.startsWith('/company/fees')) {
+      return <FeesCollection />;
     } else if (path.startsWith('/company/accounting')) {
       return <Accounting />;
     } else if (path.startsWith('/company/team')) {

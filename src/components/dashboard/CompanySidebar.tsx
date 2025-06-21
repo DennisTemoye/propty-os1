@@ -26,6 +26,7 @@ import {
   ChevronDown,
   Wrench,
   UserCheck,
+  Receipt,
 } from 'lucide-react';
 
 const sidebarItems = [
@@ -34,6 +35,7 @@ const sidebarItems = [
   { icon: Users, label: 'Clients', path: '/company/clients' },
   { icon: UserCheck, label: 'Marketers', path: '/company/marketers' },
   { icon: Handshake, label: 'Sales & Allocation', path: '/company/sales' },
+  { icon: Receipt, label: 'Fees Collection', path: '/company/fees' },
   { icon: DollarSign, label: 'Accounting', path: '/company/accounting' },
   { icon: Users2, label: 'Team & Roles', path: '/company/team' },
   { icon: BarChart3, label: 'Reports', path: '/company/reports' },
