@@ -1,405 +1,442 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Calculator, 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  Plus,
-  Search,
-  Filter,
-  Download,
-  Eye,
-  Edit,
-  CheckCircle,
-  Clock,
-  CreditCard
-} from 'lucide-react';
-import { ExpenseForm } from './accounting/ExpenseForm';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Plus, TrendingUp, TrendingDown, DollarSign, FileText, Download, Filter, Eye } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { IncomeForm } from './accounting/IncomeForm';
-import { AnalyticsCharts } from './accounting/AnalyticsCharts';
+import { ExpenseForm } from './accounting/ExpenseForm';
 import { PaymentsManagement } from './accounting/PaymentsManagement';
-
-// Mock data
-const mockExpenses = [
-  {
-    id: 1,
-    title: 'Digital Marketing Campaign',
-    vendor: 'AdTech Solutions',
-    date: '2024-01-15',
-    amount: 2500000,
-    category: 'Marketing & Advertising',
-    paymentMethod: 'Bank Transfer',
-    status: 'verified',
-    notes: 'Q1 property marketing campaign'
-  },
-  {
-    id: 2,
-    title: 'Legal Documentation',
-    vendor: 'Lagos Legal Associates',
-    date: '2024-01-10',
-    amount: 850000,
-    category: 'Legal & Registration',
-    paymentMethod: 'Cheque',
-    status: 'pending',
-    notes: 'Property registration fees'
-  }
-];
-
-const mockIncome = [
-  {
-    id: 1,
-    title: 'Oceanview Apartment Sale',
-    client: 'Mrs. Adaora Okafor',
-    project: 'Lekki Gardens Phase II',
-    date: '2024-01-20',
-    amount: 45000000,
-    category: 'Property Sales',
-    paymentMethod: 'Bank Transfer',
-    status: 'received'
-  }
-];
+import { AnalyticsCharts } from './accounting/AnalyticsCharts';
+import { AccountingDownloadActions } from './accounting/AccountingDownloadActions';
 
 export function Accounting() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [showExpenseForm, setShowExpenseForm] = useState(false);
-  const [showIncomeForm, setShowIncomeForm] = useState(false);
-  const [expenses, setExpenses] = useState(mockExpenses);
-  const [income, setIncome] = useState(mockIncome);
-  const [editingExpense, setEditingExpense] = useState(null);
-  const [editingIncome, setEditingIncome] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+  const [dateFilter, setDateFilter] = useState('this-month');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [marketerFilter, setMarketerFilter] = useState('all'); // New filter for marketers
+
+  // Mock data with marketer commissions integrated
+  const mockTransactions = [
+    {
+      id: 1,
+      type: 'income',
+      category: 'Property Sales',
+      description: 'Sale of Block A - Plot 02, Victoria Gardens',
+      amount: 25000000,
+      date: '2024-01-15',
+      status: 'completed',
+      reference: 'PS-001',
+      client: 'John Doe',
+      marketer: 'Jane Smith'
+    },
+    {
+      id: 2,
+      type: 'expense',
+      category: 'Commission',
+      description: 'Sales commission for Jane Smith - John Doe allocation',
+      amount: 625000,
+      date: '2024-01-15',
+      status: 'paid',
+      reference: 'COM-001',
+      client: 'John Doe',
+      marketer: 'Jane Smith'
+    },
+    {
+      id: 3,
+      type: 'income',
+      category: 'Property Sales',
+      description: 'Sale of Block B - Plot 08, Emerald Heights',
+      amount: 30000000,
+      date: '2024-01-10',
+      status: 'completed',
+      reference: 'PS-002',
+      client: 'Sarah Johnson',
+      marketer: 'Mike Davis'
+    },
+    {
+      id: 4,
+      type: 'expense',
+      category: 'Commission',
+      description: 'Sales commission for Mike Davis - Sarah Johnson allocation',
+      amount: 900000,
+      date: '2024-01-10',
+      status: 'pending',
+      reference: 'COM-002',
+      client: 'Sarah Johnson',
+      marketer: 'Mike Davis'
+    },
+    {
+      id: 5,
+      type: 'expense',
+      category: 'Refund',
+      description: 'Partial refund for allocation revocation - Robert Brown',
+      amount: 8800000,
+      date: '2024-01-20',
+      status: 'completed',
+      reference: 'REF-001',
+      client: 'Robert Brown',
+      marketer: 'Jane Smith'
+    }
+  ];
+
+  const marketers = ['Jane Smith', 'Mike Davis', 'Sarah Johnson'];
+
+  // Filter transactions
+  const filteredTransactions = mockTransactions.filter(transaction => {
+    const matchesCategory = categoryFilter === 'all' || transaction.category === categoryFilter;
+    const matchesMarketer = marketerFilter === 'all' || transaction.marketer === marketerFilter;
+    // Add date filtering logic here based on dateFilter
+    return matchesCategory && matchesMarketer;
+  });
 
   // Calculate totals
-  const totalRevenue = income.reduce((sum, item) => sum + item.amount, 0);
-  const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
-  const netProfit = totalRevenue - totalExpenses;
-  const pendingExpenses = expenses.filter(exp => exp.status === 'pending').reduce((sum, item) => sum + item.amount, 0);
+  const totalIncome = filteredTransactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
 
-  const handleAddExpense = (data) => {
-    const newExpense = {
-      id: expenses.length + 1,
-      ...data,
-      date: data.date.toISOString().split('T')[0],
-      amount: parseFloat(data.amount)
-    };
-    setExpenses([...expenses, newExpense]);
-  };
+  const totalExpenses = filteredTransactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
 
-  const handleAddIncome = (data) => {
-    const newIncome = {
-      id: income.length + 1,
-      ...data,
-      date: data.date.toISOString().split('T')[0],
-      amount: parseFloat(data.amount)
-    };
-    setIncome([...income, newIncome]);
-  };
+  const totalCommissions = filteredTransactions
+    .filter(t => t.category === 'Commission')
+    .reduce((sum, t) => sum + t.amount, 0);
 
-  const handleEditExpense = (expense) => {
-    setEditingExpense(expense);
-    setShowExpenseForm(true);
-  };
+  const totalRefunds = filteredTransactions
+    .filter(t => t.category === 'Refund')
+    .reduce((sum, t) => sum + t.amount, 0);
 
-  const handleEditIncome = (incomeItem) => {
-    setEditingIncome(incomeItem);
-    setShowIncomeForm(true);
-  };
+  const netProfit = totalIncome - totalExpenses;
 
-  const toggleExpenseStatus = (id) => {
-    setExpenses(expenses.map(exp => 
-      exp.id === id 
-        ? { ...exp, status: exp.status === 'pending' ? 'verified' : 'pending' }
-        : exp
-    ));
-  };
-
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
       currency: 'NGN',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
     }).format(amount);
   };
 
-  const filteredExpenses = expenses.filter(expense => {
-    const matchesSearch = expense.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         expense.vendor.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || expense.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+      case 'paid':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const kpiData = [
+    {
+      title: 'Total Income',
+      value: formatCurrency(totalIncome),
+      subtitle: 'This period',
+      icon: TrendingUp,
+      color: 'text-emerald-700',
+      bgColor: 'bg-emerald-100',
+      cardBg: 'from-emerald-50 to-emerald-100',
+    },
+    {
+      title: 'Total Expenses',
+      value: formatCurrency(totalExpenses),
+      subtitle: 'This period',
+      icon: TrendingDown,
+      color: 'text-red-700',
+      bgColor: 'bg-red-100',
+      cardBg: 'from-red-50 to-red-100',
+    },
+    {
+      title: 'Commission Paid',
+      value: formatCurrency(totalCommissions),
+      subtitle: 'To marketers',
+      icon: DollarSign,
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-100',
+      cardBg: 'from-purple-50 to-purple-100',
+    },
+    {
+      title: 'Net Profit',
+      value: formatCurrency(netProfit),
+      subtitle: 'After expenses',
+      icon: FileText,
+      color: netProfit >= 0 ? 'text-emerald-700' : 'text-red-700',
+      bgColor: netProfit >= 0 ? 'bg-emerald-100' : 'bg-red-100',
+      cardBg: netProfit >= 0 ? 'from-emerald-50 to-emerald-100' : 'from-red-50 to-red-100',
+    },
+  ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Accounting & Expenses</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Accounting & Finance</h1>
+          <p className="text-gray-600 mt-1">Track income, expenses, and financial performance</p>
+        </div>
         <div className="flex space-x-2">
-          <Button variant="outline" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Export Report
-          </Button>
-          <Button 
-            onClick={() => setShowIncomeForm(true)}
-            className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add Income
-          </Button>
-          <Button 
-            onClick={() => setShowExpenseForm(true)}
-            className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add Expense
-          </Button>
+          <AccountingDownloadActions />
+          <Dialog open={isIncomeModalOpen} onOpenChange={setIsIncomeModalOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-green-600 hover:bg-green-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Income
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Record Income</DialogTitle>
+                <DialogDescription>Add a new income transaction</DialogDescription>
+              </DialogHeader>
+              <IncomeForm onClose={() => setIsIncomeModalOpen(false)} />
+            </DialogContent>
+          </Dialog>
+          <Dialog open={isExpenseModalOpen} onOpenChange={setIsExpenseModalOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Expense
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Record Expense</DialogTitle>
+                <DialogDescription>Add a new expense transaction</DialogDescription>
+              </DialogHeader>
+              <ExpenseForm onClose={() => setIsExpenseModalOpen(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-green-600">{formatCurrency(totalRevenue)}</div>
-                <div className="text-sm text-gray-500">Total Revenue</div>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpiData.map((kpi, index) => (
+          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-600 mb-2">
+                    {kpi.title}
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                  <div className="text-xs text-gray-500">{kpi.subtitle}</div>
+                </div>
+                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
+                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                </div>
               </div>
-              <TrendingUp className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-red-600">{formatCurrency(totalExpenses)}</div>
-                <div className="text-sm text-gray-500">Total Expenses</div>
-              </div>
-              <TrendingDown className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-blue-600">{formatCurrency(netProfit)}</div>
-                <div className="text-sm text-gray-500">Net Profit</div>
-              </div>
-              <Calculator className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-orange-600">{formatCurrency(pendingExpenses)}</div>
-                <div className="text-sm text-gray-500">Pending Approval</div>
-              </div>
-              <Clock className="h-8 w-8 text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="transactions">Transactions</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
-          <TabsTrigger value="income">Income</TabsTrigger>
-          <TabsTrigger value="expenses">Expenses</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Income</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {income.slice(0, 5).map((item) => (
-                    <div key={item.id} className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                      <div>
-                        <div className="font-medium">{item.title}</div>
-                        <div className="text-sm text-gray-500">{item.client}</div>
-                      </div>
-                      <div className="text-green-600 font-bold">{formatCurrency(item.amount)}</div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Expenses</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {expenses.slice(0, 5).map((expense) => (
-                    <div key={expense.id} className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                      <div>
-                        <div className="font-medium">{expense.title}</div>
-                        <div className="text-sm text-gray-500">{expense.category}</div>
-                      </div>
-                      <div className="text-red-600 font-bold">{formatCurrency(expense.amount)}</div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="payments">
-          <PaymentsManagement />
-        </TabsContent>
-
-        <TabsContent value="income" className="space-y-4">
+          {/* Recent Transactions with Enhanced Filtering */}
           <Card>
             <CardHeader>
-              <CardTitle>Income Records</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {income.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">{item.title}</TableCell>
-                      <TableCell>{item.client}</TableCell>
-                      <TableCell>{new Date(item.date).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{item.category}</Badge>
-                      </TableCell>
-                      <TableCell className="text-green-600 font-bold">
-                        {formatCurrency(item.amount)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => handleEditIncome(item)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="expenses" className="space-y-4">
-          {/* Filters */}
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="Search expenses..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
+              <div className="flex items-center justify-between">
+                <CardTitle>Recent Transactions</CardTitle>
+                <div className="flex space-x-2">
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="Property Sales">Property Sales</SelectItem>
+                      <SelectItem value="Commission">Commission</SelectItem>
+                      <SelectItem value="Refund">Refund</SelectItem>
+                      <SelectItem value="Infrastructure Fee">Infrastructure Fee</SelectItem>
+                      <SelectItem value="Service Charge">Service Charge</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={marketerFilter} onValueChange={setMarketerFilter}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Marketer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Marketers</SelectItem>
+                      {marketers.map(marketer => (
+                        <SelectItem key={marketer} value={marketer}>
+                          {marketer}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-full md:w-[200px]">
-                    <SelectValue placeholder="Filter by category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="Marketing & Advertising">Marketing & Advertising</SelectItem>
-                    <SelectItem value="Legal & Registration">Legal & Registration</SelectItem>
-                    <SelectItem value="Office Supplies">Office Supplies</SelectItem>
-                    <SelectItem value="Other Admin Costs">Other Admin Costs</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Expenses Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Expense Records</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Vendor</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Type</TableHead>
                     <TableHead>Category</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Client/Marketer</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredExpenses.map((expense) => (
-                    <TableRow key={expense.id}>
-                      <TableCell className="font-medium">{expense.title}</TableCell>
-                      <TableCell>{expense.vendor}</TableCell>
-                      <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
+                  {filteredTransactions.slice(0, 10).map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell>{transaction.date}</TableCell>
                       <TableCell>
-                        <Badge variant="outline">{expense.category}</Badge>
+                        <Badge variant={transaction.type === 'income' ? 'default' : 'secondary'}>
+                          {transaction.type}
+                        </Badge>
                       </TableCell>
-                      <TableCell className="text-red-600 font-bold">
-                        {formatCurrency(expense.amount)}
+                      <TableCell>{transaction.category}</TableCell>
+                      <TableCell className="max-w-xs truncate">{transaction.description}</TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div>{transaction.client}</div>
+                          {transaction.marketer && (
+                            <div className="text-gray-500">via {transaction.marketer}</div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className={`font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                        {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
                       </TableCell>
                       <TableCell>
-                        <Badge 
-                          variant={expense.status === 'verified' ? 'default' : 'secondary'}
-                          className={expense.status === 'verified' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}
-                        >
-                          {expense.status}
+                        <Badge className={getStatusColor(transaction.status)}>
+                          {transaction.status}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex space-x-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => handleEditExpense(expense)}
-                          >
-                            <Edit className="h-4 w-4" />
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="transactions" className="space-y-6">
+          {/* Enhanced Transactions View with Marketer Filtering */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>All Transactions</CardTitle>
+                <div className="flex space-x-2">
+                  <Select value={dateFilter} onValueChange={setDateFilter}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Date Range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="today">Today</SelectItem>
+                      <SelectItem value="this-week">This Week</SelectItem>
+                      <SelectItem value="this-month">This Month</SelectItem>
+                      <SelectItem value="last-month">Last Month</SelectItem>
+                      <SelectItem value="this-year">This Year</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="Property Sales">Property Sales</SelectItem>
+                      <SelectItem value="Commission">Commission</SelectItem>
+                      <SelectItem value="Refund">Refund</SelectItem>
+                      <SelectItem value="Infrastructure Fee">Infrastructure Fee</SelectItem>
+                      <SelectItem value="Service Charge">Service Charge</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={marketerFilter} onValueChange={setMarketerFilter}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Marketer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Marketers</SelectItem>
+                      {marketers.map(marketer => (
+                        <SelectItem key={marketer} value={marketer}>
+                          {marketer}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline">
+                    <Download className="h-4 w-4 mr-2" />
+                    Export
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Reference</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Marketer</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTransactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell className="font-mono text-sm">{transaction.reference}</TableCell>
+                      <TableCell>{transaction.date}</TableCell>
+                      <TableCell>
+                        <Badge variant={transaction.type === 'income' ? 'default' : 'secondary'}>
+                          {transaction.type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{transaction.category}</TableCell>
+                      <TableCell className="max-w-xs truncate">{transaction.description}</TableCell>
+                      <TableCell>{transaction.client}</TableCell>
+                      <TableCell>{transaction.marketer || '-'}</TableCell>
+                      <TableCell className={`font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                        {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(transaction.status)}>
+                          {transaction.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-1">
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => toggleExpenseStatus(expense.id)}
-                          >
-                            {expense.status === 'verified' ? <Clock className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+                          <Button variant="ghost" size="sm">
+                            <Download className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>
@@ -411,31 +448,14 @@ export function Accounting() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="analytics">
+        <TabsContent value="payments" className="space-y-6">
+          <PaymentsManagement />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
           <AnalyticsCharts />
         </TabsContent>
       </Tabs>
-
-      {/* Forms */}
-      <ExpenseForm
-        isOpen={showExpenseForm}
-        onClose={() => {
-          setShowExpenseForm(false);
-          setEditingExpense(null);
-        }}
-        onSubmit={handleAddExpense}
-        expense={editingExpense}
-      />
-
-      <IncomeForm
-        isOpen={showIncomeForm}
-        onClose={() => {
-          setShowIncomeForm(false);
-          setEditingIncome(null);
-        }}
-        onSubmit={handleAddIncome}
-        income={editingIncome}
-      />
     </div>
   );
 }

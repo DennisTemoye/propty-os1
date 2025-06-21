@@ -32,7 +32,7 @@ const CompanyDashboard = () => {
       return <ProjectSites />;
     } else if (path.startsWith('/company/clients')) {
       return <Clients />;
-    } else if (path.startsWith('/company/marketers')) {
+    } else if (path.startsWith('/company/marketers') && !path.includes('/company/marketers/')) {
       return <MarketersCommission />;
     } else if (path.startsWith('/company/sales')) {
       return <SalesAllocation />;

@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, TrendingUp, Users, DollarSign, CheckCircle, Clock, Eye, Download, Filter, Edit, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { NewMarketerForm } from './forms/NewMarketerForm';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const mockMarketers = [
   {
@@ -22,6 +22,7 @@ const mockMarketers = [
     leads: 45,
     conversions: 12,
     sales: 8,
+    totalSalesVolume: '₦200M', // New field
     commission: '₦2.4M',
     commissionPaid: '₦1.8M',
     commissionPending: '₦600K',
@@ -38,6 +39,7 @@ const mockMarketers = [
     leads: 38,
     conversions: 15,
     sales: 10,
+    totalSalesVolume: '₦310M', // New field
     commission: '₦3.1M',
     commissionPaid: '₦2.5M',
     commissionPending: '₦600K',
@@ -54,6 +56,7 @@ const mockMarketers = [
     leads: 29,
     conversions: 8,
     sales: 6,
+    totalSalesVolume: '₦150M', // New field
     commission: '₦1.8M',
     commissionPaid: '₦1.8M',
     commissionPending: '₦0',
@@ -128,6 +131,7 @@ export function MarketersCommission() {
   const [marketerSearchTerm, setMarketerSearchTerm] = useState('');
   
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Filter commissions based on filters
   const filteredCommissions = commissions.filter(commission => {
@@ -304,12 +308,7 @@ export function MarketersCommission() {
   };
 
   const handleViewDetails = (marketerId: number) => {
-    const marketer = marketers.find(m => m.id === marketerId);
-    setSelectedMarketer(marketer);
-    toast({
-      title: "View Details",
-      description: `Viewing details for ${marketer?.name}`,
-    });
+    navigate(`/company/marketers/${marketerId}`);
   };
 
   const handleExportReport = (marketerId?: number) => {
@@ -492,6 +491,10 @@ export function MarketersCommission() {
                     </div>
                     
                     <div className="pt-3 border-t space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Total Sales Volume:</span>
+                        <span className="font-bold text-purple-600">{marketer.totalSalesVolume}</span>
+                      </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Total Commission:</span>
                         <span className="font-bold text-purple-600">{marketer.commission}</span>
