@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, User, Building, DollarSign, MessageSquare, Calendar, TrendingUp, Users, Target, Clock } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Plus, User, Building, DollarSign, MessageSquare, Calendar, TrendingUp, Users, Target, Clock, LayoutGrid, List, Table as TableIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -186,6 +186,7 @@ export function CRMPipelinesPage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedTeamMember, setSelectedTeamMember] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewType, setViewType] = useState<'kanban' | 'table' | 'list'>('kanban');
   const form = useForm();
 
   const handleDragStart = (e: React.DragEvent, lead: Lead) => {
@@ -291,24 +292,216 @@ export function CRMPipelinesPage() {
   };
 
   const kpis = calculateKPIs();
-
   const teamMembers = ['Sarah Wilson', 'Mike Johnson', 'David Brown'];
+
+  const renderKanbanView = () => (
+    <div className="flex gap-4 overflow-x-auto pb-4">
+      {stages.map((stage) => (
+        <div
+          key={stage.id}
+          className="bg-gray-50 rounded-lg p-4 min-h-[600px] w-80 flex-shrink-0"
+          onDragOver={handleDragOver}
+          onDrop={(e) => handleDrop(e, stage.id)}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-gray-900">{stage.name}</h3>
+            <Badge variant="outline">{getLeadsByStage(stage.id).length}</Badge>
+          </div>
+
+          <div className="space-y-3">
+            {getLeadsByStage(stage.id).map((lead) => (
+              <Card
+                key={lead.id}
+                className="cursor-move hover:shadow-md transition-shadow"
+                draggable
+                onDragStart={(e) => handleDragStart(e, lead)}
+                onClick={() => setSelectedLead(lead)}
+              >
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-medium text-sm leading-tight">{lead.clientName}</h4>
+                      <Badge 
+                        className={`text-xs flex-shrink-0 ${
+                          lead.priority === 'high' ? 'bg-red-100 text-red-800' :
+                          lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`} 
+                        variant="secondary"
+                      >
+                        {lead.priority}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-gray-600">{lead.development}</p>
+                    <div className="space-y-2">
+                      <Badge className={`${stage.color} text-xs w-fit`} variant="secondary">
+                        {formatCurrency(lead.dealValue)}
+                      </Badge>
+                      <div className="text-xs text-gray-500">{lead.source}</div>
+                    </div>
+                    <div className="text-xs text-gray-500 border-t pt-2 space-y-1">
+                      <div>Assigned: {lead.assignedTo}</div>
+                      <div>Last: {new Date(lead.lastActivity).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderTableView = () => (
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Client</TableHead>
+              <TableHead>Development</TableHead>
+              <TableHead>Stage</TableHead>
+              <TableHead>Deal Value</TableHead>
+              <TableHead>Priority</TableHead>
+              <TableHead>Assigned To</TableHead>
+              <TableHead>Source</TableHead>
+              <TableHead>Last Activity</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {getFilteredLeads().map((lead) => (
+              <TableRow 
+                key={lead.id} 
+                className="cursor-pointer hover:bg-gray-50"
+                onClick={() => setSelectedLead(lead)}
+              >
+                <TableCell className="font-medium">{lead.clientName}</TableCell>
+                <TableCell>{lead.development}</TableCell>
+                <TableCell>
+                  <Badge className={stages.find(s => s.id === lead.stage)?.color} variant="secondary">
+                    {stages.find(s => s.id === lead.stage)?.name}
+                  </Badge>
+                </TableCell>
+                <TableCell>{formatCurrency(lead.dealValue)}</TableCell>
+                <TableCell>
+                  <Badge 
+                    className={`${
+                      lead.priority === 'high' ? 'bg-red-100 text-red-800' :
+                      lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`} 
+                    variant="secondary"
+                  >
+                    {lead.priority}
+                  </Badge>
+                </TableCell>
+                <TableCell>{lead.assignedTo}</TableCell>
+                <TableCell>{lead.source}</TableCell>
+                <TableCell>{new Date(lead.lastActivity).toLocaleDateString()}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+
+  const renderListView = () => (
+    <div className="space-y-4">
+      {getFilteredLeads().map((lead) => (
+        <Card 
+          key={lead.id} 
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => setSelectedLead(lead)}
+        >
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <h4 className="font-semibold">{lead.clientName}</h4>
+                  <Badge 
+                    className={`${
+                      lead.priority === 'high' ? 'bg-red-100 text-red-800' :
+                      lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`} 
+                    variant="secondary"
+                  >
+                    {lead.priority}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-600">{lead.development}</p>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500 mb-1">Stage</div>
+                <Badge className={stages.find(s => s.id === lead.stage)?.color} variant="secondary">
+                  {stages.find(s => s.id === lead.stage)?.name}
+                </Badge>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500 mb-1">Deal Value</div>
+                <div className="font-semibold">{formatCurrency(lead.dealValue)}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500 mb-1">Assigned To</div>
+                <div className="text-sm">{lead.assignedTo}</div>
+                <div className="text-xs text-gray-500">Source: {lead.source}</div>
+                <div className="text-xs text-gray-500">Last: {new Date(lead.lastActivity).toLocaleDateString()}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">CRM Pipelines</h1>
           <p className="text-gray-600 mt-1">Manage leads across stages: Contacted → Inspection → Offer → Payment → Closed</p>
         </div>
-        <Button onClick={() => setIsAddLeadOpen(true)} className="bg-purple-600 hover:bg-purple-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Lead
-        </Button>
+        <div className="flex gap-2">
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <Button
+              variant={viewType === 'kanban' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewType('kanban')}
+              className="px-3"
+            >
+              <LayoutGrid className="h-4 w-4 mr-1" />
+              Kanban
+            </Button>
+            <Button
+              variant={viewType === 'table' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewType('table')}
+              className="px-3"
+            >
+              <TableIcon className="h-4 w-4 mr-1" />
+              Table
+            </Button>
+            <Button
+              variant={viewType === 'list' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewType('list')}
+              className="px-3"
+            >
+              <List className="h-4 w-4 mr-1" />
+              List
+            </Button>
+          </div>
+          <Button onClick={() => setIsAddLeadOpen(true)} className="bg-purple-600 hover:bg-purple-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Lead
+          </Button>
+        </div>
       </div>
 
       {/* KPI Section */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -385,16 +578,16 @@ export function CRMPipelinesPage() {
       {/* Filter Tabs and Search */}
       <Card>
         <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <Tabs value={activeFilter} onValueChange={setActiveFilter} className="w-full md:w-auto">
-              <TabsList className="grid w-full md:w-auto grid-cols-3">
+          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+            <Tabs value={activeFilter} onValueChange={setActiveFilter} className="w-full lg:w-auto">
+              <TabsList className="grid w-full lg:w-auto grid-cols-3">
                 <TabsTrigger value="all">All Leads</TabsTrigger>
                 <TabsTrigger value="high-priority">High Priority</TabsTrigger>
                 <TabsTrigger value="recent">Recent Activity</TabsTrigger>
               </TabsList>
             </Tabs>
-            <div className="flex gap-4 w-full md:w-auto">
-              <div className="w-full md:w-48">
+            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+              <div className="w-full sm:w-48">
                 <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by team member" />
@@ -407,7 +600,7 @@ export function CRMPipelinesPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full md:w-64">
+              <div className="w-full sm:w-64">
                 <Input
                   placeholder="Search leads..."
                   value={searchQuery}
@@ -420,65 +613,10 @@ export function CRMPipelinesPage() {
         </CardContent>
       </Card>
 
-      {/* Pipeline Stages */}
-      <div className="overflow-x-auto">
-        <div className="flex gap-4 lg:grid lg:grid-cols-5 lg:gap-6 min-w-max lg:min-w-0">
-          {stages.map((stage) => (
-            <div
-              key={stage.id}
-              className="bg-gray-50 rounded-lg p-3 lg:p-4 min-h-[600px] w-72 lg:w-auto flex-shrink-0"
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, stage.id)}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900 text-sm lg:text-base">{stage.name}</h3>
-                <Badge variant="outline">{getLeadsByStage(stage.id).length}</Badge>
-              </div>
-
-              <div className="space-y-3">
-                {getLeadsByStage(stage.id).map((lead) => (
-                  <Card
-                    key={lead.id}
-                    className="cursor-move hover:shadow-md transition-shadow"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, lead)}
-                    onClick={() => setSelectedLead(lead)}
-                  >
-                    <CardContent className="p-3 lg:p-4">
-                      <div className="space-y-2">
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-medium text-sm leading-tight">{lead.clientName}</h4>
-                          <Badge 
-                            className={`text-xs flex-shrink-0 ${
-                              lead.priority === 'high' ? 'bg-red-100 text-red-800' :
-                              lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`} 
-                            variant="secondary"
-                          >
-                            {lead.priority}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-gray-600 truncate">{lead.development}</p>
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <Badge className={`${stage.color} text-xs w-fit`} variant="secondary">
-                            {formatCurrency(lead.dealValue)}
-                          </Badge>
-                          <div className="text-xs text-gray-500 truncate">{lead.source}</div>
-                        </div>
-                        <div className="text-xs text-gray-500 border-t pt-2 space-y-1">
-                          <div className="truncate">Assigned: {lead.assignedTo}</div>
-                          <div>Last: {new Date(lead.lastActivity).toLocaleDateString()}</div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Pipeline Views */}
+      {viewType === 'kanban' && renderKanbanView()}
+      {viewType === 'table' && renderTableView()}
+      {viewType === 'list' && renderListView()}
 
       {/* Add Lead Modal */}
       <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
