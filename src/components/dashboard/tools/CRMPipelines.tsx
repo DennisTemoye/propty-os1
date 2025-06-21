@@ -421,61 +421,63 @@ export function CRMPipelinesPage() {
       </Card>
 
       {/* Pipeline Stages */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {stages.map((stage) => (
-          <div
-            key={stage.id}
-            className="bg-gray-50 rounded-lg p-4 min-h-[600px]"
-            onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, stage.id)}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900">{stage.name}</h3>
-              <Badge variant="outline">{getLeadsByStage(stage.id).length}</Badge>
-            </div>
+      <div className="overflow-x-auto">
+        <div className="flex gap-4 lg:grid lg:grid-cols-5 lg:gap-6 min-w-max lg:min-w-0">
+          {stages.map((stage) => (
+            <div
+              key={stage.id}
+              className="bg-gray-50 rounded-lg p-3 lg:p-4 min-h-[600px] w-72 lg:w-auto flex-shrink-0"
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, stage.id)}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900 text-sm lg:text-base">{stage.name}</h3>
+                <Badge variant="outline">{getLeadsByStage(stage.id).length}</Badge>
+              </div>
 
-            <div className="space-y-3">
-              {getLeadsByStage(stage.id).map((lead) => (
-                <Card
-                  key={lead.id}
-                  className="cursor-move hover:shadow-md transition-shadow"
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, lead)}
-                  onClick={() => setSelectedLead(lead)}
-                >
-                  <CardContent className="p-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium text-sm">{lead.clientName}</h4>
-                        <Badge 
-                          className={`text-xs ${
-                            lead.priority === 'high' ? 'bg-red-100 text-red-800' :
-                            lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`} 
-                          variant="secondary"
-                        >
-                          {lead.priority}
-                        </Badge>
+              <div className="space-y-3">
+                {getLeadsByStage(stage.id).map((lead) => (
+                  <Card
+                    key={lead.id}
+                    className="cursor-move hover:shadow-md transition-shadow"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, lead)}
+                    onClick={() => setSelectedLead(lead)}
+                  >
+                    <CardContent className="p-3 lg:p-4">
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className="font-medium text-sm leading-tight">{lead.clientName}</h4>
+                          <Badge 
+                            className={`text-xs flex-shrink-0 ${
+                              lead.priority === 'high' ? 'bg-red-100 text-red-800' :
+                              lead.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`} 
+                            variant="secondary"
+                          >
+                            {lead.priority}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-gray-600 truncate">{lead.development}</p>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                          <Badge className={`${stage.color} text-xs w-fit`} variant="secondary">
+                            {formatCurrency(lead.dealValue)}
+                          </Badge>
+                          <div className="text-xs text-gray-500 truncate">{lead.source}</div>
+                        </div>
+                        <div className="text-xs text-gray-500 border-t pt-2 space-y-1">
+                          <div className="truncate">Assigned: {lead.assignedTo}</div>
+                          <div>Last: {new Date(lead.lastActivity).toLocaleDateString()}</div>
+                        </div>
                       </div>
-                      <p className="text-xs text-gray-600">{lead.development}</p>
-                      <div className="flex items-center justify-between">
-                        <Badge className={stage.color} variant="secondary">
-                          {formatCurrency(lead.dealValue)}
-                        </Badge>
-                        <div className="text-xs text-gray-500">{lead.source}</div>
-                      </div>
-                      <div className="text-xs text-gray-500 border-t pt-2">
-                        <div>Assigned: {lead.assignedTo}</div>
-                        <div>Last activity: {new Date(lead.lastActivity).toLocaleDateString()}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Add Lead Modal */}
