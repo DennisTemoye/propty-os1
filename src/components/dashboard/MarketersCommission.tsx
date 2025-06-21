@@ -275,6 +275,7 @@ export function MarketersCommission() {
       leads: 0,
       conversions: 0,
       sales: 0,
+      totalSalesVolume: '₦0', // Add missing totalSalesVolume property
       commission: '₦0',
       commissionPaid: '₦0',
       commissionPending: '₦0',
