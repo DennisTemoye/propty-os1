@@ -142,7 +142,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
         <Button type="submit" className="flex-1">
           Record Expense
         </Button>
-        <Button type="button" variant="outline" onClick={onClose">
+        <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>
       </div>
