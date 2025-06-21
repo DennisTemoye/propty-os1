@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,29 +10,30 @@ import { toast } from 'sonner';
 
 interface NewProjectFormProps {
   onClose: () => void;
+  initialData?: any;
 }
 
-export function NewProjectForm({ onClose }: NewProjectFormProps) {
+export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    location: '',
-    city: '',
-    state: '',
-    category: '',
-    type: '',
-    developmentStage: '',
-    totalBlocks: '',
-    totalUnits: '',
-    budget: '',
-    startDate: '',
-    expectedCompletion: '',
-    projectManager: '',
-    tags: '',
+    name: initialData?.name || '',
+    description: initialData?.description || '',
+    location: initialData?.location || '',
+    city: initialData?.city || '',
+    state: initialData?.state || '',
+    category: initialData?.category || '',
+    type: initialData?.type || '',
+    developmentStage: initialData?.developmentStage || '',
+    totalBlocks: initialData?.totalBlocks?.toString() || '',
+    totalUnits: initialData?.totalUnits?.toString() || '',
+    budget: initialData?.budget || '',
+    startDate: initialData?.startDate || '',
+    expectedCompletion: initialData?.expectedCompletion || '',
+    projectManager: initialData?.projectManager || '',
+    tags: initialData?.tags?.join(', ') || '',
     image: null as File | null
   });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(initialData?.image || null);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -71,8 +71,8 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
     }
 
     // Simulate API call
-    console.log('Creating project with data:', formData);
-    toast.success(`Project "${formData.name}" created successfully!`);
+    console.log(initialData ? 'Updating project with data:' : 'Creating project with data:', formData);
+    toast.success(`Project "${formData.name}" ${initialData ? 'updated' : 'created'} successfully!`);
     onClose();
   };
 
@@ -367,7 +367,7 @@ export function NewProjectForm({ onClose }: NewProjectFormProps) {
           Cancel
         </Button>
         <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
-          Create Project
+          {initialData ? 'Update Project' : 'Create Project'}
         </Button>
       </div>
     </form>

@@ -14,7 +14,8 @@ import { User, Building, ArrowRight, Calendar, FileText } from 'lucide-react';
 interface ReallocationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onReallocation: (data: any) => void;
+  allocation?: any;
+  onReallocate: (data: any) => void;
 }
 
 const mockAllocatedUnits = [
@@ -67,9 +68,9 @@ const mockMarketers = [
   { id: 'marketer4', name: 'Tom Wilson' }
 ];
 
-export function ReallocationModal({ isOpen, onClose, onReallocation }: ReallocationModalProps) {
-  const [selectedUnit, setSelectedUnit] = useState<any>(null);
-  const [step, setStep] = useState<'select' | 'form' | 'confirm'>('select');
+export function ReallocationModal({ isOpen, onClose, allocation, onReallocate }: ReallocationModalProps) {
+  const [selectedUnit, setSelectedUnit] = useState<any>(allocation || null);
+  const [step, setStep] = useState<'select' | 'form' | 'confirm'>(allocation ? 'form' : 'select');
   
   const form = useForm({
     defaultValues: {
@@ -100,7 +101,7 @@ export function ReallocationModal({ isOpen, onClose, onReallocation }: Reallocat
     
     setStep('confirm');
     setTimeout(() => {
-      onReallocation(reallocationData);
+      onReallocate(reallocationData);
       toast.success('Unit successfully reallocated!');
       handleClose();
     }, 1500);
@@ -108,13 +109,13 @@ export function ReallocationModal({ isOpen, onClose, onReallocation }: Reallocat
 
   const handleClose = () => {
     setSelectedUnit(null);
-    setStep('select');
+    setStep(allocation ? 'form' : 'select');
     form.reset();
     onClose();
   };
 
   const handleBack = () => {
-    if (step === 'form') {
+    if (step === 'form' && !allocation) {
       setStep('select');
       setSelectedUnit(null);
     }
@@ -133,7 +134,7 @@ export function ReallocationModal({ isOpen, onClose, onReallocation }: Reallocat
           </DialogDescription>
         </DialogHeader>
 
-        {step === 'select' && (
+        {step === 'select' && !allocation && (
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Select Unit to Re-allocate</h3>
             <div className="space-y-3">
@@ -175,9 +176,11 @@ export function ReallocationModal({ isOpen, onClose, onReallocation }: Reallocat
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Re-allocation Details</h3>
-              <Button variant="outline" onClick={handleBack}>
-                Back to Selection
-              </Button>
+              {!allocation && (
+                <Button variant="outline" onClick={handleBack}>
+                  Back to Selection
+                </Button>
+              )}
             </div>
 
             {/* Unit Summary */}
