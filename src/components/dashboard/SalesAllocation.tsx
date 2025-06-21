@@ -4,17 +4,66 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Handshake, DollarSign, FileText, Users, TrendingUp, ArrowRight, History } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Handshake, DollarSign, FileText, Users, TrendingUp, ArrowRight, History, Edit, Trash2, RefreshCw } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { NewAllocationForm } from './forms/NewAllocationForm';
 import { ReallocationModal } from './forms/ReallocationModal';
+import { UpdateAllocationStatusModal } from './forms/UpdateAllocationStatusModal';
+import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
 import { ReallocationHistory } from './ReallocationHistory';
+
+const statusColors = {
+  'interested': 'bg-blue-100 text-blue-800',
+  'offered': 'bg-orange-100 text-orange-800',
+  'allocated': 'bg-green-100 text-green-800',
+  'revoked': 'bg-red-100 text-red-800'
+};
+
+// Mock data with status field
+const mockAllocations = [
+  {
+    id: 1,
+    clientName: 'John Doe',
+    unit: 'Block A - Plot 02',
+    project: 'Victoria Gardens',
+    amount: '₦25,000,000',
+    status: 'allocated',
+    date: '2024-01-15',
+    lastUpdated: '2024-01-20'
+  },
+  {
+    id: 2,
+    clientName: 'Jane Smith',
+    unit: 'Block B - Plot 08',
+    project: 'Golden View Towers',
+    amount: '₦30,000,000',
+    status: 'offered',
+    date: '2024-01-10',
+    lastUpdated: '2024-01-18'
+  },
+  {
+    id: 3,
+    clientName: 'Mike Johnson',
+    unit: 'Block C - Plot 15',
+    project: 'Emerald Heights',
+    amount: '₦22,000,000',
+    status: 'interested',
+    date: '2024-01-20',
+    lastUpdated: '2024-01-22'
+  }
+];
 
 export function SalesAllocation() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNewAllocationForm, setShowNewAllocationForm] = useState(false);
   const [showReallocationModal, setShowReallocationModal] = useState(false);
+  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
+  const [showRevokeModal, setShowRevokeModal] = useState(false);
+  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
+  const [statusFilter, setStatusFilter] = useState('all');
   const [activeTab, setActiveTab] = useState('overview');
 
   // Check if we're on the /new route
@@ -31,9 +80,32 @@ export function SalesAllocation() {
 
   const handleReallocation = (data: any) => {
     console.log('Processing reallocation:', data);
-    // Here you would typically update your backend/state management
-    // For now, we'll just log the data
   };
+
+  const handleUpdateStatus = (allocation: any) => {
+    setSelectedAllocation(allocation);
+    setShowUpdateStatusModal(true);
+  };
+
+  const handleRevokeAllocation = (allocation: any) => {
+    setSelectedAllocation(allocation);
+    setShowRevokeModal(true);
+  };
+
+  const handleStatusUpdate = (data: any) => {
+    console.log('Status updated:', data);
+    // Here you would update your state management/backend
+  };
+
+  const handleRevocation = (data: any) => {
+    console.log('Allocation revoked:', data);
+    // Here you would update your state management/backend
+  };
+
+  // Filter allocations by status
+  const filteredAllocations = mockAllocations.filter(allocation => 
+    statusFilter === 'all' || allocation.status === statusFilter
+  );
 
   if (showNewAllocationForm) {
     return (
@@ -84,14 +156,14 @@ export function SalesAllocation() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* Stats Cards with status breakdown */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-blue-600">45</div>
-                <div className="text-sm text-gray-500">Active Leads</div>
+                <div className="text-2xl font-bold text-blue-600">12</div>
+                <div className="text-sm text-gray-500">Interested</div>
               </div>
               <TrendingUp className="h-8 w-8 text-blue-600" />
             </div>
@@ -102,8 +174,20 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
+                <div className="text-2xl font-bold text-orange-600">8</div>
+                <div className="text-sm text-gray-500">Offered</div>
+              </div>
+              <FileText className="h-8 w-8 text-orange-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
                 <div className="text-2xl font-bold text-green-600">23</div>
-                <div className="text-sm text-gray-500">Units Allocated</div>
+                <div className="text-sm text-gray-500">Allocated</div>
               </div>
               <Handshake className="h-8 w-8 text-green-600" />
             </div>
@@ -114,10 +198,10 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-orange-600">₦2.4B</div>
-                <div className="text-sm text-gray-500">Total Sales</div>
+                <div className="text-2xl font-bold text-red-600">2</div>
+                <div className="text-sm text-gray-500">Revoked</div>
               </div>
-              <DollarSign className="h-8 w-8 text-orange-600" />
+              <ArrowRight className="h-8 w-8 text-red-600" />
             </div>
           </CardContent>
         </Card>
@@ -126,10 +210,10 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-purple-600">5</div>
-                <div className="text-sm text-gray-500">Reallocations</div>
+                <div className="text-2xl font-bold text-purple-600">₦2.4B</div>
+                <div className="text-sm text-gray-500">Total Value</div>
               </div>
-              <ArrowRight className="h-8 w-8 text-purple-600" />
+              <DollarSign className="h-8 w-8 text-purple-600" />
             </div>
           </CardContent>
         </Card>
@@ -139,7 +223,7 @@ export function SalesAllocation() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="allocations">Active Allocations</TabsTrigger>
+          <TabsTrigger value="allocations">Current Allocations</TabsTrigger>
           <TabsTrigger value="history">Reallocation History</TabsTrigger>
         </TabsList>
 
@@ -150,15 +234,20 @@ export function SalesAllocation() {
               <CardTitle>Sales Pipeline</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                {['Contacted', 'Inspection', 'Offer', 'Payment', 'Closed'].map((stage, index) => (
-                  <div key={stage} className="text-center">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {[
+                  { stage: 'Interested', count: 12, color: 'blue' },
+                  { stage: 'Offered', count: 8, color: 'orange' },
+                  { stage: 'Allocated', count: 23, color: 'green' },
+                  { stage: 'Revoked', count: 2, color: 'red' }
+                ].map((stage, index) => (
+                  <div key={stage.stage} className="text-center">
                     <div className="bg-gray-100 rounded-lg p-4 mb-2">
-                      <div className="text-2xl font-bold text-gray-800">{12 - index * 2}</div>
-                      <div className="text-sm text-gray-600">{stage}</div>
+                      <div className={`text-2xl font-bold text-${stage.color}-600`}>{stage.count}</div>
+                      <div className="text-sm text-gray-600">{stage.stage}</div>
                     </div>
                     <Badge variant="outline" className="text-xs">
-                      {Math.round((12 - index * 2) / 45 * 100)}% of total
+                      {Math.round((stage.count / 45) * 100)}% of total
                     </Badge>
                   </div>
                 ))}
@@ -210,20 +299,75 @@ export function SalesAllocation() {
         <TabsContent value="allocations" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Active Unit Allocations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* This would typically be populated from your data source */}
-                <div className="text-center py-8 text-gray-500">
-                  <Handshake className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Allocation Management</h3>
-                  <p className="text-gray-500 mb-6">View and manage all active unit allocations here.</p>
-                  <Button onClick={handleNewAllocation} className="bg-purple-600 hover:bg-purple-700">
-                    Create New Allocation
-                  </Button>
+              <div className="flex items-center justify-between">
+                <CardTitle>Current Allocations</CardTitle>
+                <div className="flex items-center space-x-2">
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="interested">Interested</SelectItem>
+                      <SelectItem value="offered">Offered</SelectItem>
+                      <SelectItem value="allocated">Allocated</SelectItem>
+                      <SelectItem value="revoked">Revoked</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Unit</TableHead>
+                    <TableHead>Project</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Last Updated</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredAllocations.map((allocation) => (
+                    <TableRow key={allocation.id}>
+                      <TableCell className="font-medium">{allocation.clientName}</TableCell>
+                      <TableCell>{allocation.unit}</TableCell>
+                      <TableCell>{allocation.project}</TableCell>
+                      <TableCell className="font-medium text-purple-600">{allocation.amount}</TableCell>
+                      <TableCell>
+                        <Badge className={statusColors[allocation.status as keyof typeof statusColors]}>
+                          {allocation.status.charAt(0).toUpperCase() + allocation.status.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-500">{allocation.lastUpdated}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleUpdateStatus(allocation)}
+                          >
+                            <RefreshCw className="h-3 w-3" />
+                          </Button>
+                          {allocation.status === 'allocated' && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRevokeAllocation(allocation)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
@@ -233,11 +377,25 @@ export function SalesAllocation() {
         </TabsContent>
       </Tabs>
 
-      {/* Reallocation Modal */}
+      {/* Modals */}
       <ReallocationModal 
         isOpen={showReallocationModal}
         onClose={() => setShowReallocationModal(false)}
         onReallocation={handleReallocation}
+      />
+
+      <UpdateAllocationStatusModal
+        isOpen={showUpdateStatusModal}
+        onClose={() => setShowUpdateStatusModal(false)}
+        allocation={selectedAllocation}
+        onStatusUpdate={handleStatusUpdate}
+      />
+
+      <RevokeAllocationModal
+        isOpen={showRevokeModal}
+        onClose={() => setShowRevokeModal(false)}
+        allocation={selectedAllocation}
+        onRevoke={handleRevocation}
       />
     </div>
   );
