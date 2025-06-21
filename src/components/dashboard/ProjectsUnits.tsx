@@ -5,13 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, MapPin, FileText, Building, Home, DollarSign, Search, Edit, UserPlus, Trash2 } from 'lucide-react';
+import { Plus, MapPin, Building, Home, DollarSign, Search, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NewProjectForm } from './forms/NewProjectForm';
-import { ProjectDocumentsView } from './projects/ProjectDocumentsView';
-import { toast } from 'sonner';
 
 const mockProjects = [
   {
@@ -207,8 +203,6 @@ const mockProjects = [
 export function ProjectsUnits() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
-  const [isDocumentsModalOpen, setIsDocumentsModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
   const navigate = useNavigate();
@@ -246,25 +240,9 @@ export function ProjectsUnits() {
     navigate(`/company/projects/${projectId}`);
   };
 
-  const handleEditProject = (e: React.MouseEvent, projectId: number) => {
+  const handleViewDetails = (e: React.MouseEvent, projectId: number) => {
     e.stopPropagation();
-    navigate(`/company/projects/${projectId}/settings`);
-  };
-
-  const handleAllocateUnit = (e: React.MouseEvent, projectId: number) => {
-    e.stopPropagation();
-    navigate(`/company/sales-allocation?project=${projectId}`);
-  };
-
-  const handleDeleteProject = (e: React.MouseEvent, project: any) => {
-    e.stopPropagation();
-    toast.success(`Project "${project.name}" has been deleted successfully.`);
-  };
-
-  const handleViewDocuments = (e: React.MouseEvent, project: any) => {
-    e.stopPropagation();
-    setSelectedProject(project);
-    setIsDocumentsModalOpen(true);
+    navigate(`/company/projects/${projectId}`);
   };
 
   const developmentStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover', 'Completed'];
@@ -477,58 +455,6 @@ export function ProjectsUnits() {
                       style={{ width: `${((project.allocatedUnits || project.soldUnits) / project.totalUnits) * 100}%` }}
                     ></div>
                   </div>
-
-                  {/* CTA Buttons */}
-                  <div className="flex gap-2 pt-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="flex-1"
-                      onClick={(e) => handleEditProject(e, project.id)}
-                    >
-                      <Edit className="h-3 w-3 mr-1" />
-                      Edit
-                    </Button>
-                    
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="flex-1"
-                      onClick={(e) => handleAllocateUnit(e, project.id)}
-                    >
-                      <UserPlus className="h-3 w-3 mr-1" />
-                      Allocate
-                    </Button>
-                    
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction 
-                            className="bg-red-600 hover:bg-red-700"
-                            onClick={(e) => handleDeleteProject(e, project)}
-                          >
-                            Delete Project
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -576,55 +502,20 @@ export function ProjectsUnits() {
                         <div className="text-xs text-gray-500 space-y-0.5">
                           <div>Allocated: {project.allocatedUnits || project.soldUnits}</div>
                           <div>Available: {project.availableUnits}</div>
-                          <div>Interested: {project.interestedUnits || 0}</div>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium text-purple-600">
-                      {project.revenue}
-                    </TableCell>
+                    <TableCell className="font-medium">{project.revenue}</TableCell>
                     <TableCell>
-                      <div className="flex space-x-2">
-                        <Button 
-                          variant="outline" 
-                          onClick={(e) => handleEditProject(e, project.id)}
-                        >
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          onClick={(e) => handleAllocateUnit(e, project.id)}
-                        >
-                          <UserPlus className="h-3 w-3" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
-                                className="bg-red-600 hover:bg-red-700"
-                                onClick={(e) => handleDeleteProject(e, project)}
-                              >
-                                Delete Project
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => handleViewDetails(e, project.id)}
+                        className="h-8 px-3"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        View Details
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -635,30 +526,18 @@ export function ProjectsUnits() {
       )}
 
       {/* New Project Modal */}
-      <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create New Project</DialogTitle>
-            <DialogDescription>
-              Add a new real estate project to your portfolio
-            </DialogDescription>
-          </DialogHeader>
-          <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
-        </DialogContent>
-      </Dialog>
-
-      {/* Documents Modal */}
-      <Dialog open={isDocumentsModalOpen} onOpenChange={setIsDocumentsModalOpen}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Project Documents - {selectedProject?.name}</DialogTitle>
-            <DialogDescription>
-              View and manage documents for this project
-            </DialogDescription>
-          </DialogHeader>
-          <ProjectDocumentsView project={selectedProject} />
-        </DialogContent>
-      </Dialog>
+      {isNewProjectOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto">
+            <div className="p-6 border-b">
+              <h2 className="text-2xl font-bold">Create New Project</h2>
+            </div>
+            <div className="p-6">
+              <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

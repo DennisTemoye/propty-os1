@@ -1,10 +1,12 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Edit, Settings, MapPin, Calendar, User, UserPlus, Trash2, Building } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ArrowLeft, Edit, MapPin, User, UserPlus, Trash2, Building } from 'lucide-react';
 import { ProjectHeader } from '@/components/dashboard/projects/ProjectHeader';
 import { ProjectKPIGrid } from '@/components/dashboard/projects/ProjectKPIGrid';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
@@ -13,6 +15,8 @@ import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksT
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSettingsTab } from '@/components/dashboard/projects/ProjectSettingsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
+import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
+import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { toast } from 'sonner';
 
 const mockProjects = [
@@ -236,6 +240,13 @@ export default function ProjectDetailPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   
+  // Modal states
+  const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
+  const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
+  const [isReallocateOpen, setIsReallocateOpen] = useState(false);
+  const [isRevokeOpen, setIsRevokeOpen] = useState(false);
+  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
+  
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
   if (!project) {
@@ -255,11 +266,24 @@ export default function ProjectDetailPage() {
   }
 
   const handleAllocateUnit = () => {
-    navigate(`/company/sales-allocation?project=${project.id}`);
+    console.log('Fetching allocation form data...');
+    setIsAllocateUnitOpen(true);
   };
 
   const handleEditProject = () => {
-    navigate(`/company/projects/${project.id}/settings`);
+    console.log('Fetching project edit form data...');
+    setIsEditProjectOpen(true);
+  };
+
+  const handleReallocate = (unitId: string, clientName: string) => {
+    console.log('Fetching reallocation form data for:', unitId);
+    setIsReallocateOpen(true);
+  };
+
+  const handleRevoke = (allocation: any) => {
+    console.log('Fetching revoke form data for:', allocation);
+    setSelectedAllocation(allocation);
+    setIsRevokeOpen(true);
   };
 
   const handleDeleteProject = () => {
@@ -465,7 +489,11 @@ export default function ProjectDetailPage() {
             </TabsContent>
 
             <TabsContent value="sales-history" className="p-6">
-              <ProjectSalesHistoryTab project={project} />
+              <ProjectSalesHistoryTab 
+                project={project} 
+                onReallocate={handleReallocate}
+                onRevoke={handleRevoke}
+              />
             </TabsContent>
 
             <TabsContent value="documents" className="p-6">
@@ -478,6 +506,66 @@ export default function ProjectDetailPage() {
           </Tabs>
         </div>
       </div>
+
+      {/* Modals */}
+      
+      {/* Edit Project Modal */}
+      <Dialog open={isEditProjectOpen} onOpenChange={setIsEditProjectOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Project</DialogTitle>
+          </DialogHeader>
+          <NewProjectForm onClose={() => setIsEditProjectOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Allocate Unit Modal */}
+      <Dialog open={isAllocateUnitOpen} onOpenChange={setIsAllocateUnitOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Allocate Unit</DialogTitle>
+          </DialogHeader>
+          <div className="p-4">
+            <p>Allocation form will be loaded here...</p>
+            <div className="flex justify-end mt-4">
+              <Button onClick={() => setIsAllocateUnitOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reallocate Modal */}
+      <Dialog open={isReallocateOpen} onOpenChange={setIsReallocateOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Reallocate Unit</DialogTitle>
+          </DialogHeader>
+          <div className="p-4">
+            <p>Reallocation form will be loaded here...</p>
+            <div className="flex justify-end mt-4">
+              <Button onClick={() => setIsReallocateOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Revoke Allocation Modal */}
+      {selectedAllocation && (
+        <RevokeAllocationModal
+          isOpen={isRevokeOpen}
+          onClose={() => {
+            setIsRevokeOpen(false);
+            setSelectedAllocation(null);
+          }}
+          allocation={selectedAllocation}
+          onRevoke={(data) => {
+            console.log('Revoke allocation:', data);
+            toast.success('Allocation revoked successfully');
+            setIsRevokeOpen(false);
+            setSelectedAllocation(null);
+          }}
+        />
+      )}
     </div>
   );
 }

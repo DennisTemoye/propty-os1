@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,6 +18,8 @@ interface ProjectSalesHistoryTabProps {
     availableUnits: number;
     reservedUnits: number;
   };
+  onReallocate?: (unitId: string, clientName: string) => void;
+  onRevoke?: (allocation: any) => void;
 }
 
 const mockAllocatedUnits = [
@@ -87,7 +88,7 @@ const mockOfferedUnits = [
   }
 ];
 
-export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps) {
+export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: ProjectSalesHistoryTabProps) {
   const [activeTab, setActiveTab] = useState('allocated');
   const navigate = useNavigate();
 
@@ -96,13 +97,19 @@ export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps)
   };
 
   const handleReallocate = (unitId: string, clientName: string) => {
-    toast.success(`Reallocation initiated for ${unitId} from ${clientName}`);
-    // This would typically open the reallocation form from sales & allocation module
+    if (onReallocate) {
+      onReallocate(unitId, clientName);
+    } else {
+      toast.success(`Reallocation initiated for ${unitId} from ${clientName}`);
+    }
   };
 
-  const handleRevoke = (unitId: string, clientName: string) => {
-    toast.success(`Allocation revoked for ${unitId} from ${clientName}`);
-    // This would typically open the revoke form from sales & allocation module
+  const handleRevoke = (allocation: any) => {
+    if (onRevoke) {
+      onRevoke(allocation);
+    } else {
+      toast.success(`Allocation revoked for ${allocation.unitId} from ${allocation.clientName}`);
+    }
   };
 
   const getPaymentStatusColor = (status: string) => {
@@ -280,7 +287,7 @@ export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps)
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction 
                                   className="bg-red-600 hover:bg-red-700"
-                                  onClick={() => handleRevoke(unit.unitId, unit.clientName)}
+                                  onClick={() => handleRevoke(unit)}
                                 >
                                   Revoke Allocation
                                 </AlertDialogAction>
@@ -422,7 +429,7 @@ export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps)
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction 
                                   className="bg-red-600 hover:bg-red-700"
-                                  onClick={() => handleRevoke(unit.unitId, unit.clientName)}
+                                  onClick={() => handleRevoke(unit)}
                                 >
                                   Revoke Offer
                                 </AlertDialogAction>
