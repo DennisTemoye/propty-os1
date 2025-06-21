@@ -14,14 +14,12 @@ import {
   GripVertical, 
   Eye, 
   EyeOff, 
-  Edit3, 
   Save,
   FileText,
   User,
   CreditCard,
   Building
 } from 'lucide-react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface FormField {
   id: string;
@@ -46,7 +44,6 @@ interface FormTemplate {
 export function FormEditor() {
   const [selectedForm, setSelectedForm] = useState<string>('');
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
-  const [editingField, setEditingField] = useState<FormField | null>(null);
   const [newField, setNewField] = useState<Partial<FormField>>({
     name: '',
     label: '',
@@ -101,16 +98,17 @@ export function FormEditor() {
 
   const selectedFormTemplate = formTemplates.find(form => form.id === selectedForm);
 
-  const handleDragEnd = (result: any) => {
-    if (!result.destination || !selectedFormTemplate) return;
+  const moveField = (dragIndex: number, hoverIndex: number) => {
+    if (!selectedFormTemplate) return;
 
-    const items = Array.from(selectedFormTemplate.fields);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    const draggedField = selectedFormTemplate.fields[dragIndex];
+    const newFields = [...selectedFormTemplate.fields];
+    newFields.splice(dragIndex, 1);
+    newFields.splice(hoverIndex, 0, draggedField);
 
     setFormTemplates(prev => prev.map(template => 
       template.id === selectedForm 
-        ? { ...template, fields: items }
+        ? { ...template, fields: newFields }
         : template
     ));
   };
@@ -324,72 +322,58 @@ export function FormEditor() {
             </div>
           </CardHeader>
           <CardContent>
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="form-fields">
-                {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3">
-                    {selectedFormTemplate.fields.map((field, index) => (
-                      <Draggable key={field.id} draggableId={field.id} index={index}>
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`p-4 border rounded-lg bg-white ${
-                              snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'
-                            } ${!field.visible ? 'opacity-50' : ''}`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <div {...provided.dragHandleProps}>
-                                  <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
-                                </div>
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <h4 className="font-medium">{field.label}</h4>
-                                    {field.required && (
-                                      <Badge variant="destructive" className="text-xs">Required</Badge>
-                                    )}
-                                    {field.isCustom && (
-                                      <Badge variant="secondary" className="text-xs">Custom</Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-sm text-gray-500">
-                                    {field.name} • {field.type}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleToggleFieldVisibility(field.id)}
-                                >
-                                  {field.visible ? (
-                                    <Eye className="h-4 w-4" />
-                                  ) : (
-                                    <EyeOff className="h-4 w-4" />
-                                  )}
-                                </Button>
-                                {field.isCustom && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleRemoveField(field.id)}
-                                  >
-                                    <Trash2 className="h-4 w-4 text-red-500" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
+            <div className="space-y-3">
+              {selectedFormTemplate.fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className={`p-4 border rounded-lg bg-white shadow-sm ${!field.visible ? 'opacity-50' : ''}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="cursor-grab hover:cursor-grabbing">
+                        <GripVertical className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium">{field.label}</h4>
+                          {field.required && (
+                            <Badge variant="destructive" className="text-xs">Required</Badge>
+                          )}
+                          {field.isCustom && (
+                            <Badge variant="secondary" className="text-xs">Custom</Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          {field.name} • {field.type}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleToggleFieldVisibility(field.id)}
+                      >
+                        {field.visible ? (
+                          <Eye className="h-4 w-4" />
+                        ) : (
+                          <EyeOff className="h-4 w-4" />
                         )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
+                      </Button>
+                      {field.isCustom && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveField(field.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}
