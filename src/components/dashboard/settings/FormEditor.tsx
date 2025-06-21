@@ -18,7 +18,12 @@ import {
   FileText,
   User,
   CreditCard,
-  Building
+  Building,
+  MapPin,
+  DollarSign,
+  Send,
+  AlertCircle,
+  Settings
 } from 'lucide-react';
 
 interface FormField {
@@ -39,6 +44,7 @@ interface FormTemplate {
   description: string;
   icon: React.ReactNode;
   fields: FormField[];
+  category: string;
 }
 
 export function FormEditor() {
@@ -58,33 +64,57 @@ export function FormEditor() {
       id: 'client-form',
       name: 'Client Form',
       description: 'Client onboarding and information collection',
+      category: 'Core Forms',
       icon: <User className="h-5 w-5" />,
       fields: [
         { id: '1', name: 'firstName', label: 'First Name', type: 'text', required: true, visible: true },
         { id: '2', name: 'lastName', label: 'Last Name', type: 'text', required: true, visible: true },
         { id: '3', name: 'email', label: 'Email Address', type: 'email', required: true, visible: true },
         { id: '4', name: 'phone', label: 'Phone Number', type: 'phone', required: true, visible: true },
-        { id: '5', name: 'gender', label: 'Gender', type: 'select', required: false, visible: true, options: ['Male', 'Female', 'Other'] },
-        { id: '6', name: 'address', label: 'Address', type: 'textarea', required: false, visible: true },
+        { id: '5', name: 'address', label: 'Address', type: 'textarea', required: false, visible: true },
+        { id: '6', name: 'clientType', label: 'Client Type', type: 'select', required: false, visible: true, options: ['Individual', 'Corporate', 'Investor'] },
+        { id: '7', name: 'source', label: 'Lead Source', type: 'select', required: false, visible: true, options: ['Referral', 'Website', 'Social Media', 'Advertisement', 'Walk-in'] },
+        { id: '8', name: 'notes', label: 'Notes', type: 'textarea', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'development-form',
+      name: 'Development Form',
+      description: 'New real estate development creation',
+      category: 'Core Forms',
+      icon: <Building className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'projectName', label: 'Project Name', type: 'text', required: true, visible: true },
+        { id: '2', name: 'location', label: 'Location', type: 'text', required: true, visible: true },
+        { id: '3', name: 'description', label: 'Description', type: 'textarea', required: true, visible: true },
+        { id: '4', name: 'totalUnits', label: 'Total Units', type: 'number', required: true, visible: true },
+        { id: '5', name: 'pricePerUnit', label: 'Price Per Unit', type: 'number', required: true, visible: true },
+        { id: '6', name: 'launchDate', label: 'Launch Date', type: 'date', required: false, visible: true },
+        { id: '7', name: 'completionDate', label: 'Expected Completion', type: 'date', required: false, visible: true },
+        { id: '8', name: 'amenities', label: 'Amenities', type: 'textarea', required: false, visible: true },
       ]
     },
     {
       id: 'allocation-form',
       name: 'Allocation Form',
       description: 'Property allocation and assignment',
-      icon: <Building className="h-5 w-5" />,
+      category: 'Core Forms',
+      icon: <MapPin className="h-5 w-5" />,
       fields: [
         { id: '1', name: 'clientName', label: 'Client Name', type: 'select', required: true, visible: true },
         { id: '2', name: 'projectName', label: 'Project Name', type: 'select', required: true, visible: true },
         { id: '3', name: 'unitNumber', label: 'Unit Number', type: 'text', required: true, visible: true },
         { id: '4', name: 'allocationDate', label: 'Allocation Date', type: 'date', required: true, visible: true },
-        { id: '5', name: 'notes', label: 'Notes', type: 'textarea', required: false, visible: true },
+        { id: '5', name: 'paymentPlan', label: 'Payment Plan', type: 'select', required: true, visible: true, options: ['Full Payment', 'Installment', 'Custom'] },
+        { id: '6', name: 'initialPayment', label: 'Initial Payment', type: 'number', required: false, visible: true },
+        { id: '7', name: 'notes', label: 'Notes', type: 'textarea', required: false, visible: true },
       ]
     },
     {
       id: 'payment-form',
       name: 'Payment Form',
       description: 'Payment collection and tracking',
+      category: 'Financial Forms',
       icon: <CreditCard className="h-5 w-5" />,
       fields: [
         { id: '1', name: 'clientName', label: 'Client Name', type: 'select', required: true, visible: true },
@@ -92,26 +122,62 @@ export function FormEditor() {
         { id: '3', name: 'paymentMethod', label: 'Payment Method', type: 'select', required: true, visible: true, options: ['Cash', 'Bank Transfer', 'Check', 'Card'] },
         { id: '4', name: 'paymentDate', label: 'Payment Date', type: 'date', required: true, visible: true },
         { id: '5', name: 'reference', label: 'Reference Number', type: 'text', required: false, visible: true },
+        { id: '6', name: 'paymentType', label: 'Payment Type', type: 'select', required: true, visible: true, options: ['Initial Payment', 'Installment', 'Final Payment', 'Additional Fee'] },
+        { id: '7', name: 'description', label: 'Description', type: 'textarea', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'expense-form',
+      name: 'Expense Form',
+      description: 'Business expense recording',
+      category: 'Financial Forms',
+      icon: <DollarSign className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'expenseType', label: 'Expense Type', type: 'select', required: true, visible: true, options: ['Office Supplies', 'Marketing', 'Travel', 'Utilities', 'Professional Services', 'Other'] },
+        { id: '2', name: 'amount', label: 'Amount', type: 'number', required: true, visible: true },
+        { id: '3', name: 'vendor', label: 'Vendor/Supplier', type: 'text', required: true, visible: true },
+        { id: '4', name: 'expenseDate', label: 'Expense Date', type: 'date', required: true, visible: true },
+        { id: '5', name: 'project', label: 'Related Project', type: 'select', required: false, visible: true },
+        { id: '6', name: 'receipt', label: 'Receipt/Invoice', type: 'file', required: false, visible: true },
+        { id: '7', name: 'description', label: 'Description', type: 'textarea', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'notice-form',
+      name: 'Notice Form',
+      description: 'Send notices to clients or staff',
+      category: 'Communication Forms',
+      icon: <Send className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'noticeType', label: 'Notice Type', type: 'select', required: true, visible: true, options: ['Payment Reminder', 'Project Update', 'General Announcement', 'Legal Notice'] },
+        { id: '2', name: 'recipients', label: 'Recipients', type: 'select', required: true, visible: true, options: ['All Clients', 'Specific Client', 'All Staff', 'Specific Staff Member'] },
+        { id: '3', name: 'subject', label: 'Subject', type: 'text', required: true, visible: true },
+        { id: '4', name: 'message', label: 'Message', type: 'textarea', required: true, visible: true },
+        { id: '5', name: 'priority', label: 'Priority', type: 'select', required: true, visible: true, options: ['Low', 'Medium', 'High', 'Urgent'] },
+        { id: '6', name: 'scheduleDate', label: 'Schedule Date', type: 'date', required: false, visible: true },
+        { id: '7', name: 'attachments', label: 'Attachments', type: 'file', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'project-site-form',
+      name: 'Project Site Form',
+      description: 'Project site management and tracking',
+      category: 'Project Management',
+      icon: <Building className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'siteName', label: 'Site Name', type: 'text', required: true, visible: true },
+        { id: '2', name: 'parentProject', label: 'Parent Project', type: 'select', required: true, visible: true },
+        { id: '3', name: 'location', label: 'Location', type: 'text', required: true, visible: true },
+        { id: '4', name: 'siteManager', label: 'Site Manager', type: 'select', required: false, visible: true },
+        { id: '5', name: 'startDate', label: 'Start Date', type: 'date', required: false, visible: true },
+        { id: '6', name: 'expectedCompletion', label: 'Expected Completion', type: 'date', required: false, visible: true },
+        { id: '7', name: 'budget', label: 'Budget', type: 'number', required: false, visible: true },
+        { id: '8', name: 'description', label: 'Description', type: 'textarea', required: false, visible: true },
       ]
     }
   ]);
 
   const selectedFormTemplate = formTemplates.find(form => form.id === selectedForm);
-
-  const moveField = (dragIndex: number, hoverIndex: number) => {
-    if (!selectedFormTemplate) return;
-
-    const draggedField = selectedFormTemplate.fields[dragIndex];
-    const newFields = [...selectedFormTemplate.fields];
-    newFields.splice(dragIndex, 1);
-    newFields.splice(hoverIndex, 0, draggedField);
-
-    setFormTemplates(prev => prev.map(template => 
-      template.id === selectedForm 
-        ? { ...template, fields: newFields }
-        : template
-    ));
-  };
 
   const handleAddField = () => {
     if (!selectedFormTemplate || !newField.name || !newField.label) return;
@@ -178,6 +244,15 @@ export function FormEditor() {
     // Here you would typically save to a backend or local storage
   };
 
+  // Group forms by category
+  const formsByCategory = formTemplates.reduce((acc, form) => {
+    if (!acc[form.category]) {
+      acc[form.category] = [];
+    }
+    acc[form.category].push(form);
+    return acc;
+  }, {} as Record<string, FormTemplate[]>);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -199,32 +274,40 @@ export function FormEditor() {
           <CardTitle>Select Form to Edit</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {formTemplates.map((template) => (
-              <Card 
-                key={template.id}
-                className={`cursor-pointer transition-all hover:shadow-md ${
-                  selectedForm === template.id ? 'ring-2 ring-purple-500 bg-purple-50' : ''
-                }`}
-                onClick={() => setSelectedForm(template.id)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                      {template.icon}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{template.name}</h3>
-                      <p className="text-sm text-gray-500">{template.description}</p>
-                      <Badge variant="outline" className="mt-1">
-                        {template.fields.length} fields
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {Object.entries(formsByCategory).map(([category, forms]) => (
+            <div key={category} className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
+                <Settings className="h-5 w-5 text-purple-600" />
+                {category}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {forms.map((template) => (
+                  <Card 
+                    key={template.id}
+                    className={`cursor-pointer transition-all hover:shadow-md ${
+                      selectedForm === template.id ? 'ring-2 ring-purple-500 bg-purple-50' : ''
+                    }`}
+                    onClick={() => setSelectedForm(template.id)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-purple-100 rounded-lg">
+                          {template.icon}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{template.name}</h3>
+                          <p className="text-sm text-gray-500">{template.description}</p>
+                          <Badge variant="outline" className="mt-1">
+                            {template.fields.length} fields
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
 
@@ -345,6 +428,7 @@ export function FormEditor() {
                         </div>
                         <p className="text-sm text-gray-500">
                           {field.name} • {field.type}
+                          {field.options && ` • ${field.options.length} options`}
                         </p>
                       </div>
                     </div>
