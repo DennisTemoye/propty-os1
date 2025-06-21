@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,7 +15,7 @@ export function Reports() {
   const [dateRange, setDateRange] = useState('this-month');
   const [projectFilter, setProjectFilter] = useState('all');
   const [marketerFilter, setMarketerFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] useState('all');
   const [includeRefunds, setIncludeRefunds] = useState(false);
 
   // Mock data for sales reports
