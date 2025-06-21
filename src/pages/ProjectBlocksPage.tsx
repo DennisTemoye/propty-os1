@@ -42,7 +42,7 @@ export default function DevelopmentBlocksPage() {
         <div className="mb-6">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/company/projects')}
+            onClick={() => navigate('/company/developments')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

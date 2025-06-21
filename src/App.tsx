@@ -36,9 +36,9 @@ const App = () => (
             <Route path="/reset-code" element={<ResetCodePage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/company/dashboard" element={<CompanyDashboard />} />
-            <Route path="/company/projects" element={<CompanyDashboard />} />
-            <Route path="/company/projects/:projectId" element={<ProjectDetailPage />} />
-            <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
+            <Route path="/company/developments" element={<CompanyDashboard />} />
+            <Route path="/company/developments/:projectId" element={<ProjectDetailPage />} />
+            <Route path="/company/developments/:projectId/blocks" element={<ProjectBlocksPage />} />
             <Route path="/company/clients" element={<CompanyDashboard />} />
             <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
             <Route path="/company/sales" element={<CompanyDashboard />} />

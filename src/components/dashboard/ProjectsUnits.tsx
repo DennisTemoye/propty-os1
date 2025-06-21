@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -187,12 +186,12 @@ export function ProjectsUnits() {
   };
 
   const handleDevelopmentClick = (developmentId: number) => {
-    navigate(`/company/projects/${developmentId}`);
+    navigate(`/company/developments/${developmentId}`);
   };
 
   const handleManageBlocks = (e: React.MouseEvent, developmentId: number) => {
     e.stopPropagation();
-    navigate(`/company/projects/${developmentId}/blocks`);
+    navigate(`/company/developments/${developmentId}/blocks`);
   };
 
   const handleViewDocuments = (e: React.MouseEvent, development: any) => {

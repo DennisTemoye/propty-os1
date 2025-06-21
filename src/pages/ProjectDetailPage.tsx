@@ -72,12 +72,12 @@ export default function DevelopmentDetailPage() {
     if (window.confirm('Are you sure you want to delete this development? This action cannot be undone.')) {
       console.log('Deleting development:', development.id);
       toast.success('Development deleted successfully');
-      navigate('/company/projects');
+      navigate('/company/developments');
     }
   };
 
   const handleManageBlocks = () => {
-    navigate(`/company/projects/${development.id}/blocks`);
+    navigate(`/company/developments/${development.id}/blocks`);
   };
 
   const handleViewDocuments = () => {
@@ -99,7 +99,7 @@ export default function DevelopmentDetailPage() {
           <div className="flex items-center justify-between">
             <Button 
               variant="outline" 
-              onClick={() => navigate('/company/projects')}
+              onClick={() => navigate('/company/developments')}
               className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
