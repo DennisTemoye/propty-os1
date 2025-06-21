@@ -15,7 +15,7 @@ interface Document {
   title: string;
   fileName: string;
   category: string;
-  linkedTo: 'client' | 'development';
+  linkedTo: 'client' | 'project';
   linkedId: string;
   linkedName: string;
   fileSize: string;
@@ -31,7 +31,7 @@ const mockDocuments: Document[] = [
     title: 'Victoria Gardens Survey Plan',
     fileName: 'victoria_gardens_survey.pdf',
     category: 'Survey',
-    linkedTo: 'development',
+    linkedTo: 'project',
     linkedId: '1',
     linkedName: 'Victoria Gardens',
     fileSize: '2.5 MB',
@@ -57,7 +57,7 @@ const mockDocuments: Document[] = [
     title: 'Certificate of Occupancy',
     fileName: 'co_lagos_estate.pdf',
     category: 'Certificate',
-    linkedTo: 'development',
+    linkedTo: 'project',
     linkedId: '2',
     linkedName: 'Lagos Estate',
     fileSize: '1.8 MB',
@@ -110,7 +110,7 @@ export function DocumentManagerPage() {
       title: formData.title,
       fileName: data.fileName || 'document.pdf',
       category: formData.category,
-      linkedTo: formData.linkedTo as 'client' | 'development',
+      linkedTo: formData.linkedTo as 'client' | 'project',
       linkedId: '1',
       linkedName: formData.linkedName,
       fileSize: '1.2 MB',
@@ -185,9 +185,9 @@ export function DocumentManagerPage() {
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-purple-600">
-              {documents.filter(d => d.linkedTo === 'development').length}
+              {documents.filter(d => d.linkedTo === 'project').length}
             </div>
-            <div className="text-sm text-gray-500">Development Documents</div>
+            <div className="text-sm text-gray-500">Project Documents</div>
           </CardContent>
         </Card>
         <Card>
@@ -233,7 +233,7 @@ export function DocumentManagerPage() {
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="client">Client Documents</SelectItem>
-                <SelectItem value="development">Development Documents</SelectItem>
+                <SelectItem value="project">Project Documents</SelectItem>
               </SelectContent>
             </Select>
             <Button 
@@ -347,7 +347,7 @@ export function DocumentManagerPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="client">Client</SelectItem>
-                    <SelectItem value="development">Development</SelectItem>
+                    <SelectItem value="project">Project</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -357,7 +357,7 @@ export function DocumentManagerPage() {
               <Input 
                 value={formData.linkedName}
                 onChange={(e) => setFormData(prev => ({ ...prev, linkedName: e.target.value }))}
-                placeholder="Enter client or development name" 
+                placeholder="Enter client or project name" 
                 required 
               />
             </div>
