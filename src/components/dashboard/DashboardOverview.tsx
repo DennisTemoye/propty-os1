@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell, CreditCard } from 'lucide-react';
+import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell, CreditCard, Send } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 import { 
@@ -18,6 +18,7 @@ import { NewProjectSiteForm } from '@/components/dashboard/forms/NewProjectSiteF
 import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
 import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
 import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
+import { SendNoticeForm } from '@/components/dashboard/notices/SendNoticeForm';
 import { useNavigate } from 'react-router-dom';
 
 const salesData = [
@@ -170,6 +171,7 @@ export function DashboardOverview() {
       case 'client': return 'Create New Client';
       case 'allocation': return 'Create New Allocation';
       case 'expense': return 'Record New Expense';
+      case 'notice': return 'Send New Notice';
       default: return 'Create New';
     }
   };
@@ -181,6 +183,7 @@ export function DashboardOverview() {
       case 'client': return 'Add a new client to your database';
       case 'allocation': return 'Allocate a unit to a client';
       case 'expense': return 'Record a new business expense';
+      case 'notice': return 'Send a notice to clients or staff members';
       default: return '';
     }
   };
@@ -197,6 +200,8 @@ export function DashboardOverview() {
         return <NewAllocationForm onClose={closeSheet} />;
       case 'expense':
         return <NewExpenseForm onClose={closeSheet} />;
+      case 'notice':
+        return <SendNoticeForm onClose={closeSheet} />;
       default:
         return null;
     }
@@ -276,6 +281,13 @@ export function DashboardOverview() {
                 >
                   <CreditCard className="h-5 w-5 text-emerald-600" />
                   <span className="font-medium">New Payment</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('notice')}
+                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <Send className="h-5 w-5 text-orange-600" />
+                  <span className="font-medium">New Notice</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
