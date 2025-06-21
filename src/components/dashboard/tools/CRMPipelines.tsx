@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -184,6 +183,7 @@ export function CRMPipelinesPage() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedTeamMember, setSelectedTeamMember] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const form = useForm();
 
@@ -252,9 +252,11 @@ export function CRMPipelinesPage() {
         const threeDaysAgo = new Date();
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
         filtered = filtered.filter(lead => new Date(lead.lastActivity) > threeDaysAgo);
-      } else {
-        filtered = filtered.filter(lead => lead.assignedTo.toLowerCase().includes(activeFilter.toLowerCase()));
       }
+    }
+
+    if (selectedTeamMember) {
+      filtered = filtered.filter(lead => lead.assignedTo === selectedTeamMember);
     }
     
     if (searchQuery) {
@@ -288,6 +290,8 @@ export function CRMPipelinesPage() {
   };
 
   const kpis = calculateKPIs();
+
+  const teamMembers = ['Sarah Wilson', 'Mike Johnson', 'David Brown'];
 
   return (
     <div className="space-y-6">
@@ -382,21 +386,34 @@ export function CRMPipelinesPage() {
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <Tabs value={activeFilter} onValueChange={setActiveFilter} className="w-full md:w-auto">
-              <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-5">
+              <TabsList className="grid w-full md:w-auto grid-cols-3">
                 <TabsTrigger value="all">All Leads</TabsTrigger>
                 <TabsTrigger value="high-priority">High Priority</TabsTrigger>
                 <TabsTrigger value="recent">Recent Activity</TabsTrigger>
-                <TabsTrigger value="Sarah Wilson">Sarah's Leads</TabsTrigger>
-                <TabsTrigger value="Mike Johnson">Mike's Leads</TabsTrigger>
               </TabsList>
             </Tabs>
-            <div className="w-full md:w-64">
-              <Input
-                placeholder="Search leads..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
-              />
+            <div className="flex gap-4 w-full md:w-auto">
+              <div className="w-full md:w-48">
+                <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by team member" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Team Members</SelectItem>
+                    {teamMembers.map((member) => (
+                      <SelectItem key={member} value={member}>{member}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-full md:w-64">
+                <Input
+                  placeholder="Search leads..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
         </CardContent>
