@@ -2,68 +2,111 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Plus, TrendingUp, Users, DollarSign, CheckCircle, Clock, Eye, Download } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { NewMarketerForm } from '@/components/dashboard/forms/NewMarketerForm';
-import { Plus, Search, Users, DollarSign, TrendingUp, Phone, Mail, Building } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+const mockMarketers = [
+  {
+    id: 1,
+    name: 'Jane Smith',
+    email: 'jane@proptyos.com',
+    phone: '+234 801 111 2222',
+    leads: 45,
+    conversions: 12,
+    sales: 8,
+    commission: '₦2.4M',
+    commissionPaid: '₦1.8M',
+    commissionPending: '₦600K',
+    status: 'active',
+    projects: ['Victoria Gardens', 'Emerald Heights'],
+    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=150&h=150&fit=crop&crop=face'
+  },
+  {
+    id: 2,
+    name: 'Mike Davis',
+    email: 'mike@proptyos.com',
+    phone: '+234 802 333 4444',
+    leads: 38,
+    conversions: 15,
+    sales: 10,
+    commission: '₦3.1M',
+    commissionPaid: '₦2.5M',
+    commissionPending: '₦600K',
+    status: 'active',
+    projects: ['Golden View', 'Victoria Gardens'],
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+  },
+  {
+    id: 3,
+    name: 'Sarah Johnson',
+    email: 'sarah@proptyos.com',
+    phone: '+234 803 555 6666',
+    leads: 29,
+    conversions: 8,
+    sales: 6,
+    commission: '₦1.8M',
+    commissionPaid: '₦1.8M',
+    commissionPending: '₦0',
+    status: 'inactive',
+    projects: ['Emerald Heights'],
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
+  },
+];
+
+const mockCommissions = [
+  {
+    id: 1,
+    marketerId: 1,
+    marketerName: 'Jane Smith',
+    clientName: 'John Doe',
+    project: 'Victoria Gardens',
+    unit: 'Block A - Plot 02',
+    saleAmount: '₦25M',
+    commissionRate: '2.5%',
+    commissionAmount: '₦625K',
+    status: 'pending',
+    saleDate: '2024-01-15',
+    dueDate: '2024-02-15'
+  },
+  {
+    id: 2,
+    marketerId: 2,
+    marketerName: 'Mike Davis',
+    clientName: 'Jane Williams',
+    project: 'Golden View',
+    unit: 'Block B - Plot 08',
+    saleAmount: '₦30M',
+    commissionRate: '3%',
+    commissionAmount: '₦900K',
+    status: 'paid',
+    saleDate: '2024-01-10',
+    dueDate: '2024-02-10',
+    paidDate: '2024-02-08'
+  },
+  {
+    id: 3,
+    marketerId: 1,
+    marketerName: 'Jane Smith',
+    clientName: 'Robert Brown',
+    project: 'Emerald Heights',
+    unit: 'Block C - Plot 15',
+    saleAmount: '₦22M',
+    commissionRate: '2.5%',
+    commissionAmount: '₦550K',
+    status: 'approved',
+    saleDate: '2024-01-20',
+    dueDate: '2024-02-20'
+  }
+];
 
 export function MarketersCommission() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMarketer, setSelectedMarketer] = useState<any>(null);
   const [isNewMarketerOpen, setIsNewMarketerOpen] = useState(false);
-
-  // Mock data for marketers
-  const marketers = [
-    {
-      id: 1,
-      name: 'Jane Smith',
-      email: 'jane@proptyos.com',
-      phone: '+234 801 111 2222',
-      role: 'Senior Marketer',
-      status: 'active',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=150&h=150&fit=crop&crop=face',
-      totalLeads: 45,
-      totalSales: 8,
-      totalCommission: '₦2.4M',
-      commissionPending: '₦600K',
-      assignedProjects: ['Victoria Gardens', 'Emerald Heights']
-    },
-    {
-      id: 2,
-      name: 'Michael Johnson',
-      email: 'michael@proptyos.com',
-      phone: '+234 801 222 3333',
-      role: 'External Marketer',
-      status: 'active',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      totalLeads: 32,
-      totalSales: 5,
-      totalCommission: '₦1.8M',
-      commissionPending: '₦400K',
-      assignedProjects: ['Golden View']
-    },
-    {
-      id: 3,
-      name: 'Sarah Williams',
-      email: 'sarah@proptyos.com',
-      phone: '+234 801 333 4444',
-      role: 'Marketing Team Lead',
-      status: 'active',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      totalLeads: 67,
-      totalSales: 12,
-      totalCommission: '₦3.2M',
-      commissionPending: '₦800K',
-      assignedProjects: ['Victoria Gardens', 'Sunset Residences']
-    }
-  ];
-
-  const filteredMarketers = marketers.filter(marketer =>
-    marketer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    marketer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    marketer.role.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [activeTab, setActiveTab] = useState('marketers');
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -76,203 +119,302 @@ export function MarketersCommission() {
     }
   };
 
-  const totalMarketers = marketers.length;
-  const totalCommissionPending = marketers.reduce((sum, marketer) => {
-    return sum + parseFloat(marketer.commissionPending.replace('₦', '').replace('K', '')) * 1000;
-  }, 0);
+  const getCommissionStatusColor = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-800';
+      case 'approved':
+        return 'bg-blue-100 text-blue-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const activeMarketers = mockMarketers.filter(marketer => marketer.status === 'active').length;
+  const totalLeads = mockMarketers.reduce((sum, marketer) => sum + marketer.leads, 0);
+  const totalSales = mockMarketers.reduce((sum, marketer) => sum + marketer.sales, 0);
+  const totalCommissionPaid = mockCommissions
+    .filter(c => c.status === 'paid')
+    .reduce((sum, c) => sum + parseFloat(c.commissionAmount.replace('₦', '').replace('K', '')), 0);
+  const totalCommissionPending = mockCommissions
+    .filter(c => c.status === 'pending' || c.status === 'approved')
+    .reduce((sum, c) => sum + parseFloat(c.commissionAmount.replace('₦', '').replace('K', '')), 0);
+
+  const kpiData = [
+    {
+      title: 'Active Marketers',
+      value: activeMarketers.toString(),
+      subtitle: 'Currently working',
+      icon: Users,
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-100',
+      cardBg: 'from-purple-50 to-purple-100',
+    },
+    {
+      title: 'Total Sales',
+      value: totalSales.toString(),
+      subtitle: 'Units sold',
+      icon: TrendingUp,
+      color: 'text-emerald-700',
+      bgColor: 'bg-emerald-100',
+      cardBg: 'from-emerald-50 to-emerald-100',
+    },
+    {
+      title: 'Commission Paid',
+      value: `₦${totalCommissionPaid.toFixed(0)}K`,
+      subtitle: 'This period',
+      icon: CheckCircle,
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-100',
+      cardBg: 'from-blue-50 to-blue-100',
+    },
+    {
+      title: 'Commission Pending',
+      value: `₦${totalCommissionPending.toFixed(0)}K`,
+      subtitle: 'Awaiting payment',
+      icon: Clock,
+      color: 'text-amber-700',
+      bgColor: 'bg-amber-100',
+      cardBg: 'from-amber-50 to-amber-100',
+    },
+  ];
+
+  const handleMarkAsPaid = (commissionId: number) => {
+    console.log('Mark commission as paid:', commissionId);
+    // Implementation for marking commission as paid
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Marketers & Commission</h1>
-          <p className="text-gray-600">Manage external marketers and internal sales agents</p>
+          <p className="text-gray-600 mt-1">Manage sales team and track commission payments</p>
         </div>
-        <Dialog open={isNewMarketerOpen} onOpenChange={setIsNewMarketerOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-purple-600 hover:bg-purple-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Add New Marketer
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Add New Marketer</DialogTitle>
-            </DialogHeader>
-            <NewMarketerForm onClose={() => setIsNewMarketerOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        <Button 
+          className="bg-purple-600 hover:bg-purple-700"
+          onClick={() => setIsNewMarketerOpen(true)}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Marketer
+        </Button>
       </div>
 
-      {/* KPI Cards */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-gray-500 mb-1">Total Marketers</div>
-                <div className="text-2xl font-bold text-blue-600">{totalMarketers}</div>
-              </div>
-              <Users className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-gray-500 mb-1">Total Leads</div>
-                <div className="text-2xl font-bold text-green-600">
-                  {marketers.reduce((sum, m) => sum + m.totalLeads, 0)}
-                </div>
-              </div>
-              <TrendingUp className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-gray-500 mb-1">Total Sales</div>
-                <div className="text-2xl font-bold text-purple-600">
-                  {marketers.reduce((sum, m) => sum + m.totalSales, 0)}
-                </div>
-              </div>
-              <Building className="h-8 w-8 text-purple-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-gray-500 mb-1">Pending Commission</div>
-                <div className="text-2xl font-bold text-orange-600">
-                  ₦{(totalCommissionPending / 1000).toFixed(0)}K
-                </div>
-              </div>
-              <DollarSign className="h-8 w-8 text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search marketers by name, email, or role..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Marketers List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredMarketers.map((marketer) => (
-          <Card key={marketer.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+        {kpiData.map((kpi, index) => (
+          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
             <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={marketer.avatar} alt={marketer.name} />
-                    <AvatarFallback>
-                      {marketer.name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-semibold text-lg">{marketer.name}</h3>
-                    <p className="text-gray-600 text-sm">{marketer.role}</p>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-600 mb-2">
+                    {kpi.title}
                   </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                  <div className="text-xs text-gray-500">{kpi.subtitle}</div>
                 </div>
-                <Badge className={getStatusColor(marketer.status)}>
-                  {marketer.status}
-                </Badge>
-              </div>
-
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center text-sm text-gray-600">
-                  <Phone className="h-4 w-4 mr-2" />
-                  {marketer.phone}
+                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
+                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <Mail className="h-4 w-4 mr-2" />
-                  {marketer.email}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Total Leads:</span>
-                  <span className="font-medium">{marketer.totalLeads}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Total Sales:</span>
-                  <span className="font-medium text-green-600">{marketer.totalSales}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Commission Earned:</span>
-                  <span className="font-medium text-purple-600">{marketer.totalCommission}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Pending:</span>
-                  <span className="font-medium text-orange-600">{marketer.commissionPending}</span>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <div className="text-sm text-gray-500 mb-2">Assigned Projects:</div>
-                <div className="flex flex-wrap gap-1">
-                  {marketer.assignedProjects.map((project, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {project}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t">
-                <Button variant="outline" className="w-full" size="sm">
-                  View Details
-                </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {filteredMarketers.length === 0 && (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No marketers found</h3>
-            <p className="text-gray-500 mb-4">
-              {searchTerm ? 'No marketers match your search criteria.' : 'Get started by adding your first marketer.'}
-            </p>
-            {!searchTerm && (
-              <Button 
-                className="bg-purple-600 hover:bg-purple-700"
-                onClick={() => setIsNewMarketerOpen(true)}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add New Marketer
+      {/* Tabs for Marketers and Commissions */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="marketers">Marketers</TabsTrigger>
+          <TabsTrigger value="commissions">Commission Tracking</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="marketers" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {mockMarketers.map((marketer) => (
+              <Card key={marketer.id} className="hover:shadow-lg transition-shadow bg-white">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={marketer.avatar} alt={marketer.name} />
+                        <AvatarFallback>
+                          {marketer.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <CardTitle className="text-lg">{marketer.name}</CardTitle>
+                        <p className="text-sm text-gray-500">{marketer.email}</p>
+                      </div>
+                    </div>
+                    <Badge className={getStatusColor(marketer.status)}>
+                      {marketer.status}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <div className="text-lg font-bold text-blue-600">{marketer.leads}</div>
+                        <div className="text-xs text-gray-500">Leads</div>
+                      </div>
+                      <div>
+                        <div className="text-lg font-bold text-yellow-600">{marketer.conversions}</div>
+                        <div className="text-xs text-gray-500">Conversions</div>
+                      </div>
+                      <div>
+                        <div className="text-lg font-bold text-green-600">{marketer.sales}</div>
+                        <div className="text-xs text-gray-500">Sales</div>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-3 border-t space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Total Commission:</span>
+                        <span className="font-bold text-purple-600">{marketer.commission}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Paid:</span>
+                        <span className="font-medium text-green-600">{marketer.commissionPaid}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Pending:</span>
+                        <span className="font-medium text-orange-600">{marketer.commissionPending}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-2">
+                      <div className="text-xs text-gray-500 mb-1">Assigned Projects:</div>
+                      <div className="flex flex-wrap gap-1">
+                        {marketer.projects.map((project, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {project}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-2 pt-3">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Eye className="h-3 w-3 mr-1" />
+                        View Details
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Download className="h-3 w-3 mr-1" />
+                        Export Report
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="commissions" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold text-gray-900">Commission Tracking</h3>
+            <div className="flex space-x-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export CSV
               </Button>
-            )}
-          </CardContent>
-        </Card>
-      )}
+              <Button className="bg-purple-600 hover:bg-purple-700" size="sm">
+                Process Payments
+              </Button>
+            </div>
+          </div>
+
+          <Card className="bg-white">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Marketer</TableHead>
+                    <TableHead>Client/Property</TableHead>
+                    <TableHead>Sale Amount</TableHead>
+                    <TableHead>Commission</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Due Date</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockCommissions.map((commission) => (
+                    <TableRow key={commission.id} className="hover:bg-gray-50">
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{commission.marketerName}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{commission.clientName}</div>
+                          <div className="text-sm text-gray-500">{commission.project}</div>
+                          <div className="text-xs text-gray-400">{commission.unit}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{commission.saleAmount}</TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium text-purple-600">{commission.commissionAmount}</div>
+                          <div className="text-xs text-gray-500">{commission.commissionRate}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getCommissionStatusColor(commission.status)}>
+                          {commission.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">{commission.dueDate}</div>
+                        {commission.paidDate && (
+                          <div className="text-xs text-green-600">Paid: {commission.paidDate}</div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          {commission.status === 'approved' && (
+                            <Button 
+                              size="sm" 
+                              className="bg-green-600 hover:bg-green-700"
+                              onClick={() => handleMarkAsPaid(commission.id)}
+                            >
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Mark Paid
+                            </Button>
+                          )}
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Add Marketer Modal */}
+      <Dialog open={isNewMarketerOpen} onOpenChange={setIsNewMarketerOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Marketer</DialogTitle>
+            <DialogDescription>
+              Add a new sales marketer to your team
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">Marketer registration form would go here...</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
