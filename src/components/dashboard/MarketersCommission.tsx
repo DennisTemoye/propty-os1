@@ -1,24 +1,19 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search, Users, TrendingUp, DollarSign, Building, Filter, Eye, MoreHorizontal, Edit, Trash2, Download } from 'lucide-react';
-import { NewMarketerForm } from './forms/NewMarketerForm';
-import { useNavigate } from 'react-router-dom';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Plus, Edit, Trash2, Users, Mail, Phone, Building } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { toast } from 'sonner';
 
 export function MarketersCommission() {
-  const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [roleFilter, setRoleFilter] = useState('all');
-
-  const [mockMarketers, setMockMarketers] = useState([
+  const [marketers, setMarketers] = useState([
     {
       id: 1,
       name: 'Jane Smith',
@@ -34,7 +29,7 @@ export function MarketersCommission() {
       commissionPending: '₦600K',
       status: 'active',
       projects: ['Victoria Gardens', 'Emerald Heights'],
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=150&h=150&fit=crop&crop=face'
+      avatar: `https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=150&h=150&fit=crop&crop=face`
     },
     {
       id: 2,
@@ -47,260 +42,281 @@ export function MarketersCommission() {
       sales: 5,
       totalSalesVolume: '₦125M',
       commission: '₦1.5M',
-      commissionPaid: '₦1.0M',
-      commissionPending: '₦500K',
+      commissionPaid: '₦1.2M',
+      commissionPending: '₦300K',
       status: 'active',
-      projects: ['Victoria Gardens'],
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00d5a4ee9baa?w=150&h=150&fit=crop&crop=face'
+      projects: ['Emerald Heights'],
+      avatar: `https://images.unsplash.com/photo-1500648767791-00d5a4ee9baa?w=150&h=150&fit=crop&crop=face`
     },
     {
       id: 3,
       name: 'Sarah Johnson',
       email: 'sarah@proptyos.com',
       phone: '+234 703 333 4444',
-      role: 'Team Lead',
-      leads: 60,
-      conversions: 15,
-      sales: 10,
-      totalSalesVolume: '₦250M',
-      commission: '₦3.0M',
-      commissionPaid: '₦2.5M',
-      commissionPending: '₦500K',
-      status: 'inactive',
-      projects: ['Emerald Heights', 'The Grand Residences'],
-      avatar: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936e79?w=150&h=150&fit=crop&crop=face'
-    },
-    {
-      id: 4,
-      name: 'David Brown',
-      email: 'david@proptyos.com',
-      phone: '+234 814 444 5555',
-      role: 'Marketer',
-      leads: 25,
+      role: 'Junior Marketer',
+      leads: 20,
       conversions: 5,
       sales: 3,
       totalSalesVolume: '₦75M',
       commission: '₦900K',
       commissionPaid: '₦700K',
       commissionPending: '₦200K',
-      status: 'active',
-      projects: ['The Grand Residences'],
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd8a72f9e?w=150&h=150&fit=crop&crop=face'
+      status: 'inactive',
+      projects: ['Victoria Gardens'],
+      avatar: `https://images.unsplash.com/photo-1531427186611-ecfd6d936e79?w=150&h=150&fit=crop&crop=face`
     }
   ]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingMarketer, setEditingMarketer] = useState<any>(null);
+  const [formValues, setFormValues] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    role: '',
+    projects: [] as string[]
+  });
+  const [availableProjects] = useState(['Victoria Gardens', 'Emerald Heights', 'The Grand Residences']);
 
-  const handleAddMarketer = (formData: any) => {
-    const newMarketer = {
-      id: mockMarketers.length + 1,
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      role: formData.role,
-      leads: 0,
-      conversions: 0,
-      sales: 0,
-      totalSalesVolume: '₦0',
-      commission: '₦0',
-      commissionPaid: '₦0',
-      commissionPending: '₦0',
-      status: 'active',
-      projects: formData.projects || [],
-      avatar: `https://images.unsplash.com/photo-${1500000000000 + Math.random() * 100000000}?w=150&h=150&fit=crop&crop=face`
-    };
-
-    setMockMarketers(prev => [...prev, newMarketer]);
-    setIsModalOpen(false);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'inactive':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
-  const filteredMarketers = mockMarketers.filter(marketer => {
-    const searchMatch = marketer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      marketer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      marketer.phone.includes(searchTerm);
+  const handleOpenForm = () => {
+    setIsFormOpen(true);
+    setFormValues({ name: '', email: '', phone: '', role: '', projects: [] });
+    setEditingMarketer(null);
+  };
 
-    const statusMatch = statusFilter === 'all' || marketer.status === statusFilter;
-    const roleMatch = roleFilter === 'all' || marketer.role === roleFilter;
+  const handleEditMarketer = (marketer: any) => {
+    setEditingMarketer(marketer);
+    setFormValues({
+      name: marketer.name,
+      email: marketer.email,
+      phone: marketer.phone,
+      role: marketer.role,
+      projects: marketer.projects
+    });
+    setIsFormOpen(true);
+  };
 
-    return searchMatch && statusMatch && roleMatch;
-  });
+  const handleDeleteMarketer = (id: number) => {
+    setMarketers(prev => prev.filter(marketer => marketer.id !== id));
+    toast.success('Marketer deleted successfully');
+  };
 
-  const totalMarketers = mockMarketers.length;
-  const activeMarketers = mockMarketers.filter(m => m.status === 'active').length;
-  const inactiveMarketers = mockMarketers.filter(m => m.status === 'inactive').length;
-  const totalCommissionPending = mockMarketers.reduce((sum, m) => sum + parseFloat(m.commissionPending.replace('₦', '').replace('K', '')) * 1000, 0);
+  const handleFormValueChange = (field: string, value: any) => {
+    setFormValues(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleProjectSelect = (project: string) => {
+    if (formValues.projects.includes(project)) {
+      setFormValues(prev => ({
+        ...prev,
+        projects: prev.projects.filter(p => p !== project)
+      }));
+    } else {
+      setFormValues(prev => ({
+        ...prev,
+        projects: [...prev.projects, project]
+      }));
+    }
+  };
+
+  const handleSaveMarketer = (marketerData: any) => {
+    if (editingMarketer) {
+      setMarketers(prev => prev.map(m => 
+        m.id === editingMarketer.id 
+          ? {
+              ...m,
+              name: marketerData.name,
+              email: marketerData.email,
+              phone: marketerData.phone,
+              role: marketerData.role,
+              projects: marketerData.projects,
+              totalSalesVolume: m.totalSalesVolume
+            }
+          : m
+      ));
+      toast.success('Marketer updated successfully');
+    } else {
+      const newMarketer = {
+        id: Date.now(),
+        name: marketerData.name,
+        email: marketerData.email,
+        phone: marketerData.phone,
+        role: marketerData.role,
+        leads: 0,
+        conversions: 0,
+        sales: 0,
+        totalSalesVolume: '₦0',
+        commission: '₦0',
+        commissionPaid: '₦0',
+        commissionPending: '₦0',
+        status: 'active',
+        projects: marketerData.projects,
+        avatar: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face`
+      };
+      setMarketers(prev => [...prev, newMarketer]);
+      toast.success('Marketer added successfully');
+    }
+    setIsFormOpen(false);
+    setEditingMarketer(null);
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Marketers & Commissions</h1>
-          <p className="text-gray-600 mt-1">Manage marketers, track performance, and process commissions</p>
+          <p className="text-gray-600 mt-1">Manage marketers and track their commissions</p>
         </div>
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-green-600 hover:bg-green-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Marketer
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add New Marketer</DialogTitle>
-              <DialogDescription>Create a new marketer profile</DialogDescription>
-            </DialogHeader>
-            <NewMarketerForm onSubmit={handleAddMarketer} onClose={() => setIsModalOpen(false)} />
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-gray-600">Total Marketers</div>
-                <div className="text-2xl font-bold text-gray-900">{totalMarketers}</div>
-              </div>
-              <Users className="h-6 w-6 text-gray-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-gray-600">Active Marketers</div>
-                <div className="text-2xl font-bold text-green-600">{activeMarketers}</div>
-              </div>
-              <TrendingUp className="h-6 w-6 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-gray-600">Inactive Marketers</div>
-                <div className="text-2xl font-bold text-red-600">{inactiveMarketers}</div>
-              </div>
-              <Building className="h-6 w-6 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-gray-600">Total Commission Pending</div>
-                <div className="text-2xl font-bold text-orange-600">₦{totalCommissionPending / 1000}K</div>
-              </div>
-              <DollarSign className="h-6 w-6 text-orange-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filter and Search */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Input
-            type="text"
-            placeholder="Search marketers..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-md"
-          />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="Marketer">Marketer</SelectItem>
-              <SelectItem value="Senior Marketer">Senior Marketer</SelectItem>
-              <SelectItem value="Team Lead">Team Lead</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button variant="outline">
-          <Filter className="h-4 w-4 mr-2" />
-          Filters
+        <Button onClick={handleOpenForm} className="bg-purple-600 hover:bg-purple-700">
+          <Plus className="h-4 w-4 mr-2" />
+          Add Marketer
         </Button>
       </div>
 
-      {/* Marketers List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredMarketers.map((marketer) => (
-          <Card key={marketer.id} className="bg-white shadow-md rounded-lg overflow-hidden">
-            <CardHeader className="flex items-center space-x-4 pt-4 pl-4">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={marketer.avatar} alt={marketer.name} />
-                <AvatarFallback>{marketer.name.split(" ").map((n) => n[0]).join("")}</AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle className="text-lg font-semibold">{marketer.name}</CardTitle>
-                <p className="text-sm text-gray-500">{marketer.role}</p>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between text-sm text-gray-600">
-                <div className="flex items-center space-x-1">
-                  <Users className="h-4 w-4" />
-                  <span>{marketer.leads} Leads</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Building className="h-4 w-4" />
-                  <span>{marketer.sales} Sales</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <DollarSign className="h-4 w-4" />
-                  <span>{marketer.commission}</span>
-                </div>
-              </div>
-              <Badge className={marketer.status === 'active' ? 'bg-green-100 text-green-800 mt-2' : 'bg-red-100 text-red-800 mt-2'}>
-                {marketer.status}
-              </Badge>
-            </CardContent>
-            <div className="flex justify-between items-center p-4">
-              <Button variant="secondary" size="sm" onClick={() => navigate(`/company/marketers/${marketer.id}`)}>
-                View Details
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => console.log('Edit marketer', marketer.id)}>
-                    <Edit className="h-4 w-4 mr-2" /> Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => console.log('Delete marketer', marketer.id)}>
-                    <Trash2 className="h-4 w-4 mr-2" /> Delete
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => console.log('Download report', marketer.id)}>
-                    <Download className="h-4 w-4 mr-2" /> Download Report
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+      <Card>
+        <CardHeader>
+          <CardTitle>Marketers List</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Projects</TableHead>
+                  <TableHead>Leads</TableHead>
+                  <TableHead>Sales</TableHead>
+                  <TableHead>Commission</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {marketers.map((marketer) => (
+                  <TableRow key={marketer.id}>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={marketer.avatar} alt={marketer.name} />
+                          <AvatarFallback>{marketer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <span>{marketer.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-500">
+                        <p className="flex items-center"><Mail className="h-3 w-3 mr-1" />{marketer.email}</p>
+                        <p className="flex items-center"><Phone className="h-3 w-3 mr-1" />{marketer.phone}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{marketer.role}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {marketer.projects.map((project, index) => (
+                          <Badge key={index} variant="secondary">{project}</Badge>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <Users className="h-4 w-4 text-blue-500" />
+                        <span>{marketer.leads}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <Building className="h-4 w-4 text-green-500" />
+                        <span>{marketer.sales}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{marketer.commission}</TableCell>
+                    <TableCell>
+                      <Badge className={getStatusColor(marketer.status)}>
+                        {marketer.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => handleEditMarketer(marketer)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => handleDeleteMarketer(marketer.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingMarketer ? 'Edit Marketer' : 'Add Marketer'}</DialogTitle>
+            <DialogDescription>
+              {editingMarketer ? 'Update marketer details' : 'Create a new marketer'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">Name</Label>
+              <Input id="name" value={formValues.name} onChange={(e) => handleFormValueChange('name', e.target.value)} className="col-span-3" />
             </div>
-          </Card>
-        ))}
-      </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">Email</Label>
+              <Input id="email" type="email" value={formValues.email} onChange={(e) => handleFormValueChange('email', e.target.value)} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phone" className="text-right">Phone</Label>
+              <Input id="phone" value={formValues.phone} onChange={(e) => handleFormValueChange('phone', e.target.value)} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="role" className="text-right">Role</Label>
+              <Input id="role" value={formValues.role} onChange={(e) => handleFormValueChange('role', e.target.value)} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label className="text-right mt-2">Projects</Label>
+              <div className="col-span-3 space-y-1">
+                {availableProjects.map((project) => (
+                  <div key={project} className="flex items-center space-x-2">
+                    <Input
+                      type="checkbox"
+                      id={project}
+                      checked={formValues.projects.includes(project)}
+                      onChange={() => handleProjectSelect(project)}
+                    />
+                    <Label htmlFor={project}>{project}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setIsFormOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => handleSaveMarketer(formValues)}>
+              {editingMarketer ? 'Update' : 'Save'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

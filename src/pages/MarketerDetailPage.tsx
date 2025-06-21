@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -9,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Phone, Mail, Building, Users, DollarSign, TrendingUp, Calendar, FileText, Download, Eye } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Building, Users, DollarSign, TrendingUp, Calendar, FileText, Download, Eye, Trophy, Target, Star } from 'lucide-react';
 import { DownloadService } from '@/services/downloadService';
 import { toast } from 'sonner';
 
@@ -17,7 +16,7 @@ const MarketerDetailPage = () => {
   const { marketerId } = useParams();
   const navigate = useNavigate();
 
-  // Mock marketer data
+  // Mock marketer data with enhanced performance metrics
   const marketer = {
     id: 1,
     name: 'Jane Smith',
@@ -27,8 +26,9 @@ const MarketerDetailPage = () => {
     status: 'active',
     avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=150&h=150&fit=crop&crop=face',
     joinDate: '2023-06-15',
-    totalClients: 45,
-    totalSales: 8,
+    totalLeads: 45,
+    conversions: 12,
+    totalPropertySales: 8,
     totalSalesVolume: '₦200M',
     totalCommission: '₦2.4M',
     commissionPaid: '₦1.8M',
@@ -38,6 +38,24 @@ const MarketerDetailPage = () => {
       baserate: '2.5%',
       bonusThreshold: '10 units/month',
       bonusRate: '0.5%'
+    },
+    // New performance metrics
+    salesRank: 1,
+    totalMarketers: 15,
+    bestPerformingProject: {
+      name: 'Victoria Gardens',
+      unitsold: 5,
+      revenue: '₦125M',
+      commission: '₦1.5M',
+      conversionRate: '78%'
+    },
+    performanceMetrics: {
+      monthlyTarget: 3,
+      monthlyAchieved: 4,
+      yearlyTarget: 36,
+      yearlyAchieved: 28,
+      avgDealSize: '₦25M',
+      bestMonth: 'January 2024'
     }
   };
 
@@ -46,62 +64,61 @@ const MarketerDetailPage = () => {
     {
       id: 1,
       clientName: 'John Doe',
-      propertyType: 'Residential Plot',
-      unit: 'Block A - Plot 02',
+      propertyUnit: 'Block A - Plot 02',
       project: 'Victoria Gardens',
-      salePrice: '₦25M',
+      saleAmount: '₦25M',
       saleDate: '2024-01-15',
       status: 'completed',
       commission: '₦625K',
-      paymentStatus: 'fully-paid'
+      paymentMethod: 'Bank Transfer'
     },
     {
       id: 2,
       clientName: 'Sarah Johnson',
-      propertyType: 'Commercial Plot',
-      unit: 'Block B - Plot 08',
+      propertyUnit: 'Block B - Plot 08',
       project: 'Emerald Heights',
-      salePrice: '₦30M',
+      saleAmount: '₦30M',
       saleDate: '2024-01-10',
       status: 'completed',
       commission: '₦750K',
-      paymentStatus: 'installment'
+      paymentMethod: 'Cash'
     },
     {
       id: 3,
       clientName: 'Mike Williams',
-      propertyType: 'Residential Plot',
-      unit: 'Block C - Plot 15',
+      propertyUnit: 'Block C - Plot 15',
       project: 'Victoria Gardens',
-      salePrice: '₦22M',
+      saleAmount: '₦22M',
       saleDate: '2024-01-05',
-      status: 'processing',
+      status: 'pending',
       commission: '₦550K',
-      paymentStatus: 'pending'
+      paymentMethod: 'Installment'
     }
   ];
 
-  // Mock commission breakdown
-  const commissionBreakdown = [
+  // Mock commissions data
+  const commissions = [
     {
       id: 1,
-      month: 'January 2024',
-      totalSales: '₦77M',
-      grossCommission: '₦1.925M',
-      deductions: '₦0',
-      netCommission: '₦1.925M',
+      clientName: 'John Doe',
+      project: 'Victoria Gardens',
+      saleAmount: '₦25M',
+      commissionAmount: '₦625K',
+      rate: '2.5%',
       status: 'paid',
-      paymentDate: '2024-02-01'
+      dateEarned: '2024-01-15',
+      datePaid: '2024-02-01'
     },
     {
       id: 2,
-      month: 'December 2023',
-      totalSales: '₦45M',
-      grossCommission: '₦1.125M',
-      deductions: '₦50K',
-      netCommission: '₦1.075M',
-      status: 'paid',
-      paymentDate: '2024-01-01'
+      clientName: 'Sarah Johnson',
+      project: 'Emerald Heights',
+      saleAmount: '₦30M',
+      commissionAmount: '₦750K',
+      rate: '2.5%',
+      status: 'pending',
+      dateEarned: '2024-01-10',
+      datePaid: null
     }
   ];
 
@@ -110,23 +127,23 @@ const MarketerDetailPage = () => {
     {
       id: 1,
       action: 'Property Sale Completed',
-      description: 'Completed sale of Block A - Plot 02 to John Doe for ₦25M',
+      description: 'Closed sale for John Doe - Block A Plot 02, Victoria Gardens',
       date: '2024-01-15 10:30 AM',
       type: 'sale'
     },
     {
       id: 2,
-      action: 'Commission Processed',
-      description: 'Commission of ₦625K processed for John Doe property sale',
+      action: 'Commission Paid',
+      description: 'Commission of ₦625K paid for John Doe property sale',
       date: '2024-02-01 2:15 PM',
       type: 'commission'
     },
     {
       id: 3,
-      action: 'Client Onboarded',
-      description: 'Successfully onboarded new client Sarah Johnson',
-      date: '2024-01-08 9:00 AM',
-      type: 'client'
+      action: 'Client Consultation',
+      description: 'Initial consultation with Mike Williams for property inquiry',
+      date: '2024-01-01 9:00 AM',
+      type: 'consultation'
     }
   ];
 
@@ -134,13 +151,9 @@ const MarketerDetailPage = () => {
     switch (status) {
       case 'active':
       case 'completed':
-      case 'fully-paid':
         return 'bg-green-100 text-green-800';
       case 'inactive':
         return 'bg-gray-100 text-gray-800';
-      case 'processing':
-      case 'installment':
-        return 'bg-blue-100 text-blue-800';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'paid':
@@ -156,20 +169,36 @@ const MarketerDetailPage = () => {
         return 'bg-blue-100 text-blue-800';
       case 'commission':
         return 'bg-green-100 text-green-800';
-      case 'client':
+      case 'consultation':
         return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const handleDownloadSalesReport = () => {
-    toast.success('Sales report downloaded successfully');
+  const getRankColor = (rank: number) => {
+    if (rank === 1) return 'text-yellow-600';
+    if (rank <= 3) return 'text-gray-500';
+    if (rank <= 5) return 'text-orange-600';
+    return 'text-gray-400';
+  };
+
+  const getRankIcon = (rank: number) => {
+    if (rank === 1) return Trophy;
+    if (rank <= 3) return Star;
+    return Target;
   };
 
   const handleDownloadCommissionReport = () => {
+    DownloadService.generateMarketerCommissionReport(marketer, commissions);
     toast.success('Commission report downloaded successfully');
   };
+
+  const handleExportSalesReport = () => {
+    toast.success('Sales report export started. Download will begin shortly.');
+  };
+
+  const RankIcon = getRankIcon(marketer.salesRank);
 
   return (
     <SidebarProvider>
@@ -197,7 +226,15 @@ const MarketerDetailPage = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <h1 className="text-3xl font-bold text-gray-900">{marketer.name}</h1>
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h1 className="text-3xl font-bold text-gray-900">{marketer.name}</h1>
+                        <div className="flex items-center space-x-2">
+                          <RankIcon className={`h-6 w-6 ${getRankColor(marketer.salesRank)}`} />
+                          <Badge variant="outline" className={`${getRankColor(marketer.salesRank)} border-current`}>
+                            Rank #{marketer.salesRank} of {marketer.totalMarketers}
+                          </Badge>
+                        </div>
+                      </div>
                       <p className="text-lg text-gray-600 mb-2">{marketer.role}</p>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <div className="flex items-center">
@@ -219,7 +256,7 @@ const MarketerDetailPage = () => {
                     <Badge className={getStatusColor(marketer.status)}>
                       {marketer.status}
                     </Badge>
-                    <Button variant="outline" onClick={handleDownloadSalesReport}>
+                    <Button variant="outline" onClick={handleDownloadCommissionReport}>
                       <FileText className="h-4 w-4 mr-2" />
                       Download Report
                     </Button>
@@ -229,14 +266,148 @@ const MarketerDetailPage = () => {
               </CardContent>
             </Card>
 
+            {/* Performance Overview Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-yellow-600" />
+                    Best Performing Project
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">{marketer.bestPerformingProject.name}</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Units Sold</p>
+                        <p className="text-xl font-bold text-blue-600">{marketer.bestPerformingProject.unitsold}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Revenue Generated</p>
+                        <p className="text-xl font-bold text-green-600">{marketer.bestPerformingProject.revenue}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Commission Earned</p>
+                        <p className="text-xl font-bold text-purple-600">{marketer.bestPerformingProject.commission}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Conversion Rate</p>
+                        <p className="text-xl font-bold text-orange-600">{marketer.bestPerformingProject.conversionRate}</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5 text-blue-600" />
+                    Performance Targets
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">Monthly Target</span>
+                      <span className="text-sm text-gray-600">{marketer.performanceMetrics.monthlyAchieved}/{marketer.performanceMetrics.monthlyTarget}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-green-600 h-2 rounded-full" 
+                        style={{ width: `${Math.min((marketer.performanceMetrics.monthlyAchieved / marketer.performanceMetrics.monthlyTarget) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-green-600 mt-1">133% achieved</p>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">Yearly Target</span>
+                      <span className="text-sm text-gray-600">{marketer.performanceMetrics.yearlyAchieved}/{marketer.performanceMetrics.yearlyTarget}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-blue-600 h-2 rounded-full" 
+                        style={{ width: `${(marketer.performanceMetrics.yearlyAchieved / marketer.performanceMetrics.yearlyTarget) * 100}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-blue-600 mt-1">78% achieved</p>
+                  </div>
+
+                  <div className="pt-2 border-t">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Avg Deal Size:</span>
+                      <span className="font-medium">{marketer.performanceMetrics.avgDealSize}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Best Month:</span>
+                      <span className="font-medium">{marketer.performanceMetrics.bestMonth}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Basic Information Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Basic Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500 mb-1">Contact Details</h4>
+                    <p className="text-sm">{marketer.email}</p>
+                    <p className="text-sm">{marketer.phone}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500 mb-1">Role</h4>
+                    <p className="text-sm">{marketer.role}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500 mb-1">Assigned Projects</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {marketer.assignedProjects.map((project, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {project}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Commission Structure</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Base Rate:</span>
+                    <span className="font-medium">{marketer.commissionStructure.baserate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Bonus Threshold:</span>
+                    <span className="font-medium">{marketer.commissionStructure.bonusThreshold}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Bonus Rate:</span>
+                    <span className="font-medium">{marketer.commissionStructure.bonusRate}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
             {/* Summary KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Total Clients</div>
-                      <div className="text-2xl font-bold text-blue-600">{marketer.totalClients}</div>
+                      <div className="text-sm text-gray-500 mb-1">Total Leads Generated</div>
+                      <div className="text-2xl font-bold text-blue-600">{marketer.totalLeads}</div>
                     </div>
                     <Users className="h-8 w-8 text-blue-600" />
                   </div>
@@ -248,7 +419,7 @@ const MarketerDetailPage = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-sm text-gray-500 mb-1">Properties Sold</div>
-                      <div className="text-2xl font-bold text-green-600">{marketer.totalSales}</div>
+                      <div className="text-2xl font-bold text-green-600">{marketer.totalPropertySales}</div>
                     </div>
                     <Building className="h-8 w-8 text-green-600" />
                   </div>
@@ -271,7 +442,7 @@ const MarketerDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Total Commission</div>
+                      <div className="text-sm text-gray-500 mb-1">Total Commission Earned</div>
                       <div className="text-2xl font-bold text-orange-600">{marketer.totalCommission}</div>
                     </div>
                     <DollarSign className="h-8 w-8 text-orange-600" />
@@ -284,7 +455,7 @@ const MarketerDetailPage = () => {
             <Tabs defaultValue="sales" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="sales">Property Sales</TabsTrigger>
-                <TabsTrigger value="commissions">Commission Summary</TabsTrigger>
+                <TabsTrigger value="commissions">Commissions</TabsTrigger>
                 <TabsTrigger value="activity">Activity Log</TabsTrigger>
               </TabsList>
 
@@ -292,9 +463,9 @@ const MarketerDetailPage = () => {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Property Sales Records</CardTitle>
-                    <Button variant="outline" size="sm" onClick={handleDownloadSalesReport}>
+                    <Button variant="outline" size="sm" onClick={handleExportSalesReport}>
                       <Download className="h-4 w-4 mr-2" />
-                      Export Sales Data
+                      Export Sales Report
                     </Button>
                   </CardHeader>
                   <CardContent>
@@ -302,14 +473,13 @@ const MarketerDetailPage = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Client Name</TableHead>
-                          <TableHead>Property Type</TableHead>
-                          <TableHead>Unit/Plot</TableHead>
+                          <TableHead>Property Unit</TableHead>
                           <TableHead>Project</TableHead>
-                          <TableHead>Sale Price</TableHead>
+                          <TableHead>Sale Amount</TableHead>
                           <TableHead>Sale Date</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Payment Status</TableHead>
                           <TableHead>Commission</TableHead>
+                          <TableHead>Payment Method</TableHead>
                           <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -317,22 +487,17 @@ const MarketerDetailPage = () => {
                         {propertySales.map((sale) => (
                           <TableRow key={sale.id}>
                             <TableCell className="font-medium">{sale.clientName}</TableCell>
-                            <TableCell>{sale.propertyType}</TableCell>
-                            <TableCell>{sale.unit}</TableCell>
+                            <TableCell>{sale.propertyUnit}</TableCell>
                             <TableCell>{sale.project}</TableCell>
-                            <TableCell className="font-medium">{sale.salePrice}</TableCell>
+                            <TableCell className="font-medium">{sale.saleAmount}</TableCell>
                             <TableCell>{sale.saleDate}</TableCell>
                             <TableCell>
                               <Badge className={getStatusColor(sale.status)}>
                                 {sale.status}
                               </Badge>
                             </TableCell>
-                            <TableCell>
-                              <Badge className={getStatusColor(sale.paymentStatus)}>
-                                {sale.paymentStatus}
-                              </Badge>
-                            </TableCell>
                             <TableCell className="font-medium text-green-600">{sale.commission}</TableCell>
+                            <TableCell>{sale.paymentMethod}</TableCell>
                             <TableCell>
                               <Button variant="ghost" size="sm">
                                 <Eye className="h-4 w-4" />
@@ -376,7 +541,7 @@ const MarketerDetailPage = () => {
 
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Monthly Commission Breakdown</CardTitle>
+                    <CardTitle>Commission Breakdown</CardTitle>
                     <Button variant="outline" size="sm" onClick={handleDownloadCommissionReport}>
                       <Download className="h-4 w-4 mr-2" />
                       Download Summary
@@ -386,29 +551,31 @@ const MarketerDetailPage = () => {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Period</TableHead>
-                          <TableHead>Total Sales</TableHead>
-                          <TableHead>Gross Commission</TableHead>
-                          <TableHead>Deductions</TableHead>
-                          <TableHead>Net Commission</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Project</TableHead>
+                          <TableHead>Sale Amount</TableHead>
+                          <TableHead>Rate</TableHead>
+                          <TableHead>Commission</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Payment Date</TableHead>
+                          <TableHead>Date Earned</TableHead>
+                          <TableHead>Date Paid</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {commissionBreakdown.map((commission) => (
+                        {commissions.map((commission) => (
                           <TableRow key={commission.id}>
-                            <TableCell className="font-medium">{commission.month}</TableCell>
-                            <TableCell className="font-medium">{commission.totalSales}</TableCell>
-                            <TableCell className="font-medium text-purple-600">{commission.grossCommission}</TableCell>
-                            <TableCell className="text-red-600">{commission.deductions}</TableCell>
-                            <TableCell className="font-medium text-green-600">{commission.netCommission}</TableCell>
+                            <TableCell className="font-medium">{commission.clientName}</TableCell>
+                            <TableCell>{commission.project}</TableCell>
+                            <TableCell className="font-medium">{commission.saleAmount}</TableCell>
+                            <TableCell>{commission.rate}</TableCell>
+                            <TableCell className="font-medium text-purple-600">{commission.commissionAmount}</TableCell>
                             <TableCell>
                               <Badge className={getStatusColor(commission.status)}>
                                 {commission.status}
                               </Badge>
                             </TableCell>
-                            <TableCell>{commission.paymentDate}</TableCell>
+                            <TableCell>{commission.dateEarned}</TableCell>
+                            <TableCell>{commission.datePaid || '-'}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -420,7 +587,7 @@ const MarketerDetailPage = () => {
               <TabsContent value="activity" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
+                    <CardTitle>Activity Log</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
