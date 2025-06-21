@@ -9,13 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Phone, Mail, Building, Users, DollarSign, TrendingUp, Calendar, FileText, Download, Eye } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Phone, Mail, Building, Users, DollarSign, TrendingUp, Calendar, FileText, Download, Eye, Trophy, Filter } from 'lucide-react';
 import { DownloadService } from '@/services/downloadService';
 import { toast } from 'sonner';
 
 const MarketerDetailPage = () => {
   const { marketerId } = useParams();
   const navigate = useNavigate();
+  const [projectFilter, setProjectFilter] = useState('all');
 
   // Mock data - in real app, this would come from API based on marketerId
   const marketer = {
@@ -39,11 +41,13 @@ const MarketerDetailPage = () => {
       baserate: '2.5%',
       bonusThreshold: '10 units/month',
       bonusRate: '0.5%'
-    }
+    },
+    performanceRank: 3, // Overall rank among all marketers
+    totalMarketers: 15
   };
 
-  // Mock sales and allocations data
-  const salesAllocations = [
+  // Mock sales data with project information
+  const salesData = [
     {
       id: 1,
       clientName: 'John Doe',
@@ -51,7 +55,7 @@ const MarketerDetailPage = () => {
       project: 'Victoria Gardens',
       amount: '₦25M',
       date: '2024-01-15',
-      status: 'allocated',
+      status: 'completed',
       commission: '₦625K'
     },
     {
@@ -61,7 +65,7 @@ const MarketerDetailPage = () => {
       project: 'Emerald Heights',
       amount: '₦30M',
       date: '2024-01-10',
-      status: 'allocated',
+      status: 'completed',
       commission: '₦750K'
     },
     {
@@ -71,10 +75,28 @@ const MarketerDetailPage = () => {
       project: 'Victoria Gardens',
       amount: '₦22M',
       date: '2024-01-05',
-      status: 'interested',
-      commission: '₦0'
+      status: 'pending',
+      commission: '₦550K'
+    },
+    {
+      id: 4,
+      clientName: 'Emma Davis',
+      unit: 'Block A - Plot 12',
+      project: 'Emerald Heights',
+      amount: '₦28M',
+      date: '2024-01-20',
+      status: 'completed',
+      commission: '₦700K'
     }
   ];
+
+  // Filter sales data based on project selection
+  const filteredSalesData = projectFilter === 'all' 
+    ? salesData 
+    : salesData.filter(sale => sale.project === projectFilter);
+
+  // Get unique projects for filter
+  const projects = [...new Set(salesData.map(sale => sale.project))];
 
   // Mock commissions data
   const commissions = [
@@ -106,15 +128,15 @@ const MarketerDetailPage = () => {
   const activityLog = [
     {
       id: 1,
-      action: 'Client Allocated',
-      description: 'John Doe allocated to Block A - Plot 02, Victoria Gardens',
+      action: 'Sale Completed',
+      description: 'John Doe completed purchase of Block A - Plot 02, Victoria Gardens',
       date: '2024-01-15 10:30 AM',
-      type: 'allocation'
+      type: 'sale'
     },
     {
       id: 2,
       action: 'Commission Paid',
-      description: 'Commission of ₦625K paid for John Doe allocation',
+      description: 'Commission of ₦625K paid for John Doe sale',
       date: '2024-02-01 2:15 PM',
       type: 'commission'
     },
@@ -133,14 +155,12 @@ const MarketerDetailPage = () => {
         return 'bg-green-100 text-green-800';
       case 'inactive':
         return 'bg-gray-100 text-gray-800';
-      case 'allocated':
+      case 'completed':
         return 'bg-blue-100 text-blue-800';
-      case 'interested':
+      case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'paid':
         return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-orange-100 text-orange-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -148,7 +168,7 @@ const MarketerDetailPage = () => {
 
   const getActivityTypeColor = (type: string) => {
     switch (type) {
-      case 'allocation':
+      case 'sale':
         return 'bg-blue-100 text-blue-800';
       case 'commission':
         return 'bg-green-100 text-green-800';
@@ -157,6 +177,28 @@ const MarketerDetailPage = () => {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const getPerformanceRankBadge = () => {
+    const { performanceRank, totalMarketers } = marketer;
+    let badgeColor = 'bg-gray-100 text-gray-800';
+    let icon = null;
+
+    if (performanceRank <= 3) {
+      badgeColor = 'bg-yellow-100 text-yellow-800';
+      icon = <Trophy className="h-3 w-3 mr-1" />;
+    } else if (performanceRank <= Math.ceil(totalMarketers * 0.3)) {
+      badgeColor = 'bg-green-100 text-green-800';
+    } else if (performanceRank <= Math.ceil(totalMarketers * 0.6)) {
+      badgeColor = 'bg-blue-100 text-blue-800';
+    }
+
+    return (
+      <Badge className={badgeColor}>
+        {icon}
+        Rank #{performanceRank} of {totalMarketers}
+      </Badge>
+    );
   };
 
   const handleDownloadCommissionReport = () => {
@@ -196,7 +238,7 @@ const MarketerDetailPage = () => {
                     <div>
                       <h1 className="text-3xl font-bold text-gray-900">{marketer.name}</h1>
                       <p className="text-lg text-gray-600 mb-2">{marketer.role}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
                         <div className="flex items-center">
                           <Phone className="h-4 w-4 mr-1" />
                           {marketer.phone}
@@ -209,6 +251,9 @@ const MarketerDetailPage = () => {
                           <Calendar className="h-4 w-4 mr-1" />
                           Joined: {marketer.joinDate}
                         </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {getPerformanceRankBadge()}
                       </div>
                     </div>
                   </div>
@@ -277,27 +322,15 @@ const MarketerDetailPage = () => {
             </div>
 
             {/* Summary KPIs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Total Clients Referred</div>
-                      <div className="text-2xl font-bold text-blue-600">{marketer.totalLeads}</div>
+                      <div className="text-sm text-gray-500 mb-1">Total Clients Converted</div>
+                      <div className="text-2xl font-bold text-blue-600">{marketer.conversions}</div>
                     </div>
                     <Users className="h-8 w-8 text-blue-600" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm text-gray-500 mb-1">Total Units Allocated</div>
-                      <div className="text-2xl font-bold text-green-600">{marketer.totalSales}</div>
-                    </div>
-                    <Building className="h-8 w-8 text-green-600" />
                   </div>
                 </CardContent>
               </Card>
@@ -330,7 +363,7 @@ const MarketerDetailPage = () => {
             {/* Detailed Tabs */}
             <Tabs defaultValue="sales" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="sales">Sales & Allocations</TabsTrigger>
+                <TabsTrigger value="sales">Sales</TabsTrigger>
                 <TabsTrigger value="commissions">Commissions</TabsTrigger>
                 <TabsTrigger value="activity">Activity Log</TabsTrigger>
               </TabsList>
@@ -338,11 +371,26 @@ const MarketerDetailPage = () => {
               <TabsContent value="sales" className="space-y-6">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Sales & Allocations</CardTitle>
-                    <Button variant="outline" size="sm" onClick={handleExportSalesReport}>
-                      <Download className="h-4 w-4 mr-2" />
-                      Export Sales Report
-                    </Button>
+                    <CardTitle>Sales Records</CardTitle>
+                    <div className="flex items-center space-x-2">
+                      <Select value={projectFilter} onValueChange={setProjectFilter}>
+                        <SelectTrigger className="w-48">
+                          <SelectValue placeholder="Filter by project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Projects</SelectItem>
+                          {projects.map(project => (
+                            <SelectItem key={project} value={project}>
+                              {project}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button variant="outline" size="sm" onClick={handleExportSalesReport}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Export Sales Report
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <Table>
@@ -359,19 +407,19 @@ const MarketerDetailPage = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {salesAllocations.map((allocation) => (
-                          <TableRow key={allocation.id}>
-                            <TableCell className="font-medium">{allocation.clientName}</TableCell>
-                            <TableCell>{allocation.unit}</TableCell>
-                            <TableCell>{allocation.project}</TableCell>
-                            <TableCell className="font-medium">{allocation.amount}</TableCell>
-                            <TableCell>{allocation.date}</TableCell>
+                        {filteredSalesData.map((sale) => (
+                          <TableRow key={sale.id}>
+                            <TableCell className="font-medium">{sale.clientName}</TableCell>
+                            <TableCell>{sale.unit}</TableCell>
+                            <TableCell>{sale.project}</TableCell>
+                            <TableCell className="font-medium">{sale.amount}</TableCell>
+                            <TableCell>{sale.date}</TableCell>
                             <TableCell>
-                              <Badge className={getStatusColor(allocation.status)}>
-                                {allocation.status}
+                              <Badge className={getStatusColor(sale.status)}>
+                                {sale.status}
                               </Badge>
                             </TableCell>
-                            <TableCell className="font-medium text-green-600">{allocation.commission}</TableCell>
+                            <TableCell className="font-medium text-green-600">{sale.commission}</TableCell>
                             <TableCell>
                               <Button variant="ghost" size="sm">
                                 <Eye className="h-4 w-4" />
@@ -381,6 +429,11 @@ const MarketerDetailPage = () => {
                         ))}
                       </TableBody>
                     </Table>
+                    {filteredSalesData.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        No sales records found for the selected project.
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
