@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell } from 'lucide-react';
+import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell, CreditCard } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 import { 
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
 
 const kpiData = [
   {
@@ -122,10 +123,21 @@ const financialData = [
 
 export function DashboardOverview() {
   const [showNotification, setShowNotification] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const handleNewAction = (action: string) => {
     console.log(`Creating new ${action}`);
-    // Here you would implement the actual navigation or modal opening logic
+    if (action === 'payment') {
+      setShowPaymentModal(true);
+    }
+    // Here you would implement the actual navigation or modal opening logic for other actions
+  };
+
+  // Mock client data for payment modal (in real app, this would come from props or context)
+  const mockClient = {
+    id: '1',
+    name: 'General Payment Entry',
+    email: 'payment@company.com'
   };
 
   return (
@@ -195,6 +207,13 @@ export function DashboardOverview() {
                 >
                   <DollarSign className="h-5 w-5 text-red-600" />
                   <span className="font-medium">New Expense</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('payment')}
+                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <CreditCard className="h-5 w-5 text-emerald-600" />
+                  <span className="font-medium">New Payment</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -452,6 +471,13 @@ export function DashboardOverview() {
           </Card>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      <AddPaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        client={mockClient}
+      />
     </div>
   );
 }
