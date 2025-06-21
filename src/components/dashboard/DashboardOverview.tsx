@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell, CreditCard, Send } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
@@ -50,7 +50,7 @@ export function DashboardOverview() {
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [activeSheet, setActiveSheet] = useState<string | null>(null);
+  const [activeModal, setActiveModal] = useState<string | null>(null);
 
   // KPI data with navigation handlers
   const kpiData = [
@@ -149,12 +149,12 @@ export function DashboardOverview() {
     if (action === 'payment') {
       setShowPaymentModal(true);
     } else {
-      setActiveSheet(action);
+      setActiveModal(action);
     }
   };
 
-  const closeSheet = () => {
-    setActiveSheet(null);
+  const closeModal = () => {
+    setActiveModal(null);
   };
 
   // Mock client data for payment modal (in real app, this would come from props or context)
@@ -164,7 +164,7 @@ export function DashboardOverview() {
     email: 'payment@company.com'
   };
 
-  const getSheetTitle = (action: string) => {
+  const getModalTitle = (action: string) => {
     switch (action) {
       case 'development': return 'Create New Project';
       case 'project_site': return 'Create New Project Site';
@@ -176,7 +176,7 @@ export function DashboardOverview() {
     }
   };
 
-  const getSheetDescription = (action: string) => {
+  const getModalDescription = (action: string) => {
     switch (action) {
       case 'development': return 'Add a new real estate development to your portfolio';
       case 'project_site': return 'Add a new project site to track development progress';
@@ -188,18 +188,18 @@ export function DashboardOverview() {
     }
   };
 
-  const renderSheetContent = (action: string) => {
+  const renderModalContent = (action: string) => {
     switch (action) {
       case 'development':
-        return <NewDevelopmentForm onClose={closeSheet} />;
+        return <NewDevelopmentForm onClose={closeModal} />;
       case 'project_site':
-        return <NewProjectSiteForm onClose={closeSheet} />;
+        return <NewProjectSiteForm onClose={closeModal} />;
       case 'client':
-        return <NewClientForm onClose={closeSheet} />;
+        return <NewClientForm onClose={closeModal} />;
       case 'allocation':
-        return <NewAllocationForm onClose={closeSheet} />;
+        return <NewAllocationForm onClose={closeModal} />;
       case 'expense':
-        return <NewExpenseForm onClose={closeSheet} />;
+        return <NewExpenseForm onClose={closeModal} />;
       case 'notice':
         return <SendNoticeForm />;
       default:
@@ -558,20 +558,20 @@ export function DashboardOverview() {
         client={mockClient}
       />
 
-      {/* Side Sheet for Forms */}
-      <Sheet open={!!activeSheet} onOpenChange={closeSheet}>
-        <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>{activeSheet ? getSheetTitle(activeSheet) : ''}</SheetTitle>
-            <SheetDescription>
-              {activeSheet ? getSheetDescription(activeSheet) : ''}
-            </SheetDescription>
-          </SheetHeader>
+      {/* Centered Modal for Forms */}
+      <Dialog open={!!activeModal} onOpenChange={closeModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{activeModal ? getModalTitle(activeModal) : ''}</DialogTitle>
+            <DialogDescription>
+              {activeModal ? getModalDescription(activeModal) : ''}
+            </DialogDescription>
+          </DialogHeader>
           <div className="mt-6">
-            {activeSheet && renderSheetContent(activeSheet)}
+            {activeModal && renderModalContent(activeModal)}
           </div>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
