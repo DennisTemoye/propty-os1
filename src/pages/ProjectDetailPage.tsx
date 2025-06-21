@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Edit, Trash2, FileText, Building, Users, BarChart3 } from 'lucide-react';
 import { ProjectDetailView } from '@/components/dashboard/projects/ProjectDetailView';
-import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
+import { NewDevelopmentForm } from '@/components/dashboard/forms/NewDevelopmentForm';
 import { toast } from 'sonner';
 
 const mockDevelopments = [
@@ -172,7 +172,7 @@ export default function DevelopmentDetailPage() {
                 Update development information and settings
               </DialogDescription>
             </DialogHeader>
-            <NewProjectForm onClose={() => setIsEditOpen(false)} />
+            <NewDevelopmentForm onClose={() => setIsEditOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>

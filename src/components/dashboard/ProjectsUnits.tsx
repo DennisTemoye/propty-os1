@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, MapPin, FileText, Building, Home, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { NewProjectForm } from './forms/NewProjectForm';
+import { NewDevelopmentForm } from './forms/NewDevelopmentForm';
 import { ProjectDocumentsView } from './projects/ProjectDocumentsView';
 
 const mockDevelopments = [
@@ -475,7 +476,7 @@ export function ProjectsUnits() {
               Add a new real estate development to your portfolio
             </DialogDescription>
           </DialogHeader>
-          <NewProjectForm onClose={() => setIsNewDevelopmentOpen(false)} />
+          <NewDevelopmentForm onClose={() => setIsNewDevelopmentOpen(false)} />
         </DialogContent>
       </Dialog>
 
