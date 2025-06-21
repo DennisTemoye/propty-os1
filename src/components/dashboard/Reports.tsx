@@ -191,7 +191,7 @@ export function Reports() {
           <p className="text-gray-600 mt-1">Generate detailed reports and insights</p>
         </div>
         <div className="flex space-x-2">
-          <ReportExportActions />
+          <ReportExportActions reportType="sales" />
           <Button className="bg-purple-600 hover:bg-purple-700">
             <FileText className="h-4 w-4 mr-2" />
             Generate Report

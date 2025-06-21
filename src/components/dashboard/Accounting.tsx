@@ -14,6 +14,7 @@ import { ExpenseForm } from './accounting/ExpenseForm';
 import { PaymentsManagement } from './accounting/PaymentsManagement';
 import { AnalyticsCharts } from './accounting/AnalyticsCharts';
 import { AccountingDownloadActions } from './accounting/AccountingDownloadActions';
+import { toast } from 'sonner';
 
 export function Accounting() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -138,6 +139,16 @@ export function Accounting() {
     }
   };
 
+  const handleIncomeSubmit = (data: any) => {
+    console.log('Income submitted:', data);
+    toast.success('Income record added successfully');
+  };
+
+  const handleExpenseSubmit = (data: any) => {
+    console.log('Expense submitted:', data);
+    toast.success('Expense record added successfully');
+  };
+
   const kpiData = [
     {
       title: 'Total Income',
@@ -198,7 +209,11 @@ export function Accounting() {
                 <DialogTitle>Record Income</DialogTitle>
                 <DialogDescription>Add a new income transaction</DialogDescription>
               </DialogHeader>
-              <IncomeForm onClose={() => setIsIncomeModalOpen(false)} />
+              <IncomeForm 
+                isOpen={isIncomeModalOpen}
+                onClose={() => setIsIncomeModalOpen(false)}
+                onSubmit={handleIncomeSubmit}
+              />
             </DialogContent>
           </Dialog>
           <Dialog open={isExpenseModalOpen} onOpenChange={setIsExpenseModalOpen}>
@@ -213,7 +228,11 @@ export function Accounting() {
                 <DialogTitle>Record Expense</DialogTitle>
                 <DialogDescription>Add a new expense transaction</DialogDescription>
               </DialogHeader>
-              <ExpenseForm onClose={() => setIsExpenseModalOpen(false)} />
+              <ExpenseForm 
+                isOpen={isExpenseModalOpen}
+                onClose={() => setIsExpenseModalOpen(false)}
+                onSubmit={handleExpenseSubmit}
+              />
             </DialogContent>
           </Dialog>
         </div>
