@@ -12,11 +12,7 @@ import { ClientDetailView } from './clients/ClientDetailView';
 import { AssignPropertyModal } from './clients/AssignPropertyModal';
 import { AddPaymentModal } from './clients/AddPaymentModal';
 import { ClientDocumentsView } from './clients/ClientDocumentsView';
-import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
-import { UpdateAllocationStatusModal } from './allocation/UpdateAllocationStatusModal';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { AllocationStatus, RevocationData } from '@/types/allocation';
 
 const mockClients = [
   {
@@ -176,9 +172,6 @@ export function Clients() {
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [isDocumentsOpen, setIsDocumentsOpen] = useState(false);
-  const [isRevokeOpen, setIsRevokeOpen] = useState(false);
-  const [isStatusUpdateOpen, setIsStatusUpdateOpen] = useState(false);
-  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
@@ -239,30 +232,6 @@ export function Clients() {
     e.stopPropagation();
     setSelectedClient(client);
     setIsDocumentsOpen(true);
-  };
-
-  const handleRevokeAllocation = (allocation: any) => {
-    setSelectedAllocation(allocation);
-    setIsRevokeOpen(true);
-  };
-
-  const handleUpdateStatus = (allocation: any) => {
-    setSelectedAllocation(allocation);
-    setIsStatusUpdateOpen(true);
-  };
-
-  const handleRevocationSubmit = (data: RevocationData) => {
-    console.log('Processing revocation:', data);
-    toast.success('Allocation revoked successfully');
-    setIsRevokeOpen(false);
-    setSelectedAllocation(null);
-  };
-
-  const handleStatusUpdate = (newStatus: AllocationStatus, notes?: string) => {
-    console.log('Updating status:', { newStatus, notes });
-    toast.success('Allocation status updated successfully');
-    setIsStatusUpdateOpen(false);
-    setSelectedAllocation(null);
   };
 
   return (
@@ -623,22 +592,6 @@ export function Clients() {
           {selectedClient && <ClientDocumentsView client={selectedClient} />}
         </DialogContent>
       </Dialog>
-
-      {/* Revoke Allocation Modal */}
-      <RevokeAllocationModal
-        isOpen={isRevokeOpen}
-        onClose={() => setIsRevokeOpen(false)}
-        allocation={selectedAllocation}
-        onRevoke={handleRevocationSubmit}
-      />
-
-      {/* Update Status Modal */}
-      <UpdateAllocationStatusModal
-        isOpen={isStatusUpdateOpen}
-        onClose={() => setIsStatusUpdateOpen(false)}
-        allocation={selectedAllocation}
-        onStatusUpdate={handleStatusUpdate}
-      />
     </div>
   );
 }

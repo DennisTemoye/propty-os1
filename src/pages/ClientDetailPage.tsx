@@ -1,17 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign, XCircle } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-react';
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
 import { ClientForm } from '@/components/dashboard/clients/ClientForm';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
-import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
-import { UpdateAllocationStatusModal } from '@/components/dashboard/allocation/UpdateAllocationStatusModal';
-import { AllocationStatusBadge } from '@/components/dashboard/allocation/AllocationStatusBadge';
 import { toast } from 'sonner';
-import { AllocationStatus, RevocationData } from '@/types/allocation';
 
 const mockClients = [
   {
@@ -173,9 +170,6 @@ export default function ClientDetailPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
-  const [isRevokeOpen, setIsRevokeOpen] = useState(false);
-  const [isStatusUpdateOpen, setIsStatusUpdateOpen] = useState(false);
-  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   
   const client = mockClients.find(c => c.id === parseInt(clientId || '1'));
 
@@ -207,30 +201,6 @@ export default function ClientDetailPage() {
 
   const handleAddPayment = () => {
     setIsAddPaymentOpen(true);
-  };
-
-  const handleRevokeAllocation = (allocation: any) => {
-    setSelectedAllocation(allocation);
-    setIsRevokeOpen(true);
-  };
-
-  const handleUpdateStatus = (allocation: any) => {
-    setSelectedAllocation(allocation);
-    setIsStatusUpdateOpen(true);
-  };
-
-  const handleRevocationSubmit = (data: RevocationData) => {
-    console.log('Processing revocation:', data);
-    toast.success('Allocation revoked successfully');
-    setIsRevokeOpen(false);
-    setSelectedAllocation(null);
-  };
-
-  const handleStatusUpdate = (newStatus: AllocationStatus, notes?: string) => {
-    console.log('Updating status:', { newStatus, notes });
-    toast.success('Allocation status updated successfully');
-    setIsStatusUpdateOpen(false);
-    setSelectedAllocation(null);
   };
 
   return (
@@ -281,11 +251,7 @@ export default function ClientDetailPage() {
           </div>
         </div>
         
-        <ClientDetailView 
-          client={client} 
-          onRevokeAllocation={handleRevokeAllocation}
-          onUpdateStatus={handleUpdateStatus}
-        />
+        <ClientDetailView client={client} />
 
         {/* Edit Client Modal */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
@@ -312,22 +278,6 @@ export default function ClientDetailPage() {
           isOpen={isAddPaymentOpen}
           onClose={() => setIsAddPaymentOpen(false)}
           client={client}
-        />
-
-        {/* Revoke Allocation Modal */}
-        <RevokeAllocationModal
-          isOpen={isRevokeOpen}
-          onClose={() => setIsRevokeOpen(false)}
-          allocation={selectedAllocation}
-          onRevoke={handleRevocationSubmit}
-        />
-
-        {/* Update Status Modal */}
-        <UpdateAllocationStatusModal
-          isOpen={isStatusUpdateOpen}
-          onClose={() => setIsStatusUpdateOpen(false)}
-          allocation={selectedAllocation}
-          onStatusUpdate={handleStatusUpdate}
         />
       </div>
     </div>

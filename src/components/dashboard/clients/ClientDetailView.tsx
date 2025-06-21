@@ -6,18 +6,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard, Filter, Users, XCircle, Edit } from 'lucide-react';
+import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard, Filter, Users } from 'lucide-react';
 import { ClientDocumentsView } from './ClientDocumentsView';
 import { ClientDownloadActions } from './ClientDownloadActions';
-import { AllocationStatusBadge } from '../allocation/AllocationStatusBadge';
 
 interface ClientDetailViewProps {
   client: any;
-  onRevokeAllocation?: (allocation: any) => void;
-  onUpdateStatus?: (allocation: any) => void;
 }
 
-export function ClientDetailView({ client, onRevokeAllocation, onUpdateStatus }: ClientDetailViewProps) {
+export function ClientDetailView({ client }: ClientDetailViewProps) {
   const [selectedProperty, setSelectedProperty] = useState('all');
 
   const getStatusColor = (status: string) => {
