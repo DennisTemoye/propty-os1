@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -18,6 +18,8 @@ interface PipelineKanbanProps {
 export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: PipelineKanbanProps) {
   const { isMobile, isTablet } = useResponsive();
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Define the correct pipeline stages
   const pipelineStages = [
@@ -33,15 +35,39 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
     return leads.filter(lead => lead.stage === stageId);
   };
 
+  // Auto-scroll functionality during drag
+  const handleAutoScroll = (clientX: number) => {
+    if (!scrollContainerRef.current || !isDragging) return;
+
+    const container = scrollContainerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const scrollThreshold = 100; // pixels from edge to start scrolling
+    const scrollSpeed = 10;
+
+    if (clientX < containerRect.left + scrollThreshold) {
+      // Scroll left
+      container.scrollLeft -= scrollSpeed;
+    } else if (clientX > containerRect.right - scrollThreshold) {
+      // Scroll right
+      container.scrollLeft += scrollSpeed;
+    }
+  };
+
   const handleDragStart = (e: React.DragEvent, lead: Lead) => {
     if (isMobile) return;
     setDraggedLead(lead);
+    setIsDragging(true);
     e.dataTransfer.effectAllowed = 'move';
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
+    
+    // Trigger auto-scroll
+    if (isDragging) {
+      handleAutoScroll(e.clientX);
+    }
   };
 
   const handleDrop = (e: React.DragEvent, targetStageId: string) => {
@@ -50,7 +76,30 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
       onDragLead(draggedLead.id, targetStageId);
     }
     setDraggedLead(null);
+    setIsDragging(false);
   };
+
+  const handleDragEnd = () => {
+    setDraggedLead(null);
+    setIsDragging(false);
+  };
+
+  // Set up auto-scroll interval during drag
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    
+    if (isDragging) {
+      intervalId = setInterval(() => {
+        // The auto-scroll is handled in handleDragOver
+      }, 50);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isDragging]);
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -73,9 +122,17 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
   };
 
   return (
-    <div className="bg-gray-50 p-3 lg:p-4 rounded-lg">
-      <ScrollArea className="w-full">
-        <div className={`flex gap-3 lg:gap-4 ${isMobile ? 'pb-4' : ''}`} style={{ minWidth: 'fit-content' }}>
+    <div className="bg-gray-50 p-3 lg:p-4 rounded-lg w-full max-w-full overflow-hidden">
+      <div 
+        ref={scrollContainerRef}
+        className="overflow-x-auto overflow-y-hidden w-full"
+        style={{ scrollBehavior: 'smooth' }}
+      >
+        <div 
+          className={`flex gap-3 lg:gap-4 ${isMobile ? 'pb-4' : ''}`} 
+          style={{ minWidth: `${pipelineStages.length * (isMobile ? 250 : 250)}px` }}
+          onDragOver={handleDragOver}
+        >
           {pipelineStages.map((stage) => {
             const stageLeads = getLeadsByStage(stage.id);
             
@@ -98,91 +155,89 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
                 
                 {/* Lead Cards Container */}
                 <div className="bg-white border-x border-b border-gray-200 rounded-b-lg min-h-[400px] lg:min-h-[500px] p-2">
-                  <ScrollArea className="h-full">
-                    <div className="space-y-2">
-                      {stageLeads.map((lead) => (
-                        <Card
-                          key={lead.id}
-                          className="cursor-pointer hover:shadow-md transition-all duration-200 border border-gray-200 bg-white hover:border-gray-300"
-                          draggable={!isMobile}
-                          onDragStart={(e) => !isMobile && handleDragStart(e, lead)}
-                          onClick={() => onSelectLead(lead)}
-                        >
-                          <CardContent className="p-3">
-                            <div className="space-y-2">
-                              {/* Client Name */}
-                              <div className="flex items-center gap-2">
-                                <Avatar className="h-6 w-6 flex-shrink-0">
-                                  <AvatarFallback className="bg-gray-100 text-gray-600 text-xs font-medium">
-                                    {getInitials(lead.clientName)}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="font-medium text-gray-900 text-xs truncate">
-                                  {lead.clientName}
-                                </div>
-                              </div>
-                              
-                              {/* Priority */}
-                              <div className="flex items-center gap-1.5 text-gray-600">
-                                <AlertCircle className="h-3 w-3 flex-shrink-0" />
-                                <Badge 
-                                  variant={getPriorityColor(lead.priority)} 
-                                  className="text-xs h-5 px-1.5 flex-shrink-0"
-                                >
-                                  {lead.priority}
-                                </Badge>
-                              </div>
-                              
-                              {/* Project Interest */}
-                              {lead.projectInterest && (
-                                <div className="flex items-center gap-1.5 text-gray-600">
-                                  <Building className="h-3 w-3 flex-shrink-0" />
-                                  <span className="text-xs truncate font-medium text-blue-700">
-                                    {lead.projectInterest}
-                                  </span>
-                                </div>
-                              )}
-                              
-                              {/* Contact Info */}
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-1.5 text-gray-600">
-                                  <Mail className="h-3 w-3 flex-shrink-0" />
-                                  <span className="text-xs truncate">{lead.email}</span>
-                                </div>
-                                
-                                <div className="flex items-center gap-1.5 text-gray-600">
-                                  <Phone className="h-3 w-3 flex-shrink-0" />
-                                  <span className="text-xs">{lead.phone}</span>
-                                </div>
-                                
-                                <div className="flex items-center gap-1.5 text-gray-600">
-                                  <Globe className="h-3 w-3 flex-shrink-0" />
-                                  <span className="text-xs">{lead.source}</span>
-                                </div>
+                  <div className="space-y-2 h-full overflow-y-auto">
+                    {stageLeads.map((lead) => (
+                      <Card
+                        key={lead.id}
+                        className="cursor-pointer hover:shadow-md transition-all duration-200 border border-gray-200 bg-white hover:border-gray-300"
+                        draggable={!isMobile}
+                        onDragStart={(e) => !isMobile && handleDragStart(e, lead)}
+                        onDragEnd={handleDragEnd}
+                        onClick={() => onSelectLead(lead)}
+                      >
+                        <CardContent className="p-3">
+                          <div className="space-y-2">
+                            {/* Client Name */}
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-6 w-6 flex-shrink-0">
+                                <AvatarFallback className="bg-gray-100 text-gray-600 text-xs font-medium">
+                                  {getInitials(lead.clientName)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="font-medium text-gray-900 text-xs truncate">
+                                {lead.clientName}
                               </div>
                             </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                      
-                      {stageLeads.length === 0 && (
-                        <div className="text-center py-6 text-gray-400">
-                          <div className="w-8 h-8 mx-auto mb-2 rounded-full bg-gray-100 flex items-center justify-center">
-                            <User className="h-4 w-4" />
+                            
+                            {/* Priority */}
+                            <div className="flex items-center gap-1.5 text-gray-600">
+                              <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                              <Badge 
+                                variant={getPriorityColor(lead.priority)} 
+                                className="text-xs h-5 px-1.5 flex-shrink-0"
+                              >
+                                {lead.priority}
+                              </Badge>
+                            </div>
+                            
+                            {/* Project Interest */}
+                            {lead.projectInterest && (
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <Building className="h-3 w-3 flex-shrink-0" />
+                                <span className="text-xs truncate font-medium text-blue-700">
+                                  {lead.projectInterest}
+                                </span>
+                              </div>
+                            )}
+                            
+                            {/* Contact Info */}
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <Mail className="h-3 w-3 flex-shrink-0" />
+                                <span className="text-xs truncate">{lead.email}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <Phone className="h-3 w-3 flex-shrink-0" />
+                                <span className="text-xs">{lead.phone}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <Globe className="h-3 w-3 flex-shrink-0" />
+                                <span className="text-xs">{lead.source}</span>
+                              </div>
+                            </div>
                           </div>
-                          <p className="text-xs font-medium">No leads</p>
-                          <p className="text-xs mt-1">Leads will appear here</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                    
+                    {stageLeads.length === 0 && (
+                      <div className="text-center py-6 text-gray-400">
+                        <div className="w-8 h-8 mx-auto mb-2 rounded-full bg-gray-100 flex items-center justify-center">
+                          <User className="h-4 w-4" />
                         </div>
-                      )}
-                    </div>
-                  </ScrollArea>
+                        <p className="text-xs font-medium">No leads</p>
+                        <p className="text-xs mt-1">Leads will appear here</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      </div>
     </div>
   );
 }
