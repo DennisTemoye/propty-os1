@@ -173,7 +173,7 @@ export function DashboardOverview() {
                   className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
                   <Building className="h-5 w-5 text-purple-600" />
-                  <span className="font-medium">New Project Site</span>
+                  <span className="font-medium">New Development</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('client')}
