@@ -148,6 +148,8 @@ export function DashboardOverview() {
     console.log(`Creating new ${action}`);
     if (action === 'payment') {
       setShowPaymentModal(true);
+    } else if (action === 'client') {
+      navigate('/company/clients/new');
     } else {
       setActiveModal(action);
     }
