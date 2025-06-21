@@ -144,7 +144,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
           <TabsTrigger value="client-details" className="text-base">Client Details</TabsTrigger>
           <TabsTrigger value="properties" className="text-base">Properties</TabsTrigger>
           <TabsTrigger value="payments" className="text-base">Payments</TabsTrigger>
-          <TabsTrigger value="billing" className="text-base">Billing</TabsTrigger>
+          <TabsTrigger value="billing" className="text-base">Fees</TabsTrigger>
           <TabsTrigger value="documents" className="text-base">Documents</TabsTrigger>
           <TabsTrigger value="activity" className="text-base">Activity</TabsTrigger>
         </TabsList>
@@ -499,7 +499,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
         <TabsContent value="billing" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl">Billing History</CardTitle>
+              <CardTitle className="text-xl">Fees History</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
