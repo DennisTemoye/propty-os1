@@ -278,7 +278,7 @@ export function GlobalSettings() {
                     className="mt-1"
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    Available variables: {{company_name}}, {{user_name}}, {{login_url}}
+                    Available variables: {`{{company_name}}, {{user_name}}, {{login_url}}`}
                   </div>
                 </div>
                 <div>
@@ -294,7 +294,7 @@ export function GlobalSettings() {
                     className="mt-1"
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    Available variables: {{company_name}}, {{notification_text}}, {{action_url}}
+                    Available variables: {`{{company_name}}, {{notification_text}}, {{action_url}}`}
                   </div>
                 </div>
                 <div>
@@ -310,7 +310,7 @@ export function GlobalSettings() {
                     className="mt-1"
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    Available variables: {{company_name}}, {{amount}}, {{due_date}}, {{payment_url}}
+                    Available variables: {`{{company_name}}, {{amount}}, {{due_date}}, {{payment_url}}`}
                   </div>
                 </div>
               </div>
