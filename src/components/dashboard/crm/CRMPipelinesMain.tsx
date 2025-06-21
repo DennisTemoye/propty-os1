@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,12 +14,12 @@ import { AddLeadModal } from './AddLeadModal';
 import { LeadDetailsDrawer } from './LeadDetailsDrawer';
 import { PipelineSettings } from './PipelineSettings';
 import { Lead, PipelineStage } from './types';
-import { mockLeads, defaultStages } from './mockData';
+import { mockLeads, mockStages } from './mockData';
 
 export function CRMPipelinesMain() {
   const { isMobile, isTablet } = useResponsive();
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
-  const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
+  const [stages, setStages] = useState<PipelineStage[]>(mockStages);
   const [viewType, setViewType] = useState<'kanban' | 'table'>('kanban');
   const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
