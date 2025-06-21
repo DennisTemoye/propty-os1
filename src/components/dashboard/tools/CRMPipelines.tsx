@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -183,7 +184,7 @@ export function CRMPipelinesPage() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
-  const [selectedTeamMember, setSelectedTeamMember] = useState('');
+  const [selectedTeamMember, setSelectedTeamMember] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const form = useForm();
 
@@ -255,7 +256,7 @@ export function CRMPipelinesPage() {
       }
     }
 
-    if (selectedTeamMember) {
+    if (selectedTeamMember && selectedTeamMember !== 'all') {
       filtered = filtered.filter(lead => lead.assignedTo === selectedTeamMember);
     }
     
@@ -399,7 +400,7 @@ export function CRMPipelinesPage() {
                     <SelectValue placeholder="Filter by team member" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Team Members</SelectItem>
+                    <SelectItem value="all">All Team Members</SelectItem>
                     {teamMembers.map((member) => (
                       <SelectItem key={member} value={member}>{member}</SelectItem>
                     ))}
