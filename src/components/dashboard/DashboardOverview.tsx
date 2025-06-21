@@ -4,13 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell, CreditCard } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
-import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
 import { NewDevelopmentForm } from '@/components/dashboard/forms/NewDevelopmentForm';
@@ -19,6 +12,9 @@ import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
 import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
 import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
 import { useNavigate } from 'react-router-dom';
+import { DashboardKPISection } from './DashboardKPISection';
+import { QuickActionButton } from './QuickActionButton';
+import { QuickActionModal } from './QuickActionModal';
 
 const salesData = [
   { month: 'Jan', sales: 65, revenue: 2.4, allocations: 58 },
@@ -49,99 +45,8 @@ export function DashboardOverview() {
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showQuickActionModal, setShowQuickActionModal] = useState(false);
   const [activeSheet, setActiveSheet] = useState<string | null>(null);
-
-  // KPI data with navigation handlers
-  const kpiData = [
-    {
-      title: 'Total Projects',
-      value: '24',
-      subtitle: '3 New This Quarter',
-      icon: Building,
-      gradientFrom: 'from-blue-500',
-      gradientTo: 'to-cyan-400',
-      iconBgColor: 'bg-white/20',
-      iconColor: 'text-white',
-      onClick: () => navigate('/company/developments'),
-    },
-    {
-      title: 'Active Clients',
-      value: '1,247',
-      subtitle: '89 New This Month',
-      icon: Users,
-      gradientFrom: 'from-emerald-500',
-      gradientTo: 'to-teal-400',
-      iconBgColor: 'bg-white/20',
-      iconColor: 'text-white',
-      onClick: () => navigate('/company/clients'),
-    },
-    {
-      title: 'Total Sales Revenue',
-      value: '₦2.4B',
-      subtitle: '156 Units Sold',
-      icon: DollarSign,
-      gradientFrom: 'from-purple-500',
-      gradientTo: 'to-pink-400',
-      iconBgColor: 'bg-white/20',
-      iconColor: 'text-white',
-      onClick: () => navigate('/company/accounting'),
-    },
-    {
-      title: 'Pending Allocations',
-      value: '23',
-      subtitle: 'Awaiting Processing',
-      icon: FileText,
-      gradientFrom: 'from-orange-500',
-      gradientTo: 'to-amber-400',
-      iconBgColor: 'bg-white/20',
-      iconColor: 'text-white',
-      onClick: () => navigate('/company/sales'),
-    },
-    {
-      title: 'Available Units',
-      value: '187',
-      subtitle: 'Ready for Allocation',
-      icon: MapPin,
-      gradientFrom: 'from-indigo-500',
-      gradientTo: 'to-purple-400',
-      iconBgColor: 'bg-white/20',
-      iconColor: 'text-white',
-      onClick: () => navigate('/company/developments'),
-    },
-    {
-      title: 'Installment Collections',
-      value: '₦450M',
-      subtitle: '92% Collection Rate',
-      icon: Calculator,
-      gradientFrom: 'from-green-500',
-      gradientTo: 'to-emerald-400',
-      iconBgColor: 'bg-white/20',
-      iconColor: 'text-white',
-      onClick: () => navigate('/company/accounting'),
-    },
-    {
-      title: 'Completed Deals',
-      value: '89',
-      subtitle: 'This Quarter',
-      icon: CheckCircle,
-      gradientFrom: 'from-teal-500',
-      gradientTo: 'to-cyan-400',
-      iconBgColor: 'bg-white/20',
-      iconColor: 'text-white',
-      onClick: () => navigate('/company/sales'),
-    },
-    {
-      title: 'Scheduled Inspections',
-      value: '34',
-      subtitle: 'Next 7 Days',
-      icon: Calendar,
-      gradientFrom: 'from-rose-500',
-      gradientTo: 'to-pink-400',
-      iconBgColor: 'bg-white/20',
-      iconColor: 'text-white',
-      onClick: () => navigate('/company/calendar'),
-    },
-  ];
 
   const handleNewAction = (action: string) => {
     console.log(`Creating new ${action}`);
@@ -156,7 +61,6 @@ export function DashboardOverview() {
     setActiveSheet(null);
   };
 
-  // Mock client data for payment modal (in real app, this would come from props or context)
   const mockClient = {
     id: '1',
     name: 'General Payment Entry',
@@ -231,80 +135,14 @@ export function DashboardOverview() {
           </div>
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                  <Plus className="h-5 w-5 mr-2" />
-                  New
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl z-50"
-                align="end"
-              >
-                <DropdownMenuItem 
-                  onClick={() => handleNewAction('development')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                >
-                  <Building className="h-5 w-5 text-purple-600" />
-                  <span className="font-medium">New Development</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleNewAction('client')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                >
-                  <Users className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium">New Client</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleNewAction('allocation')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                >
-                  <MapPin className="h-5 w-5 text-green-600" />
-                  <span className="font-medium">New Allocation</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleNewAction('expense')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                >
-                  <DollarSign className="h-5 w-5 text-red-600" />
-                  <span className="font-medium">New Expense</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleNewAction('payment')}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                >
-                  <CreditCard className="h-5 w-5 text-emerald-600" />
-                  <span className="font-medium">New Payment</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <QuickActionButton onClick={() => setShowQuickActionModal(true)} />
           </div>
         </div>
       </div>
 
       <div className="p-6 space-y-8">
-        {/* KPI Cards - Now clickable and connected to their respective modules */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {kpiData.map((kpi, index) => (
-            <div
-              key={index}
-              onClick={kpi.onClick}
-              className="cursor-pointer transform hover:scale-105 transition-all duration-300"
-            >
-              <GradientKpiCard
-                title={kpi.title}
-                value={kpi.value}
-                subtitle={kpi.subtitle}
-                icon={kpi.icon}
-                gradientFrom={kpi.gradientFrom}
-                gradientTo={kpi.gradientTo}
-                iconBgColor={kpi.iconBgColor}
-                iconColor={kpi.iconColor}
-              />
-            </div>
-          ))}
-        </div>
+        {/* KPI Cards - Now using the new modular component */}
+        <DashboardKPISection />
 
         {/* Main Analytics Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -544,6 +382,12 @@ export function DashboardOverview() {
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         client={mockClient}
+      />
+
+      {/* Quick Action Modal */}
+      <QuickActionModal
+        isOpen={showQuickActionModal}
+        onClose={() => setShowQuickActionModal(false)}
       />
 
       {/* Side Sheet for Forms */}
