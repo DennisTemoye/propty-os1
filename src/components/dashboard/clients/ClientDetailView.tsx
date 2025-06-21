@@ -1,34 +1,38 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard } from 'lucide-react';
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  CreditCard, 
+  FileText, 
+  Calendar,
+  CheckCircle,
+  AlertCircle,
+  Building,
+  DollarSign,
+  Clock,
+  Send
+} from 'lucide-react';
 import { ClientDocumentsView } from './ClientDocumentsView';
 import { InstalmentTracking } from './InstalmentTracking';
+import { ClientNoticesSection } from './ClientNoticesSection';
+import { useNavigate } from 'react-router-dom';
 
 interface ClientDetailViewProps {
   client: any;
 }
 
 export function ClientDetailView({ client }: ClientDetailViewProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800';
-      case 'unassigned':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
+  const navigate = useNavigate();
+  
   const getKycStatusColor = (status: string) => {
     switch (status) {
       case 'approved':
@@ -42,302 +46,222 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
     }
   };
 
-  const mockPaymentHistory = [
-    { id: 1, date: '2024-01-10', amount: '₦5M', type: 'Initial Payment', status: 'completed' },
-    { id: 2, date: '2024-01-25', amount: '₦5M', type: 'Milestone 1', status: 'completed' },
-    { id: 3, date: '2024-02-10', amount: '₦5M', type: 'Milestone 2', status: 'completed' },
-    { id: 4, date: '2024-02-15', amount: '₦5M', type: 'Milestone 3', status: 'pending' },
-    { id: 5, date: '2024-03-01', amount: '₦5M', type: 'Final Payment', status: 'pending' }
-  ];
-
-  const mockBillingHistory = [
-    { id: 1, date: '2024-01-15', type: 'Infrastructure Fee', amount: '₦2.5M', status: 'paid', project: 'Victoria Gardens' },
-    { id: 2, date: '2024-02-01', type: 'Service Charge - Estate Management', amount: '₦50K', status: 'paid', project: 'Victoria Gardens' },
-    { id: 3, date: '2024-03-01', type: 'Service Charge - Estate Management', amount: '₦50K', status: 'overdue', project: 'Victoria Gardens' },
-    { id: 4, date: '2024-02-15', type: 'Infrastructure Fee (Milestone 2)', amount: '₦1.25M', status: 'pending', project: 'Victoria Gardens' }
-  ];
-
-  const mockActivityLog = [
-    { id: 1, date: '2024-01-20', action: 'Property assigned', details: 'Assigned Block A - Plot 02' },
-    { id: 2, date: '2024-01-15', action: 'KYC approved', details: 'All documents verified' },
-    { id: 3, date: '2024-01-10', action: 'Client created', details: 'Profile created in system' }
-  ];
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'inactive':
+        return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-blue-100 text-blue-800';
+      case 'unassigned':
+        return 'bg-orange-100 text-orange-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
-    <div className="space-y-8">
-      {/* Header Section - Client Summary */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-0 shadow-sm">
-        <CardContent className="p-8">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-6">
-              <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-                <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
-                <AvatarFallback className="bg-blue-100 text-blue-600 text-lg font-semibold">
-                  <User className="h-12 w-12" />
+    <div className="space-y-6">
+      {/* Client Header */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-16 w-16">
+                <AvatarImage src={client.passportPhoto} alt={client.name} />
+                <AvatarFallback>
+                  {client.name.split(' ').map((n: string) => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
-              
-              <div className="space-y-3">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{client.name}</h1>
-                  <p className="text-gray-600 text-lg">ID: {client.nationalId}</p>
-                </div>
-                
-                <div className="flex items-center space-x-4">
-                  <Badge className={`${getStatusColor(client.status)} px-3 py-1 text-sm font-medium`}>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{client.name}</h2>
+                <p className="text-gray-600">{client.email}</p>
+                <div className="flex items-center space-x-2 mt-1">
+                  <Badge className={getStatusColor(client.status)}>
                     {client.status}
                   </Badge>
-                  <Badge className={`${getKycStatusColor(client.kycStatus)} px-3 py-1 text-sm font-medium`}>
+                  <Badge className={getKycStatusColor(client.kycStatus)}>
                     KYC {client.kycStatus}
                   </Badge>
                 </div>
               </div>
             </div>
-
-            {/* Quick Stats */}
-            <div className="text-right space-y-2">
-              <div className="text-sm text-gray-600">Total Investment</div>
+            
+            <div className="text-right">
               <div className="text-2xl font-bold text-green-600">{client.totalPaid}</div>
-              <div className="text-sm text-gray-600">
-                {client.projects?.length || 0} Properties
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Contact Information */}
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl">Contact Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Mail className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="font-medium">{client.email}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <Phone className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium">{client.phone}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-orange-50 rounded-lg">
-                <MapPin className="h-5 w-5 text-orange-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Address</p>
-                <p className="font-medium">{client.address}</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Main Content Tabs */}
-      <Tabs defaultValue="properties" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 h-12">
-          <TabsTrigger value="properties" className="text-base">Properties</TabsTrigger>
-          <TabsTrigger value="instalments" className="text-base">Instalments</TabsTrigger>
-          <TabsTrigger value="payments" className="text-base">Payments</TabsTrigger>
-          <TabsTrigger value="billing" className="text-base">Billing</TabsTrigger>
-          <TabsTrigger value="documents" className="text-base">Documents</TabsTrigger>
-          <TabsTrigger value="activity" className="text-base">Activity</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="properties" className="mt-6">
-          {client.projects && client.projects.length > 0 ? (
-            <div className="space-y-4">
-              {client.projects.slice(0, 6).map((project: any, index: number) => (
-                <Card key={index} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <h3 className="font-semibold text-lg">{project.name}</h3>
-                        <p className="text-gray-600">{project.unit}</p>
-                        <p className="text-sm text-gray-500">Assigned: {project.assignedDate}</p>
-                      </div>
-                      
-                      {index === 0 && (
-                        <div className="text-right space-y-2">
-                          <div className="text-sm text-gray-500">Payment Progress</div>
-                          <div className="flex items-center space-x-3">
-                            <div className="w-32 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-green-600 h-2 rounded-full"
-                                style={{ width: `${client.paymentProgress}%` }}
-                              ></div>
-                            </div>
-                            <span className="text-sm font-medium">{client.paymentProgress}%</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              
-              {client.projects.length > 6 && (
-                <Card className="border-dashed">
-                  <CardContent className="p-6 text-center">
-                    <p className="text-gray-600">
-                      +{client.projects.length - 6} more properties
-                    </p>
-                  </CardContent>
-                </Card>
+              <div className="text-sm text-gray-600">Total Paid</div>
+              {client.balance !== '₦0' && (
+                <div className="text-lg font-semibold text-orange-600 mt-1">{client.balance}</div>
+              )}
+              {client.balance !== '₦0' && (
+                <div className="text-sm text-gray-600">Outstanding Balance</div>
               )}
             </div>
-          ) : (
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Tabs */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="projects">Projects ({client.projects.length})</TabsTrigger>
+          <TabsTrigger value="payments">Payment Tracking</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="notices">Notices</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Personal Information */}
             <Card>
-              <CardContent className="text-center py-12">
-                <Building className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Properties Assigned</h3>
-                <p className="text-gray-500 mb-6">This client hasn't been assigned a property yet.</p>
-                <Button className="bg-green-600 hover:bg-green-700">
-                  Assign Property
-                </Button>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  Personal Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <Mail className="h-4 w-4 text-gray-400" />
+                  <span>{client.email}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  <span>{client.phone}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <MapPin className="h-4 w-4 text-gray-400" />
+                  <span>{client.address}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CreditCard className="h-4 w-4 text-gray-400" />
+                  <span>{client.nationalId}</span>
+                </div>
+                {client.assignedDate && (
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    <span>Joined: {client.assignedDate}</span>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          )}
-        </TabsContent>
 
-        <TabsContent value="instalments" className="mt-6">
-          <InstalmentTracking client={client} />
-        </TabsContent>
-
-        <TabsContent value="payments" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">Payment History</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-base">Date</TableHead>
-                    <TableHead className="text-base">Type</TableHead>
-                    <TableHead className="text-base">Amount</TableHead>
-                    <TableHead className="text-base">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockPaymentHistory.map((payment) => (
-                    <TableRow key={payment.id} className="h-14">
-                      <TableCell className="text-base">{payment.date}</TableCell>
-                      <TableCell className="text-base">{payment.type}</TableCell>
-                      <TableCell className="font-semibold text-base">{payment.amount}</TableCell>
-                      <TableCell>
-                        <Badge className={payment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                          {payment.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="billing" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">Billing History</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <Card className="p-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">₦3.75M</div>
-                      <div className="text-sm text-gray-500">Infrastructure Fees</div>
-                    </div>
-                  </Card>
-                  <Card className="p-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">₦100K</div>
-                      <div className="text-sm text-gray-500">Service Charges</div>
-                    </div>
-                  </Card>
-                  <Card className="p-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-red-600">₦50K</div>
-                      <div className="text-sm text-gray-500">Outstanding</div>
-                    </div>
-                  </Card>
+            {/* Payment Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <DollarSign className="h-5 w-5 mr-2" />
+                  Payment Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Payment Progress</span>
+                    <span>{client.paymentProgress}%</span>
+                  </div>
+                  <Progress value={client.paymentProgress} className="h-2" />
                 </div>
-
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-base">Date</TableHead>
-                      <TableHead className="text-base">Type</TableHead>
-                      <TableHead className="text-base">Project</TableHead>
-                      <TableHead className="text-base">Amount</TableHead>
-                      <TableHead className="text-base">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockBillingHistory.map((billing) => (
-                      <TableRow key={billing.id} className="h-14">
-                        <TableCell className="text-base">{billing.date}</TableCell>
-                        <TableCell className="text-base">{billing.type}</TableCell>
-                        <TableCell className="text-base">{billing.project}</TableCell>
-                        <TableCell className="font-semibold text-base">{billing.amount}</TableCell>
-                        <TableCell>
-                          <Badge className={
-                            billing.status === 'paid' ? 'bg-green-100 text-green-800' : 
-                            billing.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
-                          }>
-                            {billing.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="documents" className="mt-6">
-          <ClientDocumentsView client={client} />
-        </TabsContent>
-
-        <TabsContent value="activity" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">Recent Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {mockActivityLog.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-4 p-4 border-l-4 border-l-blue-500 bg-blue-50 rounded-r-lg">
-                    <Calendar className="h-5 w-5 mt-1 text-blue-600" />
-                    <div className="flex-1">
-                      <div className="font-medium text-lg">{activity.action}</div>
-                      <div className="text-gray-600 mt-1">{activity.details}</div>
-                      <div className="text-sm text-gray-500 mt-2">{activity.date}</div>
+                
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div>
+                    <div className="text-sm text-gray-600">Total Paid</div>
+                    <div className="text-lg font-semibold text-green-600">{client.totalPaid}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600">Balance</div>
+                    <div className="text-lg font-semibold text-orange-600">{client.balance}</div>
+                  </div>
+                </div>
+                
+                {client.nextPayment && (
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-800">
+                        Next Payment Due: {client.nextPayment}
+                      </span>
                     </div>
                   </div>
-                ))}
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-3">
+                <Button 
+                  onClick={() => navigate(`/company/tools/send-notice?clientId=${client.id}`)}
+                  variant="outline"
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  Send Notice
+                </Button>
+                <Button variant="outline">
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Record Payment
+                </Button>
+                <Button variant="outline">
+                  <Building className="h-4 w-4 mr-2" />
+                  Assign Property
+                </Button>
+                <Button variant="outline">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Generate Report
+                </Button>
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="projects" className="space-y-6">
+          <div className="grid gap-4">
+            {client.projects.map((project: any, index: number) => (
+              <Card key={index}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-lg">{project.name}</h3>
+                      <p className="text-gray-600">{project.unit}</p>
+                      <p className="text-sm text-gray-500">Assigned: {project.assignedDate}</p>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {client.projects.length === 0 && (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <Building className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Projects Assigned</h3>
+                  <p className="text-gray-600">This client hasn't been assigned to any projects yet.</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="payments">
+          <InstalmentTracking clientId={client.id} />
+        </TabsContent>
+
+        <TabsContent value="documents">
+          <ClientDocumentsView clientId={client.id} documents={client.documents} />
+        </TabsContent>
+
+        <TabsContent value="notices">
+          <ClientNoticesSection clientId={client.id} />
         </TabsContent>
       </Tabs>
     </div>

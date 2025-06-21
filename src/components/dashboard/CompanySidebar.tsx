@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -27,6 +26,7 @@ import {
   Wrench,
   UserCheck,
   Receipt,
+  Send,
 } from 'lucide-react';
 
 const sidebarItems = [
@@ -45,6 +45,7 @@ const advancedToolsItems = [
   { icon: TrendingUp, label: 'CRM Pipelines', path: '/company/tools/crm-pipelines', description: 'Manage leads across stages: Contacted → Inspection → Offer → Payment → Closed' },
   { icon: FolderOpen, label: 'Document Manager', path: '/company/tools/document-manager', description: 'Store and manage signed documents, survey plans, allocation letters, and related files' },
   { icon: Calendar, label: 'Calendar & Scheduling', path: '/company/tools/calendar', description: 'Track inspections, scheduled meetings, follow-up deadlines, and important project dates' },
+  { icon: Send, label: 'Send Notice', path: '/company/tools/send-notice', description: 'Notify clients through email and WhatsApp with bulk messaging capabilities' },
 ];
 
 interface CompanySidebarProps {
