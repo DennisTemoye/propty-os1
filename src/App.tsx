@@ -1,10 +1,10 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { CompanyLayout } from "@/components/layouts/CompanyLayout";
 import Index from "./pages/Index";
 import BookDemoPage from "./pages/BookDemoPage";
 import LoginPage from "./pages/LoginPage";
@@ -30,6 +30,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/book-demo" element={<BookDemoPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -38,64 +39,64 @@ const App = () => (
             <Route path="/reset-code" element={<ResetCodePage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             
-            {/* Dashboard Routes */}
-            <Route path="/company/dashboard" element={<CompanyDashboard />} />
+            {/* Company Routes with Consistent Layout */}
+            <Route path="/company/dashboard" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
             
             {/* Project Routes */}
-            <Route path="/company/projects" element={<CompanyDashboard />} />
-            <Route path="/company/projects/new" element={<CompanyDashboard />} />
-            <Route path="/company/projects/:projectId" element={<ProjectDetailPage />} />
-            <Route path="/company/projects/:projectId/overview" element={<ProjectDetailPage />} />
-            <Route path="/company/projects/:projectId/layout" element={<ProjectDetailPage />} />
-            <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
-            <Route path="/company/projects/:projectId/documents" element={<ProjectDetailPage />} />
-            <Route path="/company/projects/:projectId/settings" element={<ProjectDetailPage />} />
+            <Route path="/company/projects" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/projects/new" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/projects/:projectId" element={<CompanyLayout><ProjectDetailPage /></CompanyLayout>} />
+            <Route path="/company/projects/:projectId/overview" element={<CompanyLayout><ProjectDetailPage /></CompanyLayout>} />
+            <Route path="/company/projects/:projectId/layout" element={<CompanyLayout><ProjectDetailPage /></CompanyLayout>} />
+            <Route path="/company/projects/:projectId/blocks" element={<CompanyLayout><ProjectBlocksPage /></CompanyLayout>} />
+            <Route path="/company/projects/:projectId/documents" element={<CompanyLayout><ProjectDetailPage /></CompanyLayout>} />
+            <Route path="/company/projects/:projectId/settings" element={<CompanyLayout><ProjectDetailPage /></CompanyLayout>} />
             
             {/* Client Routes */}
-            <Route path="/company/clients" element={<CompanyDashboard />} />
-            <Route path="/company/clients/new" element={<NewClientPage />} />
-            <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
+            <Route path="/company/clients" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/clients/new" element={<CompanyLayout><NewClientPage /></CompanyLayout>} />
+            <Route path="/company/clients/:clientId" element={<CompanyLayout><ClientDetailPage /></CompanyLayout>} />
             
             {/* Marketer Routes */}
-            <Route path="/company/marketers" element={<CompanyDashboard />} />
-            <Route path="/company/marketers/new" element={<CompanyDashboard />} />
-            <Route path="/company/marketers/:marketerId" element={<MarketerDetailPage />} />
+            <Route path="/company/marketers" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/marketers/new" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/marketers/:marketerId" element={<CompanyLayout><MarketerDetailPage /></CompanyLayout>} />
             
             {/* Sales & Allocation Routes */}
-            <Route path="/company/sales" element={<CompanyDashboard />} />
-            <Route path="/company/sales-allocations" element={<CompanyDashboard />} />
-            <Route path="/company/sales-allocations/new" element={<CompanyDashboard />} />
+            <Route path="/company/sales" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/sales-allocations" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/sales-allocations/new" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
             
             {/* Fees Collection Routes */}
-            <Route path="/company/fees" element={<CompanyDashboard />} />
-            <Route path="/company/fees/setup" element={<CompanyDashboard />} />
-            <Route path="/company/fees/collection" element={<CompanyDashboard />} />
-            <Route path="/company/fees/monitoring" element={<CompanyDashboard />} />
+            <Route path="/company/fees" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/fees/setup" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/fees/collection" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/fees/monitoring" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
             
             {/* Accounting Routes */}
-            <Route path="/company/accounting" element={<CompanyDashboard />} />
-            <Route path="/company/accounting/summary" element={<CompanyDashboard />} />
-            <Route path="/company/accounting/expense/new" element={<CompanyDashboard />} />
-            <Route path="/company/accounting/payment/new" element={<CompanyDashboard />} />
-            <Route path="/company/accounting/invoice/:id" element={<CompanyDashboard />} />
+            <Route path="/company/accounting" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/accounting/summary" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/accounting/expense/new" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/accounting/payment/new" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/accounting/invoice/:id" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
             
             {/* Team & Roles Routes */}
-            <Route path="/company/team" element={<CompanyDashboard />} />
-            <Route path="/company/settings/team" element={<CompanyDashboard />} />
+            <Route path="/company/team" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/settings/team" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
             
             {/* Reports Routes */}
-            <Route path="/company/reports" element={<CompanyDashboard />} />
+            <Route path="/company/reports" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
             
             {/* Advanced Tools Routes */}
-            <Route path="/company/tools/crm-pipelines" element={<CompanyDashboard />} />
-            <Route path="/company/tools/calendar" element={<CompanyDashboard />} />
-            <Route path="/company/tools/document-manager" element={<CompanyDashboard />} />
-            <Route path="/company/tools/send-notice" element={<CompanyDashboard />} />
+            <Route path="/company/tools/crm-pipelines" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/tools/calendar" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/tools/document-manager" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/tools/send-notice" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
             
             {/* Other Routes */}
-            <Route path="/company/settings" element={<CompanyDashboard />} />
-            <Route path="/company/referrals" element={<CompanyDashboard />} />
-            <Route path="/company/help" element={<CompanyDashboard />} />
+            <Route path="/company/settings" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/referrals" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
+            <Route path="/company/help" element={<CompanyLayout><CompanyDashboard /></CompanyLayout>} />
             
             {/* Catch-all route - MUST be last */}
             <Route path="*" element={<NotFound />} />
