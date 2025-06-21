@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,13 +8,14 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { ArrowLeft, User, Upload, Copy, Check } from 'lucide-react';
+import { ArrowLeft, User, Upload, Copy, Check, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const NewClientPage = () => {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [idFilePreview, setIdFilePreview] = useState<string | null>(null);
   
   const form = useForm({
     defaultValues: {
@@ -32,6 +32,7 @@ const NewClientPage = () => {
       employerName: '',
       idType: '',
       idNumber: '',
+      idFile: null,
       address: '',
       city: '',
       state: '',
@@ -55,6 +56,18 @@ const NewClientPage = () => {
       };
       reader.readAsDataURL(file);
       form.setValue('passportPhoto', file);
+    }
+  };
+
+  const handleIdFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setIdFilePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+      form.setValue('idFile', file);
     }
   };
 
@@ -104,6 +117,7 @@ const NewClientPage = () => {
 
               {/* Form */}
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                {/* Personal Information */}
                 <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <CardHeader>
                     <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">Personal Information</CardTitle>
@@ -279,6 +293,38 @@ const NewClientPage = () => {
                           placeholder="Enter ID number"
                           className="h-11" 
                         />
+                      </div>
+                    </div>
+                    
+                    {/* ID File Upload */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">ID Document Upload</label>
+                      <div className="flex items-center gap-4">
+                        <div className="w-32 h-20 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center overflow-hidden">
+                          {idFilePreview ? (
+                            <img src={idFilePreview} alt="ID Preview" className="w-full h-full object-cover" />
+                          ) : (
+                            <FileText className="h-8 w-8 text-gray-400" />
+                          )}
+                        </div>
+                        <div>
+                          <input
+                            type="file"
+                            accept="image/*,.pdf"
+                            onChange={handleIdFileUpload}
+                            className="hidden"
+                            id="id-file-upload"
+                          />
+                          <label htmlFor="id-file-upload">
+                            <Button type="button" variant="outline" className="cursor-pointer" asChild>
+                              <span>
+                                <Upload className="h-4 w-4 mr-2" />
+                                Upload ID Document
+                              </span>
+                            </Button>
+                          </label>
+                          <p className="text-xs text-gray-500 mt-1">JPG, PNG, PDF up to 5MB</p>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
