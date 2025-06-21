@@ -4,8 +4,8 @@ import { Lead, PipelineStage } from './types';
 export const mockStages: PipelineStage[] = [
   { id: 'new_lead', name: 'New Lead', color: '#3b82f6', order: 1, icon: 'user-plus' },
   { id: 'contacted', name: 'Contacted', color: '#60a5fa', order: 2, icon: 'phone' },
-  { id: 'inspection_scheduled', name: 'Inspection Scheduled', color: '#eab308', order: 3, icon: 'calendar' },
-  { id: 'offer_sent', name: 'Offer Sent', color: '#84cc16', order: 4, icon: 'file-text' },
+  { id: 'inspection_scheduled', name: 'Inspection Schedule', color: '#eab308', order: 3, icon: 'calendar' },
+  { id: 'inspected', name: 'Inspected', color: '#10b981', order: 4, icon: 'check' },
   { id: 'won_deal', name: 'Won Deal', color: '#22c55e', order: 5, icon: 'check-circle', isClosedStage: true },
   { id: 'lost_deal', name: 'Lost Deal', color: '#ef4444', order: 6, icon: 'x-circle', isClosedStage: true }
 ];
@@ -67,7 +67,7 @@ export const mockLeads: Lead[] = [
     clientName: 'Rita Okoro',
     email: 'rita.okoro@email.com',
     phone: '+234801234567',
-    stage: 'new_lead',
+    stage: 'inspected',
     projectInterest: 'Harmony Gardens',
     source: 'Website',
     assignedTo: 'Tom Wilson',
@@ -84,7 +84,7 @@ export const mockLeads: Lead[] = [
     clientName: 'Stephen Chkete',
     email: 'stephen.chkete@email.com',
     phone: '+234801112234',
-    stage: 'contacted',
+    stage: 'won_deal',
     projectInterest: 'Legacy Gardens',
     source: 'Cold Call',
     assignedTo: 'Jane Smith',
@@ -101,7 +101,7 @@ export const mockLeads: Lead[] = [
     clientName: 'Ibrahim Musa',
     email: 'ibrahim.musa2@email.com',
     phone: '+23480112334',
-    stage: 'offer_sent',
+    stage: 'lost_deal',
     projectInterest: 'Harmony Gardens',
     source: 'Referral',
     assignedTo: 'Mike Johnson',
