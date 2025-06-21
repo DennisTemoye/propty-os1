@@ -170,7 +170,7 @@ export function ProjectsUnits() {
   const [isDocumentsModalOpen, setIsDocumentsModalOpen] = useState(false);
   const [selectedDevelopment, setSelectedDevelopment] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [stageFilter, setStageFilter] = useState('');
+  const [stageFilter, setStageFilter] = useState('all');
   const navigate = useNavigate();
 
   const getDevelopmentStageColor = (stage: string) => {
@@ -196,7 +196,7 @@ export function ProjectsUnits() {
                          development.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          development.type.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesStage = !stageFilter || development.developmentStage === stageFilter;
+    const matchesStage = stageFilter === 'all' || development.developmentStage === stageFilter;
     
     return matchesSearch && matchesStage;
   });
@@ -315,7 +315,7 @@ export function ProjectsUnits() {
                     <SelectValue placeholder="Development stage" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Stages</SelectItem>
+                    <SelectItem value="all">All Stages</SelectItem>
                     {developmentStages.map((stage) => (
                       <SelectItem key={stage} value={stage}>{stage}</SelectItem>
                     ))}
