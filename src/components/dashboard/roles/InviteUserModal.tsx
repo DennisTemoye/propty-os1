@@ -32,7 +32,7 @@ export function InviteUserModal({ roles, onUserInvited }: InviteUserModalProps) 
       name,
       email,
       role: selectedRoleData?.name || 'Unknown',
-      roleId: selectedRole,
+      roleId: parseInt(selectedRole),
       status: 'pending',
       invitedAt: new Date().toISOString(),
       invitedBy: 'Current User'

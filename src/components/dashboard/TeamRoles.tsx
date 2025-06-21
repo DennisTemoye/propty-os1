@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,6 +24,7 @@ interface TeamMember {
   name: string;
   email: string;
   role: string;
+  roleId?: number;
   status: string;
   lastLogin?: string;
   invitedAt?: string;
@@ -59,9 +59,9 @@ export function TeamRoles() {
   ]);
 
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { id: 1, name: 'John Manager', email: 'john@proptyos.com', role: 'Project Manager', status: 'active', lastLogin: '2 hours ago' },
-    { id: 2, name: 'Sarah Sales', email: 'sarah@proptyos.com', role: 'Sales Agent', status: 'active', lastLogin: '1 day ago' },
-    { id: 3, name: 'Mike Finance', email: 'mike@proptyos.com', role: 'Sales Agent', status: 'pending', invitedAt: '2 days ago' }
+    { id: 1, name: 'John Manager', email: 'john@proptyos.com', role: 'Project Manager', roleId: 2, status: 'active', lastLogin: '2 hours ago' },
+    { id: 2, name: 'Sarah Sales', email: 'sarah@proptyos.com', role: 'Sales Agent', roleId: 3, status: 'active', lastLogin: '1 day ago' },
+    { id: 3, name: 'Mike Finance', email: 'mike@proptyos.com', role: 'Sales Agent', roleId: 3, status: 'pending', invitedAt: '2 days ago' }
   ]);
 
   const [editingRole, setEditingRole] = useState<Role | null>(null);
@@ -93,11 +93,13 @@ export function TeamRoles() {
   const handleUserInvited = (userData: TeamMember) => {
     setTeamMembers(prev => [...prev, userData]);
     // Update user count for the assigned role
-    setRoles(prev => prev.map(role => 
-      role.id.toString() === userData.roleId 
-        ? { ...role, userCount: role.userCount + 1 }
-        : role
-    ));
+    if (userData.roleId) {
+      setRoles(prev => prev.map(role => 
+        role.id === userData.roleId 
+          ? { ...role, userCount: role.userCount + 1 }
+          : role
+      ));
+    }
   };
 
   const getLevelColor = (level: string) => {
