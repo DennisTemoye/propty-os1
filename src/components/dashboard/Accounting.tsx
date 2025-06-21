@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, TrendingUp, TrendingDown, DollarSign, FileText, Download, Filter, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { IncomeForm } from './accounting/IncomeForm';
+import { ExpenseForm } from './accounting/ExpenseForm';
 import { PaymentsManagement } from './accounting/PaymentsManagement';
 import { AnalyticsCharts } from './accounting/AnalyticsCharts';
 import { AccountingDownloadActions } from './accounting/AccountingDownloadActions';
@@ -175,12 +177,12 @@ export function Accounting() {
   ];
 
   const handleIncomeSubmit = (data: any) => {
-    console.log('Income data:', data);
+    console.log('Income submitted:', data);
     setIsIncomeModalOpen(false);
   };
 
   const handleExpenseSubmit = (data: any) => {
-    console.log('Expense data:', data);
+    console.log('Expense submitted:', data);
     setIsExpenseModalOpen(false);
   };
 
@@ -205,10 +207,11 @@ export function Accounting() {
                 <DialogTitle>Record Income</DialogTitle>
                 <DialogDescription>Add a new income transaction</DialogDescription>
               </DialogHeader>
-              <div className="p-4">
-                <p>Income form will be implemented here</p>
-                <Button onClick={handleIncomeSubmit}>Save Income</Button>
-              </div>
+              <IncomeForm 
+                isOpen={isIncomeModalOpen}
+                onClose={() => setIsIncomeModalOpen(false)}
+                onSubmit={handleIncomeSubmit}
+              />
             </DialogContent>
           </Dialog>
           <Dialog open={isExpenseModalOpen} onOpenChange={setIsExpenseModalOpen}>
@@ -223,10 +226,11 @@ export function Accounting() {
                 <DialogTitle>Record Expense</DialogTitle>
                 <DialogDescription>Add a new expense transaction</DialogDescription>
               </DialogHeader>
-              <div className="p-4">
-                <p>Expense form will be implemented here</p>
-                <Button onClick={handleExpenseSubmit}>Save Expense</Button>
-              </div>
+              <ExpenseForm 
+                isOpen={isExpenseModalOpen}
+                onClose={() => setIsExpenseModalOpen(false)}
+                onSubmit={handleExpenseSubmit}
+              />
             </DialogContent>
           </Dialog>
         </div>
