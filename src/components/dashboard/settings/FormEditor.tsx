@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -79,8 +78,8 @@ export function FormEditor() {
     },
     {
       id: 'development-form',
-      name: 'Development Form',
-      description: 'New real estate development creation',
+      name: 'Project Form',
+      description: 'New real estate project creation',
       category: 'Core Forms',
       icon: <Building className="h-5 w-5" />,
       fields: [
