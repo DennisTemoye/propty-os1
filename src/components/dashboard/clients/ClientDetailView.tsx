@@ -174,10 +174,6 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                     <p className="font-medium">Michael</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500">Date of Birth</label>
-                    <p className="font-medium">March 15, 1985</p>
-                  </div>
-                  <div>
                     <label className="text-sm text-gray-500">Gender</label>
                     <p className="font-medium">Male</p>
                   </div>
@@ -190,8 +186,12 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                     <p className="font-medium">Nigerian</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500">State of Origin</label>
-                    <p className="font-medium">Lagos</p>
+                    <label className="text-sm text-gray-500">Occupation</label>
+                    <p className="font-medium">Software Engineer</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Employer/Business Name</label>
+                    <p className="font-medium">Tech Solutions Ltd</p>
                   </div>
                 </div>
               </CardContent>
@@ -207,28 +207,12 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray-500">Primary Phone</label>
-                  <p className="font-medium">{client.phone}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">Alternative Phone</label>
-                  <p className="font-medium">+234 802 345 6789</p>
-                </div>
-                <div>
                   <label className="text-sm text-gray-500">Email Address</label>
                   <p className="font-medium">{client.email}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-500">Residential Address</label>
-                  <p className="font-medium">{client.address}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">City</label>
-                  <p className="font-medium">Lagos</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">State</label>
-                  <p className="font-medium">Lagos State</p>
+                  <label className="text-sm text-gray-500">Phone Number</label>
+                  <p className="font-medium">{client.phone}</p>
                 </div>
               </CardContent>
             </Card>
@@ -251,44 +235,34 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                   <p className="font-medium">{client.nationalId}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-500">BVN</label>
-                  <p className="font-medium">22345678901</p>
-                </div>
-                <div>
                   <label className="text-sm text-gray-500">ID Document</label>
                   <p className="font-medium text-blue-600 cursor-pointer hover:underline">View Document</p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Employment Information */}
+            {/* Residential Address */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Building className="h-5 w-5" />
-                  <span>Employment Information</span>
+                  <MapPin className="h-5 w-5" />
+                  <span>Residential Address</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray-500">Occupation</label>
-                  <p className="font-medium">Software Engineer</p>
+                  <label className="text-sm text-gray-500">Permanent Residential Address</label>
+                  <p className="font-medium">{client.address}</p>
                 </div>
-                <div>
-                  <label className="text-sm text-gray-500">Employer/Business Name</label>
-                  <p className="font-medium">Tech Solutions Ltd</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">Monthly Income Range</label>
-                  <p className="font-medium">₦500,000 - ₦1,000,000</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">Years of Experience</label>
-                  <p className="font-medium">8 years</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">Source of Investment</label>
-                  <p className="font-medium">Personal Savings</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-gray-500">City</label>
+                    <p className="font-medium">Lagos</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">State</label>
+                    <p className="font-medium">Lagos State</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -313,18 +287,18 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                       <p className="font-medium">Spouse</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-500">Phone Number</label>
-                      <p className="font-medium">+234 803 456 7890</p>
+                      <label className="text-sm text-gray-500">Next of Kin Address</label>
+                      <p className="font-medium">123 Victoria Island, Lagos</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm text-gray-500">Email Address</label>
+                      <label className="text-sm text-gray-500">Next of Kin Email</label>
                       <p className="font-medium">jane.doe@example.com</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-500">Address</label>
-                      <p className="font-medium">123 Victoria Island, Lagos</p>
+                      <label className="text-sm text-gray-500">Next of Kin Phone</label>
+                      <p className="font-medium">+234 803 456 7890</p>
                     </div>
                   </div>
                 </div>
