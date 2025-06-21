@@ -1,7 +1,9 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { FileText, DollarSign, AlertTriangle, Eye } from 'lucide-react';
+import { FileText, DollarSign, AlertTriangle, Eye, Receipt } from 'lucide-react';
+import { FileActions } from '@/components/common/FileActions';
+import { EnhancedDownloadService } from '@/services/enhancedDownloadService';
 import { toast } from 'sonner';
 
 interface FeeActionsProps {
@@ -16,10 +18,33 @@ export function FeeActions({ fee, onRecordPayment, onViewDetails }: FeeActionsPr
     toast.success(`Reminder sent to ${fee.clientName}`);
   };
 
-  const handleViewStatement = (fee: any) => {
-    console.log('Viewing statement for:', fee.clientName);
-    toast.info(`Opening statement for ${fee.clientName}`);
-  };
+  const feeFileActions = [
+    {
+      type: 'receipt',
+      label: 'Fee Receipt',
+      icon: <Receipt className="h-4 w-4 mr-2" />,
+      downloadFn: async () => {
+        await EnhancedDownloadService.downloadFeeReceipt(fee);
+      }
+    },
+    {
+      type: 'statement',
+      label: 'Fee Statement',
+      icon: <FileText className="h-4 w-4 mr-2" />,
+      downloadFn: async () => {
+        await EnhancedDownloadService.downloadClientStatement(
+          { name: fee.clientName }, 
+          [{ 
+            date: new Date(), 
+            description: fee.feeType, 
+            type: 'fee', 
+            amount: fee.amount, 
+            balance: fee.outstanding 
+          }]
+        );
+      }
+    }
+  ];
 
   return (
     <div className="flex space-x-2">
@@ -46,13 +71,7 @@ export function FeeActions({ fee, onRecordPayment, onViewDetails }: FeeActionsPr
         </Button>
       )}
       
-      <Button 
-        variant="outline" 
-        size="sm"
-        onClick={() => handleViewStatement(fee)}
-      >
-        <FileText className="h-3 w-3" />
-      </Button>
+      <FileActions actions={feeFileActions} />
       
       <Button 
         variant="outline" 
