@@ -18,89 +18,7 @@ import { NewProjectSiteForm } from '@/components/dashboard/forms/NewProjectSiteF
 import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
 import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
 import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
-
-const kpiData = [
-  {
-    title: 'Total Projects',
-    value: '24',
-    subtitle: '3 New This Quarter',
-    icon: Building,
-    gradientFrom: 'from-blue-500',
-    gradientTo: 'to-cyan-400',
-    iconBgColor: 'bg-white/20',
-    iconColor: 'text-white',
-  },
-  {
-    title: 'Active Clients',
-    value: '1,247',
-    subtitle: '89 New This Month',
-    icon: Users,
-    gradientFrom: 'from-emerald-500',
-    gradientTo: 'to-teal-400',
-    iconBgColor: 'bg-white/20',
-    iconColor: 'text-white',
-  },
-  {
-    title: 'Total Sales Revenue',
-    value: '₦2.4B',
-    subtitle: '156 Units Sold',
-    icon: DollarSign,
-    gradientFrom: 'from-purple-500',
-    gradientTo: 'to-pink-400',
-    iconBgColor: 'bg-white/20',
-    iconColor: 'text-white',
-  },
-  {
-    title: 'Pending Allocations',
-    value: '23',
-    subtitle: 'Awaiting Processing',
-    icon: FileText,
-    gradientFrom: 'from-orange-500',
-    gradientTo: 'to-amber-400',
-    iconBgColor: 'bg-white/20',
-    iconColor: 'text-white',
-  },
-  {
-    title: 'Available Units',
-    value: '187',
-    subtitle: 'Ready for Allocation',
-    icon: MapPin,
-    gradientFrom: 'from-indigo-500',
-    gradientTo: 'to-purple-400',
-    iconBgColor: 'bg-white/20',
-    iconColor: 'text-white',
-  },
-  {
-    title: 'Installment Collections',
-    value: '₦450M',
-    subtitle: '92% Collection Rate',
-    icon: Calculator,
-    gradientFrom: 'from-green-500',
-    gradientTo: 'to-emerald-400',
-    iconBgColor: 'bg-white/20',
-    iconColor: 'text-white',
-  },
-  {
-    title: 'Completed Deals',
-    value: '89',
-    subtitle: 'This Quarter',
-    icon: CheckCircle,
-    gradientFrom: 'from-teal-500',
-    gradientTo: 'to-cyan-400',
-    iconBgColor: 'bg-white/20',
-    iconColor: 'text-white',
-  },
-  {
-    title: 'Scheduled Inspections',
-    value: '34',
-    subtitle: 'Next 7 Days',
-    icon: Calendar,
-    gradientFrom: 'from-rose-500',
-    gradientTo: 'to-pink-400',
-    iconBgColor: 'bg-white/20',
-    iconColor: 'text-white',
-  },
-];
+import { useNavigate } from 'react-router-dom';
 
 const salesData = [
   { month: 'Jan', sales: 65, revenue: 2.4, allocations: 58 },
@@ -128,9 +46,102 @@ const financialData = [
 ];
 
 export function DashboardOverview() {
+  const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [activeSheet, setActiveSheet] = useState<string | null>(null);
+
+  // KPI data with navigation handlers
+  const kpiData = [
+    {
+      title: 'Total Projects',
+      value: '24',
+      subtitle: '3 New This Quarter',
+      icon: Building,
+      gradientFrom: 'from-blue-500',
+      gradientTo: 'to-cyan-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/developments'),
+    },
+    {
+      title: 'Active Clients',
+      value: '1,247',
+      subtitle: '89 New This Month',
+      icon: Users,
+      gradientFrom: 'from-emerald-500',
+      gradientTo: 'to-teal-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/clients'),
+    },
+    {
+      title: 'Total Sales Revenue',
+      value: '₦2.4B',
+      subtitle: '156 Units Sold',
+      icon: DollarSign,
+      gradientFrom: 'from-purple-500',
+      gradientTo: 'to-pink-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/accounting'),
+    },
+    {
+      title: 'Pending Allocations',
+      value: '23',
+      subtitle: 'Awaiting Processing',
+      icon: FileText,
+      gradientFrom: 'from-orange-500',
+      gradientTo: 'to-amber-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/sales'),
+    },
+    {
+      title: 'Available Units',
+      value: '187',
+      subtitle: 'Ready for Allocation',
+      icon: MapPin,
+      gradientFrom: 'from-indigo-500',
+      gradientTo: 'to-purple-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/developments'),
+    },
+    {
+      title: 'Installment Collections',
+      value: '₦450M',
+      subtitle: '92% Collection Rate',
+      icon: Calculator,
+      gradientFrom: 'from-green-500',
+      gradientTo: 'to-emerald-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/accounting'),
+    },
+    {
+      title: 'Completed Deals',
+      value: '89',
+      subtitle: 'This Quarter',
+      icon: CheckCircle,
+      gradientFrom: 'from-teal-500',
+      gradientTo: 'to-cyan-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/sales'),
+    },
+    {
+      title: 'Scheduled Inspections',
+      value: '34',
+      subtitle: 'Next 7 Days',
+      icon: Calendar,
+      gradientFrom: 'from-rose-500',
+      gradientTo: 'to-pink-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/calendar'),
+    },
+  ];
 
   const handleNewAction = (action: string) => {
     console.log(`Creating new ${action}`);
@@ -154,7 +165,7 @@ export function DashboardOverview() {
 
   const getSheetTitle = (action: string) => {
     switch (action) {
-      case 'project': return 'Create New Development';
+      case 'development': return 'Create New Development';
       case 'project_site': return 'Create New Project Site';
       case 'client': return 'Create New Client';
       case 'allocation': return 'Create New Allocation';
@@ -165,7 +176,7 @@ export function DashboardOverview() {
 
   const getSheetDescription = (action: string) => {
     switch (action) {
-      case 'project': return 'Add a new real estate development to your portfolio';
+      case 'development': return 'Add a new real estate development to your portfolio';
       case 'project_site': return 'Add a new project site to track development progress';
       case 'client': return 'Add a new client to your database';
       case 'allocation': return 'Allocate a unit to a client';
@@ -176,7 +187,7 @@ export function DashboardOverview() {
 
   const renderSheetContent = (action: string) => {
     switch (action) {
-      case 'project':
+      case 'development':
         return <NewDevelopmentForm onClose={closeSheet} />;
       case 'project_site':
         return <NewProjectSiteForm onClose={closeSheet} />;
@@ -232,11 +243,11 @@ export function DashboardOverview() {
                 align="end"
               >
                 <DropdownMenuItem 
-                  onClick={() => handleNewAction('project_site')}
+                  onClick={() => handleNewAction('development')}
                   className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
                   <Building className="h-5 w-5 text-purple-600" />
-                  <span className="font-medium">New Project Site</span>
+                  <span className="font-medium">New Development</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('client')}
@@ -273,20 +284,25 @@ export function DashboardOverview() {
       </div>
 
       <div className="p-6 space-y-8">
-        {/* KPI Cards */}
+        {/* KPI Cards - Now clickable and connected to their respective modules */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {kpiData.map((kpi, index) => (
-            <GradientKpiCard
+            <div
               key={index}
-              title={kpi.title}
-              value={kpi.value}
-              subtitle={kpi.subtitle}
-              icon={kpi.icon}
-              gradientFrom={kpi.gradientFrom}
-              gradientTo={kpi.gradientTo}
-              iconBgColor={kpi.iconBgColor}
-              iconColor={kpi.iconColor}
-            />
+              onClick={kpi.onClick}
+              className="cursor-pointer transform hover:scale-105 transition-all duration-300"
+            >
+              <GradientKpiCard
+                title={kpi.title}
+                value={kpi.value}
+                subtitle={kpi.subtitle}
+                icon={kpi.icon}
+                gradientFrom={kpi.gradientFrom}
+                gradientTo={kpi.gradientTo}
+                iconBgColor={kpi.iconBgColor}
+                iconColor={kpi.iconColor}
+              />
+            </div>
           ))}
         </div>
 
@@ -423,7 +439,7 @@ export function DashboardOverview() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-100 dark:border-green-800">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-100 dark:border-green-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/1')}>
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />
@@ -438,7 +454,7 @@ export function DashboardOverview() {
                     <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/2')}>
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />
@@ -453,7 +469,7 @@ export function DashboardOverview() {
                     <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-100 dark:border-purple-800">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-100 dark:border-purple-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/3')}>
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />
