@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,6 +18,7 @@ import { FeeDetailsModal } from './fees/FeeDetailsModal';
 import { FeesOverviewTab } from './fees/FeesOverviewTab';
 import { PaymentCollectionTab } from './fees/PaymentCollectionTab';
 import { EnhancedMonitoringDashboard } from './fees/EnhancedMonitoringDashboard';
+import { DownloadService } from '@/services/downloadService';
 import { toast } from 'sonner';
 
 const mockFeeData = [
@@ -81,9 +81,9 @@ export function FeesCollection() {
     setIsFeeDetailsModalOpen(true);
   };
 
-  const handleExportData = (type: string) => {
-    console.log(`Exporting ${type} data...`);
-    toast.success(`${type} export started. Download will begin shortly.`);
+  const handleExportFeeStatement = () => {
+    DownloadService.generateFeeStatement(mockFeeData);
+    toast.success('Fee statement exported successfully');
   };
 
   const handleSendBulkReminders = () => {
@@ -100,9 +100,9 @@ export function FeesCollection() {
           <p className="text-gray-600 mt-1">Comprehensive fee management and collection system</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => handleExportData('Fees Report')} size="sm">
+          <Button variant="outline" onClick={handleExportFeeStatement} size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Export
+            Export Statement
           </Button>
           <Button variant="outline" onClick={handleSendBulkReminders} className="text-orange-600 border-orange-200 hover:bg-orange-50" size="sm">
             <Mail className="h-4 w-4 mr-2" />
