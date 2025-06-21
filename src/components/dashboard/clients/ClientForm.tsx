@@ -7,8 +7,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Badge } from '@/components/ui/badge';
 import { useForm } from 'react-hook-form';
-import { User, Upload, ChevronDown, ChevronRight, Link2, UserPlus } from 'lucide-react';
+import { 
+  User, 
+  Upload, 
+  ChevronDown, 
+  ChevronRight, 
+  Link2, 
+  UserPlus, 
+  IdCard, 
+  MapPin, 
+  Users, 
+  StickyNote,
+  Camera,
+  Mail,
+  Phone,
+  Briefcase
+} from 'lucide-react';
 
 interface ClientFormProps {
   onClose: () => void;
@@ -81,95 +97,127 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
 
   if (onboardingMethod === 'link') {
     return (
-      <div className="space-y-6">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto">
-            <Link2 className="h-8 w-8 text-purple-600" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">Share Client Form</h3>
-            <p className="text-gray-600">Send this link to your client to fill the form themselves</p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-200">
-            <code className="text-sm break-all">
-              {`${window.location.origin}/client-form/${Date.now()}`}
-            </code>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={generateFormLink} className="flex-1">
-              Copy Link
-            </Button>
-            <Button variant="outline" onClick={() => setOnboardingMethod('manual')} className="flex-1">
-              Fill Manually
-            </Button>
-          </div>
-        </div>
+      <div className="max-w-2xl mx-auto">
+        <Card className="border-none shadow-xl bg-gradient-to-br from-purple-50 to-indigo-50">
+          <CardContent className="p-8">
+            <div className="text-center space-y-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                <Link2 className="h-10 w-10 text-white" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold text-gray-900">Share Client Form</h3>
+                <p className="text-gray-600 max-w-md mx-auto">Send this secure link to your client so they can fill out their information directly</p>
+              </div>
+              <div className="bg-white p-6 rounded-xl border-2 border-dashed border-purple-200 shadow-inner">
+                <code className="text-sm text-gray-700 break-all font-mono bg-gray-50 px-3 py-2 rounded-lg">
+                  {`${window.location.origin}/client-form/${Date.now()}`}
+                </code>
+              </div>
+              <div className="flex gap-3">
+                <Button onClick={generateFormLink} className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg">
+                  <Link2 className="h-4 w-4 mr-2" />
+                  Copy Link
+                </Button>
+                <Button variant="outline" onClick={() => setOnboardingMethod('manual')} className="flex-1 border-purple-200 hover:bg-purple-50">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Fill Manually
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Onboarding Method Selector */}
-      <div className="flex gap-2">
-        <Select value={onboardingMethod} onValueChange={(value: 'manual' | 'link') => setOnboardingMethod(value)}>
-          <SelectTrigger className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="manual">
-              <div className="flex items-center gap-2">
-                <UserPlus className="h-4 w-4" />
-                Fill form manually
-              </div>
-            </SelectItem>
-            <SelectItem value="link">
-              <div className="flex items-center gap-2">
-                <Link2 className="h-4 w-4" />
-                Copy form link to share with client
-              </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-6 text-white">
+        <h2 className="text-2xl font-bold mb-2">
+          {client ? 'Update Client Information' : 'Add New Client'}
+        </h2>
+        <p className="text-purple-100">
+          Fill in the client details below or share a form link for self-completion
+        </p>
       </div>
 
+      {/* Onboarding Method Selector */}
+      <Card className="border border-purple-100 shadow-md">
+        <CardContent className="p-4">
+          <Select value={onboardingMethod} onValueChange={(value: 'manual' | 'link') => setOnboardingMethod(value)}>
+            <SelectTrigger className="w-full border-purple-200 focus:ring-purple-500">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-white border border-purple-100">
+              <SelectItem value="manual">
+                <div className="flex items-center gap-3 py-1">
+                  <UserPlus className="h-4 w-4 text-purple-600" />
+                  <span>Fill form manually</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="link">
+                <div className="flex items-center gap-3 py-1">
+                  <Link2 className="h-4 w-4 text-indigo-600" />
+                  <span>Copy form link to share with client</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Personal Information */}
           <Collapsible open={expandedSections.personal} onOpenChange={() => toggleSection('personal')}>
-            <Card>
+            <Card className="overflow-hidden border border-purple-100 shadow-md hover:shadow-lg transition-shadow">
               <CollapsibleTrigger asChild>
-                <CardHeader className="cursor-pointer hover:bg-gray-50">
+                <CardHeader className="cursor-pointer hover:bg-purple-50 transition-colors border-b border-purple-50">
                   <CardTitle className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <User className="h-5 w-5" />
-                      Personal Information
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <User className="h-5 w-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <span className="text-lg font-semibold text-gray-900">Personal Information</span>
+                        <Badge variant="secondary" className="ml-2 bg-purple-100 text-purple-700">Required</Badge>
+                      </div>
                     </div>
                     {expandedSections.personal ? 
-                      <ChevronDown className="h-4 w-4" /> : 
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronDown className="h-5 w-5 text-purple-600" /> : 
+                      <ChevronRight className="h-5 w-5 text-purple-600" />
                     }
                   </CardTitle>
                 </CardHeader>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <CardContent className="space-y-4">
+                <CardContent className="p-6 space-y-6 bg-gradient-to-br from-white to-purple-25">
                   {/* Passport Photo */}
-                  <div>
-                    <FormLabel>Passport Photograph</FormLabel>
-                    <div className="mt-2 flex items-center space-x-4">
-                      <div className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
-                        {passportPhoto ? (
-                          <img 
-                            src={URL.createObjectURL(passportPhoto)} 
-                            alt="Passport" 
-                            className="w-full h-full object-cover rounded-lg"
-                          />
-                        ) : (
-                          <User className="h-8 w-8 text-gray-400" />
+                  <div className="flex flex-col items-center space-y-4">
+                    <FormLabel className="text-sm font-semibold text-gray-700">Passport Photograph</FormLabel>
+                    <div className="flex items-center space-x-6">
+                      <div className="relative">
+                        <div className="w-32 h-32 border-2 border-dashed border-purple-300 rounded-xl flex items-center justify-center bg-purple-50 hover:bg-purple-100 transition-colors">
+                          {passportPhoto ? (
+                            <img 
+                              src={URL.createObjectURL(passportPhoto)} 
+                              alt="Passport" 
+                              className="w-full h-full object-cover rounded-xl"
+                            />
+                          ) : (
+                            <Camera className="h-12 w-12 text-purple-400" />
+                          )}
+                        </div>
+                        {passportPhoto && (
+                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
                         )}
                       </div>
-                      <div>
+                      <div className="space-y-2">
                         <Input
                           type="file"
                           accept="image/*"
@@ -178,27 +226,30 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                           id="passport-upload"
                         />
                         <label htmlFor="passport-upload">
-                          <Button type="button" variant="outline" size="sm" asChild>
+                          <Button type="button" variant="outline" size="sm" asChild className="border-purple-200 hover:bg-purple-50">
                             <span className="cursor-pointer">
                               <Upload className="h-4 w-4 mr-2" />
-                              Upload Photo
+                              {passportPhoto ? 'Change Photo' : 'Upload Photo'}
                             </span>
                           </Button>
                         </label>
-                        <p className="text-xs text-gray-500 mt-1">JPG, PNG up to 2MB</p>
+                        <p className="text-xs text-gray-500">JPG, PNG up to 2MB</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name *</FormLabel>
+                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <User className="h-4 w-4" />
+                            First Name *
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter first name" {...field} />
+                            <Input placeholder="Enter first name" {...field} className="border-purple-200 focus:ring-purple-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -210,9 +261,12 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Last Name *</FormLabel>
+                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <User className="h-4 w-4" />
+                            Last Name *
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter last name" {...field} />
+                            <Input placeholder="Enter last name" {...field} className="border-purple-200 focus:ring-purple-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -224,9 +278,9 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="otherName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Other Name (Optional)</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">Other Name (Optional)</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter other name" {...field} />
+                            <Input placeholder="Enter other name" {...field} className="border-purple-200 focus:ring-purple-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -238,10 +292,10 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="gender"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Gender *</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">Gender *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="border-purple-200 focus:ring-purple-500">
                                 <SelectValue placeholder="Select gender" />
                               </SelectTrigger>
                             </FormControl>
@@ -261,10 +315,10 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="maritalStatus"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Marital Status</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">Marital Status</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="border-purple-200 focus:ring-purple-500">
                                 <SelectValue placeholder="Select marital status" />
                               </SelectTrigger>
                             </FormControl>
@@ -285,9 +339,12 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address *</FormLabel>
+                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Mail className="h-4 w-4" />
+                            Email Address *
+                          </FormLabel>
                           <FormControl>
-                            <Input type="email" placeholder="Enter email address" {...field} />
+                            <Input type="email" placeholder="Enter email address" {...field} className="border-purple-200 focus:ring-purple-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -299,9 +356,12 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number *</FormLabel>
+                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Phone className="h-4 w-4" />
+                            Phone Number *
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter phone number" {...field} />
+                            <Input placeholder="Enter phone number" {...field} className="border-purple-200 focus:ring-purple-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -313,9 +373,9 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="nationality"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nationality</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">Nationality</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter nationality" {...field} />
+                            <Input placeholder="Enter nationality" {...field} className="border-purple-200 focus:ring-purple-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -327,9 +387,12 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="occupation"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Occupation</FormLabel>
+                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Briefcase className="h-4 w-4" />
+                            Occupation
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter occupation" {...field} />
+                            <Input placeholder="Enter occupation" {...field} className="border-purple-200 focus:ring-purple-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -341,9 +404,9 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="employerName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Employer/Business Name</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">Employer/Business Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter employer or business name" {...field} />
+                            <Input placeholder="Enter employer or business name" {...field} className="border-purple-200 focus:ring-purple-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -357,30 +420,35 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
 
           {/* Identification */}
           <Collapsible open={expandedSections.identification} onOpenChange={() => toggleSection('identification')}>
-            <Card>
+            <Card className="overflow-hidden border border-indigo-100 shadow-md hover:shadow-lg transition-shadow">
               <CollapsibleTrigger asChild>
-                <CardHeader className="cursor-pointer hover:bg-gray-50">
+                <CardHeader className="cursor-pointer hover:bg-indigo-50 transition-colors border-b border-indigo-50">
                   <CardTitle className="flex items-center justify-between">
-                    <span>Identification</span>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-indigo-100 rounded-lg">
+                        <IdCard className="h-5 w-5 text-indigo-600" />
+                      </div>
+                      <span className="text-lg font-semibold text-gray-900">Identification</span>
+                    </div>
                     {expandedSections.identification ? 
-                      <ChevronDown className="h-4 w-4" /> : 
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronDown className="h-5 w-5 text-indigo-600" /> : 
+                      <ChevronRight className="h-5 w-5 text-indigo-600" />
                     }
                   </CardTitle>
                 </CardHeader>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CardContent className="p-6 space-y-6 bg-gradient-to-br from-white to-indigo-25">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="idType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>ID Type</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">ID Type</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="border-indigo-200 focus:ring-indigo-500">
                                 <SelectValue placeholder="Select ID type" />
                               </SelectTrigger>
                             </FormControl>
@@ -401,9 +469,9 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="idNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>ID Number</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">ID Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter ID number" {...field} />
+                            <Input placeholder="Enter ID number" {...field} className="border-indigo-200 focus:ring-indigo-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -417,43 +485,52 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
 
           {/* Residential Address */}
           <Collapsible open={expandedSections.address} onOpenChange={() => toggleSection('address')}>
-            <Card>
+            <Card className="overflow-hidden border border-green-100 shadow-md hover:shadow-lg transition-shadow">
               <CollapsibleTrigger asChild>
-                <CardHeader className="cursor-pointer hover:bg-gray-50">
+                <CardHeader className="cursor-pointer hover:bg-green-50 transition-colors border-b border-green-50">
                   <CardTitle className="flex items-center justify-between">
-                    <span>Residential Address</span>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <MapPin className="h-5 w-5 text-green-600" />
+                      </div>
+                      <span className="text-lg font-semibold text-gray-900">Residential Address</span>
+                    </div>
                     {expandedSections.address ? 
-                      <ChevronDown className="h-4 w-4" /> : 
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronDown className="h-5 w-5 text-green-600" /> : 
+                      <ChevronRight className="h-5 w-5 text-green-600" />
                     }
                   </CardTitle>
                 </CardHeader>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <CardContent className="space-y-4">
+                <CardContent className="p-6 space-y-6 bg-gradient-to-br from-white to-green-25">
                   <FormField
                     control={form.control}
                     name="permanentAddress"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Permanent Address</FormLabel>
+                        <FormLabel className="text-sm font-semibold text-gray-700">Permanent Address</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter permanent address" {...field} />
+                          <Textarea 
+                            placeholder="Enter permanent address" 
+                            {...field} 
+                            className="border-green-200 focus:ring-green-500 min-h-[100px]" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="city"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>City</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">City</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter city" {...field} />
+                            <Input placeholder="Enter city" {...field} className="border-green-200 focus:ring-green-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -465,9 +542,9 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="state"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>State</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">State</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter state" {...field} />
+                            <Input placeholder="Enter state" {...field} className="border-green-200 focus:ring-green-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -481,29 +558,37 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
 
           {/* Next of Kin Information */}
           <Collapsible open={expandedSections.nextOfKin} onOpenChange={() => toggleSection('nextOfKin')}>
-            <Card>
+            <Card className="overflow-hidden border border-orange-100 shadow-md hover:shadow-lg transition-shadow">
               <CollapsibleTrigger asChild>
-                <CardHeader className="cursor-pointer hover:bg-gray-50">
+                <CardHeader className="cursor-pointer hover:bg-orange-50 transition-colors border-b border-orange-50">
                   <CardTitle className="flex items-center justify-between">
-                    <span>Next of Kin Information</span>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-orange-100 rounded-lg">
+                        <Users className="h-5 w-5 text-orange-600" />
+                      </div>
+                      <span className="text-lg font-semibold text-gray-900">Next of Kin Information</span>
+                    </div>
                     {expandedSections.nextOfKin ? 
-                      <ChevronDown className="h-4 w-4" /> : 
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronDown className="h-5 w-5 text-orange-600" /> : 
+                      <ChevronRight className="h-5 w-5 text-orange-600" />
                     }
                   </CardTitle>
                 </CardHeader>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CardContent className="p-6 space-y-6 bg-gradient-to-br from-white to-orange-25">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="nokFullName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name *</FormLabel>
+                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <User className="h-4 w-4" />
+                            Full Name *
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter next of kin's full name" {...field} />
+                            <Input placeholder="Enter next of kin's full name" {...field} className="border-orange-200 focus:ring-orange-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -515,10 +600,10 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="nokRelationship"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Relationship *</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-gray-700">Relationship *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="border-orange-200 focus:ring-orange-500">
                                 <SelectValue placeholder="Select relationship" />
                               </SelectTrigger>
                             </FormControl>
@@ -541,9 +626,12 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="nokPhone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number *</FormLabel>
+                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Phone className="h-4 w-4" />
+                            Phone Number *
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter phone number" {...field} />
+                            <Input placeholder="Enter phone number" {...field} className="border-orange-200 focus:ring-orange-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -555,9 +643,12 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                       name="nokEmail"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address</FormLabel>
+                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Mail className="h-4 w-4" />
+                            Email Address
+                          </FormLabel>
                           <FormControl>
-                            <Input type="email" placeholder="Enter email address" {...field} />
+                            <Input type="email" placeholder="Enter email address" {...field} className="border-orange-200 focus:ring-orange-500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -570,9 +661,16 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
                     name="nokAddress"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Address</FormLabel>
+                        <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                          <MapPin className="h-4 w-4" />
+                          Address
+                        </FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter next of kin's address" {...field} />
+                          <Textarea 
+                            placeholder="Enter next of kin's address" 
+                            {...field} 
+                            className="border-orange-200 focus:ring-orange-500 min-h-[80px]" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -585,30 +683,35 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
 
           {/* Additional Notes */}
           <Collapsible open={expandedSections.notes} onOpenChange={() => toggleSection('notes')}>
-            <Card>
+            <Card className="overflow-hidden border border-gray-100 shadow-md hover:shadow-lg transition-shadow">
               <CollapsibleTrigger asChild>
-                <CardHeader className="cursor-pointer hover:bg-gray-50">
+                <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-50">
                   <CardTitle className="flex items-center justify-between">
-                    <span>Additional Notes</span>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        <StickyNote className="h-5 w-5 text-gray-600" />
+                      </div>
+                      <span className="text-lg font-semibold text-gray-900">Additional Notes</span>
+                    </div>
                     {expandedSections.notes ? 
-                      <ChevronDown className="h-4 w-4" /> : 
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronDown className="h-5 w-5 text-gray-600" /> : 
+                      <ChevronRight className="h-5 w-5 text-gray-600" />
                     }
                   </CardTitle>
                 </CardHeader>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <CardContent>
+                <CardContent className="p-6">
                   <FormField
                     control={form.control}
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Notes</FormLabel>
+                        <FormLabel className="text-sm font-semibold text-gray-700">Notes</FormLabel>
                         <FormControl>
                           <Textarea 
                             placeholder="Add any additional notes about the client" 
-                            className="min-h-[100px]"
+                            className="min-h-[120px] border-gray-200 focus:ring-gray-500"
                             {...field} 
                           />
                         </FormControl>
@@ -621,14 +724,27 @@ export function ClientForm({ onClose, client }: ClientFormProps) {
             </Card>
           </Collapsible>
 
-          <div className="flex gap-4 pt-4">
-            <Button type="submit" className="flex-1">
-              {client ? 'Update Client' : 'Create Client'}
-            </Button>
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
-            </Button>
-          </div>
+          {/* Action Buttons */}
+          <Card className="border border-purple-100 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex gap-4">
+                <Button 
+                  type="submit" 
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg h-12 text-lg font-semibold"
+                >
+                  {client ? 'Update Client' : 'Create Client'}
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={onClose} 
+                  className="flex-1 border-gray-300 hover:bg-gray-50 h-12 text-lg font-semibold"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </form>
       </Form>
     </div>
