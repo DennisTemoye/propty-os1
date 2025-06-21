@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,7 @@ export function Accounting() {
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [dateFilter, setDateFilter] = useState('this-month');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [marketerFilter, setMarketerFilter] = useState('all'); // New filter for marketers
+  const [marketerFilter, setMarketerFilter] = useState('all');
 
   // Mock data with marketer commissions integrated
   const mockTransactions = [
@@ -198,7 +197,7 @@ export function Accounting() {
                 <DialogTitle>Record Income</DialogTitle>
                 <DialogDescription>Add a new income transaction</DialogDescription>
               </DialogHeader>
-              <IncomeForm onClose={() => setIsIncomeModalOpen(false)} />
+              <IncomeForm />
             </DialogContent>
           </Dialog>
           <Dialog open={isExpenseModalOpen} onOpenChange={setIsExpenseModalOpen}>
@@ -213,7 +212,7 @@ export function Accounting() {
                 <DialogTitle>Record Expense</DialogTitle>
                 <DialogDescription>Add a new expense transaction</DialogDescription>
               </DialogHeader>
-              <ExpenseForm onClose={() => setIsExpenseModalOpen(false)} />
+              <ExpenseForm />
             </DialogContent>
           </Dialog>
         </div>
