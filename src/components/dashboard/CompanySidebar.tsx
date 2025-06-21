@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -70,12 +69,13 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
   };
 
   const handleLogout = () => {
+    // Add logout logic here
     navigate('/login');
   };
 
   return (
-    <div className={cn('w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 fixed left-0 top-0 h-screen z-10', className)}>
-      <div className="space-y-4 py-4 h-full flex flex-col">
+    <div className={cn('pb-12 w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900', className)}>
+      <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="flex items-center mb-2">
             <Building2 className="h-6 w-6 mr-2 text-blue-300" />
@@ -87,8 +87,8 @@ export function CompanySidebar({ className }: CompanySidebarProps) {
             </Badge>
           </div>
         </div>
-        <div className="px-3 flex-1">
-          <ScrollArea className="h-full">
+        <div className="px-3">
+          <ScrollArea className="h-[calc(100vh-160px)]">
             <div className="space-y-1">
               {sidebarItems.map((item) => (
                 <Button
