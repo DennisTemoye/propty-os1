@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Handshake, DollarSign, FileText, Users, TrendingUp } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { NewAllocationForm } from './forms/NewAllocationForm';
 
 export function SalesAllocation() {
   const navigate = useNavigate();
