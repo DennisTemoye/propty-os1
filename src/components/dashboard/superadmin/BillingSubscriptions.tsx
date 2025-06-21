@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { CreditCard, DollarSign, TrendingUp, Users, Edit, Eye } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { CreditCard, DollarSign, TrendingUp, Users, Edit, Eye, Calendar } from 'lucide-react';
 
 const subscriptionPlans = [
   {
@@ -16,9 +16,23 @@ const subscriptionPlans = [
     name: 'Trial',
     monthlyPrice: 0,
     annualPrice: 0,
-    description: '14-day free trial with basic features',
-    features: ['5 Projects', '2 Team Members', 'Basic Support', 'Core Features'],
-    limits: { projects: 5, teamSize: 2, storage: '1GB' },
+    description: '14-day free trial with core features',
+    limits: { 
+      projects: 2, 
+      teamSize: 3, 
+      storage: '500MB',
+      clients: 10
+    },
+    features: {
+      projects: true,
+      clients: true,
+      salesAllocation: false,
+      accounting: false,
+      crm: false,
+      feesCollection: false,
+      sendNotice: false,
+      reports: false
+    },
     companies: 12
   },
   {
@@ -27,8 +41,22 @@ const subscriptionPlans = [
     monthlyPrice: 25000,
     annualPrice: 250000,
     description: 'Perfect for small property businesses',
-    features: ['25 Projects', '10 Team Members', 'Email Support', 'All Core Features'],
-    limits: { projects: 25, teamSize: 10, storage: '10GB' },
+    limits: { 
+      projects: 10, 
+      teamSize: 5, 
+      storage: '5GB',
+      clients: 50
+    },
+    features: {
+      projects: true,
+      clients: true,
+      salesAllocation: true,
+      accounting: true,
+      crm: false,
+      feesCollection: true,
+      sendNotice: true,
+      reports: true
+    },
     companies: 45
   },
   {
@@ -37,8 +65,22 @@ const subscriptionPlans = [
     monthlyPrice: 75000,
     annualPrice: 750000,
     description: 'Ideal for growing property companies',
-    features: ['100 Projects', '50 Team Members', 'Priority Support', 'Advanced Features', 'API Access'],
-    limits: { projects: 100, teamSize: 50, storage: '100GB' },
+    limits: { 
+      projects: 50, 
+      teamSize: 25, 
+      storage: '50GB',
+      clients: 500
+    },
+    features: {
+      projects: true,
+      clients: true,
+      salesAllocation: true,
+      accounting: true,
+      crm: true,
+      feesCollection: true,
+      sendNotice: true,
+      reports: true
+    },
     companies: 28
   },
   {
@@ -47,17 +89,42 @@ const subscriptionPlans = [
     monthlyPrice: 150000,
     annualPrice: 1500000,
     description: 'For large enterprises with custom needs',
-    features: ['Unlimited Projects', 'Unlimited Team Members', '24/7 Support', 'All Features', 'Custom Integration'],
-    limits: { projects: 'Unlimited', teamSize: 'Unlimited', storage: '1TB' },
+    limits: { 
+      projects: 'Unlimited', 
+      teamSize: 'Unlimited', 
+      storage: '500GB',
+      clients: 'Unlimited'
+    },
+    features: {
+      projects: true,
+      clients: true,
+      salesAllocation: true,
+      accounting: true,
+      crm: true,
+      feesCollection: true,
+      sendNotice: true,
+      reports: true
+    },
     companies: 8
   }
 ];
+
+const featureLabels = {
+  projects: 'Projects & Units Management',
+  clients: 'Client Management',
+  salesAllocation: 'Sales Allocation',
+  accounting: 'Accounting & Financial',
+  crm: 'CRM & Pipelines',
+  feesCollection: 'Fees Collection',
+  sendNotice: 'Send Notice',
+  reports: 'Reports & Analytics'
+};
 
 const revenueMetrics = {
   mtd: 15200000,
   ytd: 125000000,
   totalRevenue: 245000000,
-  avgRevenuePerUser: 85000
+  avgRevenuePerCompany: 85000
 };
 
 const mockSubscriptions = [
@@ -68,7 +135,8 @@ const mockSubscriptions = [
     status: 'active',
     nextBilling: '2024-02-15',
     revenue: 75000,
-    startDate: '2024-01-15'
+    startDate: '2024-01-15',
+    billingCycle: 'monthly'
   },
   {
     id: 2,
@@ -77,7 +145,8 @@ const mockSubscriptions = [
     status: 'active',
     nextBilling: '2024-02-10',
     revenue: 150000,
-    startDate: '2024-01-10'
+    startDate: '2024-01-10',
+    billingCycle: 'annual'
   },
   {
     id: 3,
@@ -86,13 +155,14 @@ const mockSubscriptions = [
     status: 'trial',
     nextBilling: '2024-02-01',
     revenue: 0,
-    startDate: '2024-01-18'
+    startDate: '2024-01-18',
+    billingCycle: 'trial'
   }
 ];
 
 export function BillingSubscriptions() {
-  const [selectedPlan, setSelectedPlan] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [plans, setPlans] = useState(subscriptionPlans);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', {
@@ -115,6 +185,27 @@ export function BillingSubscriptions() {
     }
   };
 
+  const handleFeatureToggle = (planId: string, feature: string) => {
+    if (!editMode) return;
+    
+    setPlans(plans.map(plan => 
+      plan.id === planId 
+        ? { 
+            ...plan, 
+            features: { 
+              ...plan.features, 
+              [feature]: !plan.features[feature as keyof typeof plan.features] 
+            } 
+          }
+        : plan
+    ));
+  };
+
+  const handleSaveChanges = () => {
+    console.log('Saving plan configurations...');
+    setEditMode(false);
+  };
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="overview" className="w-full">
@@ -122,7 +213,7 @@ export function BillingSubscriptions() {
           <TabsTrigger value="overview">Revenue Overview</TabsTrigger>
           <TabsTrigger value="plans">Plan Configuration</TabsTrigger>
           <TabsTrigger value="subscriptions">Active Subscriptions</TabsTrigger>
-          <TabsTrigger value="invoices">Invoice Management</TabsTrigger>
+          <TabsTrigger value="billing">Billing Management</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -172,9 +263,9 @@ export function BillingSubscriptions() {
                   <CreditCard className="h-5 w-5 text-orange-600" />
                   <div>
                     <div className="text-2xl font-bold text-orange-600">
-                      {formatCurrency(revenueMetrics.avgRevenuePerUser)}
+                      {formatCurrency(revenueMetrics.avgRevenuePerCompany)}
                     </div>
-                    <div className="text-sm text-gray-600">Avg Revenue/User</div>
+                    <div className="text-sm text-gray-600">Avg Revenue/Company</div>
                   </div>
                 </div>
               </CardContent>
@@ -205,85 +296,112 @@ export function BillingSubscriptions() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>Subscription Plans Configuration</span>
-                <Button onClick={() => setEditMode(!editMode)}>
+                <span>ProptyOS Subscription Plans</span>
+                <Button 
+                  onClick={editMode ? handleSaveChanges : () => setEditMode(true)}
+                  className={editMode ? 'bg-green-600 hover:bg-green-700' : ''}
+                >
                   <Edit className="h-4 w-4 mr-2" />
                   {editMode ? 'Save Changes' : 'Edit Plans'}
                 </Button>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {subscriptionPlans.map((plan) => (
+              <div className="space-y-8">
+                {plans.map((plan) => (
                   <Card key={plan.id} className="relative">
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">{plan.name}</CardTitle>
+                        <div>
+                          <CardTitle className="text-xl">{plan.name} Plan</CardTitle>
+                          <p className="text-gray-600 mt-1">{plan.description}</p>
+                        </div>
                         <Badge variant="outline">{plan.companies} companies</Badge>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      {editMode ? (
-                        <div className="space-y-3">
-                          <div>
-                            <Label htmlFor={`monthly-${plan.id}`}>Monthly Price (₦)</Label>
-                            <Input
-                              id={`monthly-${plan.id}`}
-                              type="number"
-                              defaultValue={plan.monthlyPrice}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor={`annual-${plan.id}`}>Annual Price (₦)</Label>
-                            <Input
-                              id={`annual-${plan.id}`}
-                              type="number"
-                              defaultValue={plan.annualPrice}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor={`projects-${plan.id}`}>Max Projects</Label>
-                            <Input
-                              id={`projects-${plan.id}`}
-                              defaultValue={plan.limits.projects}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor={`team-${plan.id}`}>Team Size</Label>
-                            <Input
-                              id={`team-${plan.id}`}
-                              defaultValue={plan.limits.teamSize}
-                              className="mt-1"
-                            />
-                          </div>
+                    <CardContent className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Pricing & Limits */}
+                        <div className="space-y-4">
+                          <h4 className="font-semibold">Pricing & Limits</h4>
+                          {editMode ? (
+                            <div className="space-y-3">
+                              <div>
+                                <Label htmlFor={`monthly-${plan.id}`}>Monthly Price (₦)</Label>
+                                <Input
+                                  id={`monthly-${plan.id}`}
+                                  type="number"
+                                  defaultValue={plan.monthlyPrice}
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor={`annual-${plan.id}`}>Annual Price (₦)</Label>
+                                <Input
+                                  id={`annual-${plan.id}`}
+                                  type="number"
+                                  defaultValue={plan.annualPrice}
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor={`projects-${plan.id}`}>Max Projects</Label>
+                                <Input
+                                  id={`projects-${plan.id}`}
+                                  defaultValue={plan.limits.projects}
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor={`team-${plan.id}`}>Team Size</Label>
+                                <Input
+                                  id={`team-${plan.id}`}
+                                  defaultValue={plan.limits.teamSize}
+                                  className="mt-1"
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              <div>
+                                <div className="text-2xl font-bold">
+                                  {formatCurrency(plan.monthlyPrice)}
+                                </div>
+                                <div className="text-sm text-gray-600">per month</div>
+                              </div>
+                              <div>
+                                <div className="text-lg font-semibold">
+                                  {formatCurrency(plan.annualPrice)}
+                                </div>
+                                <div className="text-sm text-gray-600">per year (save 17%)</div>
+                              </div>
+                              <div className="text-sm space-y-1">
+                                <div>• Max Projects: {plan.limits.projects}</div>
+                                <div>• Team Size: {plan.limits.teamSize}</div>
+                                <div>• Storage: {plan.limits.storage}</div>
+                                <div>• Max Clients: {plan.limits.clients}</div>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      ) : (
-                        <div className="space-y-3">
-                          <div>
-                            <div className="text-2xl font-bold">
-                              {formatCurrency(plan.monthlyPrice)}
-                            </div>
-                            <div className="text-sm text-gray-600">per month</div>
-                          </div>
-                          <div>
-                            <div className="text-lg font-semibold">
-                              {formatCurrency(plan.annualPrice)}
-                            </div>
-                            <div className="text-sm text-gray-600">per year</div>
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {plan.description}
-                          </div>
-                          <div className="space-y-1">
-                            {plan.features.map((feature, index) => (
-                              <div key={index} className="text-sm">• {feature}</div>
+
+                        {/* ProptyOS Modules */}
+                        <div className="space-y-4">
+                          <h4 className="font-semibold">ProptyOS Modules Access</h4>
+                          <div className="space-y-3">
+                            {Object.entries(featureLabels).map(([key, label]) => (
+                              <div key={key} className="flex items-center justify-between">
+                                <span className="text-sm">{label}</span>
+                                <Switch 
+                                  checked={plan.features[key as keyof typeof plan.features]}
+                                  onCheckedChange={() => handleFeatureToggle(plan.id, key)}
+                                  disabled={!editMode}
+                                />
+                              </div>
                             ))}
                           </div>
                         </div>
-                      )}
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -295,7 +413,7 @@ export function BillingSubscriptions() {
         <TabsContent value="subscriptions" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Active Subscriptions</CardTitle>
+              <CardTitle>Active Company Subscriptions</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -304,7 +422,7 @@ export function BillingSubscriptions() {
                     <TableHead>Company</TableHead>
                     <TableHead>Plan</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Start Date</TableHead>
+                    <TableHead>Billing Cycle</TableHead>
                     <TableHead>Next Billing</TableHead>
                     <TableHead>Monthly Revenue</TableHead>
                     <TableHead>Actions</TableHead>
@@ -326,9 +444,14 @@ export function BillingSubscriptions() {
                           {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
                         </Badge>
                       </TableCell>
-                      <TableCell>{subscription.startDate}</TableCell>
-                      <TableCell>{subscription.nextBilling}</TableCell>
-                      <TableCell>{formatCurrency(subscription.revenue)}</TableCell>
+                      <TableCell className="capitalize">{subscription.billingCycle}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-4 w-4 text-gray-400" />
+                          <span>{subscription.nextBilling}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{formatCurrency(subscription.revenue)}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="sm">
@@ -347,19 +470,21 @@ export function BillingSubscriptions() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="invoices" className="space-y-6">
+        <TabsContent value="billing" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Invoice Management</CardTitle>
+              <CardTitle>Billing Management</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-gray-500">
-                Invoice management features will be implemented here, including:
+                <CreditCard className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                <h3 className="text-lg font-medium mb-2">Billing Management Tools</h3>
+                <p className="text-sm">Advanced billing features coming soon:</p>
                 <div className="mt-4 space-y-2 text-sm">
-                  <div>• View all company invoices</div>
-                  <div>• Track payment status</div>
-                  <div>• Generate manual invoices</div>
-                  <div>• Payment history and disputes</div>
+                  <div>• Payment history and invoice management</div>
+                  <div>• Failed payment retry automation</div>
+                  <div>• Custom billing cycles and discounts</div>
+                  <div>• Revenue analytics and forecasting</div>
                 </div>
               </div>
             </CardContent>
