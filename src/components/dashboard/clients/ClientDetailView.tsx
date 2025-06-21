@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard, Filter } from 'lucide-react';
+import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard, Filter, Users } from 'lucide-react';
 import { ClientDocumentsView } from './ClientDocumentsView';
 import { ClientDownloadActions } from './ClientDownloadActions';
 
@@ -163,8 +162,16 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm text-gray-500">Full Name</label>
-                    <p className="font-medium">{client.name}</p>
+                    <label className="text-sm text-gray-500">First Name</label>
+                    <p className="font-medium">John</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Last Name</label>
+                    <p className="font-medium">Doe</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Other Name</label>
+                    <p className="font-medium">Michael</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Date of Birth</label>
@@ -216,8 +223,12 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                   <p className="font-medium">{client.address}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-500">Office Address</label>
-                  <p className="font-medium">456 Business District, Victoria Island, Lagos</p>
+                  <label className="text-sm text-gray-500">City</label>
+                  <p className="font-medium">Lagos</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">State</label>
+                  <p className="font-medium">Lagos State</p>
                 </div>
               </CardContent>
             </Card>
@@ -244,12 +255,8 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                   <p className="font-medium">22345678901</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-500">Next of Kin</label>
-                  <p className="font-medium">Mrs. Jane Doe (Spouse)</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">Next of Kin Phone</label>
-                  <p className="font-medium">+234 803 456 7890</p>
+                  <label className="text-sm text-gray-500">ID Document</label>
+                  <p className="font-medium text-blue-600 cursor-pointer hover:underline">View Document</p>
                 </div>
               </CardContent>
             </Card>
@@ -268,11 +275,11 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                   <p className="font-medium">Software Engineer</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-500">Employer</label>
+                  <label className="text-sm text-gray-500">Employer/Business Name</label>
                   <p className="font-medium">Tech Solutions Ltd</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-500">Monthly Income</label>
+                  <label className="text-sm text-gray-500">Monthly Income Range</label>
                   <p className="font-medium">₦500,000 - ₦1,000,000</p>
                 </div>
                 <div>
@@ -285,9 +292,64 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Next of Kin Information */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Users className="h-5 w-5" />
+                  <span>Next of Kin Information</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm text-gray-500">Next of Kin Full Name</label>
+                      <p className="font-medium">Mrs. Jane Doe</p>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-500">Relationship</label>
+                      <p className="font-medium">Spouse</p>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-500">Phone Number</label>
+                      <p className="font-medium">+234 803 456 7890</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm text-gray-500">Email Address</label>
+                      <p className="font-medium">jane.doe@example.com</p>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-500">Address</label>
+                      <p className="font-medium">123 Victoria Island, Lagos</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Additional Notes */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="h-5 w-5" />
+                  <span>Additional Notes</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Client is a first-time real estate investor. Prefers email communication for updates. 
+                  Has expressed interest in additional properties in the same development.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
+        
         <TabsContent value="properties" className="mt-6">
           {client.projects && client.projects.length > 0 ? (
             <div className="space-y-4">
