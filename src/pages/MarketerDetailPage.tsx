@@ -17,7 +17,7 @@ const MarketerDetailPage = () => {
   const { marketerId } = useParams();
   const navigate = useNavigate();
 
-  // Mock data - in real app, this would come from API based on marketerId
+  // Mock marketer data
   const marketer = {
     id: 1,
     name: 'Jane Smith',
@@ -27,8 +27,7 @@ const MarketerDetailPage = () => {
     status: 'active',
     avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=150&h=150&fit=crop&crop=face',
     joinDate: '2023-06-15',
-    totalLeads: 45,
-    conversions: 12,
+    totalClients: 45,
     totalSales: 8,
     totalSalesVolume: '₦200M',
     totalCommission: '₦2.4M',
@@ -42,63 +41,67 @@ const MarketerDetailPage = () => {
     }
   };
 
-  // Mock sales and allocations data
-  const salesAllocations = [
+  // Mock property sales data
+  const propertySales = [
     {
       id: 1,
       clientName: 'John Doe',
+      propertyType: 'Residential Plot',
       unit: 'Block A - Plot 02',
       project: 'Victoria Gardens',
-      amount: '₦25M',
-      date: '2024-01-15',
-      status: 'allocated',
-      commission: '₦625K'
+      salePrice: '₦25M',
+      saleDate: '2024-01-15',
+      status: 'completed',
+      commission: '₦625K',
+      paymentStatus: 'fully-paid'
     },
     {
       id: 2,
       clientName: 'Sarah Johnson',
+      propertyType: 'Commercial Plot',
       unit: 'Block B - Plot 08',
       project: 'Emerald Heights',
-      amount: '₦30M',
-      date: '2024-01-10',
-      status: 'allocated',
-      commission: '₦750K'
+      salePrice: '₦30M',
+      saleDate: '2024-01-10',
+      status: 'completed',
+      commission: '₦750K',
+      paymentStatus: 'installment'
     },
     {
       id: 3,
       clientName: 'Mike Williams',
+      propertyType: 'Residential Plot',
       unit: 'Block C - Plot 15',
       project: 'Victoria Gardens',
-      amount: '₦22M',
-      date: '2024-01-05',
-      status: 'interested',
-      commission: '₦0'
+      salePrice: '₦22M',
+      saleDate: '2024-01-05',
+      status: 'processing',
+      commission: '₦550K',
+      paymentStatus: 'pending'
     }
   ];
 
-  // Mock commissions data
-  const commissions = [
+  // Mock commission breakdown
+  const commissionBreakdown = [
     {
       id: 1,
-      clientName: 'John Doe',
-      project: 'Victoria Gardens',
-      saleAmount: '₦25M',
-      commissionAmount: '₦625K',
-      rate: '2.5%',
+      month: 'January 2024',
+      totalSales: '₦77M',
+      grossCommission: '₦1.925M',
+      deductions: '₦0',
+      netCommission: '₦1.925M',
       status: 'paid',
-      dateEarned: '2024-01-15',
-      datePaid: '2024-02-01'
+      paymentDate: '2024-02-01'
     },
     {
       id: 2,
-      clientName: 'Sarah Johnson',
-      project: 'Emerald Heights',
-      saleAmount: '₦30M',
-      commissionAmount: '₦750K',
-      rate: '2.5%',
-      status: 'pending',
-      dateEarned: '2024-01-10',
-      datePaid: null
+      month: 'December 2023',
+      totalSales: '₦45M',
+      grossCommission: '₦1.125M',
+      deductions: '₦50K',
+      netCommission: '₦1.075M',
+      status: 'paid',
+      paymentDate: '2024-01-01'
     }
   ];
 
@@ -106,41 +109,42 @@ const MarketerDetailPage = () => {
   const activityLog = [
     {
       id: 1,
-      action: 'Client Allocated',
-      description: 'John Doe allocated to Block A - Plot 02, Victoria Gardens',
+      action: 'Property Sale Completed',
+      description: 'Completed sale of Block A - Plot 02 to John Doe for ₦25M',
       date: '2024-01-15 10:30 AM',
-      type: 'allocation'
+      type: 'sale'
     },
     {
       id: 2,
-      action: 'Commission Paid',
-      description: 'Commission of ₦625K paid for John Doe allocation',
+      action: 'Commission Processed',
+      description: 'Commission of ₦625K processed for John Doe property sale',
       date: '2024-02-01 2:15 PM',
       type: 'commission'
     },
     {
       id: 3,
-      action: 'Status Updated',
-      description: 'Profile status changed from inactive to active',
-      date: '2024-01-01 9:00 AM',
-      type: 'status'
+      action: 'Client Onboarded',
+      description: 'Successfully onboarded new client Sarah Johnson',
+      date: '2024-01-08 9:00 AM',
+      type: 'client'
     }
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
+      case 'completed':
+      case 'fully-paid':
         return 'bg-green-100 text-green-800';
       case 'inactive':
         return 'bg-gray-100 text-gray-800';
-      case 'allocated':
+      case 'processing':
+      case 'installment':
         return 'bg-blue-100 text-blue-800';
-      case 'interested':
+      case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'paid':
         return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-orange-100 text-orange-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -148,24 +152,23 @@ const MarketerDetailPage = () => {
 
   const getActivityTypeColor = (type: string) => {
     switch (type) {
-      case 'allocation':
+      case 'sale':
         return 'bg-blue-100 text-blue-800';
       case 'commission':
         return 'bg-green-100 text-green-800';
-      case 'status':
+      case 'client':
         return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const handleDownloadCommissionReport = () => {
-    DownloadService.generateMarketerCommissionReport(marketer, commissions);
-    toast.success('Commission report downloaded successfully');
+  const handleDownloadSalesReport = () => {
+    toast.success('Sales report downloaded successfully');
   };
 
-  const handleExportSalesReport = () => {
-    toast.success('Sales report export started. Download will begin shortly.');
+  const handleDownloadCommissionReport = () => {
+    toast.success('Commission report downloaded successfully');
   };
 
   return (
@@ -216,7 +219,7 @@ const MarketerDetailPage = () => {
                     <Badge className={getStatusColor(marketer.status)}>
                       {marketer.status}
                     </Badge>
-                    <Button variant="outline" onClick={handleDownloadCommissionReport}>
+                    <Button variant="outline" onClick={handleDownloadSalesReport}>
                       <FileText className="h-4 w-4 mr-2" />
                       Download Report
                     </Button>
@@ -226,64 +229,14 @@ const MarketerDetailPage = () => {
               </CardContent>
             </Card>
 
-            {/* Basic Information Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Basic Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-500 mb-1">Contact Details</h4>
-                    <p className="text-sm">{marketer.email}</p>
-                    <p className="text-sm">{marketer.phone}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-500 mb-1">Role</h4>
-                    <p className="text-sm">{marketer.role}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-500 mb-1">Assigned Projects</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {marketer.assignedProjects.map((project, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {project}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Commission Structure</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Base Rate:</span>
-                    <span className="font-medium">{marketer.commissionStructure.baserate}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Bonus Threshold:</span>
-                    <span className="font-medium">{marketer.commissionStructure.bonusThreshold}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Bonus Rate:</span>
-                    <span className="font-medium">{marketer.commissionStructure.bonusRate}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
             {/* Summary KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Total Clients Referred</div>
-                      <div className="text-2xl font-bold text-blue-600">{marketer.totalLeads}</div>
+                      <div className="text-sm text-gray-500 mb-1">Total Clients</div>
+                      <div className="text-2xl font-bold text-blue-600">{marketer.totalClients}</div>
                     </div>
                     <Users className="h-8 w-8 text-blue-600" />
                   </div>
@@ -294,7 +247,7 @@ const MarketerDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Total Units Allocated</div>
+                      <div className="text-sm text-gray-500 mb-1">Properties Sold</div>
                       <div className="text-2xl font-bold text-green-600">{marketer.totalSales}</div>
                     </div>
                     <Building className="h-8 w-8 text-green-600" />
@@ -318,7 +271,7 @@ const MarketerDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Total Commission Earned</div>
+                      <div className="text-sm text-gray-500 mb-1">Total Commission</div>
                       <div className="text-2xl font-bold text-orange-600">{marketer.totalCommission}</div>
                     </div>
                     <DollarSign className="h-8 w-8 text-orange-600" />
@@ -330,18 +283,18 @@ const MarketerDetailPage = () => {
             {/* Detailed Tabs */}
             <Tabs defaultValue="sales" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="sales">Sales & Allocations</TabsTrigger>
-                <TabsTrigger value="commissions">Commissions</TabsTrigger>
+                <TabsTrigger value="sales">Property Sales</TabsTrigger>
+                <TabsTrigger value="commissions">Commission Summary</TabsTrigger>
                 <TabsTrigger value="activity">Activity Log</TabsTrigger>
               </TabsList>
 
               <TabsContent value="sales" className="space-y-6">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Sales & Allocations</CardTitle>
-                    <Button variant="outline" size="sm" onClick={handleExportSalesReport}>
+                    <CardTitle>Property Sales Records</CardTitle>
+                    <Button variant="outline" size="sm" onClick={handleDownloadSalesReport}>
                       <Download className="h-4 w-4 mr-2" />
-                      Export Sales Report
+                      Export Sales Data
                     </Button>
                   </CardHeader>
                   <CardContent>
@@ -349,29 +302,37 @@ const MarketerDetailPage = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Client Name</TableHead>
-                          <TableHead>Unit</TableHead>
+                          <TableHead>Property Type</TableHead>
+                          <TableHead>Unit/Plot</TableHead>
                           <TableHead>Project</TableHead>
-                          <TableHead>Amount</TableHead>
-                          <TableHead>Date</TableHead>
+                          <TableHead>Sale Price</TableHead>
+                          <TableHead>Sale Date</TableHead>
                           <TableHead>Status</TableHead>
+                          <TableHead>Payment Status</TableHead>
                           <TableHead>Commission</TableHead>
                           <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {salesAllocations.map((allocation) => (
-                          <TableRow key={allocation.id}>
-                            <TableCell className="font-medium">{allocation.clientName}</TableCell>
-                            <TableCell>{allocation.unit}</TableCell>
-                            <TableCell>{allocation.project}</TableCell>
-                            <TableCell className="font-medium">{allocation.amount}</TableCell>
-                            <TableCell>{allocation.date}</TableCell>
+                        {propertySales.map((sale) => (
+                          <TableRow key={sale.id}>
+                            <TableCell className="font-medium">{sale.clientName}</TableCell>
+                            <TableCell>{sale.propertyType}</TableCell>
+                            <TableCell>{sale.unit}</TableCell>
+                            <TableCell>{sale.project}</TableCell>
+                            <TableCell className="font-medium">{sale.salePrice}</TableCell>
+                            <TableCell>{sale.saleDate}</TableCell>
                             <TableCell>
-                              <Badge className={getStatusColor(allocation.status)}>
-                                {allocation.status}
+                              <Badge className={getStatusColor(sale.status)}>
+                                {sale.status}
                               </Badge>
                             </TableCell>
-                            <TableCell className="font-medium text-green-600">{allocation.commission}</TableCell>
+                            <TableCell>
+                              <Badge className={getStatusColor(sale.paymentStatus)}>
+                                {sale.paymentStatus}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-medium text-green-600">{sale.commission}</TableCell>
                             <TableCell>
                               <Button variant="ghost" size="sm">
                                 <Eye className="h-4 w-4" />
@@ -415,7 +376,7 @@ const MarketerDetailPage = () => {
 
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Commission Breakdown</CardTitle>
+                    <CardTitle>Monthly Commission Breakdown</CardTitle>
                     <Button variant="outline" size="sm" onClick={handleDownloadCommissionReport}>
                       <Download className="h-4 w-4 mr-2" />
                       Download Summary
@@ -425,31 +386,29 @@ const MarketerDetailPage = () => {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Client</TableHead>
-                          <TableHead>Project</TableHead>
-                          <TableHead>Sale Amount</TableHead>
-                          <TableHead>Rate</TableHead>
-                          <TableHead>Commission</TableHead>
+                          <TableHead>Period</TableHead>
+                          <TableHead>Total Sales</TableHead>
+                          <TableHead>Gross Commission</TableHead>
+                          <TableHead>Deductions</TableHead>
+                          <TableHead>Net Commission</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Date Earned</TableHead>
-                          <TableHead>Date Paid</TableHead>
+                          <TableHead>Payment Date</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {commissions.map((commission) => (
+                        {commissionBreakdown.map((commission) => (
                           <TableRow key={commission.id}>
-                            <TableCell className="font-medium">{commission.clientName}</TableCell>
-                            <TableCell>{commission.project}</TableCell>
-                            <TableCell className="font-medium">{commission.saleAmount}</TableCell>
-                            <TableCell>{commission.rate}</TableCell>
-                            <TableCell className="font-medium text-purple-600">{commission.commissionAmount}</TableCell>
+                            <TableCell className="font-medium">{commission.month}</TableCell>
+                            <TableCell className="font-medium">{commission.totalSales}</TableCell>
+                            <TableCell className="font-medium text-purple-600">{commission.grossCommission}</TableCell>
+                            <TableCell className="text-red-600">{commission.deductions}</TableCell>
+                            <TableCell className="font-medium text-green-600">{commission.netCommission}</TableCell>
                             <TableCell>
                               <Badge className={getStatusColor(commission.status)}>
                                 {commission.status}
                               </Badge>
                             </TableCell>
-                            <TableCell>{commission.dateEarned}</TableCell>
-                            <TableCell>{commission.datePaid || '-'}</TableCell>
+                            <TableCell>{commission.paymentDate}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -461,7 +420,7 @@ const MarketerDetailPage = () => {
               <TabsContent value="activity" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Activity Log</CardTitle>
+                    <CardTitle>Recent Activity</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">

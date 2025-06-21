@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,7 @@ export function Accounting() {
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [dateFilter, setDateFilter] = useState('this-month');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [marketerFilter, setMarketerFilter] = useState('all'); // New filter for marketers
+  const [marketerFilter, setMarketerFilter] = useState('all');
 
   // Mock data with marketer commissions integrated
   const mockTransactions = [
@@ -177,6 +176,16 @@ export function Accounting() {
     },
   ];
 
+  const handleIncomeSubmit = (data: any) => {
+    console.log('Income submitted:', data);
+    setIsIncomeModalOpen(false);
+  };
+
+  const handleExpenseSubmit = (data: any) => {
+    console.log('Expense submitted:', data);
+    setIsExpenseModalOpen(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -198,7 +207,11 @@ export function Accounting() {
                 <DialogTitle>Record Income</DialogTitle>
                 <DialogDescription>Add a new income transaction</DialogDescription>
               </DialogHeader>
-              <IncomeForm onClose={() => setIsIncomeModalOpen(false)} />
+              <IncomeForm 
+                isOpen={isIncomeModalOpen}
+                onClose={() => setIsIncomeModalOpen(false)}
+                onSubmit={handleIncomeSubmit}
+              />
             </DialogContent>
           </Dialog>
           <Dialog open={isExpenseModalOpen} onOpenChange={setIsExpenseModalOpen}>
@@ -213,7 +226,11 @@ export function Accounting() {
                 <DialogTitle>Record Expense</DialogTitle>
                 <DialogDescription>Add a new expense transaction</DialogDescription>
               </DialogHeader>
-              <ExpenseForm onClose={() => setIsExpenseModalOpen(false)} />
+              <ExpenseForm 
+                isOpen={isExpenseModalOpen}
+                onClose={() => setIsExpenseModalOpen(false)}
+                onSubmit={handleExpenseSubmit}
+              />
             </DialogContent>
           </Dialog>
         </div>
