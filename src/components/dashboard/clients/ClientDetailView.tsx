@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +8,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Building, FileText, DollarSign, Calendar, Phone, Mail, MapPin, CreditCard } from 'lucide-react';
 import { ClientDocumentsView } from './ClientDocumentsView';
-import { InstalmentTracking } from './InstalmentTracking';
 import { ClientDownloadActions } from './ClientDownloadActions';
 
 interface ClientDetailViewProps {
@@ -63,6 +63,21 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
     { id: 2, date: '2024-01-15', action: 'KYC approved', details: 'All documents verified' },
     { id: 3, date: '2024-01-10', action: 'Client created', details: 'Profile created in system' }
   ];
+
+  // Calculate financial summary
+  const totalUnitPrice = 25000000; // ₦25M - example total unit price
+  const amountPaid = parseInt(client.totalPaid.replace(/[₦,M]/g, '')) * 1000000; // Convert ₦15M to 15000000
+  const balanceLeft = totalUnitPrice - amountPaid;
+  const paymentProgress = (amountPaid / totalUnitPrice) * 100;
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
 
   return (
     <div className="space-y-8">
@@ -152,9 +167,8 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="properties" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 h-12">
+        <TabsList className="grid w-full grid-cols-5 h-12">
           <TabsTrigger value="properties" className="text-base">Properties</TabsTrigger>
-          <TabsTrigger value="instalments" className="text-base">Instalments</TabsTrigger>
           <TabsTrigger value="payments" className="text-base">Payments</TabsTrigger>
           <TabsTrigger value="billing" className="text-base">Billing</TabsTrigger>
           <TabsTrigger value="documents" className="text-base">Documents</TabsTrigger>
@@ -217,42 +231,90 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
           )}
         </TabsContent>
 
-        <TabsContent value="instalments" className="mt-6">
-          <InstalmentTracking client={client} />
-        </TabsContent>
-
         <TabsContent value="payments" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">Payment History</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-base">Date</TableHead>
-                    <TableHead className="text-base">Type</TableHead>
-                    <TableHead className="text-base">Amount</TableHead>
-                    <TableHead className="text-base">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockPaymentHistory.map((payment) => (
-                    <TableRow key={payment.id} className="h-14">
-                      <TableCell className="text-base">{payment.date}</TableCell>
-                      <TableCell className="text-base">{payment.type}</TableCell>
-                      <TableCell className="font-semibold text-base">{payment.amount}</TableCell>
-                      <TableCell>
-                        <Badge className={payment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                          {payment.status}
-                        </Badge>
-                      </TableCell>
+          <div className="space-y-6">
+            {/* Financial Summary */}
+            <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-xl">Payment Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-1">Total Unit Price</div>
+                    <div className="text-2xl font-bold text-gray-900">
+                      {formatCurrency(totalUnitPrice)}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-1">Amount Paid</div>
+                    <div className="text-2xl font-bold text-green-600">
+                      {formatCurrency(amountPaid)}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-1">Balance Left</div>
+                    <div className="text-2xl font-bold text-orange-600">
+                      {formatCurrency(balanceLeft)}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-1">Progress</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {paymentProgress.toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div>
+                  <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Payment Progress</span>
+                    <span>{paymentProgress.toFixed(1)}% Complete</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <div 
+                      className="bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all duration-300"
+                      style={{ width: `${paymentProgress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Payment History */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">Payment History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-base">Date</TableHead>
+                      <TableHead className="text-base">Type</TableHead>
+                      <TableHead className="text-base">Amount</TableHead>
+                      <TableHead className="text-base">Status</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {mockPaymentHistory.map((payment) => (
+                      <TableRow key={payment.id} className="h-14">
+                        <TableCell className="text-base">{payment.date}</TableCell>
+                        <TableCell className="text-base">{payment.type}</TableCell>
+                        <TableCell className="font-semibold text-base">{payment.amount}</TableCell>
+                        <TableCell>
+                          <Badge className={payment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                            {payment.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="billing" className="mt-6">
