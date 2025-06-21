@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, TrendingUp, Users, DollarSign, CheckCircle, Clock, Eye, Download, Filter } from 'lucide-react';
+import { Plus, TrendingUp, Users, DollarSign, CheckCircle, Clock, Eye, Download, Filter, Edit, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -25,6 +26,7 @@ const mockMarketers = [
     commissionPaid: '₦1.8M',
     commissionPending: '₦600K',
     status: 'active',
+    role: 'External Marketer',
     projects: ['Victoria Gardens', 'Emerald Heights'],
     avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=150&h=150&fit=crop&crop=face'
   },
@@ -40,6 +42,7 @@ const mockMarketers = [
     commissionPaid: '₦2.5M',
     commissionPending: '₦600K',
     status: 'active',
+    role: 'Senior Marketer',
     projects: ['Golden View', 'Victoria Gardens'],
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
   },
@@ -55,6 +58,7 @@ const mockMarketers = [
     commissionPaid: '₦1.8M',
     commissionPending: '₦0',
     status: 'inactive',
+    role: 'Internal Sales Agent',
     projects: ['Emerald Heights'],
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
   },
@@ -111,9 +115,18 @@ export function MarketersCommission() {
   const [isNewMarketerOpen, setIsNewMarketerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('marketers');
   const [commissions, setCommissions] = useState(mockCommissions);
+  const [marketers, setMarketers] = useState(mockMarketers);
+  
+  // Commission filters
   const [statusFilter, setStatusFilter] = useState('all');
   const [marketerFilter, setMarketerFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Marketer filters
+  const [marketerStatusFilter, setMarketerStatusFilter] = useState('all');
+  const [marketerRoleFilter, setMarketerRoleFilter] = useState('all');
+  const [marketerSearchTerm, setMarketerSearchTerm] = useState('');
+  
   const { toast } = useToast();
 
   // Filter commissions based on filters
@@ -123,6 +136,15 @@ export function MarketersCommission() {
     const matchesSearch = commission.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          commission.project.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesMarketer && matchesSearch;
+  });
+
+  // Filter marketers based on filters
+  const filteredMarketers = marketers.filter(marketer => {
+    const matchesStatus = marketerStatusFilter === 'all' || marketer.status === marketerStatusFilter;
+    const matchesRole = marketerRoleFilter === 'all' || marketer.role === marketerRoleFilter;
+    const matchesSearch = marketer.name.toLowerCase().includes(marketerSearchTerm.toLowerCase()) ||
+                         marketer.email.toLowerCase().includes(marketerSearchTerm.toLowerCase());
+    return matchesStatus && matchesRole && matchesSearch;
   });
 
   const getStatusColor = (status: string) => {
@@ -149,13 +171,13 @@ export function MarketersCommission() {
     }
   };
 
-  const activeMarketers = mockMarketers.filter(marketer => marketer.status === 'active').length;
-  const totalLeads = mockMarketers.reduce((sum, marketer) => sum + marketer.leads, 0);
-  const totalSales = mockMarketers.reduce((sum, marketer) => sum + marketer.sales, 0);
-  const totalCommissionPaid = mockCommissions
+  const activeMarketers = marketers.filter(marketer => marketer.status === 'active').length;
+  const totalLeads = marketers.reduce((sum, marketer) => sum + marketer.leads, 0);
+  const totalSales = marketers.reduce((sum, marketer) => sum + marketer.sales, 0);
+  const totalCommissionPaid = commissions
     .filter(c => c.status === 'paid')
     .reduce((sum, c) => sum + parseFloat(c.commissionAmount.replace('₦', '').replace('K', '')), 0);
-  const totalCommissionPending = mockCommissions
+  const totalCommissionPending = commissions
     .filter(c => c.status === 'pending' || c.status === 'approved')
     .reduce((sum, c) => sum + parseFloat(c.commissionAmount.replace('₦', '').replace('K', '')), 0);
 
@@ -225,7 +247,6 @@ export function MarketersCommission() {
       return;
     }
 
-    // Update all approved commissions to paid
     setCommissions(prev => 
       prev.map(commission => 
         commission.status === 'approved' 
@@ -241,12 +262,68 @@ export function MarketersCommission() {
   };
 
   const handleNewMarketerSubmit = (marketerData: any) => {
-    console.log('New marketer data:', marketerData);
+    const newMarketer = {
+      id: marketers.length + 1,
+      name: `${marketerData.firstName} ${marketerData.lastName}`,
+      email: marketerData.email,
+      phone: marketerData.phone,
+      role: marketerData.role,
+      leads: 0,
+      conversions: 0,
+      sales: 0,
+      commission: '₦0',
+      commissionPaid: '₦0',
+      commissionPending: '₦0',
+      status: 'active',
+      projects: marketerData.projects || [],
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+    };
+
+    setMarketers(prev => [...prev, newMarketer]);
     setIsNewMarketerOpen(false);
     
     toast({
       title: "Marketer Added",
       description: "New marketer has been successfully added to the system.",
+    });
+  };
+
+  const handleEditMarketer = (marketerId: number) => {
+    toast({
+      title: "Edit Marketer",
+      description: "Edit marketer functionality coming soon.",
+    });
+  };
+
+  const handleDeleteMarketer = (marketerId: number) => {
+    setMarketers(prev => prev.filter(m => m.id !== marketerId));
+    toast({
+      title: "Marketer Removed",
+      description: "Marketer has been successfully removed from the system.",
+    });
+  };
+
+  const handleViewDetails = (marketerId: number) => {
+    const marketer = marketers.find(m => m.id === marketerId);
+    setSelectedMarketer(marketer);
+    toast({
+      title: "View Details",
+      description: `Viewing details for ${marketer?.name}`,
+    });
+  };
+
+  const handleExportReport = (marketerId?: number) => {
+    const marketerName = marketerId ? marketers.find(m => m.id === marketerId)?.name : 'All';
+    toast({
+      title: "Export Started",
+      description: `Exporting report for ${marketerName}. Download will begin shortly.`,
+    });
+  };
+
+  const handleExportCSV = () => {
+    toast({
+      title: "Export Started",
+      description: "Commission CSV export will begin shortly.",
     });
   };
 
@@ -296,8 +373,66 @@ export function MarketersCommission() {
         </TabsList>
 
         <TabsContent value="marketers" className="space-y-6">
+          {/* Marketer Filters */}
+          <Card className="bg-white">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Search</label>
+                  <Input
+                    placeholder="Search marketer..."
+                    value={marketerSearchTerm}
+                    onChange={(e) => setMarketerSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Status</label>
+                  <Select value={marketerStatusFilter} onValueChange={setMarketerStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Role</label>
+                  <Select value={marketerRoleFilter} onValueChange={setMarketerRoleFilter}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="External Marketer">External Marketer</SelectItem>
+                      <SelectItem value="Internal Sales Agent">Internal Sales Agent</SelectItem>
+                      <SelectItem value="Senior Marketer">Senior Marketer</SelectItem>
+                      <SelectItem value="Marketing Team Lead">Marketing Team Lead</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Actions</label>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => {
+                      setMarketerStatusFilter('all');
+                      setMarketerRoleFilter('all');
+                      setMarketerSearchTerm('');
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {mockMarketers.map((marketer) => (
+            {filteredMarketers.map((marketer) => (
               <Card key={marketer.id} className="hover:shadow-lg transition-shadow bg-white">
                 <CardHeader>
                   <div className="flex items-center justify-between">
@@ -311,11 +446,32 @@ export function MarketersCommission() {
                       <div>
                         <CardTitle className="text-lg">{marketer.name}</CardTitle>
                         <p className="text-sm text-gray-500">{marketer.email}</p>
+                        <p className="text-xs text-gray-400">{marketer.role}</p>
                       </div>
                     </div>
-                    <Badge className={getStatusColor(marketer.status)}>
-                      {marketer.status}
-                    </Badge>
+                    <div className="flex flex-col items-end space-y-2">
+                      <Badge className={getStatusColor(marketer.status)}>
+                        {marketer.status}
+                      </Badge>
+                      <div className="flex space-x-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleEditMarketer(marketer.id)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleDeleteMarketer(marketer.id)}
+                          className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -362,11 +518,21 @@ export function MarketersCommission() {
                     </div>
                     
                     <div className="flex space-x-2 pt-3">
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleViewDetails(marketer.id)}
+                      >
                         <Eye className="h-3 w-3 mr-1" />
                         View Details
                       </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleExportReport(marketer.id)}
+                      >
                         <Download className="h-3 w-3 mr-1" />
                         Export Report
                       </Button>
@@ -376,13 +542,23 @@ export function MarketersCommission() {
               </Card>
             ))}
           </div>
+          
+          {filteredMarketers.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              No marketers found matching the current filters.
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="commissions" className="space-y-6">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold text-gray-900">Commission Tracking</h3>
             <div className="flex space-x-2">
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleExportCSV}
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Export CSV
               </Button>
@@ -396,15 +572,9 @@ export function MarketersCommission() {
             </div>
           </div>
 
-          {/* Filters */}
+          {/* Commission Filters */}
           <Card className="bg-white">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                Filters
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Search</label>
@@ -436,7 +606,7 @@ export function MarketersCommission() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Marketers</SelectItem>
-                      {mockMarketers.map(marketer => (
+                      {marketers.map(marketer => (
                         <SelectItem key={marketer.id} value={marketer.name}>
                           {marketer.name}
                         </SelectItem>
@@ -521,7 +691,14 @@ export function MarketersCommission() {
                               Mark Paid
                             </Button>
                           )}
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => toast({
+                              title: "View Commission",
+                              description: `Viewing commission details for ${commission.clientName}`,
+                            })}
+                          >
                             <Eye className="h-3 w-3" />
                           </Button>
                         </div>
