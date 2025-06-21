@@ -9,9 +9,12 @@ import { GlobalSettings } from '@/components/dashboard/superadmin/GlobalSettings
 import { SystemLogs } from '@/components/dashboard/superadmin/SystemLogs';
 import { SupportTools } from '@/components/dashboard/superadmin/SupportTools';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const SuperAdminDashboard = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const currentPath = location.pathname;
 
   const getPageTitle = () => {
@@ -25,12 +28,18 @@ const SuperAdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-slate-50">
-      <SuperAdminSidebar />
+      <SuperAdminSidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+      />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <SuperAdminHeader title={getPageTitle()} />
+        <SuperAdminHeader 
+          title={getPageTitle()} 
+          onMenuToggle={() => setSidebarOpen(true)}
+        />
         
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-3 sm:p-6">
           <Routes>
             <Route path="/" element={<SuperAdminOverview />} />
             <Route path="/companies" element={<CompaniesManagement />} />

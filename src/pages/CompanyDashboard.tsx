@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
@@ -19,9 +19,14 @@ import { Settings } from '@/components/dashboard/Settings';
 import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
 import { HelpSupport } from '@/components/dashboard/HelpSupport';
 import { useLocation } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
 
 const CompanyDashboard = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderActiveModule = () => {
     const path = location.pathname;
@@ -66,10 +71,34 @@ const CompanyDashboard = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
-        <CompanySidebar />
-        <main className="flex-1 p-6">
-          {renderActiveModule()}
-        </main>
+        <CompanySidebar 
+          isOpen={sidebarOpen} 
+          onClose={() => setSidebarOpen(false)} 
+        />
+        
+        <div className="flex-1 flex flex-col">
+          {/* Mobile Header */}
+          {isMobile && (
+            <header className="bg-white border-b border-gray-200 px-4 py-3 lg:hidden">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSidebarOpen(true)}
+                  className="lg:hidden"
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+                <h1 className="text-lg font-semibold text-gray-900">ProptyOS</h1>
+                <div className="w-8" /> {/* Spacer for center alignment */}
+              </div>
+            </header>
+          )}
+          
+          <main className="flex-1 p-3 sm:p-6">
+            {renderActiveModule()}
+          </main>
+        </div>
       </div>
     </SidebarProvider>
   );
