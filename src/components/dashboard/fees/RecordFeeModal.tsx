@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,17 +7,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Receipt, Calendar } from 'lucide-react';
+import { Receipt, Search } from 'lucide-react';
 
 interface RecordFeeModalProps {
   onClose: () => void;
 }
 
+// Mock data - in real app this would come from API
+const projectClients = {
+  'victoria-gardens': [
+    { id: 'john-doe', name: 'John Doe' },
+    { id: 'jane-smith', name: 'Jane Smith' }
+  ],
+  'emerald-heights': [
+    { id: 'mike-johnson', name: 'Mike Johnson' },
+    { id: 'sarah-wilson', name: 'Sarah Wilson' }
+  ],
+  'golden-view': [
+    { id: 'david-brown', name: 'David Brown' },
+    { id: 'lisa-davis', name: 'Lisa Davis' }
+  ],
+  'sunset-heights': [
+    { id: 'robert-taylor', name: 'Robert Taylor' },
+    { id: 'emma-white', name: 'Emma White' }
+  ]
+};
+
 export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
+  const [clientSearch, setClientSearch] = useState('');
   const form = useForm({
     defaultValues: {
-      clientName: '',
       project: '',
+      clientName: '',
       unit: '',
       feeType: '',
       amount: '',
@@ -27,50 +48,46 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
     }
   });
 
-  const { control } = form;
+  const { control, watch } = form;
+  const selectedProject = watch('project');
+
+  const availableClients = useMemo(() => {
+    if (!selectedProject) return [];
+    return projectClients[selectedProject as keyof typeof projectClients] || [];
+  }, [selectedProject]);
+
+  const filteredClients = useMemo(() => {
+    if (!clientSearch) return availableClients;
+    return availableClients.filter(client => 
+      client.name.toLowerCase().includes(clientSearch.toLowerCase())
+    );
+  }, [availableClients, clientSearch]);
 
   const onSubmit = (data: any) => {
     console.log('Recording new fee:', data);
     toast.success('Fee recorded successfully!');
     onClose();
     form.reset();
+    setClientSearch('');
   };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="clientName">Client Name *</Label>
-          <Controller
-            name="clientName"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select client" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="john-doe">John Doe</SelectItem>
-                  <SelectItem value="jane-smith">Jane Smith</SelectItem>
-                  <SelectItem value="mike-johnson">Mike Johnson</SelectItem>
-                  <SelectItem value="sarah-wilson">Sarah Wilson</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
-
-        <div>
+        <div className="md:col-span-2">
           <Label htmlFor="project">Project *</Label>
           <Controller
             name="project"
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select onValueChange={(value) => {
+                field.onChange(value);
+                form.setValue('clientName', ''); // Reset client when project changes
+                setClientSearch('');
+              }} value={field.value}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select project" />
+                  <SelectValue placeholder="Select project first" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="victoria-gardens">Victoria Gardens</SelectItem>
@@ -81,6 +98,50 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
               </Select>
             )}
           />
+        </div>
+
+        <div className="md:col-span-2">
+          <Label htmlFor="clientSearch">Search & Select Client *</Label>
+          <div className="space-y-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder={selectedProject ? "Search clients..." : "Select project first"}
+                value={clientSearch}
+                onChange={(e) => setClientSearch(e.target.value)}
+                className="pl-10"
+                disabled={!selectedProject}
+              />
+            </div>
+            <Controller
+              name="clientName"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select 
+                  onValueChange={field.onChange} 
+                  value={field.value}
+                  disabled={!selectedProject}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={selectedProject ? "Select client" : "Select project first"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredClients.map((client) => (
+                      <SelectItem key={client.id} value={client.id}>
+                        {client.name}
+                      </SelectItem>
+                    ))}
+                    {filteredClients.length === 0 && selectedProject && (
+                      <SelectItem value="" disabled>
+                        {clientSearch ? 'No clients found' : 'No clients available'}
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
         </div>
 
         <div>

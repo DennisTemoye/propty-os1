@@ -12,19 +12,23 @@ import {
   Search, 
   Filter, 
   Download, 
-  Settings, 
   DollarSign, 
   AlertTriangle,
   CheckCircle,
   Clock,
   Receipt,
   FileText,
-  Users
+  Users,
+  FileSpreadsheet,
+  Mail
 } from 'lucide-react';
 import { FeeSetupModal } from './fees/FeeSetupModal';
 import { PaymentCollectionModal } from './fees/PaymentCollectionModal';
 import { FeeMonitoringDashboard } from './fees/FeeMonitoringDashboard';
 import { RecordFeeModal } from './fees/RecordFeeModal';
+import { FeeActions } from './fees/FeeActions';
+import { FeeDetailsModal } from './fees/FeeDetailsModal';
+import { toast } from 'sonner';
 
 const mockFeeData = [
   {
@@ -73,6 +77,7 @@ export function FeesCollection() {
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isRecordFeeModalOpen, setIsRecordFeeModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isFeeDetailsModalOpen, setIsFeeDetailsModalOpen] = useState(false);
   const [selectedFee, setSelectedFee] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -120,6 +125,22 @@ export function FeesCollection() {
     setIsPaymentModalOpen(true);
   };
 
+  const handleViewDetails = (fee: any) => {
+    setSelectedFee(fee);
+    setIsFeeDetailsModalOpen(true);
+  };
+
+  const handleExportData = (type: string) => {
+    console.log(`Exporting ${type} data...`);
+    toast.success(`${type} export started. Download will begin shortly.`);
+  };
+
+  const handleSendBulkReminders = () => {
+    const overdueCount = mockFeeData.filter(fee => fee.status === 'Overdue').length;
+    console.log('Sending bulk reminders...');
+    toast.success(`Sending reminders to ${overdueCount} clients with overdue payments`);
+  };
+
   const totalOutstanding = mockFeeData.reduce((sum, fee) => {
     return sum + parseInt(fee.outstanding.replace(/[₦,]/g, ''));
   }, 0);
@@ -138,9 +159,13 @@ export function FeesCollection() {
           <p className="text-gray-600 mt-1">Manage infrastructure fees, service charges, and post-sale financial obligations</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => handleExportData('Fees Report')}>
             <Download className="h-4 w-4 mr-2" />
             Export
+          </Button>
+          <Button variant="outline" onClick={handleSendBulkReminders} className="text-orange-600 border-orange-200 hover:bg-orange-50">
+            <Mail className="h-4 w-4 mr-2" />
+            Send Reminders
           </Button>
           <Dialog open={isRecordFeeModalOpen} onOpenChange={setIsRecordFeeModalOpen}>
             <DialogTrigger asChild>
@@ -163,7 +188,7 @@ export function FeesCollection() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleExportData('Collection Summary')}>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <DollarSign className="h-5 w-5 text-green-600" />
@@ -174,7 +199,7 @@ export function FeesCollection() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleExportData('Outstanding Report')}>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <Receipt className="h-5 w-5 text-orange-600" />
@@ -185,7 +210,7 @@ export function FeesCollection() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={handleSendBulkReminders}>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <AlertTriangle className="h-5 w-5 text-red-600" />
@@ -196,7 +221,7 @@ export function FeesCollection() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleExportData('Active Fees')}>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <Users className="h-5 w-5 text-blue-600" />
@@ -217,7 +242,7 @@ export function FeesCollection() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          {/* Filters */}
+          {/* Enhanced Filters */}
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="flex gap-4 items-center">
               <div className="relative">
@@ -253,9 +278,19 @@ export function FeesCollection() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => handleExportData('Filtered Results')}>
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                Export Filtered
+              </Button>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Advanced Filters
+              </Button>
+            </div>
           </div>
 
-          {/* Fees Table */}
+          {/* Enhanced Fees Table */}
           <Card>
             <CardContent className="p-0">
               <Table>
@@ -273,9 +308,11 @@ export function FeesCollection() {
                 </TableHeader>
                 <TableBody>
                   {filteredFees.map((fee) => (
-                    <TableRow key={fee.id}>
+                    <TableRow key={fee.id} className="hover:bg-gray-50">
                       <TableCell>
-                        <div className="font-medium">{fee.clientName}</div>
+                        <div className="font-medium cursor-pointer hover:text-blue-600" onClick={() => handleViewDetails(fee)}>
+                          {fee.clientName}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div>
@@ -303,25 +340,16 @@ export function FeesCollection() {
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className={new Date(fee.dueDate) < new Date() && fee.status !== 'Paid' ? 'text-red-600' : ''}>
+                        <span className={new Date(fee.dueDate) < new Date() && fee.status !== 'Paid' ? 'text-red-600 font-medium' : ''}>
                           {fee.dueDate}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <div className="flex space-x-2">
-                          {fee.status !== 'Paid' && (
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleRecordPayment(fee)}
-                              className="bg-green-600 hover:bg-green-700"
-                            >
-                              Record Payment
-                            </Button>
-                          )}
-                          <Button variant="outline" size="sm">
-                            <FileText className="h-3 w-3" />
-                          </Button>
-                        </div>
+                        <FeeActions 
+                          fee={fee}
+                          onRecordPayment={handleRecordPayment}
+                          onViewDetails={handleViewDetails}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -373,6 +401,23 @@ export function FeesCollection() {
           <PaymentCollectionModal 
             fee={selectedFee}
             onClose={() => setIsPaymentModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Fee Details Modal */}
+      <Dialog open={isFeeDetailsModalOpen} onOpenChange={setIsFeeDetailsModalOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Fee Details - {selectedFee?.clientName}</DialogTitle>
+            <DialogDescription>
+              Complete information for {selectedFee?.feeType}
+            </DialogDescription>
+          </DialogHeader>
+          <FeeDetailsModal 
+            fee={selectedFee}
+            onClose={() => setIsFeeDetailsModalOpen(false)}
+            onRecordPayment={handleRecordPayment}
           />
         </DialogContent>
       </Dialog>
