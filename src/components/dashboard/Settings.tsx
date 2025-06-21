@@ -6,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CompanySettings } from './settings/CompanySettings';
 import { BillingSettings } from './settings/BillingSettings';
 import { SystemSettings } from './settings/SystemSettings';
-import { Building, CreditCard, Settings as SettingsIcon, Phone } from 'lucide-react';
+import { FormEditor } from './settings/FormEditor';
+import { Building, CreditCard, Settings as SettingsIcon, Phone, FileText } from 'lucide-react';
 
 export function Settings() {
   return (
@@ -19,7 +20,7 @@ export function Settings() {
       </div>
 
       <Tabs defaultValue="company" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="company" className="flex items-center gap-2">
             <Building className="h-4 w-4" />
             Company
@@ -31,6 +32,10 @@ export function Settings() {
           <TabsTrigger value="system" className="flex items-center gap-2">
             <SettingsIcon className="h-4 w-4" />
             System
+          </TabsTrigger>
+          <TabsTrigger value="forms" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Form Editor
           </TabsTrigger>
           <TabsTrigger value="support" className="flex items-center gap-2">
             <Phone className="h-4 w-4" />
@@ -48,6 +53,10 @@ export function Settings() {
 
         <TabsContent value="system">
           <SystemSettings />
+        </TabsContent>
+
+        <TabsContent value="forms">
+          <FormEditor />
         </TabsContent>
 
         <TabsContent value="support">
