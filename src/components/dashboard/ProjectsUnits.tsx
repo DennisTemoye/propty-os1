@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,20 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, MapPin, FileText, Building, Home, DollarSign, Search, Users, RefreshCw } from 'lucide-react';
+import { Plus, MapPin, FileText, Building, Home, DollarSign, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NewProjectForm } from './forms/NewProjectForm';
 import { ProjectDocumentsView } from './projects/ProjectDocumentsView';
-import { UpdateAllocationStatusModal } from './forms/UpdateAllocationStatusModal';
-import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
-
-const statusColors = {
-  'available': 'bg-gray-100 text-gray-800',
-  'interested': 'bg-blue-100 text-blue-800',
-  'offered': 'bg-orange-100 text-orange-800',
-  'allocated': 'bg-green-100 text-green-800',
-  'revoked': 'bg-red-100 text-red-800'
-};
 
 const mockProjects = [
   {
@@ -35,41 +26,7 @@ const mockProjects = [
     availableUnits: 38,
     status: 'ongoing',
     projectStage: 'Construction',
-    revenue: '₦2.5B',
-    units: [
-      {
-        id: 1,
-        name: 'Block A - Plot 02',
-        status: 'allocated',
-        client: 'John Doe',
-        amount: '₦25M',
-        lastUpdated: '2024-01-20'
-      },
-      {
-        id: 2,
-        name: 'Block A - Plot 03',
-        status: 'offered',
-        client: 'Jane Smith',
-        amount: '₦25M',
-        lastUpdated: '2024-01-18'
-      },
-      {
-        id: 3,
-        name: 'Block A - Plot 04',
-        status: 'interested',
-        client: 'Mike Johnson',
-        amount: '₦25M',
-        lastUpdated: '2024-01-22'
-      },
-      {
-        id: 4,
-        name: 'Block A - Plot 05',
-        status: 'available',
-        client: null,
-        amount: '₦25M',
-        lastUpdated: '2024-01-15'
-      }
-    ]
+    revenue: '₦2.5B'
   },
   {
     id: 2,
@@ -212,13 +169,9 @@ export function ProjectsUnits() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const [isDocumentsModalOpen, setIsDocumentsModalOpen] = useState(false);
-  const [isUpdateStatusOpen, setIsUpdateStatusOpen] = useState(false);
-  const [isRevokeModalOpen, setIsRevokeModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
-  const [selectedUnit, setSelectedUnit] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
   const navigate = useNavigate();
 
   const getProjectStageColor = (stage: string) => {
@@ -236,26 +189,6 @@ export function ProjectsUnits() {
       default:
         return 'bg-gray-100 text-gray-800';
     }
-  };
-
-  const handleUpdateUnitStatus = (unit: any) => {
-    setSelectedUnit(unit);
-    setIsUpdateStatusOpen(true);
-  };
-
-  const handleRevokeUnit = (unit: any) => {
-    setSelectedUnit(unit);
-    setIsRevokeModalOpen(true);
-  };
-
-  const handleStatusUpdate = (data: any) => {
-    console.log('Unit status updated:', data);
-    // Here you would update your state management/backend
-  };
-
-  const handleRevocation = (data: any) => {
-    console.log('Unit allocation revoked:', data);
-    // Here you would update your state management/backend
   };
 
   // Filter projects based on search and stage
@@ -306,10 +239,10 @@ export function ProjectsUnits() {
       cardBg: 'from-emerald-50 to-emerald-100',
     },
     {
-      title: 'Units Allocated',
+      title: 'Units Sold',
       value: '845',
       subtitle: 'Successfully closed',
-      icon: Users,
+      icon: DollarSign,
       color: 'text-blue-700',
       bgColor: 'bg-blue-100',
       cardBg: 'from-blue-50 to-blue-100',
@@ -390,21 +323,6 @@ export function ProjectsUnits() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full md:w-48">
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Unit status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="available">Available</SelectItem>
-                    <SelectItem value="interested">Interested</SelectItem>
-                    <SelectItem value="offered">Offered</SelectItem>
-                    <SelectItem value="allocated">Allocated</SelectItem>
-                    <SelectItem value="revoked">Revoked</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -465,7 +383,7 @@ export function ProjectsUnits() {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Allocated:</span>
+                      <span>Sold:</span>
                       <span className="font-medium text-green-600">{project.soldUnits}</span>
                     </div>
                     <div className="flex justify-between text-sm">
@@ -477,38 +395,6 @@ export function ProjectsUnits() {
                       <span className="font-medium text-blue-600">{project.availableUnits}</span>
                     </div>
                   </div>
-
-                  {/* Unit Status Overview */}
-                  {project.units && (
-                    <div className="border-t pt-3">
-                      <div className="text-sm font-medium mb-2">Recent Unit Activity</div>
-                      <div className="space-y-1">
-                        {project.units.slice(0, 3).map((unit) => (
-                          <div key={unit.id} className="flex items-center justify-between text-xs">
-                            <span className="truncate">{unit.name}</span>
-                            <div className="flex items-center space-x-2">
-                              <Badge className={statusColors[unit.status as keyof typeof statusColors]}>
-                                {unit.status}
-                              </Badge>
-                              {unit.status !== 'available' && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUpdateUnitStatus(unit);
-                                  }}
-                                  className="h-6 w-6 p-0"
-                                >
-                                  <RefreshCw className="h-3 w-3" />
-                                </Button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                   
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
                     <div 
@@ -560,7 +446,6 @@ export function ProjectsUnits() {
                   <TableHead>Stage</TableHead>
                   <TableHead>Location</TableHead>
                   <TableHead>Blocks/Units</TableHead>
-                  <TableHead>Allocation Status</TableHead>
                   <TableHead>Revenue</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -588,16 +473,6 @@ export function ProjectsUnits() {
                       <div className="text-sm">
                         <div>{project.totalBlocks || 0} blocks</div>
                         <div className="text-gray-500">{project.totalUnits} units</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        <Badge className="bg-green-100 text-green-800 text-xs">
-                          {project.soldUnits} Allocated
-                        </Badge>
-                        <Badge className="bg-blue-100 text-blue-800 text-xs">
-                          {project.availableUnits} Available
-                        </Badge>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-purple-600">
@@ -629,7 +504,7 @@ export function ProjectsUnits() {
         </Card>
       )}
 
-      {/* Modals */}
+      {/* New Project Modal */}
       <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -642,6 +517,7 @@ export function ProjectsUnits() {
         </DialogContent>
       </Dialog>
 
+      {/* Documents Modal */}
       <Dialog open={isDocumentsModalOpen} onOpenChange={setIsDocumentsModalOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
@@ -653,20 +529,6 @@ export function ProjectsUnits() {
           <ProjectDocumentsView project={selectedProject} />
         </DialogContent>
       </Dialog>
-
-      <UpdateAllocationStatusModal
-        isOpen={isUpdateStatusOpen}
-        onClose={() => setIsUpdateStatusOpen(false)}
-        allocation={selectedUnit}
-        onStatusUpdate={handleStatusUpdate}
-      />
-
-      <RevokeAllocationModal
-        isOpen={isRevokeModalOpen}
-        onClose={() => setIsRevokeModalOpen(false)}
-        allocation={selectedUnit}
-        onRevoke={handleRevocation}
-      />
     </div>
   );
 }
