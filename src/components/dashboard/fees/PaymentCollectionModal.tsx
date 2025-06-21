@@ -27,6 +27,8 @@ export function PaymentCollectionModal({ fee, onClose }: PaymentCollectionModalP
     }
   });
 
+  const { control } = form;
+
   const onSubmit = (data: any) => {
     console.log('Recording payment:', data);
     toast.success('Payment recorded successfully!');

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -64,9 +63,9 @@ const overdueAlerts = [
 ];
 
 export function FeeMonitoringDashboard() {
-  const totalCollected = projectData.reduce((sum, project) => sum + project.collected, 0);
-  const totalOutstanding = projectData.reduce((sum, project) => sum + project.outstanding, 0);
-  const totalOverdue = projectData.reduce((sum, project) => sum + project.overdue, 0);
+  const totalCollected = projectData.reduce((sum, project) => sum + Number(project.collected), 0);
+  const totalOutstanding = projectData.reduce((sum, project) => sum + Number(project.outstanding), 0);
+  const totalOverdue = projectData.reduce((sum, project) => sum + Number(project.overdue), 0);
   
   const collectionRate = (totalCollected / (totalCollected + totalOutstanding)) * 100;
 
