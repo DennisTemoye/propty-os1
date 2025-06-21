@@ -166,7 +166,7 @@ export function DashboardOverview() {
 
   const getSheetTitle = (action: string) => {
     switch (action) {
-      case 'development': return 'Create New Development';
+      case 'development': return 'Create New Project';
       case 'project_site': return 'Create New Project Site';
       case 'client': return 'Create New Client';
       case 'allocation': return 'Create New Allocation';
@@ -201,7 +201,7 @@ export function DashboardOverview() {
       case 'expense':
         return <NewExpenseForm onClose={closeSheet} />;
       case 'notice':
-        return <SendNoticeForm onClose={closeSheet} />;
+        return <SendNoticeForm />;
       default:
         return null;
     }
@@ -252,7 +252,7 @@ export function DashboardOverview() {
                   className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
                   <Building className="h-5 w-5 text-purple-600" />
-                  <span className="font-medium">New Development</span>
+                  <span className="font-medium">New Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleNewAction('client')}
