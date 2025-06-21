@@ -24,7 +24,7 @@ interface DevelopmentFormData {
   developmentStage: string;
 }
 
-export function NewProjectForm({ onClose }: NewDevelopmentFormProps) {
+export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
   const form = useForm<DevelopmentFormData>({
     defaultValues: {
       name: '',
