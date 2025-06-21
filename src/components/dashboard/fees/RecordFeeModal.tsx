@@ -167,6 +167,7 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
                   <SelectItem value="infrastructure">Infrastructure Fee</SelectItem>
                   <SelectItem value="service">Service Charge</SelectItem>
                   <SelectItem value="maintenance">Maintenance Fee</SelectItem>
+                  <SelectItem value="application">Application Form Fee</SelectItem>
                   <SelectItem value="security">Security Deposit</SelectItem>
                   <SelectItem value="legal">Legal Fee</SelectItem>
                 </SelectContent>

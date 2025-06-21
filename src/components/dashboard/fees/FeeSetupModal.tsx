@@ -90,6 +90,7 @@ export function FeeSetupModal({ isOpen, onClose }: FeeSetupModalProps) {
                       <SelectItem value="infrastructure">Infrastructure Development Fee</SelectItem>
                       <SelectItem value="service">Service Charge</SelectItem>
                       <SelectItem value="maintenance">Maintenance Fee</SelectItem>
+                      <SelectItem value="application">Application Form Fee</SelectItem>
                       <SelectItem value="custom">Custom Fee Type</SelectItem>
                     </SelectContent>
                   </Select>
