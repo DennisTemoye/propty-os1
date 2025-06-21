@@ -1,13 +1,16 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, TrendingUp, Users, DollarSign, CheckCircle, Clock, Eye, Download } from 'lucide-react';
+import { Plus, TrendingUp, Users, DollarSign, CheckCircle, Clock, Eye, Download, Filter } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { NewMarketerForm } from './forms/NewMarketerForm';
+import { useToast } from '@/hooks/use-toast';
 
 const mockMarketers = [
   {
@@ -107,6 +110,20 @@ export function MarketersCommission() {
   const [selectedMarketer, setSelectedMarketer] = useState<any>(null);
   const [isNewMarketerOpen, setIsNewMarketerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('marketers');
+  const [commissions, setCommissions] = useState(mockCommissions);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [marketerFilter, setMarketerFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const { toast } = useToast();
+
+  // Filter commissions based on filters
+  const filteredCommissions = commissions.filter(commission => {
+    const matchesStatus = statusFilter === 'all' || commission.status === statusFilter;
+    const matchesMarketer = marketerFilter === 'all' || commission.marketerName === marketerFilter;
+    const matchesSearch = commission.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         commission.project.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesStatus && matchesMarketer && matchesSearch;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -182,8 +199,55 @@ export function MarketersCommission() {
   ];
 
   const handleMarkAsPaid = (commissionId: number) => {
-    console.log('Mark commission as paid:', commissionId);
-    // Implementation for marking commission as paid
+    setCommissions(prev => 
+      prev.map(commission => 
+        commission.id === commissionId 
+          ? { ...commission, status: 'paid', paidDate: new Date().toISOString().split('T')[0] }
+          : commission
+      )
+    );
+    
+    toast({
+      title: "Commission Marked as Paid",
+      description: "The commission has been successfully marked as paid.",
+    });
+  };
+
+  const handleProcessPayments = () => {
+    const approvedCommissions = commissions.filter(c => c.status === 'approved');
+    
+    if (approvedCommissions.length === 0) {
+      toast({
+        title: "No Payments to Process",
+        description: "There are no approved commissions ready for payment.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Update all approved commissions to paid
+    setCommissions(prev => 
+      prev.map(commission => 
+        commission.status === 'approved' 
+          ? { ...commission, status: 'paid', paidDate: new Date().toISOString().split('T')[0] }
+          : commission
+      )
+    );
+
+    toast({
+      title: "Payments Processed",
+      description: `Successfully processed ${approvedCommissions.length} commission payments.`,
+    });
+  };
+
+  const handleNewMarketerSubmit = (marketerData: any) => {
+    console.log('New marketer data:', marketerData);
+    setIsNewMarketerOpen(false);
+    
+    toast({
+      title: "Marketer Added",
+      description: "New marketer has been successfully added to the system.",
+    });
   };
 
   return (
@@ -322,11 +386,81 @@ export function MarketersCommission() {
                 <Download className="h-4 w-4 mr-2" />
                 Export CSV
               </Button>
-              <Button className="bg-purple-600 hover:bg-purple-700" size="sm">
+              <Button 
+                className="bg-purple-600 hover:bg-purple-700" 
+                size="sm"
+                onClick={handleProcessPayments}
+              >
                 Process Payments
               </Button>
             </div>
           </div>
+
+          {/* Filters */}
+          <Card className="bg-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Filters
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Search</label>
+                  <Input
+                    placeholder="Search client or project..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Status</label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="approved">Approved</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Marketer</label>
+                  <Select value={marketerFilter} onValueChange={setMarketerFilter}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Marketers</SelectItem>
+                      {mockMarketers.map(marketer => (
+                        <SelectItem key={marketer.id} value={marketer.name}>
+                          {marketer.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Actions</label>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => {
+                      setStatusFilter('all');
+                      setMarketerFilter('all');
+                      setSearchTerm('');
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           <Card className="bg-white">
             <CardContent className="p-0">
@@ -343,7 +477,7 @@ export function MarketersCommission() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockCommissions.map((commission) => (
+                  {filteredCommissions.map((commission) => (
                     <TableRow key={commission.id} className="hover:bg-gray-50">
                       <TableCell>
                         <div>
@@ -396,6 +530,11 @@ export function MarketersCommission() {
                   ))}
                 </TableBody>
               </Table>
+              {filteredCommissions.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  No commissions found matching the current filters.
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -403,16 +542,17 @@ export function MarketersCommission() {
 
       {/* Add Marketer Modal */}
       <Dialog open={isNewMarketerOpen} onOpenChange={setIsNewMarketerOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Marketer</DialogTitle>
             <DialogDescription>
               Add a new sales marketer to your team
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-gray-600">Marketer registration form would go here...</p>
-          </div>
+          <NewMarketerForm 
+            onClose={() => setIsNewMarketerOpen(false)}
+            onSubmit={handleNewMarketerSubmit}
+          />
         </DialogContent>
       </Dialog>
     </div>
