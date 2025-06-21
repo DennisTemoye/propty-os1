@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, MapPin, FileText, Building, Home, DollarSign } from 'lucide-react';
+import { Plus, MapPin, FileText, Building, Home, DollarSign, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NewDevelopmentForm } from './forms/NewDevelopmentForm';
 import { ProjectDocumentsView } from './projects/ProjectDocumentsView';
@@ -22,6 +24,7 @@ const mockDevelopments = [
     reservedUnits: 23,
     availableUnits: 38,
     status: 'ongoing',
+    developmentStage: 'Construction',
     revenue: '₦2.5B'
   },
   {
@@ -36,6 +39,7 @@ const mockDevelopments = [
     reservedUnits: 12,
     availableUnits: 32,
     status: 'ongoing',
+    developmentStage: 'Marketing',
     revenue: '₦4.2B'
   },
   {
@@ -50,6 +54,7 @@ const mockDevelopments = [
     reservedUnits: 18,
     availableUnits: 37,
     status: 'ongoing',
+    developmentStage: 'Pre-Launch',
     revenue: '₦6.8B'
   },
   {
@@ -64,6 +69,7 @@ const mockDevelopments = [
     reservedUnits: 8,
     availableUnits: 5,
     status: 'completed',
+    developmentStage: 'Handover',
     revenue: '₦3.9B'
   },
   {
@@ -78,6 +84,7 @@ const mockDevelopments = [
     reservedUnits: 25,
     availableUnits: 27,
     status: 'ongoing',
+    developmentStage: 'Planning',
     revenue: '₦5.5B'
   },
   {
@@ -92,6 +99,7 @@ const mockDevelopments = [
     reservedUnits: 45,
     availableUnits: 75,
     status: 'ongoing',
+    developmentStage: 'Construction',
     revenue: '₦7.2B'
   },
   {
@@ -106,6 +114,7 @@ const mockDevelopments = [
     reservedUnits: 80,
     availableUnits: 100,
     status: 'ongoing',
+    developmentStage: 'Marketing',
     revenue: '₦4.8B'
   },
   {
@@ -120,6 +129,7 @@ const mockDevelopments = [
     reservedUnits: 10,
     availableUnits: 5,
     status: 'ongoing',
+    developmentStage: 'Marketing',
     revenue: '₦8.5B'
   },
   {
@@ -134,6 +144,7 @@ const mockDevelopments = [
     reservedUnits: 15,
     availableUnits: 25,
     status: 'ongoing',
+    developmentStage: 'Construction',
     revenue: '₦3.8B'
   },
   {
@@ -148,6 +159,7 @@ const mockDevelopments = [
     reservedUnits: 20,
     availableUnits: 95,
     status: 'upcoming',
+    developmentStage: 'Pre-Launch',
     revenue: '₦1.2B'
   }
 ];
@@ -157,33 +169,37 @@ export function ProjectsUnits() {
   const [isNewDevelopmentOpen, setIsNewDevelopmentOpen] = useState(false);
   const [isDocumentsModalOpen, setIsDocumentsModalOpen] = useState(false);
   const [selectedDevelopment, setSelectedDevelopment] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [stageFilter, setStageFilter] = useState('');
   const navigate = useNavigate();
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ongoing':
-        return 'bg-green-100 text-green-800';
-      case 'upcoming':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'completed':
+  const getDevelopmentStageColor = (stage: string) => {
+    switch (stage) {
+      case 'Planning':
+        return 'bg-gray-100 text-gray-800';
+      case 'Pre-Launch':
         return 'bg-blue-100 text-blue-800';
+      case 'Marketing':
+        return 'bg-orange-100 text-orange-800';
+      case 'Construction':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Handover':
+        return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Housing':
-        return 'bg-blue-100 text-blue-800';
-      case 'Land':
-        return 'bg-green-100 text-green-800';
-      case 'Mixed':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  // Filter developments based on search and stage
+  const filteredDevelopments = mockDevelopments.filter(development => {
+    const matchesSearch = development.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         development.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         development.type.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStage = !stageFilter || development.developmentStage === stageFilter;
+    
+    return matchesSearch && matchesStage;
+  });
 
   const handleDevelopmentClick = (developmentId: number) => {
     navigate(`/company/developments/${developmentId}`);
@@ -199,6 +215,8 @@ export function ProjectsUnits() {
     setSelectedDevelopment(development);
     setIsDocumentsModalOpen(true);
   };
+
+  const developmentStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover'];
 
   const kpiData = [
     {
@@ -277,28 +295,58 @@ export function ProjectsUnits() {
         ))}
       </div>
 
-      {/* View Toggle */}
-      <div className="flex items-center gap-2">
-        <Button
-          variant={viewMode === 'grid' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setViewMode('grid')}
-        >
-          Grid View
-        </Button>
-        <Button
-          variant={viewMode === 'table' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setViewMode('table')}
-        >
-          Table View
-        </Button>
-      </div>
+      {/* Search and Filters */}
+      <Card className="bg-white">
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+            <div className="flex gap-4 w-full md:w-auto">
+              <div className="relative w-full md:w-80">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search developments, locations, types..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="w-full md:w-48">
+                <Select value={stageFilter} onValueChange={setStageFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Development stage" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Stages</SelectItem>
+                    {developmentStages.map((stage) => (
+                      <SelectItem key={stage} value={stage}>{stage}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+              >
+                Grid View
+              </Button>
+              <Button
+                variant={viewMode === 'table' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('table')}
+              >
+                Table View
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Developments Display */}
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {mockDevelopments.map((development) => (
+          {filteredDevelopments.map((development) => (
             <Card 
               key={development.id} 
               className="hover:shadow-lg transition-shadow cursor-pointer bg-white"
@@ -307,14 +355,9 @@ export function ProjectsUnits() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{development.name}</CardTitle>
-                  <div className="flex gap-2">
-                    <Badge className={getCategoryColor(development.category)}>
-                      {development.category}
-                    </Badge>
-                    <Badge className={getStatusColor(development.status)}>
-                      {development.status}
-                    </Badge>
-                  </div>
+                  <Badge className={getDevelopmentStageColor(development.developmentStage)}>
+                    {development.developmentStage}
+                  </Badge>
                 </div>
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin className="h-4 w-4 mr-1" />
@@ -399,16 +442,15 @@ export function ProjectsUnits() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Development</TableHead>
-                  <TableHead>Category</TableHead>
+                  <TableHead>Stage</TableHead>
                   <TableHead>Location</TableHead>
                   <TableHead>Blocks/Units</TableHead>
-                  <TableHead>Status</TableHead>
                   <TableHead>Revenue</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockDevelopments.map((development) => (
+                {filteredDevelopments.map((development) => (
                   <TableRow 
                     key={development.id} 
                     className="hover:bg-gray-50 cursor-pointer"
@@ -421,8 +463,8 @@ export function ProjectsUnits() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getCategoryColor(development.category)}>
-                        {development.category}
+                      <Badge className={getDevelopmentStageColor(development.developmentStage)}>
+                        {development.developmentStage}
                       </Badge>
                     </TableCell>
                     <TableCell>{development.location}</TableCell>
@@ -431,11 +473,6 @@ export function ProjectsUnits() {
                         <div>{development.totalBlocks || 0} blocks</div>
                         <div className="text-gray-500">{development.totalUnits} units</div>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(development.status)}>
-                        {development.status}
-                      </Badge>
                     </TableCell>
                     <TableCell className="font-medium text-purple-600">
                       {development.revenue}
