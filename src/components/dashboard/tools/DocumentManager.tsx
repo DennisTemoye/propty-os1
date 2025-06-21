@@ -84,15 +84,22 @@ export function DocumentManagerPage() {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('');
-  const [filterLinkedTo, setFilterLinkedTo] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterLinkedTo, setFilterLinkedTo] = useState('all');
+  const [formData, setFormData] = useState({
+    title: '',
+    category: '',
+    linkedTo: '',
+    linkedName: ''
+  });
+
   const form = useForm();
 
   const filteredDocuments = documents.filter(doc => {
     const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          doc.linkedName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !filterCategory || doc.category === filterCategory;
-    const matchesLinkedTo = !filterLinkedTo || doc.linkedTo === filterLinkedTo;
+    const matchesCategory = filterCategory === 'all' || doc.category === filterCategory;
+    const matchesLinkedTo = filterLinkedTo === 'all' || doc.linkedTo === filterLinkedTo;
     
     return matchesSearch && matchesCategory && matchesLinkedTo;
   });
@@ -100,12 +107,12 @@ export function DocumentManagerPage() {
   const onSubmitDocument = (data: any) => {
     const newDocument: Document = {
       id: Date.now().toString(),
-      title: data.title,
+      title: formData.title,
       fileName: data.fileName || 'document.pdf',
-      category: data.category,
-      linkedTo: data.linkedTo,
-      linkedId: data.linkedId || '1',
-      linkedName: data.linkedName,
+      category: formData.category,
+      linkedTo: formData.linkedTo as 'client' | 'development',
+      linkedId: '1',
+      linkedName: formData.linkedName,
       fileSize: '1.2 MB',
       fileType: 'PDF',
       uploadDate: new Date().toISOString().split('T')[0],
@@ -114,6 +121,7 @@ export function DocumentManagerPage() {
     
     setDocuments(prev => [...prev, newDocument]);
     setIsUploadOpen(false);
+    setFormData({ title: '', category: '', linkedTo: '', linkedName: '' });
     form.reset();
     toast.success('Document uploaded successfully');
   };
@@ -212,7 +220,7 @@ export function DocumentManagerPage() {
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>{category}</SelectItem>
                 ))}
@@ -223,7 +231,7 @@ export function DocumentManagerPage() {
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="client">Client Documents</SelectItem>
                 <SelectItem value="development">Development Documents</SelectItem>
               </SelectContent>
@@ -232,8 +240,8 @@ export function DocumentManagerPage() {
               variant="outline" 
               onClick={() => {
                 setSearchTerm('');
-                setFilterCategory('');
-                setFilterLinkedTo('');
+                setFilterCategory('all');
+                setFilterLinkedTo('all');
               }}
             >
               <Filter className="h-4 w-4 mr-2" />
@@ -310,12 +318,17 @@ export function DocumentManagerPage() {
           <form onSubmit={form.handleSubmit(onSubmitDocument)} className="space-y-4">
             <div>
               <label className="text-sm font-medium">Document Title</label>
-              <Input {...form.register('title', { required: true })} placeholder="Enter document title" />
+              <Input 
+                value={formData.title}
+                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                placeholder="Enter document title" 
+                required 
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium">Category</label>
-                <Select onValueChange={(value) => form.setValue('category', value)}>
+                <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
@@ -328,7 +341,7 @@ export function DocumentManagerPage() {
               </div>
               <div>
                 <label className="text-sm font-medium">Link To</label>
-                <Select onValueChange={(value) => form.setValue('linkedTo', value)}>
+                <Select value={formData.linkedTo} onValueChange={(value) => setFormData(prev => ({ ...prev, linkedTo: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -341,7 +354,12 @@ export function DocumentManagerPage() {
             </div>
             <div>
               <label className="text-sm font-medium">Linked Record Name</label>
-              <Input {...form.register('linkedName', { required: true })} placeholder="Enter client or development name" />
+              <Input 
+                value={formData.linkedName}
+                onChange={(e) => setFormData(prev => ({ ...prev, linkedName: e.target.value }))}
+                placeholder="Enter client or development name" 
+                required 
+              />
             </div>
             <div>
               <label className="text-sm font-medium">File Upload</label>
