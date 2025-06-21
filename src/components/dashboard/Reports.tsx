@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -53,6 +52,12 @@ export function Reports() {
     'offered': 'bg-orange-100 text-orange-800',
     'allocated': 'bg-green-100 text-green-800',
     'revoked': 'bg-red-100 text-red-800'
+  };
+
+  const handleIncludeRevokedChange = (checked: boolean | "indeterminate") => {
+    if (typeof checked === 'boolean') {
+      setIncludeRevoked(checked);
+    }
   };
 
   const filteredData = mockAllocationData.filter(allocation => {
@@ -152,7 +157,7 @@ export function Reports() {
                 <Checkbox
                   id="includeRevoked"
                   checked={includeRevoked}
-                  onCheckedChange={setIncludeRevoked}
+                  onCheckedChange={handleIncludeRevokedChange}
                 />
                 <Label htmlFor="includeRevoked" className="text-sm">
                   Include revoked allocations

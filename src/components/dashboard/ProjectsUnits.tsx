@@ -487,7 +487,7 @@ export function ProjectsUnits() {
                           <div key={unit.id} className="flex items-center justify-between text-xs">
                             <span className="truncate">{unit.name}</span>
                             <div className="flex items-center space-x-2">
-                              <Badge className={statusColors[unit.status as keyof typeof statusColors]} size="sm">
+                              <Badge className={statusColors[unit.status as keyof typeof statusColors]}>
                                 {unit.status}
                               </Badge>
                               {unit.status !== 'available' && (
