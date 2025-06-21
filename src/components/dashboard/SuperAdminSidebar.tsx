@@ -51,7 +51,7 @@ export function SuperAdminSidebar({ className }: SuperAdminSidebarProps) {
   };
 
   return (
-    <div className={cn('pb-12 w-64 bg-gradient-to-b from-slate-900 via-red-900 to-slate-900 border-r border-red-800', className)}>
+    <div className={cn('pb-12 w-64 bg-black border-r border-red-800', className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="flex items-center mb-2">
