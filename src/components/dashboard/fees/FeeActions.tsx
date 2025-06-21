@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { FileText, DollarSign, AlertTriangle, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { DownloadButton } from '@/components/ui/download-button';
 
 interface FeeActionsProps {
   fee: any;
@@ -14,11 +15,6 @@ export function FeeActions({ fee, onRecordPayment, onViewDetails }: FeeActionsPr
   const handleSendReminder = (fee: any) => {
     console.log('Sending reminder to:', fee.clientName);
     toast.success(`Reminder sent to ${fee.clientName}`);
-  };
-
-  const handleViewStatement = (fee: any) => {
-    console.log('Viewing statement for:', fee.clientName);
-    toast.info(`Opening statement for ${fee.clientName}`);
   };
 
   return (
@@ -46,13 +42,13 @@ export function FeeActions({ fee, onRecordPayment, onViewDetails }: FeeActionsPr
         </Button>
       )}
       
-      <Button 
-        variant="outline" 
+      <DownloadButton
+        data={fee}
+        filename={`${fee.clientName.replace(/\s+/g, '-')}-${fee.feeType.replace(/\s+/g, '-')}-statement`}
+        formats={['pdf']}
+        template="statement"
         size="sm"
-        onClick={() => handleViewStatement(fee)}
-      >
-        <FileText className="h-3 w-3" />
-      </Button>
+      />
       
       <Button 
         variant="outline" 

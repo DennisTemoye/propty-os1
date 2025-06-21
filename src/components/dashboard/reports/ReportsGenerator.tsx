@@ -7,10 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
 import { FileText, Download, Calendar as CalendarIcon, BarChart } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { DownloadButton } from '@/components/ui/download-button';
 
 export function ReportsGenerator() {
   const [reportType, setReportType] = useState('');
@@ -71,6 +71,23 @@ export function ReportsGenerator() {
     });
 
     toast.success('Report generated successfully!');
+  };
+
+  const getReportData = () => {
+    // Generate mock data based on selected filters
+    return {
+      reportType,
+      dateRange,
+      metrics: selectedMetrics,
+      project: projectFilter,
+      generatedAt: new Date().toISOString(),
+      data: Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        metric: selectedMetrics[i % selectedMetrics.length] || 'Sample Metric',
+        value: Math.floor(Math.random() * 1000000),
+        date: new Date().toISOString().split('T')[0]
+      }))
+    };
   };
 
   return (
@@ -209,6 +226,15 @@ export function ReportsGenerator() {
           <FileText className="h-4 w-4 mr-2" />
           Save Template
         </Button>
+        {reportType && (
+          <DownloadButton
+            data={getReportData()}
+            filename={`${reportType}-report-${new Date().toISOString().split('T')[0]}`}
+            formats={['pdf', 'csv', 'xlsx']}
+            template="report"
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+          />
+        )}
         <Button onClick={generateReport} className="bg-purple-600 hover:bg-purple-700">
           <Download className="h-4 w-4 mr-2" />
           Generate Report
