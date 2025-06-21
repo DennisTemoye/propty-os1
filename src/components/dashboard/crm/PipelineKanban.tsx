@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Phone, Mail, Building, User } from 'lucide-react';
+import { Phone, Mail, Building, User, Globe } from 'lucide-react';
 import { useResponsive } from '@/hooks/use-responsive';
 import { Lead, PipelineStage } from './types';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -110,7 +110,7 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
                         >
                           <CardContent className="p-3">
                             <div className="space-y-2">
-                              {/* Client Info Header */}
+                              {/* Client Name and Priority */}
                               <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-2 flex-1 min-w-0">
                                   <Avatar className="h-6 w-6 flex-shrink-0">
@@ -132,6 +132,16 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
                                 </Badge>
                               </div>
                               
+                              {/* Project Interest */}
+                              {lead.projectInterest && (
+                                <div className="flex items-center gap-1.5 text-gray-600">
+                                  <Building className="h-3 w-3 flex-shrink-0" />
+                                  <span className="text-xs truncate font-medium text-blue-700">
+                                    {lead.projectInterest}
+                                  </span>
+                                </div>
+                              )}
+                              
                               {/* Contact Info */}
                               <div className="space-y-1">
                                 <div className="flex items-center gap-1.5 text-gray-600">
@@ -144,14 +154,10 @@ export function PipelineKanban({ leads, stages, onDragLead, onSelectLead }: Pipe
                                   <span className="text-xs">{lead.phone}</span>
                                 </div>
                                 
-                                {lead.projectInterest && (
-                                  <div className="flex items-center gap-1.5 text-gray-600">
-                                    <Building className="h-3 w-3 flex-shrink-0" />
-                                    <span className="text-xs truncate font-medium text-blue-700">
-                                      {lead.projectInterest}
-                                    </span>
-                                  </div>
-                                )}
+                                <div className="flex items-center gap-1.5 text-gray-600">
+                                  <Globe className="h-3 w-3 flex-shrink-0" />
+                                  <span className="text-xs">{lead.source}</span>
+                                </div>
                               </div>
                             </div>
                           </CardContent>
