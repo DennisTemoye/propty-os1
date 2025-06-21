@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, FileText, DollarSign, User, Building, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ClientForm } from './clients/ClientForm';
 import { ClientDetailView } from './clients/ClientDetailView';
 import { AssignPropertyModal } from './clients/AssignPropertyModal';
 import { AddPaymentModal } from './clients/AddPaymentModal';
@@ -171,7 +169,6 @@ const mockClients = [
 
 export function Clients() {
   const [selectedClient, setSelectedClient] = useState<any>(null);
-  const [isNewClientOpen, setIsNewClientOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [isDocumentsOpen, setIsDocumentsOpen] = useState(false);
@@ -244,23 +241,13 @@ export function Clients() {
           <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
           <p className="text-gray-600 mt-1">Manage client profiles, KYC, and property assignments</p>
         </div>
-        <Dialog open={isNewClientOpen} onOpenChange={setIsNewClientOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-purple-600 hover:bg-purple-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Client
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Add New Client</DialogTitle>
-              <DialogDescription>
-                Create a new client profile and manage their information
-              </DialogDescription>
-            </DialogHeader>
-            <ClientForm onClose={() => setIsNewClientOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        <Button 
+          className="bg-purple-600 hover:bg-purple-700"
+          onClick={() => navigate('/company/clients/new')}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Client
+        </Button>
       </div>
 
       {/* Summary Cards */}
@@ -578,25 +565,6 @@ export function Clients() {
           </CardContent>
         </Card>
       )}
-
-      {/* New Client Modal */}
-      <Dialog open={isNewClientOpen} onOpenChange={setIsNewClientOpen}>
-        <DialogTrigger asChild>
-          <Button className="bg-purple-600 hover:bg-purple-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Client
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Add New Client</DialogTitle>
-            <DialogDescription>
-              Create a new client profile and manage their information
-            </DialogDescription>
-          </DialogHeader>
-          <ClientForm onClose={() => setIsNewClientOpen(false)} />
-        </DialogContent>
-      </Dialog>
 
       {/* Assign Property Modal */}
       <AssignPropertyModal 
