@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -189,7 +190,13 @@ export function Reports() {
           <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
           <p className="text-gray-600 mt-1">Generate detailed reports and insights</p>
         </div>
-        <ReportExportActions reportType="sales" />
+        <div className="flex space-x-2">
+          <ReportExportActions />
+          <Button className="bg-purple-600 hover:bg-purple-700">
+            <FileText className="h-4 w-4 mr-2" />
+            Generate Report
+          </Button>
+        </div>
       </div>
 
       {/* KPI Cards */}

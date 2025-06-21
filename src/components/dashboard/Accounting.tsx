@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,6 @@ import { ExpenseForm } from './accounting/ExpenseForm';
 import { PaymentsManagement } from './accounting/PaymentsManagement';
 import { AnalyticsCharts } from './accounting/AnalyticsCharts';
 import { AccountingDownloadActions } from './accounting/AccountingDownloadActions';
-import { toast } from 'sonner';
 
 export function Accounting() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -21,7 +21,7 @@ export function Accounting() {
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [dateFilter, setDateFilter] = useState('this-month');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [marketerFilter, setMarketerFilter] = useState('all');
+  const [marketerFilter, setMarketerFilter] = useState('all'); // New filter for marketers
 
   // Mock data with marketer commissions integrated
   const mockTransactions = [
@@ -177,18 +177,6 @@ export function Accounting() {
     },
   ];
 
-  const handleIncomeSubmit = (data: any) => {
-    console.log('Income submitted:', data);
-    toast.success('Income recorded successfully');
-    setIsIncomeModalOpen(false);
-  };
-
-  const handleExpenseSubmit = (data: any) => {
-    console.log('Expense submitted:', data);
-    toast.success('Expense recorded successfully');
-    setIsExpenseModalOpen(false);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -210,11 +198,7 @@ export function Accounting() {
                 <DialogTitle>Record Income</DialogTitle>
                 <DialogDescription>Add a new income transaction</DialogDescription>
               </DialogHeader>
-              <IncomeForm 
-                isOpen={isIncomeModalOpen}
-                onClose={() => setIsIncomeModalOpen(false)}
-                onSubmit={handleIncomeSubmit}
-              />
+              <IncomeForm onClose={() => setIsIncomeModalOpen(false)} />
             </DialogContent>
           </Dialog>
           <Dialog open={isExpenseModalOpen} onOpenChange={setIsExpenseModalOpen}>
@@ -229,11 +213,7 @@ export function Accounting() {
                 <DialogTitle>Record Expense</DialogTitle>
                 <DialogDescription>Add a new expense transaction</DialogDescription>
               </DialogHeader>
-              <ExpenseForm 
-                isOpen={isExpenseModalOpen}
-                onClose={() => setIsExpenseModalOpen(false)}
-                onSubmit={handleExpenseSubmit}
-              />
+              <ExpenseForm onClose={() => setIsExpenseModalOpen(false)} />
             </DialogContent>
           </Dialog>
         </div>

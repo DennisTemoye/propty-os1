@@ -17,7 +17,7 @@ const MarketerDetailPage = () => {
   const { marketerId } = useParams();
   const navigate = useNavigate();
 
-  // Mock marketer data
+  // Mock data - in real app, this would come from API based on marketerId
   const marketer = {
     id: 1,
     name: 'Jane Smith',
@@ -29,7 +29,7 @@ const MarketerDetailPage = () => {
     joinDate: '2023-06-15',
     totalLeads: 45,
     conversions: 12,
-    totalPropertySales: 8,
+    totalSales: 8,
     totalSalesVolume: '₦200M',
     totalCommission: '₦2.4M',
     commissionPaid: '₦1.8M',
@@ -42,40 +42,37 @@ const MarketerDetailPage = () => {
     }
   };
 
-  // Mock property sales data
-  const propertySales = [
+  // Mock sales and allocations data
+  const salesAllocations = [
     {
       id: 1,
       clientName: 'John Doe',
-      propertyUnit: 'Block A - Plot 02',
+      unit: 'Block A - Plot 02',
       project: 'Victoria Gardens',
-      saleAmount: '₦25M',
-      saleDate: '2024-01-15',
-      status: 'completed',
-      commission: '₦625K',
-      paymentMethod: 'Bank Transfer'
+      amount: '₦25M',
+      date: '2024-01-15',
+      status: 'allocated',
+      commission: '₦625K'
     },
     {
       id: 2,
       clientName: 'Sarah Johnson',
-      propertyUnit: 'Block B - Plot 08',
+      unit: 'Block B - Plot 08',
       project: 'Emerald Heights',
-      saleAmount: '₦30M',
-      saleDate: '2024-01-10',
-      status: 'completed',
-      commission: '₦750K',
-      paymentMethod: 'Cash'
+      amount: '₦30M',
+      date: '2024-01-10',
+      status: 'allocated',
+      commission: '₦750K'
     },
     {
       id: 3,
       clientName: 'Mike Williams',
-      propertyUnit: 'Block C - Plot 15',
+      unit: 'Block C - Plot 15',
       project: 'Victoria Gardens',
-      saleAmount: '₦22M',
-      saleDate: '2024-01-05',
-      status: 'pending',
-      commission: '₦550K',
-      paymentMethod: 'Installment'
+      amount: '₦22M',
+      date: '2024-01-05',
+      status: 'interested',
+      commission: '₦0'
     }
   ];
 
@@ -109,38 +106,41 @@ const MarketerDetailPage = () => {
   const activityLog = [
     {
       id: 1,
-      action: 'Property Sale Completed',
-      description: 'Closed sale for John Doe - Block A Plot 02, Victoria Gardens',
+      action: 'Client Allocated',
+      description: 'John Doe allocated to Block A - Plot 02, Victoria Gardens',
       date: '2024-01-15 10:30 AM',
-      type: 'sale'
+      type: 'allocation'
     },
     {
       id: 2,
       action: 'Commission Paid',
-      description: 'Commission of ₦625K paid for John Doe property sale',
+      description: 'Commission of ₦625K paid for John Doe allocation',
       date: '2024-02-01 2:15 PM',
       type: 'commission'
     },
     {
       id: 3,
-      action: 'Client Consultation',
-      description: 'Initial consultation with Mike Williams for property inquiry',
+      action: 'Status Updated',
+      description: 'Profile status changed from inactive to active',
       date: '2024-01-01 9:00 AM',
-      type: 'consultation'
+      type: 'status'
     }
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-      case 'completed':
         return 'bg-green-100 text-green-800';
       case 'inactive':
         return 'bg-gray-100 text-gray-800';
-      case 'pending':
+      case 'allocated':
+        return 'bg-blue-100 text-blue-800';
+      case 'interested':
         return 'bg-yellow-100 text-yellow-800';
       case 'paid':
         return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-orange-100 text-orange-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -148,11 +148,11 @@ const MarketerDetailPage = () => {
 
   const getActivityTypeColor = (type: string) => {
     switch (type) {
-      case 'sale':
+      case 'allocation':
         return 'bg-blue-100 text-blue-800';
       case 'commission':
         return 'bg-green-100 text-green-800';
-      case 'consultation':
+      case 'status':
         return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -160,12 +160,11 @@ const MarketerDetailPage = () => {
   };
 
   const handleDownloadCommissionReport = () => {
-    DownloadService.generateCommissionReport(marketer, commissions);
+    DownloadService.generateMarketerCommissionReport(marketer, commissions);
     toast.success('Commission report downloaded successfully');
   };
 
   const handleExportSalesReport = () => {
-    DownloadService.generateSalesReport(propertySales);
     toast.success('Sales report export started. Download will begin shortly.');
   };
 
@@ -283,7 +282,7 @@ const MarketerDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Total Leads Generated</div>
+                      <div className="text-sm text-gray-500 mb-1">Total Clients Referred</div>
                       <div className="text-2xl font-bold text-blue-600">{marketer.totalLeads}</div>
                     </div>
                     <Users className="h-8 w-8 text-blue-600" />
@@ -295,8 +294,8 @@ const MarketerDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Properties Sold</div>
-                      <div className="text-2xl font-bold text-green-600">{marketer.totalPropertySales}</div>
+                      <div className="text-sm text-gray-500 mb-1">Total Units Allocated</div>
+                      <div className="text-2xl font-bold text-green-600">{marketer.totalSales}</div>
                     </div>
                     <Building className="h-8 w-8 text-green-600" />
                   </div>
@@ -331,7 +330,7 @@ const MarketerDetailPage = () => {
             {/* Detailed Tabs */}
             <Tabs defaultValue="sales" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="sales">Property Sales</TabsTrigger>
+                <TabsTrigger value="sales">Sales & Allocations</TabsTrigger>
                 <TabsTrigger value="commissions">Commissions</TabsTrigger>
                 <TabsTrigger value="activity">Activity Log</TabsTrigger>
               </TabsList>
@@ -339,7 +338,7 @@ const MarketerDetailPage = () => {
               <TabsContent value="sales" className="space-y-6">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Property Sales Records</CardTitle>
+                    <CardTitle>Sales & Allocations</CardTitle>
                     <Button variant="outline" size="sm" onClick={handleExportSalesReport}>
                       <Download className="h-4 w-4 mr-2" />
                       Export Sales Report
@@ -350,31 +349,29 @@ const MarketerDetailPage = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Client Name</TableHead>
-                          <TableHead>Property Unit</TableHead>
+                          <TableHead>Unit</TableHead>
                           <TableHead>Project</TableHead>
-                          <TableHead>Sale Amount</TableHead>
-                          <TableHead>Sale Date</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Date</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Commission</TableHead>
-                          <TableHead>Payment Method</TableHead>
                           <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {propertySales.map((sale) => (
-                          <TableRow key={sale.id}>
-                            <TableCell className="font-medium">{sale.clientName}</TableCell>
-                            <TableCell>{sale.propertyUnit}</TableCell>
-                            <TableCell>{sale.project}</TableCell>
-                            <TableCell className="font-medium">{sale.saleAmount}</TableCell>
-                            <TableCell>{sale.saleDate}</TableCell>
+                        {salesAllocations.map((allocation) => (
+                          <TableRow key={allocation.id}>
+                            <TableCell className="font-medium">{allocation.clientName}</TableCell>
+                            <TableCell>{allocation.unit}</TableCell>
+                            <TableCell>{allocation.project}</TableCell>
+                            <TableCell className="font-medium">{allocation.amount}</TableCell>
+                            <TableCell>{allocation.date}</TableCell>
                             <TableCell>
-                              <Badge className={getStatusColor(sale.status)}>
-                                {sale.status}
+                              <Badge className={getStatusColor(allocation.status)}>
+                                {allocation.status}
                               </Badge>
                             </TableCell>
-                            <TableCell className="font-medium text-green-600">{sale.commission}</TableCell>
-                            <TableCell>{sale.paymentMethod}</TableCell>
+                            <TableCell className="font-medium text-green-600">{allocation.commission}</TableCell>
                             <TableCell>
                               <Button variant="ghost" size="sm">
                                 <Eye className="h-4 w-4" />
