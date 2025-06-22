@@ -36,7 +36,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label className="text-sm font-medium">Expense Title *</label>
+        <label className="text-sm font-medium text-left block mb-2">Expense Title *</label>
         <Input 
           {...form.register('title', { required: true })}
           placeholder="Enter expense title" 
@@ -45,7 +45,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Amount *</label>
+          <label className="text-sm font-medium text-left block mb-2">Amount *</label>
           <Input 
             {...form.register('amount', { required: true })}
             placeholder="e.g., ₦500,000" 
@@ -53,7 +53,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium">Date *</label>
+          <label className="text-sm font-medium text-left block mb-2">Date *</label>
           <Input 
             type="date"
             {...form.register('date', { required: true })}
@@ -63,7 +63,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Category *</label>
+          <label className="text-sm font-medium text-left block mb-2">Category *</label>
           <Select onValueChange={(value) => form.setValue('category', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
@@ -82,7 +82,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium">Vendor/Supplier</label>
+          <label className="text-sm font-medium text-left block mb-2">Vendor/Supplier</label>
           <Input 
             {...form.register('vendor')}
             placeholder="Enter vendor name" 
@@ -92,7 +92,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Payment Method</label>
+          <label className="text-sm font-medium text-left block mb-2">Payment Method</label>
           <Select onValueChange={(value) => form.setValue('paymentMethod', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select payment method" />
@@ -107,7 +107,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium">Project</label>
+          <label className="text-sm font-medium text-left block mb-2">Project</label>
           <Select onValueChange={(value) => form.setValue('projectId', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select project" />
@@ -123,7 +123,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-medium">Reference Number</label>
+        <label className="text-sm font-medium text-left block mb-2">Reference Number</label>
         <Input 
           {...form.register('reference')}
           placeholder="Receipt/Invoice number" 
@@ -131,7 +131,7 @@ export function NewExpenseForm({ onClose }: NewExpenseFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-medium">Description</label>
+        <label className="text-sm font-medium text-left block mb-2">Description</label>
         <Textarea 
           {...form.register('description')}
           placeholder="Additional details about the expense..."

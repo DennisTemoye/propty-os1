@@ -68,7 +68,7 @@ export function SimplePaymentModal({ fee, onClose }: SimplePaymentModalProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="paymentAmount">Payment Amount *</Label>
+            <Label htmlFor="paymentAmount" className="text-left block text-sm font-medium mb-2">Payment Amount *</Label>
             <Input 
               {...form.register('paymentAmount', { required: true })}
               placeholder="Enter amount"
@@ -80,7 +80,7 @@ export function SimplePaymentModal({ fee, onClose }: SimplePaymentModalProps) {
           </div>
 
           <div>
-            <Label htmlFor="paymentMethod">Payment Method *</Label>
+            <Label htmlFor="paymentMethod" className="text-left block text-sm font-medium mb-2">Payment Method *</Label>
             <Controller
               name="paymentMethod"
               control={control}
@@ -103,7 +103,7 @@ export function SimplePaymentModal({ fee, onClose }: SimplePaymentModalProps) {
           </div>
 
           <div>
-            <Label htmlFor="paymentDate">Payment Date *</Label>
+            <Label htmlFor="paymentDate" className="text-left block text-sm font-medium mb-2">Payment Date *</Label>
             <Input 
               type="date"
               {...form.register('paymentDate', { required: true })}
@@ -111,7 +111,7 @@ export function SimplePaymentModal({ fee, onClose }: SimplePaymentModalProps) {
           </div>
 
           <div>
-            <Label htmlFor="reference">Reference/Transaction ID</Label>
+            <Label htmlFor="reference" className="text-left block text-sm font-medium mb-2">Reference/Transaction ID</Label>
             <Input 
               {...form.register('reference')}
               placeholder="TRX123456789"
@@ -120,7 +120,7 @@ export function SimplePaymentModal({ fee, onClose }: SimplePaymentModalProps) {
         </div>
 
         <div>
-          <Label htmlFor="notes">Notes (Optional)</Label>
+          <Label htmlFor="notes" className="text-left block text-sm font-medium mb-2">Notes (Optional)</Label>
           <Textarea 
             {...form.register('notes')}
             placeholder="Additional notes..."

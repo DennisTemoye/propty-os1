@@ -59,7 +59,7 @@ export function AddPropertyModal() {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="name">Property Name</Label>
+            <Label htmlFor="name" className="text-left block text-sm font-medium mb-2">Property Name</Label>
             <Input
               id="name"
               value={formData.name}
@@ -70,7 +70,7 @@ export function AddPropertyModal() {
           </div>
           
           <div>
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address" className="text-left block text-sm font-medium mb-2">Address</Label>
             <Textarea
               id="address"
               value={formData.address}
@@ -81,7 +81,7 @@ export function AddPropertyModal() {
           </div>
           
           <div>
-            <Label htmlFor="type">Property Type</Label>
+            <Label htmlFor="type" className="text-left block text-sm font-medium mb-2">Property Type</Label>
             <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select property type" />
@@ -95,7 +95,7 @@ export function AddPropertyModal() {
           </div>
           
           <div>
-            <Label htmlFor="totalUnits">Total Units</Label>
+            <Label htmlFor="totalUnits" className="text-left block text-sm font-medium mb-2">Total Units</Label>
             <Input
               id="totalUnits"
               type="number"
@@ -108,7 +108,7 @@ export function AddPropertyModal() {
           </div>
           
           <div>
-            <Label htmlFor="description">Description (Optional)</Label>
+            <Label htmlFor="description" className="text-left block text-sm font-medium mb-2">Description (Optional)</Label>
             <Textarea
               id="description"
               value={formData.description}
