@@ -106,7 +106,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
       {/* Project Image Upload */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Project Image</CardTitle>
+          <CardTitle className="text-lg text-left">Project Image</CardTitle>
         </CardHeader>
         <CardContent>
           {imagePreview ? (
@@ -153,7 +153,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
       {/* Basic Information */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Basic Information</CardTitle>
+          <CardTitle className="text-lg text-left">Basic Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -199,7 +199,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
       {/* Location Information */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Location Details</CardTitle>
+          <CardTitle className="text-lg text-left">Location Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -241,7 +241,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
       {/* Project Details */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Project Details</CardTitle>
+          <CardTitle className="text-lg text-left">Project Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -313,7 +313,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
       {/* Timeline & Management */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Timeline & Management</CardTitle>
+          <CardTitle className="text-lg text-left">Timeline & Management</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
