@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Edit, MapPin, User, UserPlus, Trash2, Building } from 'lucide-react';
 import { ProjectHeader } from '@/components/dashboard/projects/ProjectHeader';
 import { ProjectKPIGrid } from '@/components/dashboard/projects/ProjectKPIGrid';
@@ -13,6 +14,7 @@ import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksT
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSettingsTab } from '@/components/dashboard/projects/ProjectSettingsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
+import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
@@ -240,6 +242,7 @@ export default function ProjectDetailPage() {
   const navigate = useNavigate();
   
   // Modal states
+  const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
   const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
   const [isReallocateOpen, setIsReallocateOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
@@ -273,7 +276,7 @@ export default function ProjectDetailPage() {
   };
 
   const handleEditProject = () => {
-    navigate(`/company/projects/${projectId}/edit`);
+    setIsEditProjectOpen(true);
   };
 
   const handleReallocate = (unitId: string, clientName: string) => {
@@ -528,6 +531,19 @@ export default function ProjectDetailPage() {
 
       {/* Modals */}
       
+      {/* Edit Project Modal */}
+      <Dialog open={isEditProjectOpen} onOpenChange={setIsEditProjectOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Project</DialogTitle>
+          </DialogHeader>
+          <NewProjectForm 
+            onClose={() => setIsEditProjectOpen(false)}
+            initialData={project}
+          />
+        </DialogContent>
+      </Dialog>
+
       {/* Allocate Unit Modal - Using the same form from Sales & Allocations */}
       <AllocateUnitModal
         isOpen={isAllocateUnitOpen}
