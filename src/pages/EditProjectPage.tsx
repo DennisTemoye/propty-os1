@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { ProjectForm } from '@/components/dashboard/projects/ProjectForm';
-import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
+// Mock project data (in real app, this would come from an API)
 const mockProjects = [
   {
     id: 1,
@@ -19,38 +20,31 @@ const mockProjects = [
     developmentStage: 'Construction',
     totalBlocks: 5,
     totalUnits: 150,
-    availableUnits: 38,
-    allocatedUnits: 89,
-    reservedUnits: 23,
-    totalClients: 112,
-    totalRevenue: '₦2,500,000,000',
-    allocationRate: 75,
-    lastUpdated: '2024-01-15',
     description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
     projectManager: 'Alice Johnson',
-    internalNotes: 'Focus on completing Block A before marketing Block C units.',
     tags: ['Premium', 'Residential', 'Lekki'],
-    image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1200&h=600&fit=crop'
-  }
+  },
+  // Add other mock projects as needed
 ];
 
 export default function EditProjectPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
+  const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  
+
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
   const handleBack = () => {
-    const backUrl = `/company/projects/${projectId}`;
-    
     if (hasUnsavedChanges) {
-      if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
-        navigate(backUrl);
-      }
+      setShowUnsavedWarning(true);
     } else {
-      navigate(backUrl);
+      navigate(`/company/projects/${projectId}`);
     }
+  };
+
+  const handleFormChange = () => {
+    setHasUnsavedChanges(true);
   };
 
   const handleFormSubmit = () => {
@@ -58,47 +52,34 @@ export default function EditProjectPage() {
     navigate(`/company/projects/${projectId}`);
   };
 
-  // Listen for beforeunload event to warn about unsaved changes
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasUnsavedChanges) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [hasUnsavedChanges]);
+  const confirmLeave = () => {
+    setHasUnsavedChanges(false);
+    navigate(`/company/projects/${projectId}`);
+  };
 
   if (!project) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
-        <CompanySidebar />
-        <div className="flex-1 flex items-center justify-center ml-64">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
-            <Button onClick={() => navigate('/company/projects')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Projects
-            </Button>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
+          <Button onClick={() => navigate('/company/projects')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Projects
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <CompanySidebar />
-      
-      <div className="flex-1 flex flex-col ml-64">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-5xl mx-auto">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white border-b px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="outline" 
+        <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="outline"
                 onClick={handleBack}
                 className="flex items-center"
               >
@@ -106,21 +87,48 @@ export default function EditProjectPage() {
                 Back to Project
               </Button>
               <h1 className="text-2xl font-bold text-gray-900">Edit Project: {project.name}</h1>
+              <div className="w-32" /> {/* Spacer for center alignment */}
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="max-w-4xl mx-auto p-6">
-            <ProjectForm 
-              onClose={handleFormSubmit}
-              project={project}
-              onFormChange={setHasUnsavedChanges}
-            />
+        {/* Form Content */}
+        <div className="p-6">
+          <div className="bg-white rounded-lg shadow-sm border">
+            <div className="p-6">
+              <ProjectForm
+                project={project}
+                onClose={handleFormSubmit}
+                onChange={handleFormChange}
+              />
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Unsaved Changes Warning */}
+      <AlertDialog open={showUnsavedWarning} onOpenChange={setShowUnsavedWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center">
+              <AlertTriangle className="h-5 w-5 text-orange-500 mr-2" />
+              Unsaved Changes
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved changes. Are you sure you want to leave? All changes will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Stay on Page</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={confirmLeave}
+            >
+              Leave Page
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
