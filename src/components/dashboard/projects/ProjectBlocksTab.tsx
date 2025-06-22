@@ -1,10 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Building, Plus, Users, Eye } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Building, Plus, Edit, Trash2, Users } from 'lucide-react';
+import { toast } from 'sonner';
+import { BlockDetailModal } from './BlockDetailModal';
 
 interface ProjectBlocksTabProps {
   project: {
@@ -13,72 +18,320 @@ interface ProjectBlocksTabProps {
   };
 }
 
-export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
-  const navigate = useNavigate();
+const mockBlocks = [
+  {
+    id: 'A',
+    name: 'Block A',
+    type: 'duplex',
+    description: 'Luxury duplex units with modern amenities',
+    totalUnits: 30,
+    availableUnits: 8,
+    reservedUnits: 7,
+    soldUnits: 15,
+    status: 'completed',
+    defaultPrice: '₦25,000,000',
+    defaultSize: '500sqm',
+    units: [
+      { id: '1', plotId: 'A-001', size: '500sqm', price: '₦25,000,000', status: 'sold', client: 'John Doe' },
+      { id: '2', plotId: 'A-002', size: '500sqm', price: '₦25,000,000', status: 'available', client: null },
+      { id: '3', plotId: 'A-003', size: '500sqm', price: '₦25,000,000', status: 'reserved', client: 'Jane Smith' },
+    ]
+  },
+  {
+    id: 'B',
+    name: 'Block B',
+    type: 'bungalow',
+    description: 'Single-story bungalow units',
+    totalUnits: 25,
+    availableUnits: 12,
+    reservedUnits: 5,
+    soldUnits: 8,
+    status: 'construction',
+    defaultPrice: '₦18,000,000',
+    defaultSize: '400sqm',
+    units: [
+      { id: '4', plotId: 'B-001', size: '400sqm', price: '₦18,000,000', status: 'sold', client: 'Mike Johnson' },
+      { id: '5', plotId: 'B-002', size: '400sqm', price: '₦18,000,000', status: 'available', client: null },
+    ]
+  },
+  {
+    id: 'C',
+    name: 'Block C',
+    type: 'commercial',
+    description: 'Commercial units for business purposes',
+    totalUnits: 20,
+    availableUnits: 15,
+    reservedUnits: 3,
+    soldUnits: 2,
+    status: 'planning',
+    defaultPrice: '₦35,000,000',
+    defaultSize: '300sqm',
+    units: [
+      { id: '6', plotId: 'C-001', size: '300sqm', price: '₦35,000,000', status: 'sold', client: 'ABC Corp' },
+    ]
+  }
+];
 
-  const mockBlocks = [
-    { id: 'A', name: 'Block A', prototype: 'Duplex', units: 50, sold: 35, reserved: 8, available: 7 },
-    { id: 'B', name: 'Block B', prototype: 'Bungalow', units: 50, sold: 30, reserved: 10, available: 10 },
-    { id: 'C', name: 'Block C', prototype: 'Duplex', units: 50, sold: 24, reserved: 5, available: 21 },
-  ];
+export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
+  const [blocks, setBlocks] = useState(mockBlocks);
+  const [isAddBlockOpen, setIsAddBlockOpen] = useState(false);
+  const [selectedBlock, setSelectedBlock] = useState<any>(null);
+  const [isBlockDetailOpen, setIsBlockDetailOpen] = useState(false);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'construction':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'planning':
+        return 'bg-blue-100 text-blue-800';
+      case 'on-hold':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleAddBlock = (formData: FormData) => {
+    const newBlock = {
+      id: String.fromCharCode(65 + blocks.length), // A, B, C, D...
+      name: formData.get('blockName') as string,
+      type: formData.get('blockType') as string,
+      description: formData.get('description') as string,
+      totalUnits: parseInt(formData.get('totalUnits') as string),
+      availableUnits: parseInt(formData.get('totalUnits') as string),
+      reservedUnits: 0,
+      soldUnits: 0,
+      status: 'planning',
+      defaultPrice: formData.get('defaultPrice') as string,
+      defaultSize: formData.get('defaultSize') as string,
+      units: []
+    };
+    
+    setBlocks([...blocks, newBlock]);
+    toast.success('Block added successfully!');
+    setIsAddBlockOpen(false);
+  };
+
+  const handleBlockClick = (block: any) => {
+    setSelectedBlock(block);
+    setIsBlockDetailOpen(true);
+  };
+
+  const handleUpdateBlock = (updatedBlock: any) => {
+    setBlocks(blocks.map(block => 
+      block.id === updatedBlock.id ? { ...block, ...updatedBlock } : block
+    ));
+    toast.success('Block updated successfully!');
+  };
+
+  const handleDeleteBlock = (blockId: string) => {
+    setBlocks(blocks.filter(block => block.id !== blockId));
+    toast.success('Block deleted successfully!');
+  };
+
+  const totalUnits = blocks.reduce((sum, block) => sum + block.totalUnits, 0);
+  const totalSold = blocks.reduce((sum, block) => sum + block.soldUnits, 0);
+  const totalReserved = blocks.reduce((sum, block) => sum + block.reservedUnits, 0);
+  const totalAvailable = blocks.reduce((sum, block) => sum + block.availableUnits, 0);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Blocks & Units Management</h2>
         <div className="flex space-x-2">
-          <Button variant="outline">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Block
-          </Button>
-          <Button 
-            onClick={() => navigate(`/company/projects/${project.id}/blocks`)}
-          >
-            <Building className="h-4 w-4 mr-2" />
-            Manage All
-          </Button>
+          <Dialog open={isAddBlockOpen} onOpenChange={setIsAddBlockOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add New Block
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Block</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                handleAddBlock(formData);
+              }} className="space-y-4">
+                <div>
+                  <Label htmlFor="blockName">Block Name</Label>
+                  <Input id="blockName" name="blockName" placeholder="e.g., Block D" required />
+                </div>
+                <div>
+                  <Label htmlFor="blockType">Block Type</Label>
+                  <Select name="blockType" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="duplex">Duplex</SelectItem>
+                      <SelectItem value="bungalow">Bungalow</SelectItem>
+                      <SelectItem value="commercial">Commercial</SelectItem>
+                      <SelectItem value="utility">Utility</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Input id="description" name="description" placeholder="Brief description" />
+                </div>
+                <div>
+                  <Label htmlFor="totalUnits">Total Units</Label>
+                  <Input id="totalUnits" name="totalUnits" type="number" placeholder="e.g., 20" required />
+                </div>
+                <div>
+                  <Label htmlFor="defaultPrice">Default Unit Price</Label>
+                  <Input id="defaultPrice" name="defaultPrice" placeholder="e.g., ₦25,000,000" />
+                </div>
+                <div>
+                  <Label htmlFor="defaultSize">Default Unit Size</Label>
+                  <Input id="defaultSize" name="defaultSize" placeholder="e.g., 500sqm" />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">Add Block</Button>
+                  <Button type="button" variant="outline" onClick={() => setIsAddBlockOpen(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {mockBlocks.map((block) => (
-          <Card key={block.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>{block.name}</span>
-                <Badge variant="outline">{block.prototype}</Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="text-sm text-gray-600">
-                  Total Units: <span className="font-medium">{block.units}</span>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-green-50 p-2 rounded">
-                    <div className="text-lg font-bold text-green-600">{block.sold}</div>
-                    <div className="text-xs text-green-600">Sold</div>
-                  </div>
-                  <div className="bg-yellow-50 p-2 rounded">
-                    <div className="text-lg font-bold text-yellow-600">{block.reserved}</div>
-                    <div className="text-xs text-yellow-600">Reserved</div>
-                  </div>
-                  <div className="bg-blue-50 p-2 rounded">
-                    <div className="text-lg font-bold text-blue-600">{block.available}</div>
-                    <div className="text-xs text-blue-600">Available</div>
-                  </div>
-                </div>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">{totalUnits}</div>
+              <div className="text-sm text-gray-500">Total Units</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">{totalSold}</div>
+              <div className="text-sm text-gray-500">Sold Units</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-600">{totalReserved}</div>
+              <div className="text-sm text-gray-500">Reserved Units</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-600">{totalAvailable}</div>
+              <div className="text-sm text-gray-500">Available Units</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-                <Button variant="outline" className="w-full">
-                  <Eye className="h-4 w-4 mr-2" />
-                  View Units
+      {/* Blocks Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {blocks.map((block) => (
+          <Card key={block.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleBlockClick(block)}>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg flex items-center">
+                  <Building className="h-5 w-5 mr-2 text-blue-600" />
+                  {block.name}
+                </CardTitle>
+                <Badge className={getStatusColor(block.status)}>
+                  {block.status}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="text-sm text-gray-600">
+                {block.description}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="text-center p-2 bg-gray-50 rounded">
+                  <div className="font-semibold text-gray-900">{block.totalUnits}</div>
+                  <div className="text-gray-500">Total</div>
+                </div>
+                <div className="text-center p-2 bg-green-50 rounded">
+                  <div className="font-semibold text-green-600">{block.soldUnits}</div>
+                  <div className="text-gray-500">Sold</div>
+                </div>
+                <div className="text-center p-2 bg-orange-50 rounded">
+                  <div className="font-semibold text-orange-600">{block.reservedUnits}</div>
+                  <div className="text-gray-500">Reserved</div>
+                </div>
+                <div className="text-center p-2 bg-blue-50 rounded">
+                  <div className="font-semibold text-blue-600">{block.availableUnits}</div>
+                  <div className="text-gray-500">Available</div>
+                </div>
+              </div>
+
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${(block.soldUnits / block.totalUnits) * 100}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-gray-500 text-center">
+                {Math.round((block.soldUnits / block.totalUnits) * 100)}% sold
+              </div>
+
+              <div className="flex space-x-2 pt-2">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBlockClick(block);
+                  }}
+                >
+                  <Edit className="h-3 w-3 mr-1" />
+                  Edit
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBlockClick(block);
+                  }}
+                >
+                  <Users className="h-3 w-3 mr-1" />
+                  Units
                 </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {/* Block Detail Modal */}
+      {selectedBlock && (
+        <BlockDetailModal
+          isOpen={isBlockDetailOpen}
+          onClose={() => {
+            setIsBlockDetailOpen(false);
+            setSelectedBlock(null);
+          }}
+          block={selectedBlock}
+          onUpdate={handleUpdateBlock}
+          onDelete={handleDeleteBlock}
+        />
+      )}
     </div>
   );
 }

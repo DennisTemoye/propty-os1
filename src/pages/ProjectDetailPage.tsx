@@ -518,7 +518,7 @@ export default function ProjectDetailPage() {
             </TabsContent>
 
             <TabsContent value="documents" className="p-6">
-              <ProjectDocumentsTab project={project} />
+              <DocumentsView project={project} />
             </TabsContent>
 
             <TabsContent value="settings" className="p-6">
