@@ -2,7 +2,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
-import LandingPage from '@/pages/LandingPage';
+import Index from '@/pages/Index';
 import CompanyDashboard from '@/pages/CompanyDashboard';
 import ProjectDetailPage from '@/pages/ProjectDetailPage';
 import NewProjectPage from '@/pages/NewProjectPage';
@@ -16,7 +16,7 @@ function App() {
       <Router>
         <div className="min-h-screen">
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<Index />} />
             <Route path="/company/*" element={<CompanyDashboard />} />
             <Route path="/company/projects/:projectId" element={<ProjectDetailPage />} />
             <Route path="/company/projects/new" element={<NewProjectPage />} />
