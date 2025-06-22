@@ -3,7 +3,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Map, Upload, Download, Eye, FileText, Calendar } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Map, Upload, Download, Eye, FileText, Calendar, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ProjectLayoutTabProps {
   project: {
@@ -12,7 +17,6 @@ interface ProjectLayoutTabProps {
   };
 }
 
-// Sample layout data for different projects
 const projectLayouts = {
   1: {
     hasLayout: true,
@@ -124,6 +128,11 @@ const projectLayouts = {
 
 export function ProjectLayoutTab({ project }: ProjectLayoutTabProps) {
   const [selectedLayout, setSelectedLayout] = useState<any>(null);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [layouts, setLayouts] = useState(
+    projectLayouts[project.id as keyof typeof projectLayouts]?.layouts || []
+  );
+  
   const projectLayoutData = projectLayouts[project.id as keyof typeof projectLayouts];
 
   const getFormatColor = (format: string) => {
@@ -140,17 +149,93 @@ export function ProjectLayoutTab({ project }: ProjectLayoutTabProps) {
     }
   };
 
+  const handleUploadLayout = (formData: FormData) => {
+    const newLayout = {
+      id: layouts.length + 1,
+      name: 'New Layout Plan',
+      type: 'Site Plan',
+      uploadDate: new Date().toISOString().split('T')[0],
+      fileSize: '2.1 MB',
+      format: 'PDF',
+      thumbnail: '/placeholder.svg'
+    };
+    setLayouts([...layouts, newLayout]);
+    toast.success('Layout uploaded successfully!');
+    setIsUploadOpen(false);
+  };
+
+  const handleViewLayout = (layoutId: number) => {
+    console.log('Viewing layout:', layoutId);
+    toast.info('Layout viewer would open in a new window');
+  };
+
+  const handleDownloadLayout = (layoutId: number) => {
+    console.log('Downloading layout:', layoutId);
+    toast.success('Layout download started');
+  };
+
+  const handleDeleteLayout = (layoutId: number) => {
+    setLayouts(layouts.filter(layout => layout.id !== layoutId));
+    toast.success('Layout deleted successfully');
+  };
+
+  const handleOpenDesigner = () => {
+    console.log('Opening layout designer for project:', project.id);
+    toast.info('Layout designer would open in a new window');
+  };
+
   if (!projectLayoutData || !projectLayoutData.hasLayout) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Layout Designer</h2>
           <div className="flex space-x-2">
-            <Button variant="outline">
-              <Upload className="h-4 w-4 mr-2" />
-              Upload Layout
-            </Button>
-            <Button>
+            <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Layout
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Upload Layout</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  handleUploadLayout(formData);
+                }} className="space-y-4">
+                  <div>
+                    <Label htmlFor="layoutName">Layout Name</Label>
+                    <Input id="layoutName" name="layoutName" placeholder="e.g., Master Plan" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="layoutType">Layout Type</Label>
+                    <Select name="layoutType" required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="site-plan">Site Plan</SelectItem>
+                        <SelectItem value="block-plan">Block Plan</SelectItem>
+                        <SelectItem value="floor-plan">Floor Plan</SelectItem>
+                        <SelectItem value="unit-plan">Unit Plan</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="layoutFile">Choose File</Label>
+                    <Input type="file" id="layoutFile" name="layoutFile" accept=".pdf,.png,.jpg,.dwg" required />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="submit">Upload Layout</Button>
+                    <Button type="button" variant="outline" onClick={() => setIsUploadOpen(false)}>Cancel</Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+            <Button onClick={handleOpenDesigner}>
               <Map className="h-4 w-4 mr-2" />
               Open Designer
             </Button>
@@ -167,11 +252,11 @@ export function ProjectLayoutTab({ project }: ProjectLayoutTabProps) {
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Layout Available</h3>
               <p className="text-gray-500 mb-4">Upload a layout plan or use our designer to create one.</p>
               <div className="flex justify-center space-x-2">
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => setIsUploadOpen(true)}>
                   <Upload className="h-4 w-4 mr-2" />
                   Upload Layout
                 </Button>
-                <Button>
+                <Button onClick={handleOpenDesigner}>
                   <Map className="h-4 w-4 mr-2" />
                   Create Layout
                 </Button>
@@ -188,11 +273,52 @@ export function ProjectLayoutTab({ project }: ProjectLayoutTabProps) {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Layout Designer</h2>
         <div className="flex space-x-2">
-          <Button variant="outline">
-            <Upload className="h-4 w-4 mr-2" />
-            Upload New Layout
-          </Button>
-          <Button>
+          <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Upload className="h-4 w-4 mr-2" />
+                Upload New Layout
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Upload Layout</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                handleUploadLayout(formData);
+              }} className="space-y-4">
+                <div>
+                  <Label htmlFor="layoutName">Layout Name</Label>
+                  <Input id="layoutName" name="layoutName" placeholder="e.g., Master Plan" required />
+                </div>
+                <div>
+                  <Label htmlFor="layoutType">Layout Type</Label>
+                  <Select name="layoutType" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="site-plan">Site Plan</SelectItem>
+                      <SelectItem value="block-plan">Block Plan</SelectItem>
+                      <SelectItem value="floor-plan">Floor Plan</SelectItem>
+                      <SelectItem value="unit-plan">Unit Plan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="layoutFile">Choose File</Label>
+                  <Input type="file" id="layoutFile" name="layoutFile" accept=".pdf,.png,.jpg,.dwg" required />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit">Upload Layout</Button>
+                  <Button type="button" variant="outline" onClick={() => setIsUploadOpen(false)}>Cancel</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <Button onClick={handleOpenDesigner}>
             <Map className="h-4 w-4 mr-2" />
             Open Designer
           </Button>
@@ -201,7 +327,7 @@ export function ProjectLayoutTab({ project }: ProjectLayoutTabProps) {
 
       {/* Layout Gallery */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projectLayoutData.layouts.map((layout) => (
+        {layouts.map((layout) => (
           <Card key={layout.id} className="cursor-pointer hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div className="aspect-video bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
@@ -230,14 +356,32 @@ export function ProjectLayoutTab({ project }: ProjectLayoutTabProps) {
                   <span>{layout.fileSize}</span>
                 </div>
                 
-                <div className="flex space-x-2 pt-2">
-                  <Button size="sm" variant="outline" className="flex-1">
+                <div className="flex space-x-1 pt-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => handleViewLayout(layout.id)}
+                  >
                     <Eye className="h-3 w-3 mr-1" />
                     View
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => handleDownloadLayout(layout.id)}
+                  >
                     <Download className="h-3 w-3 mr-1" />
                     Download
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-red-600 hover:text-red-700"
+                    onClick={() => handleDeleteLayout(layout.id)}
+                  >
+                    <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
               </div>
@@ -258,18 +402,18 @@ export function ProjectLayoutTab({ project }: ProjectLayoutTabProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Total Layouts</h4>
-              <p className="text-2xl font-bold text-blue-600">{projectLayoutData.layouts.length}</p>
+              <p className="text-2xl font-bold text-blue-600">{layouts.length}</p>
             </div>
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Last Updated</h4>
               <p className="text-sm text-gray-600">
-                {Math.max(...projectLayoutData.layouts.map(l => new Date(l.uploadDate).getTime()))}
+                {layouts.length > 0 ? layouts[layouts.length - 1].uploadDate : 'N/A'}
               </p>
             </div>
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Total Size</h4>
               <p className="text-sm text-gray-600">
-                {projectLayoutData.layouts.reduce((total, layout) => {
+                {layouts.reduce((total, layout) => {
                   const size = parseFloat(layout.fileSize.split(' ')[0]);
                   return total + size;
                 }, 0).toFixed(1)} MB

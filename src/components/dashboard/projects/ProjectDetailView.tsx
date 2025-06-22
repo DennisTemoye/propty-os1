@@ -4,6 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   MapPin, 
   Edit, 
@@ -17,9 +23,14 @@ import {
   Eye,
   Building,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  Plus,
+  Save,
+  Map
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { BlocksUnitsManager } from './BlocksUnitsManager';
+import { DocumentsView } from '../documents/DocumentsView';
 
 interface DevelopmentDetailViewProps {
   project: {
@@ -69,6 +80,10 @@ const mockDevelopmentDetails = {
 
 export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
   const [activeTab, setActiveTab] = useState('overview');
+  const [isUploadLayoutOpen, setIsUploadLayoutOpen] = useState(false);
+  const [isUploadDocumentOpen, setIsUploadDocumentOpen] = useState(false);
+  const [selectedBlock, setSelectedBlock] = useState<any>(null);
+  const [isBlockDetailOpen, setIsBlockDetailOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -88,7 +103,82 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
   };
 
   const salesProgress = (project.soldUnits / project.totalUnits) * 100;
-  const budgetProgress = 65; // Example budget utilization
+  const budgetProgress = 65;
+
+  // Handler functions for various actions
+  const handleUploadLayout = (layoutData: any) => {
+    console.log('Upload layout:', layoutData);
+    toast.success('Layout uploaded successfully!');
+    setIsUploadLayoutOpen(false);
+  };
+
+  const handleOpenDesigner = () => {
+    console.log('Opening layout designer...');
+    toast.info('Layout designer would open in a new window');
+  };
+
+  const handleViewLayout = (layoutId?: string) => {
+    console.log('View layout:', layoutId);
+    toast.info('Layout viewer would open');
+  };
+
+  const handleDownloadLayout = (layoutId?: string) => {
+    console.log('Download layout:', layoutId);
+    toast.success('Layout download started');
+  };
+
+  const handleUploadDocument = (documentData: any) => {
+    console.log('Upload document:', documentData);
+    toast.success('Document uploaded successfully!');
+    setIsUploadDocumentOpen(false);
+  };
+
+  const handleViewDocument = (docId: string) => {
+    console.log('View document:', docId);
+    toast.info('Document viewer would open');
+  };
+
+  const handleDownloadDocument = (docId: string) => {
+    console.log('Download document:', docId);
+    toast.success('Document download started');
+  };
+
+  const handleDeleteDocument = (docId: string) => {
+    console.log('Delete document:', docId);
+    toast.success('Document deleted successfully');
+  };
+
+  const handleBlockClick = (block: any) => {
+    setSelectedBlock(block);
+    setIsBlockDetailOpen(true);
+  };
+
+  const handleEditBlock = (blockData: any) => {
+    console.log('Edit block:', blockData);
+    toast.success('Block updated successfully!');
+    setIsBlockDetailOpen(false);
+  };
+
+  const handleDeleteBlock = (blockId: string) => {
+    console.log('Delete block:', blockId);
+    toast.success('Block deleted successfully');
+    setIsBlockDetailOpen(false);
+  };
+
+  const handleViewAllClients = () => {
+    console.log('Viewing all clients for project:', project.id);
+    toast.info('Redirecting to clients view...');
+  };
+
+  const handleGenerateReport = () => {
+    console.log('Generating sales report for project:', project.id);
+    toast.success('Sales report generation started');
+  };
+
+  const handleViewOnMap = () => {
+    console.log('View project on map:', project.id);
+    toast.info('Map view would open');
+  };
 
   return (
     <div className="space-y-6">
@@ -233,15 +323,15 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         </Card>
       </div>
 
-      {/* Detailed Tabs */}
+      {/* Enhanced Tabs with Functional Actions */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="layout">Layout</TabsTrigger>
           <TabsTrigger value="blocks">Blocks</TabsTrigger>
           <TabsTrigger value="sales">Sales</TabsTrigger>
-          <TabsTrigger value="payments">Payments</TabsTrigger>
-          <TabsTrigger value="team">Team</TabsTrigger>
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -286,65 +376,152 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleViewAllClients}
+                  >
                     <Users className="h-4 w-4 mr-2" />
                     View All Clients
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleGenerateReport}
+                  >
                     <FileText className="h-4 w-4 mr-2" />
                     Generate Sales Report
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleViewOnMap}
+                  >
                     <MapPin className="h-4 w-4 mr-2" />
                     View on Map
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload Documents
-                  </Button>
+                  <Dialog open={isUploadDocumentOpen} onOpenChange={setIsUploadDocumentOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Documents
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Upload Document</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="docCategory">Document Category</Label>
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="allocation-letter">Allocation Letter</SelectItem>
+                              <SelectItem value="survey-plan">Survey Plan</SelectItem>
+                              <SelectItem value="deed-of-assignment">Deed of Assignment</SelectItem>
+                              <SelectItem value="building-plan">Building Plan</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="docFile">Choose File</Label>
+                          <Input type="file" id="docFile" accept=".pdf,.doc,.docx,.jpg,.png" />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button onClick={() => handleUploadDocument({})}>Upload</Button>
+                          <Button variant="outline" onClick={() => setIsUploadDocumentOpen(false)}>Cancel</Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
 
-        <TabsContent value="blocks" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Block Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {mockDevelopmentDetails.blocks.map((block) => (
-                  <div key={block.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <span className="font-bold text-blue-600">Block {block.id}</span>
-                      </div>
-                      <div>
-                        <div className="font-medium">{block.prototype}</div>
-                        <div className="text-sm text-gray-500">{block.units} units • {block.status}</div>
-                      </div>
+        <TabsContent value="layout" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Layout Designer</h2>
+            <div className="flex space-x-2">
+              <Dialog open={isUploadLayoutOpen} onOpenChange={setIsUploadLayoutOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload New Layout
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Upload Layout</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="layoutName">Layout Name</Label>
+                      <Input id="layoutName" placeholder="e.g., Master Plan" />
                     </div>
-                    <div className="flex space-x-4 text-sm">
-                      <div className="text-center">
-                        <div className="font-medium text-green-600">{block.sold}</div>
-                        <div className="text-gray-500">Sold</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium text-yellow-600">{block.reserved}</div>
-                        <div className="text-gray-500">Reserved</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium text-blue-600">{block.available}</div>
-                        <div className="text-gray-500">Available</div>
-                      </div>
+                    <div>
+                      <Label htmlFor="layoutType">Layout Type</Label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="site-plan">Site Plan</SelectItem>
+                          <SelectItem value="block-plan">Block Plan</SelectItem>
+                          <SelectItem value="floor-plan">Floor Plan</SelectItem>
+                          <SelectItem value="unit-plan">Unit Plan</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="layoutFile">Choose File</Label>
+                      <Input type="file" id="layoutFile" accept=".pdf,.png,.jpg,.dwg" />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={() => handleUploadLayout({})}>Upload</Button>
+                      <Button variant="outline" onClick={() => setIsUploadLayoutOpen(false)}>Cancel</Button>
                     </div>
                   </div>
-                ))}
+                </DialogContent>
+              </Dialog>
+              <Button onClick={handleOpenDesigner}>
+                <Map className="h-4 w-4 mr-2" />
+                Open Designer
+              </Button>
+            </div>
+          </div>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center py-8">
+                <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Layout Preview</h3>
+                <p className="text-gray-500 mb-4">Upload a layout file or use the designer to create one</p>
+                <div className="flex justify-center space-x-2">
+                  <Button variant="outline" onClick={() => handleViewLayout()}>
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Current
+                  </Button>
+                  <Button variant="outline" onClick={() => handleDownloadLayout()}>
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="blocks" className="space-y-4">
+          <BlocksUnitsManager 
+            project={project} 
+            onAssignUnit={() => {}} 
+          />
         </TabsContent>
 
         <TabsContent value="sales" className="space-y-4">
@@ -371,94 +548,191 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="payments" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Upcoming Payments</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {mockDevelopmentDetails.upcomingPayments.map((payment) => (
-                  <div key={payment.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <div className="font-medium">{payment.client}</div>
-                      <div className="text-sm text-gray-500">{payment.type}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium text-orange-600">{payment.amount}</div>
-                      <div className="text-sm text-gray-500">Due: {payment.dueDate}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="documents" className="space-y-4">
+          <DocumentsView project={project} />
         </TabsContent>
 
-        <TabsContent value="team" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Development Team Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {mockDevelopmentDetails.team.map((member, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <div className="font-medium">{member.name}</div>
-                      <div className="text-sm text-gray-500">{member.role}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium text-blue-600">{member.sales} sales</div>
-                      <div className="text-sm text-gray-500">This month</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        <TabsContent value="settings" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Project Settings</h2>
+            <div className="flex space-x-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="text-red-600 hover:text-red-700">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Project
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data including allocations, blocks, and units.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      className="bg-red-600 hover:bg-red-700"
+                      onClick={() => {
+                        console.log('Delete project:', project.id);
+                        toast.success('Project deleted successfully');
+                      }}
+                    >
+                      Delete Project
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              <Button onClick={() => {
+                console.log('Save project settings');
+                toast.success('Project settings saved successfully');
+              }}>
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </Button>
+            </div>
+          </div>
 
-        <TabsContent value="timeline" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Development Timeline</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mt-1"></div>
-                  <div>
-                    <div className="font-medium">Development Started</div>
-                    <div className="text-sm text-gray-500">{mockDevelopmentDetails.startDate}</div>
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Basic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="projectName">Project Name</Label>
+                  <Input id="projectName" defaultValue={project.name} />
                 </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full mt-1"></div>
-                  <div>
-                    <div className="font-medium">First Units Sold</div>
-                    <div className="text-sm text-gray-500">2024-02-01</div>
-                  </div>
+                <div>
+                  <Label htmlFor="location">Location</Label>
+                  <Input id="location" defaultValue={project.location} />
                 </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full mt-1"></div>
-                  <div>
-                    <div className="font-medium">50% Sales Milestone</div>
-                    <div className="text-sm text-gray-500">Expected: 2024-08-15</div>
-                  </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea id="description" defaultValue={mockDevelopmentDetails.description} />
                 </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-3 h-3 bg-gray-300 rounded-full mt-1"></div>
-                  <div>
-                    <div className="font-medium">Development Completion</div>
-                    <div className="text-sm text-gray-500">{mockDevelopmentDetails.expectedCompletion}</div>
-                  </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Project Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="status">Status</Label>
+                  <Select defaultValue={project.status}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="paused">Paused</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                <div>
+                  <Label htmlFor="type">Type</Label>
+                  <Select defaultValue={project.type.toLowerCase()}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="residential">Residential</SelectItem>
+                      <SelectItem value="commercial">Commercial</SelectItem>
+                      <SelectItem value="mixed">Mixed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="expectedCompletion">Expected Completion</Label>
+                  <Input id="expectedCompletion" type="date" defaultValue={mockDevelopmentDetails.expectedCompletion} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
+
+      {/* Block Detail Modal */}
+      <Dialog open={isBlockDetailOpen} onOpenChange={setIsBlockDetailOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Block {selectedBlock?.id} Details</DialogTitle>
+          </DialogHeader>
+          {selectedBlock && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="blockName">Block Name</Label>
+                  <Input id="blockName" defaultValue={`Block ${selectedBlock.id}`} />
+                </div>
+                <div>
+                  <Label htmlFor="blockType">Type</Label>
+                  <Input id="blockType" defaultValue={selectedBlock.prototype} />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="blockUnits">Total Units</Label>
+                <Input id="blockUnits" type="number" defaultValue={selectedBlock.units} />
+              </div>
+              <div>
+                <Label htmlFor="blockStatus">Status</Label>
+                <Select defaultValue={selectedBlock.status}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="planning">Planning</SelectItem>
+                    <SelectItem value="construction">Construction</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex justify-between pt-4">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" className="text-red-600">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Block
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Block</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete Block {selectedBlock.id}? This will also remove all units in this block.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction 
+                        className="bg-red-600 hover:bg-red-700"
+                        onClick={() => handleDeleteBlock(selectedBlock.id)}
+                      >
+                        Delete Block
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                
+                <div className="flex space-x-2">
+                  <Button variant="outline" onClick={() => setIsBlockDetailOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => handleEditBlock(selectedBlock)}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
