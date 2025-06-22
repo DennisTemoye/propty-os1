@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, MapPin, Building, Home, DollarSign, Search, Eye } from 'lucide-react';
+import { Plus, MapPin, Building, Home, DollarSign, Search, Eye, Handshake } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NewProjectForm } from './forms/NewProjectForm';
 
@@ -267,10 +268,10 @@ export function ProjectsUnits() {
       cardBg: 'from-emerald-50 to-emerald-100',
     },
     {
-      title: 'Units Allocated',
+      title: 'Units Sold',
       value: '845',
-      subtitle: 'Successfully allocated',
-      icon: DollarSign,
+      subtitle: 'Successfully sold',
+      icon: Handshake,
       color: 'text-blue-700',
       bgColor: 'bg-blue-100',
       cardBg: 'from-blue-50 to-blue-100',
