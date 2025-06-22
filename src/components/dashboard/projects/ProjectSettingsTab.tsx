@@ -26,7 +26,7 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Project Settings</h2>
+        <h2 className="text-2xl font-bold text-left">Project Settings</h2>
         <div className="flex space-x-2">
           <Button variant="outline" className="text-red-600 hover:text-red-700">
             <Trash2 className="h-4 w-4 mr-2" />
@@ -42,21 +42,21 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle className="text-left text-lg font-semibold">Basic Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="projectName">Project Name</Label>
+              <Label htmlFor="projectName" className="text-left block text-sm font-medium text-gray-700 mb-1">Project Name</Label>
               <Input id="projectName" defaultValue={project.name} />
             </div>
             
             <div>
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location" className="text-left block text-sm font-medium text-gray-700 mb-1">Location</Label>
               <Input id="location" defaultValue={project.location} />
             </div>
 
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category" className="text-left block text-sm font-medium text-gray-700 mb-1">Category</Label>
               <Select defaultValue={project.category.toLowerCase()}>
                 <SelectTrigger>
                   <SelectValue />
@@ -70,7 +70,7 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
             </div>
 
             <div>
-              <Label htmlFor="type">Type</Label>
+              <Label htmlFor="type" className="text-left block text-sm font-medium text-gray-700 mb-1">Type</Label>
               <Select defaultValue={project.type.toLowerCase()}>
                 <SelectTrigger>
                   <SelectValue />
@@ -84,7 +84,7 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
             </div>
 
             <div>
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className="text-left block text-sm font-medium text-gray-700 mb-1">Status</Label>
               <Select defaultValue={project.status}>
                 <SelectTrigger>
                   <SelectValue />
@@ -102,11 +102,11 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Additional Details</CardTitle>
+            <CardTitle className="text-left text-lg font-semibold">Additional Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description" className="text-left block text-sm font-medium text-gray-700 mb-1">Description</Label>
               <Textarea 
                 id="description" 
                 defaultValue={project.description}
@@ -115,12 +115,12 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
             </div>
 
             <div>
-              <Label htmlFor="projectManager">Project Manager</Label>
+              <Label htmlFor="projectManager" className="text-left block text-sm font-medium text-gray-700 mb-1">Project Manager</Label>
               <Input id="projectManager" defaultValue={project.projectManager} />
             </div>
 
             <div>
-              <Label htmlFor="internalNotes">Internal Notes</Label>
+              <Label htmlFor="internalNotes" className="text-left block text-sm font-medium text-gray-700 mb-1">Internal Notes</Label>
               <Textarea 
                 id="internalNotes" 
                 defaultValue={project.internalNotes}

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ const mockAllocatedUnits = [
     marketer: 'Alice Johnson',
     amount: '₦15,600,000',
     paymentStatus: 'completed',
+    allocationStatus: 'allocated',
     clientId: 1
   },
   {
@@ -45,6 +47,7 @@ const mockAllocatedUnits = [
     marketer: 'Bob Williams',
     amount: '₦18,200,000',
     paymentStatus: 'partial',
+    allocationStatus: 'allocated',
     clientId: 2
   },
   {
@@ -57,6 +60,7 @@ const mockAllocatedUnits = [
     marketer: 'Carol Davis',
     amount: '₦22,000,000',
     paymentStatus: 'installment',
+    allocationStatus: 'allocated',
     clientId: 3
   }
 ];
@@ -72,6 +76,7 @@ const mockOfferedUnits = [
     marketer: 'Alice Johnson',
     amount: '₦15,600,000',
     expiryDate: '2024-02-20',
+    offerStatus: 'offered',
     clientId: 4
   },
   {
@@ -84,6 +89,7 @@ const mockOfferedUnits = [
     marketer: 'Bob Williams',
     amount: '₦18,200,000',
     expiryDate: '2024-02-18',
+    offerStatus: 'offered',
     clientId: 5
   }
 ];
@@ -142,30 +148,34 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
     }
   };
 
+  // Filter units based on allocation/offer status
+  const fullAllocationSales = mockAllocatedUnits.filter(unit => unit.allocationStatus === 'allocated');
+  const unallocatedSales = mockOfferedUnits.filter(unit => unit.offerStatus === 'offered');
+
   const allocatedStats = {
-    totalAllocated: mockAllocatedUnits.length,
+    totalAllocated: fullAllocationSales.length,
     totalValue: '₦55,800,000',
-    fullyPaid: mockAllocatedUnits.filter(u => u.paymentStatus === 'completed').length,
-    conversionRate: ((mockAllocatedUnits.length / (mockAllocatedUnits.length + mockOfferedUnits.length)) * 100).toFixed(1)
+    fullyPaid: fullAllocationSales.filter(u => u.paymentStatus === 'completed').length,
+    conversionRate: ((fullAllocationSales.length / (fullAllocationSales.length + unallocatedSales.length)) * 100).toFixed(1)
   };
 
   const offeredStats = {
-    totalOffered: mockOfferedUnits.length,
+    totalOffered: unallocatedSales.length,
     totalValue: '₦33,800,000',
-    pending: mockOfferedUnits.filter(u => u.status === 'Pending Response').length,
-    underNegotiation: mockOfferedUnits.filter(u => u.status === 'Under Negotiation').length
+    pending: unallocatedSales.filter(u => u.status === 'Pending Response').length,
+    underNegotiation: unallocatedSales.filter(u => u.status === 'Under Negotiation').length
   };
 
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="allocated">Allocated Units</TabsTrigger>
-          <TabsTrigger value="offered">Offered Units</TabsTrigger>
+          <TabsTrigger value="allocated">Full Allocation Sales</TabsTrigger>
+          <TabsTrigger value="offered">Unallocated Sales</TabsTrigger>
         </TabsList>
 
         <TabsContent value="allocated" className="space-y-6">
-          {/* Allocated Stats Cards */}
+          {/* Full Allocation Sales Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
               <CardContent className="p-4">
@@ -216,10 +226,10 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
             </Card>
           </div>
 
-          {/* Allocated Units Table */}
+          {/* Full Allocation Sales Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Allocated Units Details</CardTitle>
+              <CardTitle>Full Allocation Sales Details</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -235,7 +245,7 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockAllocatedUnits.map((unit) => (
+                  {fullAllocationSales.map((unit) => (
                     <TableRow key={unit.id}>
                       <TableCell className="font-medium">{unit.clientName}</TableCell>
                       <TableCell>
@@ -305,7 +315,7 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
         </TabsContent>
 
         <TabsContent value="offered" className="space-y-6">
-          {/* Offered Stats Cards */}
+          {/* Unallocated Sales Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
               <CardContent className="p-4">
@@ -356,10 +366,10 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
             </Card>
           </div>
 
-          {/* Offered Units Table */}
+          {/* Unallocated Sales Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Offered Units Details</CardTitle>
+              <CardTitle>Unallocated Sales Details</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -376,7 +386,7 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockOfferedUnits.map((unit) => (
+                  {unallocatedSales.map((unit) => (
                     <TableRow key={unit.id}>
                       <TableCell className="font-medium">{unit.clientName}</TableCell>
                       <TableCell>

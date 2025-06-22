@@ -39,15 +39,15 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
+            <CardTitle className="flex items-center text-left">
               <FileText className="h-5 w-5 mr-2" />
               Project Information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Description</h4>
-              <p className="text-gray-900">{project.description}</p>
+            <div className="text-left">
+              <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Project Description</h4>
+              <p className="text-gray-900 text-left">{project.description}</p>
             </div>
             
             <div className="flex items-center space-x-2">
@@ -56,13 +56,13 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
               <span className="font-medium">{project.projectManager}</span>
             </div>
 
-            <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Internal Notes</h4>
-              <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-md">{project.internalNotes}</p>
+            <div className="text-left">
+              <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Internal Notes</h4>
+              <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-md text-left">{project.internalNotes}</p>
             </div>
 
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2 flex items-center">
+              <h4 className="text-sm font-medium text-gray-500 mb-2 flex items-center text-left">
                 <Tag className="h-4 w-4 mr-1" />
                 Tags
               </h4>
@@ -77,7 +77,7 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
 
         <Card>
           <CardHeader>
-            <CardTitle>Allocation Progress</CardTitle>
+            <CardTitle className="text-left">Allocation Progress</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -102,7 +102,7 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
       {/* Recent Activity Log */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
+          <CardTitle className="flex items-center text-left">
             <Activity className="h-5 w-5 mr-2" />
             Recent Activity
           </CardTitle>
