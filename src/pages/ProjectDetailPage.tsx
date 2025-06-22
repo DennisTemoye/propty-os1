@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,6 @@ import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksT
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSettingsTab } from '@/components/dashboard/projects/ProjectSettingsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
-import { ProjectForm } from '@/components/dashboard/projects/ProjectForm';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
@@ -243,7 +241,6 @@ export default function ProjectDetailPage() {
   const navigate = useNavigate();
   
   // Modal states
-  const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
   const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
   const [isReallocateOpen, setIsReallocateOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
@@ -277,7 +274,7 @@ export default function ProjectDetailPage() {
   };
 
   const handleEditProject = () => {
-    setIsEditProjectOpen(true);
+    navigate(`/company/projects/${projectId}/edit`);
   };
 
   const handleReallocate = (unitId: string, clientName: string) => {
@@ -532,19 +529,6 @@ export default function ProjectDetailPage() {
 
       {/* Modals */}
       
-      {/* Edit Project Modal */}
-      <Dialog open={isEditProjectOpen} onOpenChange={setIsEditProjectOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Project</DialogTitle>
-          </DialogHeader>
-          <ProjectForm 
-            onClose={() => setIsEditProjectOpen(false)}
-            initialData={project}
-          />
-        </DialogContent>
-      </Dialog>
-
       {/* Allocate Unit Modal - Using the same form from Sales & Allocations */}
       <AllocateUnitModal
         isOpen={isAllocateUnitOpen}
