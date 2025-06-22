@@ -397,11 +397,11 @@ export function ProjectsUnits() {
               <CardContent className="p-6">
                 <div className="space-y-4">
                   {/* Project Info */}
-                  <div className="text-left">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{project.name}</h3>
-                    <div className="flex items-center text-gray-600 mb-2">
+                  <div className="text-left w-full">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 text-left">{project.name}</h3>
+                    <div className="flex items-center text-gray-600 mb-2 justify-start">
                       <MapPin className="h-4 w-4 mr-2" />
-                      <span>{project.city}, {project.state}</span>
+                      <span className="text-left">{project.city}, {project.state}</span>
                     </div>
                   </div>
 
