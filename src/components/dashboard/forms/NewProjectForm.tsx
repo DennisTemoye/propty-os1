@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -157,7 +158,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="name">Project Name *</Label>
+              <Label htmlFor="name" className="text-left block text-sm font-medium mb-2">Project Name *</Label>
               <Input
                 id="name"
                 value={formData.name}
@@ -168,7 +169,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
             </div>
             
             <div>
-              <Label htmlFor="developmentStage">Development Stage *</Label>
+              <Label htmlFor="developmentStage" className="text-left block text-sm font-medium mb-2">Development Stage *</Label>
               <Select value={formData.developmentStage} onValueChange={(value) => handleInputChange('developmentStage', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select development stage" />
@@ -183,7 +184,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
           </div>
 
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-left block text-sm font-medium mb-2">Description</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -203,7 +204,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="city">City *</Label>
+              <Label htmlFor="city" className="text-left block text-sm font-medium mb-2">City *</Label>
               <Input
                 id="city"
                 value={formData.city}
@@ -214,7 +215,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
             </div>
             
             <div>
-              <Label htmlFor="state">State *</Label>
+              <Label htmlFor="state" className="text-left block text-sm font-medium mb-2">State *</Label>
               <Input
                 id="state"
                 value={formData.state}
@@ -226,7 +227,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
           </div>
 
           <div>
-            <Label htmlFor="location">Full Address</Label>
+            <Label htmlFor="location" className="text-left block text-sm font-medium mb-2">Full Address</Label>
             <Input
               id="location"
               value={formData.location}
@@ -245,7 +246,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="category">Category *</Label>
+              <Label htmlFor="category" className="text-left block text-sm font-medium mb-2">Category *</Label>
               <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
@@ -259,7 +260,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
             </div>
             
             <div>
-              <Label htmlFor="type">Project Type</Label>
+              <Label htmlFor="type" className="text-left block text-sm font-medium mb-2">Project Type</Label>
               <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select project type" />
@@ -275,7 +276,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="totalBlocks">Total Blocks</Label>
+              <Label htmlFor="totalBlocks" className="text-left block text-sm font-medium mb-2">Total Blocks</Label>
               <Input
                 id="totalBlocks"
                 type="number"
@@ -286,7 +287,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
             </div>
             
             <div>
-              <Label htmlFor="totalUnits">Total Units</Label>
+              <Label htmlFor="totalUnits" className="text-left block text-sm font-medium mb-2">Total Units</Label>
               <Input
                 id="totalUnits"
                 type="number"
@@ -297,7 +298,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
             </div>
             
             <div>
-              <Label htmlFor="budget">Budget</Label>
+              <Label htmlFor="budget" className="text-left block text-sm font-medium mb-2">Budget</Label>
               <Input
                 id="budget"
                 value={formData.budget}
@@ -317,7 +318,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate" className="text-left block text-sm font-medium mb-2">Start Date</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -327,7 +328,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
             </div>
             
             <div>
-              <Label htmlFor="expectedCompletion">Expected Completion</Label>
+              <Label htmlFor="expectedCompletion" className="text-left block text-sm font-medium mb-2">Expected Completion</Label>
               <Input
                 id="expectedCompletion"
                 type="date"
@@ -339,7 +340,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="projectManager">Project Manager</Label>
+              <Label htmlFor="projectManager" className="text-left block text-sm font-medium mb-2">Project Manager</Label>
               <Input
                 id="projectManager"
                 value={formData.projectManager}
@@ -349,7 +350,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
             </div>
             
             <div>
-              <Label htmlFor="tags">Tags (comma separated)</Label>
+              <Label htmlFor="tags" className="text-left block text-sm font-medium mb-2">Tags (comma separated)</Label>
               <Input
                 id="tags"
                 value={formData.tags}

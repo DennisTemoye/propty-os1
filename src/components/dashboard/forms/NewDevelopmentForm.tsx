@@ -69,7 +69,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
             rules={{ required: 'Development name is required' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Development Name</FormLabel>
+                <FormLabel className="text-left block text-sm font-medium">Development Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter development name" {...field} />
                 </FormControl>
@@ -84,7 +84,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
             rules={{ required: 'Location is required' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Location</FormLabel>
+                <FormLabel className="text-left block text-sm font-medium">Location</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter development location" {...field} />
                 </FormControl>
@@ -99,7 +99,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel className="text-left block text-sm font-medium">Description</FormLabel>
               <FormControl>
                 <Textarea placeholder="Enter development description" {...field} />
               </FormControl>
@@ -115,7 +115,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
             rules={{ required: 'Category is required' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel className="text-left block text-sm font-medium">Category</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -139,7 +139,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
             rules={{ required: 'Development type is required' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Development Type</FormLabel>
+                <FormLabel className="text-left block text-sm font-medium">Development Type</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -162,7 +162,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
             rules={{ required: 'Total units is required', min: { value: 1, message: 'Must be at least 1' } }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Total Units</FormLabel>
+                <FormLabel className="text-left block text-sm font-medium">Total Units</FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="Enter total units" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                 </FormControl>
@@ -178,7 +178,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
             name="developmentSize"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Development Size</FormLabel>
+                <FormLabel className="text-left block text-sm font-medium">Development Size</FormLabel>
                 <FormControl>
                   <Input placeholder="e.g., 50 hectares" {...field} />
                 </FormControl>
@@ -192,7 +192,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
             name="developmentStage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Development Stage</FormLabel>
+                <FormLabel className="text-left block text-sm font-medium">Development Stage</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>

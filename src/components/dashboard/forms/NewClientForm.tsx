@@ -57,8 +57,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <User className="h-4 w-4" />
+                <label className="text-sm font-medium text-gray-700 text-left block">
                   First Name *
                 </label>
                 <Input 
@@ -69,8 +68,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <User className="h-4 w-4" />
+                <label className="text-sm font-medium text-gray-700 text-left block">
                   Last Name *
                 </label>
                 <Input 
@@ -83,8 +81,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
+                <label className="text-sm font-medium text-gray-700 text-left block">
                   Email Address *
                 </label>
                 <Input 
@@ -96,8 +93,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
+                <label className="text-sm font-medium text-gray-700 text-left block">
                   Phone Number *
                 </label>
                 <Input 
@@ -109,8 +105,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
+              <label className="text-sm font-medium text-gray-700 text-left block">
                 Address
               </label>
               <Input 
@@ -133,8 +128,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Users className="h-4 w-4" />
+                <label className="text-sm font-medium text-gray-700 text-left block">
                   Client Type
                 </label>
                 <Select onValueChange={(value) => form.setValue('clientType', value)}>
@@ -150,8 +144,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
+                <label className="text-sm font-medium text-gray-700 text-left block">
                   Lead Source
                 </label>
                 <Select onValueChange={(value) => form.setValue('source', value)}>
@@ -181,7 +174,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Notes</label>
+              <label className="text-sm font-medium text-gray-700 text-left block">Notes</label>
               <Textarea 
                 {...form.register('notes')}
                 placeholder="Additional notes about the client..."

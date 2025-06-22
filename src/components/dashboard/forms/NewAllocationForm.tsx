@@ -38,7 +38,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Client *</label>
+          <label className="text-sm font-medium text-left block mb-2">Client *</label>
           <Select onValueChange={(value) => form.setValue('clientId', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select client" />
@@ -52,7 +52,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium">Project *</label>
+          <label className="text-sm font-medium text-left block mb-2">Project *</label>
           <Select onValueChange={(value) => form.setValue('projectId', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select project" />
@@ -68,7 +68,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Block</label>
+          <label className="text-sm font-medium text-left block mb-2">Block</label>
           <Select onValueChange={(value) => form.setValue('blockId', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select block" />
@@ -82,7 +82,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium">Unit</label>
+          <label className="text-sm font-medium text-left block mb-2">Unit</label>
           <Select onValueChange={(value) => form.setValue('unitId', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select unit" />
@@ -98,7 +98,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Allocation Type</label>
+          <label className="text-sm font-medium text-left block mb-2">Allocation Type</label>
           <Select onValueChange={(value) => form.setValue('allocationType', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select type" />
@@ -112,7 +112,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium">Initial Status</label>
+          <label className="text-sm font-medium text-left block mb-2">Initial Status</label>
           <Select onValueChange={(value) => form.setValue('status', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select status" />
@@ -128,7 +128,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Allocation Date</label>
+          <label className="text-sm font-medium text-left block mb-2">Allocation Date</label>
           <Input 
             type="date"
             {...form.register('allocationDate', { required: true })}
@@ -136,7 +136,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium">Price *</label>
+          <label className="text-sm font-medium text-left block mb-2">Price *</label>
           <Input 
             {...form.register('price', { required: true })}
             placeholder="e.g., ₦15,000,000" 
@@ -145,7 +145,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-medium">Payment Plan</label>
+        <label className="text-sm font-medium text-left block mb-2">Payment Plan</label>
         <Select onValueChange={(value) => form.setValue('paymentPlan', value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select payment plan" />
@@ -160,7 +160,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-medium">Notes</label>
+        <label className="text-sm font-medium text-left block mb-2">Notes</label>
         <Textarea 
           {...form.register('notes')}
           placeholder="Additional notes about the allocation..."
