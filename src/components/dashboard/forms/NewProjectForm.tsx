@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,9 +11,10 @@ import { toast } from 'sonner';
 interface NewProjectFormProps {
   onClose: () => void;
   initialData?: any;
+  onChange?: () => void;
 }
 
-export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
+export function NewProjectForm({ onClose, initialData, onChange }: NewProjectFormProps) {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     description: initialData?.description || '',
@@ -41,6 +41,7 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
       ...prev,
       [field]: value
     }));
+    onChange?.();
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -362,8 +363,8 @@ export function NewProjectForm({ onClose, initialData }: NewProjectFormProps) {
         </CardContent>
       </Card>
 
-      {/* Form Actions */}
-      <div className="flex justify-end space-x-4 pt-6 border-t">
+      {/* Form Actions - Updated for page layout */}
+      <div className="sticky bottom-0 bg-white border-t p-6 flex justify-end space-x-4 shadow-lg">
         <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>

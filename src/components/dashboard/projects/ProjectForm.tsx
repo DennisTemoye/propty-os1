@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -15,9 +14,10 @@ import { toast } from 'sonner';
 interface ProjectFormProps {
   project?: any;
   onClose: () => void;
+  onChange?: () => void;
 }
 
-export function ProjectForm({ project, onClose }: ProjectFormProps) {
+export function ProjectForm({ project, onClose, onChange }: ProjectFormProps) {
   const [activeTab, setActiveTab] = useState('basic');
   const [blocks, setBlocks] = useState(project?.blocks || []);
   
@@ -39,6 +39,14 @@ export function ProjectForm({ project, onClose }: ProjectFormProps) {
       contactEmail: project?.contactEmail || ''
     }
   });
+
+  // Watch for form changes
+  React.useEffect(() => {
+    const subscription = form.watch(() => {
+      onChange?.();
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch, onChange]);
 
   const onSubmit = (data: any) => {
     console.log('Project data:', { ...data, blocks });
@@ -476,7 +484,7 @@ export function ProjectForm({ project, onClose }: ProjectFormProps) {
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end space-x-2 pt-4">
+        <div className="sticky bottom-0 bg-white border-t p-6 flex justify-end space-x-4 shadow-lg">
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
