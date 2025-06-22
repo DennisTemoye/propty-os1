@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,7 @@ import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksT
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSettingsTab } from '@/components/dashboard/projects/ProjectSettingsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
-import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
+import { ProjectForm } from '@/components/dashboard/projects/ProjectForm';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
@@ -537,7 +538,7 @@ export default function ProjectDetailPage() {
           <DialogHeader>
             <DialogTitle>Edit Project</DialogTitle>
           </DialogHeader>
-          <NewProjectForm 
+          <ProjectForm 
             onClose={() => setIsEditProjectOpen(false)}
             initialData={project}
           />
