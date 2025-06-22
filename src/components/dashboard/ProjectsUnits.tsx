@@ -381,17 +381,11 @@ export function ProjectsUnits() {
             >
               {/* Project Image */}
               <div className="relative w-full h-48 bg-gray-200 overflow-hidden">
-                {project.image ? (
-                  <img 
-                    src={project.image} 
-                    alt={project.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
-                    <Building className="h-16 w-16 text-gray-400" />
-                  </div>
-                )}
+                <img 
+                  src={project.image || 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'} 
+                  alt={project.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
                 {/* Development Stage Badge */}
                 <div className="absolute top-3 left-3">
                   <Badge className={getDevelopmentStageColor(project.developmentStage)}>
@@ -403,13 +397,12 @@ export function ProjectsUnits() {
               <CardContent className="p-6">
                 <div className="space-y-4">
                   {/* Project Info */}
-                  <div>
+                  <div className="text-left">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{project.name}</h3>
                     <div className="flex items-center text-gray-600 mb-2">
                       <MapPin className="h-4 w-4 mr-2" />
                       <span>{project.city}, {project.state}</span>
                     </div>
-                    <div className="text-sm text-gray-500">{project.type}</div>
                   </div>
 
                   {/* Stats Grid */}
