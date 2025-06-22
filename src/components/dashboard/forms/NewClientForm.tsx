@@ -49,7 +49,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
         {/* Personal Information */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-lg text-left">
               <User className="h-5 w-5 text-purple-600" />
               Personal Information
             </CardTitle>
@@ -120,7 +120,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
         {/* Client Details */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-lg text-left">
               <Building className="h-5 w-5 text-blue-600" />
               Client Details
             </CardTitle>
@@ -167,7 +167,7 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
         {/* Additional Notes */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-lg text-left">
               <FileText className="h-5 w-5 text-green-600" />
               Additional Information
             </CardTitle>

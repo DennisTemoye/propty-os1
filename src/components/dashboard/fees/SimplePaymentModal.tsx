@@ -40,7 +40,7 @@ export function SimplePaymentModal({ fee, onClose }: SimplePaymentModalProps) {
       {/* Fee Summary */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Payment for {fee.clientName}</CardTitle>
+          <CardTitle className="text-lg text-left">Payment for {fee.clientName}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4 text-sm">

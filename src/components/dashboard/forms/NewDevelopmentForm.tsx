@@ -229,7 +229,7 @@ export function NewDevelopmentForm({ onClose }: NewDevelopmentFormProps) {
           <Input type="file" accept="image/*,.pdf" className="hidden" id="layout-upload" />
           <label htmlFor="layout-upload" className="cursor-pointer">
             <div className="text-gray-500">
-              <p className="text-sm">Upload Site Layout (Optional)</p>
+              <p className="text-sm font-medium">Upload Site Layout (Optional)</p>
               <p className="text-xs mt-1">Drag and drop or click to select image/PDF</p>
             </div>
           </label>
