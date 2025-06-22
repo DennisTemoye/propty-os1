@@ -8,7 +8,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, Mail, MessageSquare, Calendar, FileText, User, Building, DollarSign, Clock, Tag } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Phone, Mail, MessageSquare, Calendar, FileText, User, Building, 
+  DollarSign, Clock, Tag, Edit, Trash2, Settings 
+} from 'lucide-react';
 import { Lead, PipelineStage, LeadNote } from './types';
 import { toast } from 'sonner';
 
@@ -17,12 +21,23 @@ interface LeadDetailsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onUpdateLead: (lead: Lead) => void;
+  onDeleteLead?: (leadId: string) => void;
+  onEditLead?: (lead: Lead) => void;
   stages: PipelineStage[];
 }
 
-export function LeadDetailsDrawer({ lead, isOpen, onClose, onUpdateLead, stages }: LeadDetailsDrawerProps) {
+export function LeadDetailsDrawer({ 
+  lead, 
+  isOpen, 
+  onClose, 
+  onUpdateLead, 
+  onDeleteLead,
+  onEditLead,
+  stages 
+}: LeadDetailsDrawerProps) {
   const [newNote, setNewNote] = useState('');
   const [isAddingNote, setIsAddingNote] = useState(false);
+  const [selectedStage, setSelectedStage] = useState(lead?.stage || '');
 
   if (!lead) return null;
 
@@ -50,6 +65,32 @@ export function LeadDetailsDrawer({ lead, isOpen, onClose, onUpdateLead, stages 
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(amount);
+  };
+
+  const handleStageChange = (newStageId: string) => {
+    const updatedLead = {
+      ...lead,
+      stage: newStageId,
+      lastActivity: new Date().toISOString()
+    };
+    onUpdateLead(updatedLead);
+    setSelectedStage(newStageId);
+    toast.success('Lead status updated successfully');
+  };
+
+  const handleDeleteLead = () => {
+    if (onDeleteLead && window.confirm('Are you sure you want to delete this lead? This action cannot be undone.')) {
+      onDeleteLead(lead.id);
+      onClose();
+      toast.success('Lead deleted successfully');
+    }
+  };
+
+  const handleEditLead = () => {
+    if (onEditLead) {
+      onEditLead(lead);
+      onClose();
+    }
   };
 
   const handleAddNote = () => {
@@ -89,22 +130,46 @@ export function LeadDetailsDrawer({ lead, isOpen, onClose, onUpdateLead, stages 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-indigo-100 text-indigo-700 font-medium">
-                {getInitials(lead.clientName)}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{lead.clientName}</span>
-                <Badge className={`border font-medium ${getPriorityColor(lead.priority)}`} variant="outline">
-                  {lead.priority} priority
-                </Badge>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarFallback className="bg-indigo-100 text-indigo-700 font-medium">
+                  {getInitials(lead.clientName)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{lead.clientName}</span>
+                  <Badge className={`border font-medium ${getPriorityColor(lead.priority)}`} variant="outline">
+                    {lead.priority} priority
+                  </Badge>
+                </div>
+                <div className="text-sm text-gray-600">{lead.email}</div>
               </div>
-              <div className="text-sm text-gray-600">{lead.email}</div>
+            </DialogTitle>
+            
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleEditLead}
+                className="flex items-center gap-2"
+              >
+                <Edit className="h-4 w-4" />
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDeleteLead}
+                className="flex items-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </Button>
             </div>
-          </DialogTitle>
+          </div>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto">
@@ -116,6 +181,49 @@ export function LeadDetailsDrawer({ lead, isOpen, onClose, onUpdateLead, stages 
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6 mt-6">
+              {/* Status Change Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Lead Status
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <label className="text-sm font-medium text-gray-700 mb-2 block">
+                        Current Stage
+                      </label>
+                      <Select 
+                        value={selectedStage || lead.stage} 
+                        onValueChange={handleStageChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select stage" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {stages.map((stage) => (
+                            <SelectItem key={stage.id} value={stage.id}>
+                              <div className="flex items-center gap-2">
+                                <div 
+                                  className="w-3 h-3 rounded-full" 
+                                  style={{ backgroundColor: stage.color }}
+                                />
+                                {stage.name}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Last updated: {new Date(lead.lastActivity).toLocaleString()}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
@@ -160,23 +268,6 @@ export function LeadDetailsDrawer({ lead, isOpen, onClose, onUpdateLead, stages 
                   </CardContent>
                 </Card>
               </div>
-
-              {/* Current Stage */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Current Stage</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-3">
-                    <Badge className={`border font-medium ${getCurrentStage()?.color}`} variant="outline">
-                      {getCurrentStage()?.name}
-                    </Badge>
-                    <div className="text-sm text-gray-600">
-                      Last updated: {new Date(lead.lastActivity).toLocaleString()}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
 
               {/* Tags */}
               {lead.tags.length > 0 && (

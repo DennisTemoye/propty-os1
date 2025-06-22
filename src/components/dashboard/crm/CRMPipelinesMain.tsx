@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { LeadDetailsDrawer } from './LeadDetailsDrawer';
 import { PipelineSettings } from './PipelineSettings';
 import { Lead, PipelineStage } from './types';
 import { mockLeads, mockStages } from './mockData';
+import { toast } from 'sonner';
 
 export function CRMPipelinesMain() {
   const { isMobile, isTablet } = useResponsive();
@@ -58,6 +60,19 @@ export function CRMPipelinesMain() {
     
     setLeads(prev => [...prev, newLead]);
     setIsAddLeadOpen(false);
+    toast.success('Lead added successfully');
+  };
+
+  const handleDeleteLead = (leadId: string) => {
+    setLeads(prev => prev.filter(lead => lead.id !== leadId));
+    toast.success('Lead deleted successfully');
+  };
+
+  const handleEditLead = (lead: Lead) => {
+    // For now, we'll just open the add lead modal with the data pre-filled
+    // In a real implementation, you might want a separate edit modal
+    setIsAddLeadOpen(true);
+    toast.info('Edit functionality would open here');
   };
 
   const getFilteredLeads = () => {
@@ -89,7 +104,7 @@ export function CRMPipelinesMain() {
   const calculateKPIs = () => {
     const filteredLeads = getFilteredLeads();
     const totalValue = filteredLeads.reduce((sum, lead) => sum + lead.dealValue, 0);
-    const closedWonLeads = filteredLeads.filter(lead => lead.stage === 'closed-won');
+    const closedWonLeads = filteredLeads.filter(lead => lead.stage === 'won_deal');
     const closedValue = closedWonLeads.reduce((sum, lead) => sum + lead.dealValue, 0);
     const conversionRate = filteredLeads.length > 0 ? (closedWonLeads.length / filteredLeads.length * 100) : 0;
 
@@ -98,7 +113,7 @@ export function CRMPipelinesMain() {
       totalValue,
       closedValue,
       conversionRate,
-      activeLeads: filteredLeads.filter(lead => !lead.stage.startsWith('closed')).length
+      activeLeads: filteredLeads.filter(lead => !['won_deal', 'lost_deal'].includes(lead.stage)).length
     };
   };
 
@@ -322,6 +337,8 @@ export function CRMPipelinesMain() {
               lead.id === updatedLead.id ? updatedLead : lead
             ));
           }}
+          onDeleteLead={handleDeleteLead}
+          onEditLead={handleEditLead}
           stages={stages}
         />
 
