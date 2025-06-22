@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -336,16 +335,64 @@ export default function ProjectDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6">
-        {/* Breadcrumb Navigation */}
-        <div className="mb-6">
+        {/* Top Navigation - Back button left, Action buttons right */}
+        <div className="flex items-center justify-between mb-6">
           <Button 
             variant="outline" 
             onClick={() => navigate('/company/projects')}
-            className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Projects
           </Button>
+
+          {/* Action Buttons */}
+          <div className="flex space-x-3">
+            <Button 
+              onClick={handleAllocateUnit}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Allocate Unit
+            </Button>
+            
+            <Button 
+              onClick={handleEditProject}
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-50"
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Project
+            </Button>
+            
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="outline"
+                  className="border-red-600 text-red-600 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data including allocations, blocks, and units.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction 
+                    className="bg-red-600 hover:bg-red-700"
+                    onClick={handleDeleteProject}
+                  >
+                    Delete Project
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
 
         {/* Project Banner Section */}
@@ -365,85 +412,34 @@ export default function ProjectDetailPage() {
             {/* Overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-40"></div>
             
-            {/* Banner Content */}
+            {/* Banner Content - No action buttons here anymore */}
             <div className="absolute inset-0 flex items-end">
               <div className="p-6 text-white w-full">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <h1 className="text-4xl font-bold">{project.name}</h1>
-                      <Badge className={getDevelopmentStageColor(project.developmentStage)}>
-                        {project.developmentStage}
-                      </Badge>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <h1 className="text-4xl font-bold">{project.name}</h1>
+                    <Badge className={getDevelopmentStageColor(project.developmentStage)}>
+                      {project.developmentStage}
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-center space-x-6 text-white/90 mb-3">
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-1" />
+                      {project.city}, {project.state}
                     </div>
-                    
-                    <div className="flex items-center space-x-6 text-white/90 mb-3">
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {project.city}, {project.state}
-                      </div>
-                      <div className="flex items-center">
-                        <Building className="h-4 w-4 mr-1" />
-                        {project.totalBlocks} Blocks
-                      </div>
-                      <div className="flex items-center">
-                        <User className="h-4 w-4 mr-1" />
-                        {project.totalUnits} Units
-                      </div>
+                    <div className="flex items-center">
+                      <Building className="h-4 w-4 mr-1" />
+                      {project.totalBlocks} Blocks
                     </div>
-
-                    <div className="text-white/80">
-                      {project.description}
+                    <div className="flex items-center">
+                      <User className="h-4 w-4 mr-1" />
+                      {project.totalUnits} Units
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex space-x-3">
-                    <Button 
-                      onClick={handleAllocateUnit}
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Allocate Unit
-                    </Button>
-                    
-                    <Button 
-                      onClick={handleEditProject}
-                      variant="outline"
-                      className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit Project
-                    </Button>
-                    
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button 
-                          variant="outline"
-                          className="bg-red-600/20 border-red-600/30 text-white hover:bg-red-600/30"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data including allocations, blocks, and units.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction 
-                            className="bg-red-600 hover:bg-red-700"
-                            onClick={handleDeleteProject}
-                          >
-                            Delete Project
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                  <div className="text-white/80">
+                    {project.description}
                   </div>
                 </div>
               </div>
