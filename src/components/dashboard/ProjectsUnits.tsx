@@ -5,9 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, MapPin, Building, Home, DollarSign, Search, Eye } from 'lucide-react';
+import { Plus, MapPin, Building, Home, DollarSign, Search, Eye, Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { NewProjectForm } from './forms/NewProjectForm';
 
 const mockProjects = [
   {
@@ -245,6 +244,11 @@ export function ProjectsUnits() {
     navigate(`/company/projects/${projectId}`);
   };
 
+  const handleEditProject = (e: React.MouseEvent, projectId: number) => {
+    e.stopPropagation();
+    navigate(`/company/projects/${projectId}/edit`);
+  };
+
   const developmentStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover', 'Completed'];
 
   const kpiData = [
@@ -299,7 +303,7 @@ export function ProjectsUnits() {
         </div>
         <Button 
           className="bg-purple-600 hover:bg-purple-700"
-          onClick={() => setIsNewProjectOpen(true)}
+          onClick={() => navigate('/company/projects/new')}
         >
           <Plus className="h-4 w-4 mr-2" />
           New Project
@@ -400,6 +404,17 @@ export function ProjectsUnits() {
                   <Badge className={getDevelopmentStageColor(project.developmentStage)}>
                     {project.developmentStage}
                   </Badge>
+                </div>
+                {/* Edit Button */}
+                <div className="absolute top-3 right-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => handleEditProject(e, project.id)}
+                    className="h-8 w-8 p-0 bg-white/80 hover:bg-white"
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
                 </div>
               </div>
 
@@ -509,15 +524,26 @@ export function ProjectsUnits() {
                     </TableCell>
                     <TableCell className="font-medium">{project.revenue}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => handleViewDetails(e, project.id)}
-                        className="h-8 px-3"
-                      >
-                        <Eye className="h-3 w-3 mr-1" />
-                        View Details
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => handleViewDetails(e, project.id)}
+                          className="h-8 px-3"
+                        >
+                          <Eye className="h-3 w-3 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => handleEditProject(e, project.id)}
+                          className="h-8 px-3"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Edit
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
