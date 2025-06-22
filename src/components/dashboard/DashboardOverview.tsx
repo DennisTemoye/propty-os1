@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ import {
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
 import { NewDevelopmentForm } from '@/components/dashboard/forms/NewDevelopmentForm';
+import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
 import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
 import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
 import { SendNoticeForm } from '@/components/dashboard/notices/SendNoticeForm';
@@ -151,8 +153,6 @@ export function DashboardOverview() {
       setShowPaymentModal(true);
     } else if (action === 'client') {
       navigate('/company/clients/new');
-    } else if (action === 'development' || action === 'project_site') {
-      navigate('/company/projects/new');
     } else {
       setActiveModal(action);
     }
@@ -195,6 +195,12 @@ export function DashboardOverview() {
 
   const renderModalContent = (action: string) => {
     switch (action) {
+      case 'development':
+        return <NewDevelopmentForm onClose={closeModal} />;
+      case 'project_site':
+        return <NewProjectForm onClose={closeModal} />;
+      case 'client':
+        return <NewClientForm onClose={closeModal} />;
       case 'allocation':
         return <NewAllocationForm onClose={closeModal} />;
       case 'expense':
