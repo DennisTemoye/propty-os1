@@ -5,9 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, MapPin, Building, Home, DollarSign, Search, Eye } from 'lucide-react';
+import { Plus, MapPin, Building, Home, DollarSign, Search, Eye, Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { NewProjectForm } from './forms/NewProjectForm';
 
 const mockProjects = [
   {
@@ -202,7 +201,6 @@ const mockProjects = [
 
 export function ProjectsUnits() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
-  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
   const navigate = useNavigate();
@@ -243,6 +241,15 @@ export function ProjectsUnits() {
   const handleViewDetails = (e: React.MouseEvent, projectId: number) => {
     e.stopPropagation();
     navigate(`/company/projects/${projectId}`);
+  };
+
+  const handleEditProject = (e: React.MouseEvent, projectId: number) => {
+    e.stopPropagation();
+    navigate(`/company/projects/${projectId}/edit`);
+  };
+
+  const handleNewProject = () => {
+    navigate('/company/projects/new');
   };
 
   const developmentStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover', 'Completed'];
@@ -299,7 +306,7 @@ export function ProjectsUnits() {
         </div>
         <Button 
           className="bg-purple-600 hover:bg-purple-700"
-          onClick={() => setIsNewProjectOpen(true)}
+          onClick={handleNewProject}
         >
           <Plus className="h-4 w-4 mr-2" />
           New Project
@@ -400,6 +407,17 @@ export function ProjectsUnits() {
                   <Badge className={getDevelopmentStageColor(project.developmentStage)}>
                     {project.developmentStage}
                   </Badge>
+                </div>
+                {/* Edit Button */}
+                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => handleEditProject(e, project.id)}
+                    className="bg-white/90 hover:bg-white h-8 w-8 p-0"
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
                 </div>
               </div>
 
@@ -509,15 +527,26 @@ export function ProjectsUnits() {
                     </TableCell>
                     <TableCell className="font-medium">{project.revenue}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => handleViewDetails(e, project.id)}
-                        className="h-8 px-3"
-                      >
-                        <Eye className="h-3 w-3 mr-1" />
-                        View Details
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => handleViewDetails(e, project.id)}
+                          className="h-8 px-3"
+                        >
+                          <Eye className="h-3 w-3 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => handleEditProject(e, project.id)}
+                          className="h-8 px-3"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Edit
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -525,20 +554,6 @@ export function ProjectsUnits() {
             </Table>
           </CardContent>
         </Card>
-      )}
-
-      {/* New Project Modal */}
-      {isNewProjectOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto">
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">Create New Project</h2>
-            </div>
-            <div className="p-6">
-              <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
