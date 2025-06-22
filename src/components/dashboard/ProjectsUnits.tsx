@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, MapPin, Building, Home, DollarSign, Search, Eye, Handshake, Edit } from 'lucide-react';
+import { Plus, MapPin, Building, Home, DollarSign, Search, Eye, Handshake } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const mockProjects = [
@@ -243,11 +243,6 @@ export function ProjectsUnits() {
     navigate(`/company/projects/${projectId}`);
   };
 
-  const handleEditProject = (e: React.MouseEvent, projectId: number) => {
-    e.stopPropagation();
-    navigate(`/company/projects/${projectId}/edit`);
-  };
-
   const handleNewProject = () => {
     navigate('/company/projects/new');
   };
@@ -408,17 +403,6 @@ export function ProjectsUnits() {
                     {project.developmentStage}
                   </Badge>
                 </div>
-                {/* Edit Button */}
-                <div className="absolute top-3 right-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => handleEditProject(e, project.id)}
-                    className="bg-white/80 hover:bg-white border-white/50 hover:border-white"
-                  >
-                    <Edit className="h-3 w-3" />
-                  </Button>
-                </div>
               </div>
 
               <CardContent className="p-6">
@@ -527,26 +511,15 @@ export function ProjectsUnits() {
                     </TableCell>
                     <TableCell className="font-medium">{project.revenue}</TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => handleViewDetails(e, project.id)}
-                          className="h-8 px-3"
-                        >
-                          <Eye className="h-3 w-3 mr-1" />
-                          View
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => handleEditProject(e, project.id)}
-                          className="h-8 px-3"
-                        >
-                          <Edit className="h-3 w-3 mr-1" />
-                          Edit
-                        </Button>
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => handleViewDetails(e, project.id)}
+                        className="h-8 px-3"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        View Details
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
