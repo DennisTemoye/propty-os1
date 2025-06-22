@@ -148,11 +148,11 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Basic Information</h3>
+          <h3 className="text-lg font-medium text-left">Basic Information</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
+              <Label htmlFor="firstName" className="text-left block text-sm font-medium">First Name *</Label>
               <Input 
                 id="firstName" 
                 placeholder="Enter first name" 
@@ -163,7 +163,7 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
               {errors.firstName && <p className="text-sm text-red-500">{errors.firstName}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
+              <Label htmlFor="lastName" className="text-left block text-sm font-medium">Last Name *</Label>
               <Input 
                 id="lastName" 
                 placeholder="Enter last name" 
@@ -177,7 +177,7 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address *</Label>
+              <Label htmlFor="email" className="text-left block text-sm font-medium">Email Address *</Label>
               <Input 
                 id="email" 
                 type="email" 
@@ -189,7 +189,7 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
               {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number *</Label>
+              <Label htmlFor="phone" className="text-left block text-sm font-medium">Phone Number *</Label>
               <Input 
                 id="phone" 
                 placeholder="Enter phone number" 
@@ -202,7 +202,7 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="role">Role *</Label>
+            <Label htmlFor="role" className="text-left block text-sm font-medium">Role *</Label>
             <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
               <SelectTrigger className={errors.role ? 'border-red-500' : ''}>
                 <SelectValue placeholder="Select role" />
@@ -220,9 +220,9 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
 
         {/* Project Assignment */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Project Assignment</h3>
+          <h3 className="text-lg font-medium text-left">Project Assignment</h3>
           <div className="space-y-2">
-            <Label>Assigned Projects *</Label>
+            <Label className="text-left block text-sm font-medium">Assigned Projects *</Label>
             <div className="grid grid-cols-2 gap-2">
               {availableProjects.map((project) => (
                 <div key={project} className="flex items-center space-x-2">
@@ -253,10 +253,10 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
 
         {/* Commission Structure */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Commission Structure</h3>
+          <h3 className="text-lg font-medium text-left">Commission Structure</h3>
           
           <div className="space-y-2">
-            <Label>Commission Type</Label>
+            <Label className="text-left block text-sm font-medium">Commission Type</Label>
             <Select 
               value={formData.commissionStructure} 
               onValueChange={(value) => handleInputChange('commissionStructure', value)}
@@ -274,7 +274,7 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
 
           {formData.commissionStructure === 'percentage' && (
             <div className="space-y-2">
-              <Label htmlFor="commissionRate">Commission Rate (%) *</Label>
+              <Label htmlFor="commissionRate" className="text-left block text-sm font-medium">Commission Rate (%) *</Label>
               <Input 
                 id="commissionRate" 
                 type="number" 
@@ -292,7 +292,7 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
 
           {formData.commissionStructure === 'fixed' && (
             <div className="space-y-2">
-              <Label htmlFor="fixedAmount">Fixed Amount (₦) *</Label>
+              <Label htmlFor="fixedAmount" className="text-left block text-sm font-medium">Fixed Amount (₦) *</Label>
               <Input 
                 id="fixedAmount" 
                 type="number" 
@@ -308,13 +308,13 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
 
           {formData.commissionStructure === 'tiered' && (
             <div className="space-y-2">
-              <Label>Tiered Structure</Label>
+              <Label className="text-left block text-sm font-medium">Tiered Structure</Label>
               <div className="text-sm text-gray-500 mb-2">
                 Configure tiered commission rates based on sales volume
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="tier1">First 5 sales (%) *</Label>
+                  <Label htmlFor="tier1" className="text-left block text-sm font-medium">First 5 sales (%) *</Label>
                   <Input 
                     id="tier1" 
                     type="number" 
@@ -326,7 +326,7 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="tier2">Next 10 sales (%) *</Label>
+                  <Label htmlFor="tier2" className="text-left block text-sm font-medium">Next 10 sales (%) *</Label>
                   <Input 
                     id="tier2" 
                     type="number" 
@@ -347,10 +347,10 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
 
         {/* Additional Details */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Additional Details</h3>
+          <h3 className="text-lg font-medium text-left">Additional Details</h3>
           
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes" className="text-left block text-sm font-medium">Notes</Label>
             <Textarea 
               id="notes" 
               placeholder="Add any additional notes or special instructions..." 
@@ -361,7 +361,7 @@ export function NewMarketerForm({ onClose, onSubmit }: NewMarketerFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="startDate">Start Date</Label>
+            <Label htmlFor="startDate" className="text-left block text-sm font-medium">Start Date</Label>
             <Input 
               id="startDate" 
               type="date" 
