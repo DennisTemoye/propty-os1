@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -335,7 +336,7 @@ export function ProjectsUnits() {
             Create Project
           </Button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
