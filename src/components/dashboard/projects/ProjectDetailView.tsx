@@ -36,6 +36,8 @@ interface DevelopmentDetailViewProps {
     projectSize?: string;
     developmentStage?: string;
     image?: string;
+    description?: string;
+    internalNotes?: string;
   };
 }
 
@@ -47,9 +49,9 @@ const mockDevelopmentDetails = {
   totalBudget: '₦1,800,000,000',
   avgUnitPrice: '₦15,600,000',
   recentSales: [
-    { id: 1, unit: 'Unit A-15', client: 'John Doe', amount: '₦15,600,000', date: '2024-01-10' },
-    { id: 2, unit: 'Unit B-08', client: 'Jane Smith', amount: '₦15,600,000', date: '2024-01-08' },
-    { id: 3, unit: 'Unit C-22', client: 'Mike Johnson', amount: '₦15,600,000', date: '2024-01-05' },
+    { id: 1, unit: 'Unit A-15', client: 'John Doe', amount: '₦15,600,000', date: '2024-01-10', status: 'Allocated' },
+    { id: 2, unit: 'Unit B-08', client: 'Jane Smith', amount: '₦15,600,000', date: '2024-01-08', status: 'Offered' },
+    { id: 3, unit: 'Unit C-22', client: 'Mike Johnson', amount: '₦15,600,000', date: '2024-01-05', status: 'Allocated' },
   ],
   upcomingPayments: [
     { id: 1, client: 'Sarah Wilson', amount: '₦3,900,000', dueDate: '2024-01-25', type: 'Installment' },
@@ -69,6 +71,7 @@ const mockDevelopmentDetails = {
 
 export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
   const [activeTab, setActiveTab] = useState('overview');
+  const [salesFilter, setSalesFilter] = useState('all');
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -89,6 +92,12 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
 
   const salesProgress = (project.soldUnits / project.totalUnits) * 100;
   const budgetProgress = 65; // Example budget utilization
+
+  const filteredSales = salesFilter === 'all' 
+    ? mockDevelopmentDetails.recentSales 
+    : mockDevelopmentDetails.recentSales.filter(sale => 
+        salesFilter === 'allocated' ? sale.status === 'Allocated' : sale.status === 'Offered'
+      );
 
   return (
     <div className="space-y-6">
@@ -238,7 +247,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="blocks">Blocks</TabsTrigger>
-          <TabsTrigger value="sales">Sales</TabsTrigger>
+          <TabsTrigger value="sales">Sales History</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
@@ -306,6 +315,30 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
               </CardContent>
             </Card>
           </div>
+
+          {/* Project Description - Left Aligned */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg text-left">Project Description</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 text-left leading-relaxed">
+                {project.description || mockDevelopmentDetails.description}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Internal Notes - Left Aligned */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg text-left">Internal Notes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 text-left leading-relaxed">
+                {project.internalNotes || 'Focus on completing Block A before marketing Block C units.'}
+              </p>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="blocks" className="space-y-4">
@@ -350,11 +383,36 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         <TabsContent value="sales" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Recent Sales</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Sales History</CardTitle>
+                <div className="flex space-x-2">
+                  <Button
+                    variant={salesFilter === 'all' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSalesFilter('all')}
+                  >
+                    All Sales
+                  </Button>
+                  <Button
+                    variant={salesFilter === 'allocated' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSalesFilter('allocated')}
+                  >
+                    Full Allocation Sales
+                  </Button>
+                  <Button
+                    variant={salesFilter === 'offered' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSalesFilter('offered')}
+                  >
+                    Unallocated Sales
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockDevelopmentDetails.recentSales.map((sale) => (
+                {filteredSales.map((sale) => (
                   <div key={sale.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <div className="font-medium">{sale.unit}</div>
@@ -363,6 +421,9 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
                     <div className="text-right">
                       <div className="font-medium text-green-600">{sale.amount}</div>
                       <div className="text-sm text-gray-500">{sale.date}</div>
+                      <Badge variant={sale.status === 'Allocated' ? 'default' : 'secondary'} className="mt-1">
+                        {sale.status}
+                      </Badge>
                     </div>
                   </div>
                 ))}

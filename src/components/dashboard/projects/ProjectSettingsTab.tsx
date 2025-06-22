@@ -26,7 +26,7 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Project Settings</h2>
+        <h2 className="text-2xl font-bold text-left">Project Settings</h2>
         <div className="flex space-x-2">
           <Button variant="outline" className="text-red-600 hover:text-red-700">
             <Trash2 className="h-4 w-4 mr-2" />
@@ -42,21 +42,21 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle className="text-lg font-semibold text-left">Basic Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="projectName">Project Name</Label>
+            <div className="space-y-2">
+              <Label htmlFor="projectName" className="text-left block font-medium">Project Name</Label>
               <Input id="projectName" defaultValue={project.name} />
             </div>
             
-            <div>
-              <Label htmlFor="location">Location</Label>
+            <div className="space-y-2">
+              <Label htmlFor="location" className="text-left block font-medium">Location</Label>
               <Input id="location" defaultValue={project.location} />
             </div>
 
-            <div>
-              <Label htmlFor="category">Category</Label>
+            <div className="space-y-2">
+              <Label htmlFor="category" className="text-left block font-medium">Category</Label>
               <Select defaultValue={project.category.toLowerCase()}>
                 <SelectTrigger>
                   <SelectValue />
@@ -69,8 +69,8 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="type">Type</Label>
+            <div className="space-y-2">
+              <Label htmlFor="type" className="text-left block font-medium">Type</Label>
               <Select defaultValue={project.type.toLowerCase()}>
                 <SelectTrigger>
                   <SelectValue />
@@ -83,8 +83,8 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="status">Status</Label>
+            <div className="space-y-2">
+              <Label htmlFor="status" className="text-left block font-medium">Status</Label>
               <Select defaultValue={project.status}>
                 <SelectTrigger>
                   <SelectValue />
@@ -102,11 +102,11 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Additional Details</CardTitle>
+            <CardTitle className="text-lg font-semibold text-left">Additional Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="description">Description</Label>
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-left block font-medium">Description</Label>
               <Textarea 
                 id="description" 
                 defaultValue={project.description}
@@ -114,13 +114,13 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
               />
             </div>
 
-            <div>
-              <Label htmlFor="projectManager">Project Manager</Label>
+            <div className="space-y-2">
+              <Label htmlFor="projectManager" className="text-left block font-medium">Project Manager</Label>
               <Input id="projectManager" defaultValue={project.projectManager} />
             </div>
 
-            <div>
-              <Label htmlFor="internalNotes">Internal Notes</Label>
+            <div className="space-y-2">
+              <Label htmlFor="internalNotes" className="text-left block font-medium">Internal Notes</Label>
               <Textarea 
                 id="internalNotes" 
                 defaultValue={project.internalNotes}
