@@ -46,17 +46,17 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="projectName" className="text-left block text-sm font-medium text-gray-700 mb-2">Project Name</Label>
+              <Label htmlFor="projectName" className="text-left block text-sm font-medium mb-2">Project Name</Label>
               <Input id="projectName" defaultValue={project.name} />
             </div>
             
             <div>
-              <Label htmlFor="location" className="text-left block text-sm font-medium text-gray-700 mb-2">Location</Label>
+              <Label htmlFor="location" className="text-left block text-sm font-medium mb-2">Location</Label>
               <Input id="location" defaultValue={project.location} />
             </div>
 
             <div>
-              <Label htmlFor="category" className="text-left block text-sm font-medium text-gray-700 mb-2">Category</Label>
+              <Label htmlFor="category" className="text-left block text-sm font-medium mb-2">Category</Label>
               <Select defaultValue={project.category.toLowerCase()}>
                 <SelectTrigger>
                   <SelectValue />
@@ -70,7 +70,7 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
             </div>
 
             <div>
-              <Label htmlFor="type" className="text-left block text-sm font-medium text-gray-700 mb-2">Type</Label>
+              <Label htmlFor="type" className="text-left block text-sm font-medium mb-2">Type</Label>
               <Select defaultValue={project.type.toLowerCase()}>
                 <SelectTrigger>
                   <SelectValue />
@@ -84,7 +84,7 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
             </div>
 
             <div>
-              <Label htmlFor="status" className="text-left block text-sm font-medium text-gray-700 mb-2">Status</Label>
+              <Label htmlFor="status" className="text-left block text-sm font-medium mb-2">Status</Label>
               <Select defaultValue={project.status}>
                 <SelectTrigger>
                   <SelectValue />
@@ -106,7 +106,7 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="description" className="text-left block text-sm font-medium text-gray-700 mb-2">Description</Label>
+              <Label htmlFor="description" className="text-left block text-sm font-medium mb-2">Description</Label>
               <Textarea 
                 id="description" 
                 defaultValue={project.description}
@@ -115,12 +115,12 @@ export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
             </div>
 
             <div>
-              <Label htmlFor="projectManager" className="text-left block text-sm font-medium text-gray-700 mb-2">Project Manager</Label>
+              <Label htmlFor="projectManager" className="text-left block text-sm font-medium mb-2">Project Manager</Label>
               <Input id="projectManager" defaultValue={project.projectManager} />
             </div>
 
             <div>
-              <Label htmlFor="internalNotes" className="text-left block text-sm font-medium text-gray-700 mb-2">Internal Notes</Label>
+              <Label htmlFor="internalNotes" className="text-left block text-sm font-medium mb-2">Internal Notes</Label>
               <Textarea 
                 id="internalNotes" 
                 defaultValue={project.internalNotes}
