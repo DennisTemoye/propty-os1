@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,6 +35,7 @@ interface DevelopmentDetailViewProps {
     documentTitle?: string;
     projectSize?: string;
     developmentStage?: string;
+    image?: string;
   };
 }
 
@@ -83,6 +83,10 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
     }
   };
 
+  const getProjectImage = (project: any) => {
+    return project.image || '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+  };
+
   const salesProgress = (project.soldUnits / project.totalUnits) * 100;
   const budgetProgress = 65; // Example budget utilization
 
@@ -90,22 +94,38 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
     <div className="space-y-6">
       {/* Development Header */}
       <div className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center space-x-3 mb-2">
-            <h2 className="text-2xl font-bold">{project.name}</h2>
-            <Badge className={getStatusColor(project.status)}>
-              {project.status}
-            </Badge>
+        <div className="flex items-start space-x-4">
+          {/* Project Image */}
+          <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+            <img 
+              src={getProjectImage(project)} 
+              alt={project.name}
+              className="w-full h-full object-cover"
+              style={{ aspectRatio: '1/1' }}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+              }}
+            />
           </div>
-          <div className="flex items-center text-gray-600 mb-2">
-            <MapPin className="h-4 w-4 mr-1" />
-            {project.location}
+          
+          <div>
+            <div className="flex items-center space-x-3 mb-2">
+              <h2 className="text-2xl font-bold">{project.name}</h2>
+              <Badge className={getStatusColor(project.status)}>
+                {project.status}
+              </Badge>
+            </div>
+            <div className="flex items-center text-gray-600 mb-2">
+              <MapPin className="h-4 w-4 mr-1" />
+              {project.location}
+            </div>
+            <div className="flex items-center text-blue-600 mb-2">
+              <FileText className="h-4 w-4 mr-1" />
+              {project.documentTitle}
+            </div>
+            <p className="text-gray-600">{mockDevelopmentDetails.description}</p>
           </div>
-          <div className="flex items-center text-blue-600 mb-2">
-            <FileText className="h-4 w-4 mr-1" />
-            {project.documentTitle}
-          </div>
-          <p className="text-gray-600">{mockDevelopmentDetails.description}</p>
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" size="sm">

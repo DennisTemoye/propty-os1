@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -268,6 +267,10 @@ export default function ProjectDetailPage() {
     );
   }
 
+  const getProjectImage = (project: any) => {
+    return project.image || '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+  };
+
   const handleAllocateUnit = () => {
     setIsAllocateUnitOpen(true);
   };
@@ -349,17 +352,16 @@ export default function ProjectDetailPage() {
         <div className="relative bg-white rounded-lg shadow-sm border overflow-hidden mb-6">
           {/* Banner Image */}
           <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600">
-            {project.image ? (
-              <img 
-                src={project.image} 
-                alt={project.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
-                <Building className="h-24 w-24 text-gray-400" />
-              </div>
-            )}
+            <img 
+              src={getProjectImage(project)} 
+              alt={project.name}
+              className="w-full h-full object-cover"
+              style={{ aspectRatio: '16/9' }}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+              }}
+            />
             {/* Overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-40"></div>
             

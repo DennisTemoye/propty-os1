@@ -286,6 +286,10 @@ export function ProjectsUnits() {
     },
   ];
 
+  const getProjectImage = (project: any) => {
+    return project.image || '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -382,9 +386,14 @@ export function ProjectsUnits() {
               {/* Project Image */}
               <div className="relative w-full h-48 bg-gray-200 overflow-hidden">
                 <img 
-                  src={project.image || 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'} 
+                  src={getProjectImage(project)} 
                   alt={project.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  style={{ aspectRatio: '16/9' }}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+                  }}
                 />
                 {/* Development Stage Badge */}
                 <div className="absolute top-3 left-3">
