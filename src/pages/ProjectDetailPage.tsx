@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -518,7 +519,7 @@ export default function ProjectDetailPage() {
             </TabsContent>
 
             <TabsContent value="documents" className="p-6">
-              <DocumentsView project={project} />
+              <ProjectDocumentsTab project={project} />
             </TabsContent>
 
             <TabsContent value="settings" className="p-6">
