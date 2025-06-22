@@ -21,8 +21,8 @@ import ClientDetailPage from '@/pages/ClientDetailPage';
 import NewClientPage from '@/pages/NewClientPage';
 import MarketerDetailPage from '@/pages/MarketerDetailPage';
 import MarketersCommissionPage from '@/pages/MarketersCommissionPage';
-import NewProjectPage from '@/pages/NewProjectPage';
-import EditProjectPage from '@/pages/EditProjectPage';
+import { NewProjectPage } from '@/pages/NewProjectPage';
+import { EditProjectPage } from '@/pages/EditProjectPage';
 import NotFound from '@/pages/NotFound';
 
 import './App.css';
