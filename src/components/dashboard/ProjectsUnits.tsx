@@ -335,7 +335,7 @@ export function ProjectsUnits() {
             Create Project
           </Button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
