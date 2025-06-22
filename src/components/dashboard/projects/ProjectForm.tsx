@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -11,12 +12,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { MapPin, Building2, Layers, Info, Plus, Trash2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface DevelopmentSiteFormProps {
+interface ProjectFormProps {
   project?: any;
   onClose: () => void;
 }
 
-export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) {
+export function ProjectForm({ project, onClose }: ProjectFormProps) {
   const [activeTab, setActiveTab] = useState('basic');
   const [blocks, setBlocks] = useState(project?.blocks || []);
   
@@ -40,8 +41,8 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
   });
 
   const onSubmit = (data: any) => {
-    console.log('Development data:', { ...data, blocks });
-    toast.success(project ? 'Development updated successfully!' : 'Development created successfully!');
+    console.log('Project data:', { ...data, blocks });
+    toast.success(project ? 'Project updated successfully!' : 'Project created successfully!');
     onClose();
   };
 
@@ -71,7 +72,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
-            <TabsTrigger value="details">Development Details</TabsTrigger>
+            <TabsTrigger value="details">Project Details</TabsTrigger>
             <TabsTrigger value="blocks">Blocks & Structure</TabsTrigger>
             <TabsTrigger value="contact">Contact Info</TabsTrigger>
           </TabsList>
@@ -79,7 +80,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
           <TabsContent value="basic" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-left">
                   <Info className="h-5 w-5 mr-2" />
                   Basic Information
                 </CardTitle>
@@ -91,7 +92,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Development Name *</FormLabel>
+                        <FormLabel className="text-left">Project Name *</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., Victoria Gardens Estate" {...field} />
                         </FormControl>
@@ -105,7 +106,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="location"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Location *</FormLabel>
+                        <FormLabel className="text-left">Location *</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., Lekki, Lagos" {...field} />
                         </FormControl>
@@ -120,10 +121,10 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Development Description</FormLabel>
+                      <FormLabel className="text-left">Project Description</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Brief description of the development..."
+                          placeholder="Brief description of the project..."
                           className="min-h-[100px]"
                           {...field} 
                         />
@@ -138,7 +139,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                   name="documentTitle"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Document Title</FormLabel>
+                      <FormLabel className="text-left">Document Title</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g., Certificate of Occupancy, Family Receipt, Approved Survey" {...field} />
                       </FormControl>
@@ -153,7 +154,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="type"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Development Type *</FormLabel>
+                        <FormLabel className="text-left">Project Type *</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger>
@@ -176,7 +177,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Development Status</FormLabel>
+                        <FormLabel className="text-left">Project Status</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger>
@@ -201,9 +202,9 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
           <TabsContent value="details" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-left">
                   <Building2 className="h-5 w-5 mr-2" />
-                  Development Details
+                  Project Details
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -213,7 +214,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="projectSize"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Development Size</FormLabel>
+                        <FormLabel className="text-left">Project Size</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., 50 hectares" {...field} />
                         </FormControl>
@@ -227,7 +228,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="developmentStage"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Development Stage</FormLabel>
+                        <FormLabel className="text-left">Development Stage</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger>
@@ -257,7 +258,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="startDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Start Date</FormLabel>
+                        <FormLabel className="text-left">Start Date</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -271,7 +272,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="expectedCompletion"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Expected Completion</FormLabel>
+                        <FormLabel className="text-left">Expected Completion</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -285,7 +286,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="totalBudget"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Total Budget</FormLabel>
+                        <FormLabel className="text-left">Total Budget</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., ₦5,000,000,000" {...field} />
                         </FormControl>
@@ -302,7 +303,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-left">
                     <Layers className="h-5 w-5 mr-2" />
                     Blocks & Structure
                   </CardTitle>
@@ -338,7 +339,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                           
                           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div>
-                              <label className="text-sm font-medium">Block ID</label>
+                              <label className="text-sm font-medium text-left block">Block ID</label>
                               <Input 
                                 placeholder="e.g., Block A"
                                 value={block.id}
@@ -347,7 +348,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                             </div>
                             
                             <div>
-                              <label className="text-sm font-medium">Prototype</label>
+                              <label className="text-sm font-medium text-left block">Prototype</label>
                               <Select 
                                 value={block.prototype}
                                 onValueChange={(value) => updateBlock(index, 'prototype', value)}
@@ -371,7 +372,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                             </div>
                             
                             <div>
-                              <label className="text-sm font-medium">Units Count</label>
+                              <label className="text-sm font-medium text-left block">Units Count</label>
                               <Input 
                                 type="number"
                                 placeholder="e.g., 30"
@@ -381,7 +382,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                             </div>
                             
                             <div>
-                              <label className="text-sm font-medium">Status</label>
+                              <label className="text-sm font-medium text-left block">Status</label>
                               <Select 
                                 value={block.status}
                                 onValueChange={(value) => updateBlock(index, 'status', value)}
@@ -401,7 +402,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                           </div>
                           
                           <div className="mt-3">
-                            <label className="text-sm font-medium">Description</label>
+                            <label className="text-sm font-medium text-left block">Description</label>
                             <Textarea 
                               placeholder="Brief description of this block..."
                               className="mt-1"
@@ -421,7 +422,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
           <TabsContent value="contact" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-left">
                   <MapPin className="h-5 w-5 mr-2" />
                   Contact Information
                 </CardTitle>
@@ -433,7 +434,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="contactPerson"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Contact Person</FormLabel>
+                        <FormLabel className="text-left">Contact Person</FormLabel>
                         <FormControl>
                           <Input placeholder="Project Manager/Lead" {...field} />
                         </FormControl>
@@ -447,7 +448,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                     name="contactPhone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Contact Phone</FormLabel>
+                        <FormLabel className="text-left">Contact Phone</FormLabel>
                         <FormControl>
                           <Input placeholder="+234 xxx xxx xxxx" {...field} />
                         </FormControl>
@@ -462,7 +463,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
                   name="contactEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact Email</FormLabel>
+                      <FormLabel className="text-left">Contact Email</FormLabel>
                       <FormControl>
                         <Input type="email" placeholder="project@company.com" {...field} />
                       </FormControl>
@@ -480,7 +481,7 @@ export function ProjectSiteForm({ project, onClose }: DevelopmentSiteFormProps) 
             Cancel
           </Button>
           <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
-            {project ? 'Update Development' : 'Create Development'}
+            {project ? 'Update Project' : 'Create Project'}
           </Button>
         </div>
       </form>
