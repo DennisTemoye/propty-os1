@@ -498,6 +498,47 @@ export function DashboardOverview() {
           </Card>
         </div>
 
+        {/* Quick Actions */}
+        <Card className="bg-white shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center space-y-2"
+                onClick={() => navigate('/company/projects/new')}
+              >
+                <Plus className="h-6 w-6" />
+                <span className="text-sm">New Project</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center space-y-2"
+                onClick={() => navigate('/company/clients/new')}
+              >
+                <UserPlus className="h-6 w-6" />
+                <span className="text-sm">Add Client</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center space-y-2"
+              >
+                <FileText className="h-6 w-6" />
+                <span className="text-sm">Send Notice</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center space-y-2"
+              >
+                <BarChart3 className="h-6 w-6" />
+                <span className="text-sm">View Reports</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Quick Actions & Performance Metrics */}
         <div className={`grid gap-4 sm:gap-6 ${
           isMobile 

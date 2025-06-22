@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, MapPin, Building, Home, DollarSign, Search, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { NewProjectForm } from './forms/NewProjectForm';
 
 const mockProjects = [
   {
@@ -202,7 +201,6 @@ const mockProjects = [
 
 export function ProjectsUnits() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
-  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
   const navigate = useNavigate();
@@ -299,7 +297,7 @@ export function ProjectsUnits() {
         </div>
         <Button 
           className="bg-purple-600 hover:bg-purple-700"
-          onClick={() => setIsNewProjectOpen(true)}
+          onClick={() => navigate('/company/projects/new')}
         >
           <Plus className="h-4 w-4 mr-2" />
           New Project
@@ -525,20 +523,6 @@ export function ProjectsUnits() {
             </Table>
           </CardContent>
         </Card>
-      )}
-
-      {/* New Project Modal */}
-      {isNewProjectOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto">
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">Create New Project</h2>
-            </div>
-            <div className="p-6">
-              <NewProjectForm onClose={() => setIsNewProjectOpen(false)} />
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );

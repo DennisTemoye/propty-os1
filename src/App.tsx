@@ -22,6 +22,8 @@ import CompanyDashboard from './pages/CompanyDashboard';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import ProjectBlocksPage from './pages/ProjectBlocksPage';
+import NewProjectPage from './pages/NewProjectPage';
+import EditProjectPage from './pages/EditProjectPage';
 import ClientDetailPage from './pages/ClientDetailPage';
 import NewClientPage from './pages/NewClientPage';
 import MarketersCommissionPage from './pages/MarketersCommissionPage';
@@ -58,6 +60,8 @@ function App() {
             <Route path="/company/*" element={<CompanyDashboard />} />
             <Route path="/company/projects/:projectId" element={<ProjectDetailPage />} />
             <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
+            <Route path="/company/projects/new" element={<NewProjectPage />} />
+            <Route path="/company/projects/:id/edit" element={<EditProjectPage />} />
             <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
             <Route path="/company/clients/new" element={<NewClientPage />} />
             <Route path="/company/marketers-commission" element={<MarketersCommissionPage />} />
