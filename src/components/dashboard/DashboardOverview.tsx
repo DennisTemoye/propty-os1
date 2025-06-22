@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,8 +13,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
-import { NewDevelopmentForm } from '@/components/dashboard/forms/NewDevelopmentForm';
-import { NewProjectForm } from '@/components/dashboard/forms/NewProjectForm';
 import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
 import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
 import { SendNoticeForm } from '@/components/dashboard/notices/SendNoticeForm';
@@ -153,6 +150,8 @@ export function DashboardOverview() {
       setShowPaymentModal(true);
     } else if (action === 'client') {
       navigate('/company/clients/new');
+    } else if (action === 'development') {
+      navigate('/company/projects/new');
     } else {
       setActiveModal(action);
     }
@@ -171,7 +170,6 @@ export function DashboardOverview() {
 
   const getModalTitle = (action: string) => {
     switch (action) {
-      case 'development': return 'Create New Project';
       case 'project_site': return 'Create New Project Site';
       case 'client': return 'Create New Client';
       case 'allocation': return 'Create New Allocation';
@@ -183,7 +181,6 @@ export function DashboardOverview() {
 
   const getModalDescription = (action: string) => {
     switch (action) {
-      case 'development': return 'Add a new real estate development to your portfolio';
       case 'project_site': return 'Add a new project site to track development progress';
       case 'client': return 'Add a new client to your database';
       case 'allocation': return 'Allocate a unit to a client';
@@ -195,10 +192,8 @@ export function DashboardOverview() {
 
   const renderModalContent = (action: string) => {
     switch (action) {
-      case 'development':
-        return <NewDevelopmentForm onClose={closeModal} />;
       case 'project_site':
-        return <NewProjectForm onClose={closeModal} />;
+        return <div>Project Site Form - To be implemented</div>;
       case 'client':
         return <NewClientForm onClose={closeModal} />;
       case 'allocation':
