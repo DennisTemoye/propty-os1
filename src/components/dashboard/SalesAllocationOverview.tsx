@@ -5,82 +5,81 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Handshake, 
   DollarSign, 
-  ArrowRight, 
-  Ban, 
-  Plus,
+  Handshake,
   TrendingUp,
   Building,
-  Users,
-  Calculator,
-  History,
   Clock,
-  Bell
+  Bell,
+  Users,
+  CheckCircle
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
 import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
 import { HistoryTab } from './sales-allocation/HistoryTab';
-import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
-import { AllocateUnitModal } from './sales-allocation/AllocateUnitModal';
-import { ReallocationModal } from './forms/ReallocationModal';
-import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
+import { SalesFlowModal } from './sales-allocation/SalesFlowModal';
+import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
 import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [showRecordSaleModal, setShowRecordSaleModal] = useState(false);
-  const [showAllocateUnitModal, setShowAllocateUnitModal] = useState(false);
-  const [showReallocationModal, setShowReallocationModal] = useState(false);
-  const [showRevokeModal, setShowRevokeModal] = useState(false);
-  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
+  const [showSalesModal, setShowSalesModal] = useState(false);
+  const [showAllocationModal, setShowAllocationModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
+    // Here you would integrate with your backend/state management
+    // If salesType is 'with_allocation', this could trigger the allocation flow
   };
 
-  const handleAllocateUnit = (data: any) => {
-    console.log('Allocating unit:', data);
+  const handleAllocationAction = (data: any) => {
+    console.log('Processing allocation action:', data);
+    // This would integrate with the existing approval workflow
+    // All allocations go to pending status and require OTP approval
   };
 
-  const handleReallocation = (data: any) => {
-    console.log('Processing reallocation:', data);
-  };
-
-  const handleRevocation = (data: any) => {
-    console.log('Processing revocation:', data);
-  };
-
-  const quickActions = [
+  const kpiData = [
     {
-      title: 'Record Sale',
-      description: 'Record a new property sale',
+      title: 'Total Sales',
+      value: '₦4.2B',
+      subtitle: 'This year',
       icon: DollarSign,
-      color: 'bg-green-600 hover:bg-green-700',
-      onClick: () => setShowRecordSaleModal(true)
+      color: 'text-green-700',
+      bgColor: 'bg-green-100',
+      change: '+8%',
+      changeType: 'positive'
     },
     {
-      title: 'Allocate Unit',
-      description: 'Assign a unit to a client',
-      icon: Handshake,
-      color: 'bg-blue-600 hover:bg-blue-700',
-      onClick: () => setShowAllocateUnitModal(true)
+      title: 'Active Allocations',
+      value: '156',
+      subtitle: 'Current allocations',
+      icon: Building,
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-100',
+      change: '+12%',
+      changeType: 'positive'
     },
     {
-      title: 'Re-allocate Unit',
-      description: 'Transfer unit to another client',
-      icon: ArrowRight,
-      color: 'bg-purple-600 hover:bg-purple-700',
-      onClick: () => setShowReallocationModal(true)
+      title: 'Pending Sales',
+      value: '23',
+      subtitle: 'Awaiting allocation',
+      icon: Clock,
+      color: 'text-orange-700',
+      bgColor: 'bg-orange-100',
+      change: '+5%',
+      changeType: 'positive'
     },
     {
-      title: 'Revoke Allocation',
-      description: 'Cancel allocation and process refund',
-      icon: Ban,
-      color: 'bg-red-600 hover:bg-red-700',
-      onClick: () => setShowRevokeModal(true)
+      title: 'Completed This Month',
+      value: '45',
+      subtitle: 'Sales + Allocations',
+      icon: CheckCircle,
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-100',
+      change: '+15%',
+      changeType: 'positive'
     }
   ];
 
@@ -89,8 +88,8 @@ export function SalesAllocationOverview() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation Overview</h1>
-          <p className="text-gray-600 mt-1">Comprehensive sales pipeline and allocation management</p>
+          <h1 className="text-3xl font-bold text-gray-900">Sales & Allocations</h1>
+          <p className="text-gray-600 mt-1">Manage sales documentation and unit allocations</p>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -107,22 +106,65 @@ export function SalesAllocationOverview() {
         </div>
       </div>
 
-      {/* Quick Action Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {quickActions.map((action, index) => (
-          <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpiData.map((kpi, index) => (
+          <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6">
-              <Button 
-                className={`w-full ${action.color} text-white`}
-                onClick={action.onClick}
-              >
-                <action.icon className="h-4 w-4 mr-2" />
-                {action.title}
-              </Button>
-              <p className="text-sm text-gray-600 mt-2 text-center">{action.description}</p>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-600 mb-2">
+                    {kpi.title}
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                  <div className="text-xs text-gray-500 mb-2">{kpi.subtitle}</div>
+                  <Badge 
+                    variant="outline" 
+                    className={kpi.changeType === 'positive' ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'}
+                  >
+                    {kpi.change} from last period
+                  </Badge>
+                </div>
+                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
+                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                </div>
+              </div>
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-green-300 bg-green-50">
+          <CardContent className="p-6">
+            <Button 
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => setShowSalesModal(true)}
+            >
+              <DollarSign className="h-4 w-4 mr-2" />
+              Record Sale
+            </Button>
+            <p className="text-sm text-gray-600 mt-2 text-center">
+              Document property sales with or without unit allocation
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-blue-300 bg-blue-50">
+          <CardContent className="p-6">
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => setShowAllocationModal(true)}
+            >
+              <Handshake className="h-4 w-4 mr-2" />
+              Manage Allocation
+            </Button>
+            <p className="text-sm text-gray-600 mt-2 text-center">
+              Handle unit allocations, reallocations, and revocations
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Main Content Tabs */}
@@ -132,7 +174,7 @@ export function SalesAllocationOverview() {
           <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending" className="relative">
-            Pending Approvals
+            Pending Allocations
             <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
           </TabsTrigger>
         </TabsList>
@@ -146,41 +188,30 @@ export function SalesAllocationOverview() {
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
-          <HistoryTab onRevoke={(allocation) => {
-            setSelectedAllocation(allocation);
-            setShowRevokeModal(true);
-          }} />
+          <HistoryTab />
         </TabsContent>
 
         <TabsContent value="pending" className="space-y-6">
-          <PendingAllocationsTab />
+          <PendingAllocationsTab 
+            onAllocate={(data) => {
+              console.log('Processing pending allocation:', data);
+              // This would trigger the allocation flow
+            }}
+          />
         </TabsContent>
       </Tabs>
 
       {/* Modals */}
-      <RecordSaleModal 
-        isOpen={showRecordSaleModal}
-        onClose={() => setShowRecordSaleModal(false)}
+      <SalesFlowModal 
+        isOpen={showSalesModal}
+        onClose={() => setShowSalesModal(false)}
         onSubmit={handleRecordSale}
       />
 
-      <AllocateUnitModal 
-        isOpen={showAllocateUnitModal}
-        onClose={() => setShowAllocateUnitModal(false)}
-        onSubmit={handleAllocateUnit}
-      />
-
-      <ReallocationModal 
-        isOpen={showReallocationModal}
-        onClose={() => setShowReallocationModal(false)}
-        onReallocate={handleReallocation}
-      />
-
-      <RevokeAllocationModal 
-        isOpen={showRevokeModal}
-        onClose={() => setShowRevokeModal(false)}
-        allocation={selectedAllocation}
-        onRevoke={handleRevocation}
+      <AllocationFlowModal 
+        isOpen={showAllocationModal}
+        onClose={() => setShowAllocationModal(false)}
+        onSubmit={handleAllocationAction}
       />
 
       <SystemNotifications 
