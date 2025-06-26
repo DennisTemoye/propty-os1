@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -79,18 +78,18 @@ export default function EditMarketerPage() {
     console.log('Saving marketer data:', formData);
     console.log('Profile photo:', profilePhoto);
     toast.success('Marketer profile updated successfully');
-    navigate(`/company/marketers/${id}`);
+    navigate(`/company/marketers/${marketer.id}`);
   };
 
   const handleBack = () => {
-    navigate(`/company/marketers/${id}`);
+    navigate(`/company/marketers/${marketer.id}`);
   };
 
   return (
     <EditFormLayout
       title="Edit Marketer Profile"
       description="Update marketer information and settings"
-      backPath={`/company/marketers/${id}`}
+      backPath={`/company/marketers/${marketer.id}`}
       onSave={handleSave}
       onBack={handleBack}
       sidebarOpen={sidebarOpen}

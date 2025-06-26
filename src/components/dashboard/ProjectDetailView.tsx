@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -76,11 +75,7 @@ export function ProjectDetailView() {
 
   const handleAllocateUnit = () => setIsAllocateUnitOpen(true);
   const handleEditProject = () => {
-    if (projectId) {
-      navigate(`/company/projects/${projectId}/edit`);
-    } else {
-      toast.error('Project ID not found');
-    }
+    navigate(`/company/projects/${project.id}/edit`);
   };
   const handleReallocate = (unitId: string, clientName: string) => {
     setReallocateData({ unitId, clientName });

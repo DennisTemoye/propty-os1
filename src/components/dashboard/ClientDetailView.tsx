@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -67,11 +66,7 @@ export function ClientDetailView() {
   }
 
   const handleEdit = () => {
-    if (clientId) {
-      navigate(`/company/clients/${clientId}/edit`);
-    } else {
-      toast.error('Client ID not found');
-    }
+    navigate(`/company/clients/${client.id}/edit`);
   };
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this client? This action cannot be undone.')) {

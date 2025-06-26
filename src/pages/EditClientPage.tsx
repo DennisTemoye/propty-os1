@@ -164,7 +164,7 @@ export default function EditClientPage() {
   
   console.log('EditClientPage - ID from params:', id);
   
-  const client = mockClients.find(c => c.id === parseInt(id || '1'));
+  const client = mockClients.find(c => c.id === parseInt(id || '0'));
   
   console.log('EditClientPage - Found client:', client);
 
@@ -211,18 +211,18 @@ export default function EditClientPage() {
     console.log('Passport photo:', passportPhoto);
     console.log('ID document:', idDocument);
     toast.success('Client updated successfully');
-    navigate(`/company/clients/${id}`);
+    navigate(`/company/clients/${client.id}`);
   };
 
   const handleBack = () => {
-    navigate(`/company/clients/${id}`);
+    navigate(`/company/clients/${client.id}`);
   };
 
   return (
     <EditFormLayout
       title="Edit Client"
       description="Update client information and details"
-      backPath={`/company/clients/${id}`}
+      backPath={`/company/clients/${client.id}`}
       onSave={handleSave}
       onBack={handleBack}
       sidebarOpen={sidebarOpen}

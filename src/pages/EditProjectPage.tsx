@@ -97,7 +97,7 @@ export default function EditProjectPage() {
   }, [watchedFields, blocks]);
 
   const handleBack = () => {
-    const backUrl = `/company/projects/${id}`;
+    const backUrl = `/company/projects/${project?.id || id}`;
     if (hasUnsavedChanges) {
       if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
         navigate(backUrl);
@@ -111,7 +111,7 @@ export default function EditProjectPage() {
     console.log('Project data:', { ...data, blocks, image: projectImage });
     toast.success('Project updated successfully!');
     setHasUnsavedChanges(false);
-    navigate(`/company/projects/${id}`);
+    navigate(`/company/projects/${project?.id || id}`);
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

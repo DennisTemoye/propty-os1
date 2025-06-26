@@ -81,11 +81,7 @@ export function MarketerDetailView() {
   };
 
   const handleEditProfile = () => {
-    if (marketerId) {
-      navigate(`/company/marketers/${marketerId}/edit`);
-    } else {
-      toast.error('Marketer ID not found');
-    }
+    navigate(`/company/marketers/${mockMarketer.id}/edit`);
   };
 
   return (
