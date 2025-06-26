@@ -48,12 +48,16 @@ const mockProjects = [
 
 export default function EditProjectPage() {
   const navigate = useNavigate();
-  const { id } = useParams(); // Changed from projectId to id
+  const { id } = useParams();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [blocks, setBlocks] = useState<any[]>([]);
   const [projectImage, setProjectImage] = useState<string>('');
   
+  console.log('EditProjectPage - ID from params:', id);
+  
   const project = mockProjects.find(p => p.id === parseInt(id || '0'));
+  
+  console.log('EditProjectPage - Found project:', project);
 
   const form = useForm({
     defaultValues: {
@@ -172,6 +176,7 @@ export default function EditProjectPage() {
         <div className="flex-1 ml-64 flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
+            <p className="text-gray-600 mb-6">The project with ID "{id}" could not be found.</p>
             <Button onClick={() => navigate('/company/projects')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Projects

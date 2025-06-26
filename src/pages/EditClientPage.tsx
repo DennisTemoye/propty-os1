@@ -172,7 +172,12 @@ export default function EditClientPage() {
   const navigate = useNavigate();
   const { isMobile, isTablet, isSmallScreen } = useResponsive();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  console.log('EditClientPage - ID from params:', id);
+  
   const client = mockClients.find(c => c.id === parseInt(id || '1'));
+  
+  console.log('EditClientPage - Found client:', client);
 
   const [formData, setFormData] = useState({
     name: client?.name || '',
@@ -188,7 +193,29 @@ export default function EditClientPage() {
   const [idDocument, setIdDocument] = useState<File | null>(null);
 
   if (!client) {
-    return <div>Client not found</div>;
+    return (
+      <div className="w-full">
+        <MobileWarningBanner />
+        <SidebarProvider>
+          <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+            <CompanySidebar 
+              isOpen={sidebarOpen} 
+              onClose={() => setSidebarOpen(false)} 
+            />
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Client Not Found</h2>
+                <p className="text-gray-600 mb-6">The client with ID "{id}" could not be found.</p>
+                <Button onClick={() => navigate('/company/clients')}>
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Clients
+                </Button>
+              </div>
+            </div>
+          </div>
+        </SidebarProvider>
+      </div>
+    );
   }
 
   const handleInputChange = (field: string, value: string) => {
