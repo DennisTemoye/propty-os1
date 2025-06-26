@@ -56,10 +56,12 @@ function App() {
 
             {/* Dashboard Routes - All handled by CompanyDashboard */}
             <Route path="/company/*" element={<CompanyDashboard />} />
+            
+            {/* Specific Edit Routes - These need to be outside the dashboard wildcard */}
             <Route path="/company/projects/new" element={<NewProjectPage />} />
-            <Route path="/company/projects/:projectId/edit" element={<EditProjectPage />} />
-            <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
-            <Route path="/company/clients/:clientId/edit" element={<EditClientPage />} />
+            <Route path="/company/projects/:id/edit" element={<EditProjectPage />} />
+            <Route path="/company/projects/:id/blocks" element={<ProjectBlocksPage />} />
+            <Route path="/company/clients/:id/edit" element={<EditClientPage />} />
             <Route path="/company/clients/new" element={<NewClientPage />} />
             <Route path="/company/marketers-commission" element={<MarketersCommissionPage />} />
 
