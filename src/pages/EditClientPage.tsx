@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -169,11 +168,11 @@ const mockClients = [
 ];
 
 export default function EditClientPage() {
-  const { clientId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { isMobile, isTablet, isSmallScreen } = useResponsive();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const client = mockClients.find(c => c.id === parseInt(clientId || '1'));
+  const client = mockClients.find(c => c.id === parseInt(id || '1'));
 
   const [formData, setFormData] = useState({
     name: client?.name || '',
@@ -218,7 +217,7 @@ export default function EditClientPage() {
     console.log('Passport photo:', passportPhoto);
     console.log('ID document:', idDocument);
     toast.success('Client updated successfully');
-    navigate(`/company/clients/${clientId}`);
+    navigate(`/company/clients/${id}`);
   };
 
   return (
@@ -264,7 +263,7 @@ export default function EditClientPage() {
                     <div className="flex items-center justify-between">
                       <Button 
                         variant="outline" 
-                        onClick={() => navigate(`/company/clients/${clientId}`)}
+                        onClick={() => navigate(`/company/clients/${id}`)}
                         className="mb-4"
                       >
                         <ArrowLeft className="h-4 w-4 mr-2" />

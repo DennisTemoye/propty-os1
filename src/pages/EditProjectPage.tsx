@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -49,12 +48,12 @@ const mockProjects = [
 
 export default function EditProjectPage() {
   const navigate = useNavigate();
-  const { projectId } = useParams();
+  const { id } = useParams(); // Changed from projectId to id
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [blocks, setBlocks] = useState<any[]>([]);
   const [projectImage, setProjectImage] = useState<string>('');
   
-  const project = mockProjects.find(p => p.id === parseInt(projectId || '0'));
+  const project = mockProjects.find(p => p.id === parseInt(id || '0'));
 
   const form = useForm({
     defaultValues: {
@@ -94,7 +93,7 @@ export default function EditProjectPage() {
   }, [watchedFields, blocks]);
 
   const handleBack = () => {
-    const backUrl = `/company/projects/${projectId}`;
+    const backUrl = `/company/projects/${id}`;
     if (hasUnsavedChanges) {
       if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
         navigate(backUrl);
@@ -108,7 +107,7 @@ export default function EditProjectPage() {
     console.log('Project data:', { ...data, blocks, image: projectImage });
     toast.success('Project updated successfully!');
     setHasUnsavedChanges(false);
-    navigate(`/company/projects/${projectId}`);
+    navigate(`/company/projects/${id}`);
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -642,7 +641,7 @@ export default function EditProjectPage() {
 
             {/* Fixed Submit Button */}
             <div className="fixed bottom-0 right-0 left-64 bg-white border-t border-gray-200 p-4 z-30">
-              <div className="flex justify-end space-x-4 max-w-4xl mx-auto">
+              <div className="flex justify-end space-x-2 max-w-4xl mx-auto">
                 <Button 
                   type="submit" 
                   className="bg-purple-600 hover:bg-purple-700"
