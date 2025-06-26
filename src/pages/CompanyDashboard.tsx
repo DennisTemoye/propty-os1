@@ -70,7 +70,7 @@ const CompanyDashboard = () => {
   };
 
   const handleOverlayClick = () => {
-    if (isMobile && sidebarOpen) {
+    if (isSmallScreen && sidebarOpen) {
       setSidebarOpen(false);
     }
   };
@@ -88,15 +88,16 @@ const CompanyDashboard = () => {
             />
           )}
           
+          {/* Sidebar - Always visible on desktop */}
           <CompanySidebar 
             isOpen={sidebarOpen} 
             onClose={() => setSidebarOpen(false)} 
           />
           
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            {/* Mobile/Tablet Header */}
+            {/* Mobile/Tablet Header - Only show on small screens */}
             {isSmallScreen && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 lg:hidden sticky top-0 z-30 shadow-sm">
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 lg:hidden sticky top-0 z-30 shadow-sm">
                 <div className="flex items-center justify-between">
                   <Button
                     variant="ghost"
@@ -110,7 +111,7 @@ const CompanyDashboard = () => {
                       <Menu className="h-5 w-5" />
                     )}
                   </Button>
-                  <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
+                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                     ProptyOS
                   </h1>
                   <div className="w-9" />
@@ -118,8 +119,9 @@ const CompanyDashboard = () => {
               </header>
             )}
             
+            {/* Main Content - Full width for all modules */}
             <main className="flex-1 overflow-auto w-full">
-              <div className="w-full h-full min-h-0 p-4 md:p-6 lg:p-8">
+              <div className="w-full h-full min-h-0">
                 {renderActiveModule()}
               </div>
             </main>

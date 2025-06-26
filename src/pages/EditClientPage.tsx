@@ -4,6 +4,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { ClientForm } from '@/components/dashboard/clients/ClientForm';
+import { GlobalLayout } from '@/components/layouts/GlobalLayout';
+import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
+import { useResponsive } from '@/hooks/use-responsive';
 
 const mockClients = [
   {
@@ -59,19 +62,23 @@ const mockClients = [
 export default function EditClientPage() {
   const { clientId } = useParams();
   const navigate = useNavigate();
+  const { isSmallScreen } = useResponsive();
   
   const client = mockClients.find(c => c.id === parseInt(clientId || '1'));
 
   if (!client) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <GlobalLayout
+        sidebar={<CompanySidebar />}
+        formLayout={true}
+      >
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Client not found</h1>
           <Button onClick={() => navigate('/company/clients')}>
             Back to Clients
           </Button>
         </div>
-      </div>
+      </GlobalLayout>
     );
   }
 
@@ -80,28 +87,29 @@ export default function EditClientPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate(`/company/clients/${client.id}`)}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Client Details
-          </Button>
-          
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Edit Client</h1>
-            <p className="text-gray-600 mt-1">Update client information and details</p>
-          </div>
-        </div>
+    <GlobalLayout
+      sidebar={<CompanySidebar />}
+      formLayout={true}
+    >
+      <div className="mb-6">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate(`/company/clients/${client.id}`)}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Client Details
+        </Button>
         
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <ClientForm client={client} onClose={handleClose} />
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Edit Client</h1>
+          <p className="text-gray-600 mt-1">Update client information and details</p>
         </div>
       </div>
-    </div>
+      
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <ClientForm client={client} onClose={handleClose} />
+      </div>
+    </GlobalLayout>
   );
 }
