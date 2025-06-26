@@ -46,8 +46,8 @@ export function GlobalLayout({
                 {sidebar}
               </aside>
             ) : (
-              // Desktop fixed sidebar
-              <aside className="fixed left-0 top-0 h-screen w-[260px] z-50 bg-white border-r overflow-y-auto">
+              // Desktop fixed sidebar - permanently fixed
+              <aside className="fixed top-0 left-0 h-screen w-[260px] z-40 bg-white border-r overflow-y-auto">
                 {sidebar}
               </aside>
             )}
@@ -56,15 +56,17 @@ export function GlobalLayout({
 
         {/* Main Content */}
         <main className={cn(
-          "flex-1 w-full min-h-screen",
-          sidebar && !isSmallScreen && "ml-[260px]",
+          "flex-1 min-h-screen",
+          // Desktop: full width with sidebar offset
+          sidebar && !isSmallScreen && "ml-[260px] w-[calc(100%-260px)]",
+          // Mobile: full width
           isSmallScreen && "w-full"
         )}>
           <div className={cn(
             "w-full h-full min-h-screen",
             formLayout 
-              ? "max-w-4xl mx-auto p-4 md:p-6 lg:p-8" 
-              : "w-full px-4 md:px-6 py-4 md:py-6"
+              ? "max-w-3xl mx-auto px-4 py-6" 
+              : "w-full px-6 py-4"
           )}>
             {children}
           </div>
