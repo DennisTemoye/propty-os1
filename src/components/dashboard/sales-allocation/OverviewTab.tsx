@@ -1,7 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { NavigationHelper } from './NavigationHelper';
 import { 
   Building, 
   DollarSign, 
@@ -11,7 +12,8 @@ import {
   Users,
   Calculator,
   Clock,
-  CheckCircle
+  CheckCircle,
+  Eye
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -93,6 +95,36 @@ const projectPerformance = [
   { project: 'Royal Estate', sales: 20, allocations: 18, pending: 2 }
 ];
 
+const recentActivities = [
+  {
+    id: 1,
+    type: 'presale',
+    title: 'Presale Recorded',
+    description: 'Victoria Gardens - Client: John Doe',
+    timestamp: '2 hours ago',
+    clientId: 'client-1',
+    projectId: 'project-1'
+  },
+  {
+    id: 2,
+    type: 'allocation',
+    title: 'Unit Allocated',
+    description: 'Block A - Plot 15 to Sarah Johnson',
+    timestamp: '4 hours ago',
+    clientId: 'client-2',
+    allocationId: 'alloc-1'
+  },
+  {
+    id: 3,
+    type: 'pending',
+    title: 'Pending Allocation',
+    description: 'Golden View - Client: Robert Brown',
+    timestamp: '6 hours ago',
+    clientId: 'client-3',
+    projectId: 'project-2'
+  }
+];
+
 export function OverviewTab() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', {
@@ -101,6 +133,31 @@ export function OverviewTab() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(amount);
+  };
+
+  const handleActivityClick = (activity: any) => {
+    console.log('Activity clicked:', activity);
+    // Navigate based on activity type
+    switch (activity.type) {
+      case 'presale':
+        console.log('Navigate to client details:', activity.clientId);
+        break;
+      case 'allocation':
+        console.log('Navigate to allocation details:', activity.allocationId);
+        break;
+      case 'pending':
+        console.log('Navigate to pending allocations');
+        break;
+    }
+  };
+
+  const handleProjectClick = (project: any) => {
+    console.log('Navigate to project details:', project.project);
+  };
+
+  const handleNavigateToModule = (module: string) => {
+    console.log('Navigate to module:', module);
+    // In a real app, this would use proper routing
   };
 
   return (
@@ -214,7 +271,11 @@ export function OverviewTab() {
         <CardContent>
           <div className="space-y-4">
             {projectPerformance.map((project, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div 
+                key={index} 
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => handleProjectClick(project)}
+              >
                 <div className="flex items-center space-x-3">
                   <Building className="h-5 w-5 text-gray-600" />
                   <div>
@@ -237,6 +298,9 @@ export function OverviewTab() {
                     <div className="text-lg font-bold text-orange-600">{project.pending}</div>
                     <div className="text-xs text-gray-500">Pending</div>
                   </div>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -251,28 +315,48 @@ export function OverviewTab() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-              <div>
-                <div className="font-medium">Presale Recorded</div>
-                <div className="text-sm text-gray-600">Victoria Gardens - Client: John Doe</div>
+            {recentActivities.map((activity) => (
+              <div 
+                key={activity.id}
+                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer hover:shadow-sm transition-all ${
+                  activity.type === 'presale' ? 'bg-green-50 hover:bg-green-100' :
+                  activity.type === 'allocation' ? 'bg-blue-50 hover:bg-blue-100' :
+                  'bg-yellow-50 hover:bg-yellow-100'
+                }`}
+                onClick={() => handleActivityClick(activity)}
+              >
+                <div className="flex-1">
+                  <div className="font-medium">{activity.title}</div>
+                  <div className="text-sm text-gray-600">{activity.description}</div>
+                  <div className="text-xs text-gray-500 mt-1">{activity.timestamp}</div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge className={
+                    activity.type === 'presale' ? 'bg-green-100 text-green-800' :
+                    activity.type === 'allocation' ? 'bg-blue-100 text-blue-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }>
+                    {activity.type === 'presale' ? 'Presale' :
+                     activity.type === 'allocation' ? 'Allocated' :
+                     'Pending'}
+                  </Badge>
+                  <Button variant="ghost" size="sm">
+                    <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </div>
               </div>
-              <Badge className="bg-green-100 text-green-800">Presale</Badge>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-              <div>
-                <div className="font-medium">Unit Allocated</div>
-                <div className="text-sm text-gray-600">Block A - Plot 15 to Sarah Johnson</div>
-              </div>
-              <Badge className="bg-blue-100 text-blue-800">Allocated</Badge>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-              <div>
-                <div className="font-medium">Pending Allocation</div>
-                <div className="text-sm text-gray-600">Golden View - Client: Robert Brown</div>
-              </div>
-              <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
-            </div>
+            ))}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Navigation Helper */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Related Actions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <NavigationHelper onNavigate={handleNavigateToModule} />
         </CardContent>
       </Card>
     </div>

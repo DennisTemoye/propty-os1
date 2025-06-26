@@ -19,7 +19,9 @@ import { HistoryTab } from './sales-allocation/HistoryTab';
 import { SalesFlowModal } from './sales-allocation/SalesFlowModal';
 import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
 import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
+import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
+import { toast } from 'sonner';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -27,16 +29,52 @@ export function SalesAllocationOverview() {
   const [showAllocationModal, setShowAllocationModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
+  // Global state for synchronization
+  const [pendingAllocationsCount, setPendingAllocationsCount] = useState(23);
+  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(3);
+
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
-    // Here you would integrate with your backend/state management
-    // If salesType is 'with_allocation', this could trigger the allocation flow
+    
+    // Update counts based on sale type
+    if (data.salesType === 'presale') {
+      setPendingAllocationsCount(prev => prev + 1);
+    }
+    
+    toast.success('Sale recorded successfully!');
+    
+    // If sale includes allocation, it goes to pending approvals
+    if (data.salesType === 'with_allocation') {
+      setPendingApprovalsCount(prev => prev + 1);
+      toast.info('Allocation submitted for approval');
+    }
   };
 
   const handleAllocationAction = (data: any) => {
     console.log('Processing allocation action:', data);
-    // This would integrate with the existing approval workflow
-    // All allocations go to pending status and require OTP approval
+    
+    // All allocation actions go to pending approval
+    setPendingApprovalsCount(prev => prev + 1);
+    toast.success('Allocation action submitted for approval!');
+  };
+
+  const handlePendingAllocation = (data: any) => {
+    console.log('Processing pending allocation:', data);
+    
+    // Move from pending allocations to pending approvals
+    setPendingAllocationsCount(prev => Math.max(0, prev - 1));
+    setPendingApprovalsCount(prev => prev + 1);
+    
+    toast.success('Allocation initiated and sent for approval!');
+  };
+
+  const handleApprovalAction = (allocationId: string, action: 'approve' | 'decline') => {
+    console.log(`${action} allocation:`, allocationId);
+    
+    // Decrease pending approvals count
+    setPendingApprovalsCount(prev => Math.max(0, prev - 1));
+    
+    toast.success(`Allocation ${action}d successfully!`);
   };
 
   const kpiData = [
@@ -62,7 +100,7 @@ export function SalesAllocationOverview() {
     },
     {
       title: 'Pending Sales',
-      value: '23',
+      value: pendingAllocationsCount.toString(),
       subtitle: 'Awaiting allocation',
       icon: Clock,
       color: 'text-orange-700',
@@ -98,9 +136,11 @@ export function SalesAllocationOverview() {
             className="relative"
           >
             <Bell className="h-4 w-4" />
-            <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center">
-              3
-            </Badge>
+            {(pendingApprovalsCount > 0) && (
+              <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center">
+                {pendingApprovalsCount}
+              </Badge>
+            )}
           </Button>
         </div>
       </div>
@@ -168,12 +208,24 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending" className="relative">
+            Pending Allocations
+            {pendingAllocationsCount > 0 && (
+              <Badge className="ml-2 bg-orange-600 text-white text-xs">
+                {pendingAllocationsCount}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="approvals" className="relative">
             Pending Approvals
-            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
+            {pendingApprovalsCount > 0 && (
+              <Badge className="ml-2 bg-yellow-600 text-white text-xs">
+                {pendingApprovalsCount}
+              </Badge>
+            )}
           </TabsTrigger>
         </TabsList>
 
@@ -187,10 +239,14 @@ export function SalesAllocationOverview() {
 
         <TabsContent value="pending" className="space-y-6">
           <PendingAllocationsTab 
-            onAllocate={(data) => {
-              console.log('Processing pending allocation:', data);
-              // This would trigger the allocation flow
-            }}
+            onAllocate={handlePendingAllocation}
+          />
+        </TabsContent>
+
+        <TabsContent value="approvals" className="space-y-6">
+          <PendingApprovalsTab 
+            onApprove={(allocationId, otpCode) => handleApprovalAction(allocationId, 'approve')}
+            onDecline={(allocationId, reason) => handleApprovalAction(allocationId, 'decline')}
           />
         </TabsContent>
       </Tabs>
@@ -214,6 +270,10 @@ export function SalesAllocationOverview() {
         onNotificationClick={(notification) => {
           console.log('Notification clicked:', notification);
           setShowNotifications(false);
+          // Navigate to relevant tab based on notification
+          if (notification.type === 'allocation_pending') {
+            setActiveTab('approvals');
+          }
         }}
       />
     </div>
