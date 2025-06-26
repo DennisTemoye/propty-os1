@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CheckCircle, XCircle, Search, Eye, Clock } from 'lucide-react';
 import { PendingAllocation } from '@/types/allocation';
-import { OTPVerificationModal } from '../allocation/OTPVerificationModal';
+import { ApprovalWorkflowModal } from '../allocation/ApprovalWorkflowModal';
 import { toast } from 'sonner';
 
 interface PendingApprovalsTabProps {
@@ -59,8 +59,7 @@ export function PendingApprovalsTab({ onApprove, onDecline }: PendingApprovalsTa
   const [searchTerm, setSearchTerm] = useState('');
   const [projectFilter, setProjectFilter] = useState('all');
   const [selectedAllocation, setSelectedAllocation] = useState<PendingAllocation | null>(null);
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [actionType, setActionType] = useState<'approve' | 'decline'>('approve');
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
 
   const filteredApprovals = pendingApprovals.filter(allocation => {
     const matchesSearch = allocation.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -72,39 +71,33 @@ export function PendingApprovalsTab({ onApprove, onDecline }: PendingApprovalsTa
 
   const projects = [...new Set(mockPendingApprovals.map(a => a.projectName))];
 
-  const handleApprovalAction = (allocation: PendingAllocation, action: 'approve' | 'decline') => {
+  const handleApprovalAction = (allocation: PendingAllocation) => {
     setSelectedAllocation(allocation);
-    setActionType(action);
-    setShowOTPModal(true);
+    setShowApprovalModal(true);
   };
 
-  const handleOTPVerified = (otpCode: string, reason?: string) => {
-    if (!selectedAllocation) return;
+  const handleApproveAllocation = (allocationId: string, otpCode: string) => {
+    setPendingApprovals(prev => 
+      prev.map(allocation => 
+        allocation.id === allocationId 
+          ? { ...allocation, status: 'approved' as const }
+          : allocation
+      )
+    );
+    onApprove?.(allocationId, otpCode);
+    toast.success('Allocation approved successfully! Letter sent to client.');
+  };
 
-    if (actionType === 'approve') {
-      setPendingApprovals(prev => 
-        prev.map(allocation => 
-          allocation.id === selectedAllocation.id 
-            ? { ...allocation, status: 'approved' as const }
-            : allocation
-        )
-      );
-      onApprove?.(selectedAllocation.id, otpCode);
-      toast.success('Allocation approved successfully!');
-    } else {
-      setPendingApprovals(prev => 
-        prev.map(allocation => 
-          allocation.id === selectedAllocation.id 
-            ? { ...allocation, status: 'declined' as const }
-            : allocation
-        )
-      );
-      onDecline?.(selectedAllocation.id, reason || 'No reason provided');
-      toast.success('Allocation declined and team member has been notified.');
-    }
-
-    setShowOTPModal(false);
-    setSelectedAllocation(null);
+  const handleDeclineAllocation = (allocationId: string, reason: string) => {
+    setPendingApprovals(prev => 
+      prev.map(allocation => 
+        allocation.id === allocationId 
+          ? { ...allocation, status: 'declined' as const }
+          : allocation
+      )
+    );
+    onDecline?.(allocationId, reason);
+    toast.success('Allocation declined and team member has been notified.');
   };
 
   return (
@@ -121,7 +114,7 @@ export function PendingApprovalsTab({ onApprove, onDecline }: PendingApprovalsTa
             </Badge>
           </div>
           <p className="text-sm text-gray-600">
-            Allocation actions submitted by team members requiring administrative approval
+            Allocation actions submitted by team members requiring administrative approval with letter preview
           </p>
         </CardHeader>
         <CardContent>
@@ -187,18 +180,11 @@ export function PendingApprovalsTab({ onApprove, onDecline }: PendingApprovalsTa
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => handleApprovalAction(allocation, 'approve')}
-                        className="text-green-600 hover:text-green-700"
+                        onClick={() => handleApprovalAction(allocation)}
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                       >
-                        <CheckCircle className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleApprovalAction(allocation, 'decline')}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <XCircle className="h-4 w-4" />
+                        <Eye className="h-4 w-4 mr-1" />
+                        Review
                       </Button>
                     </div>
                   </TableCell>
@@ -216,12 +202,15 @@ export function PendingApprovalsTab({ onApprove, onDecline }: PendingApprovalsTa
         </CardContent>
       </Card>
 
-      <OTPVerificationModal 
-        isOpen={showOTPModal}
-        onClose={() => setShowOTPModal(false)}
+      <ApprovalWorkflowModal 
+        isOpen={showApprovalModal}
+        onClose={() => {
+          setShowApprovalModal(false);
+          setSelectedAllocation(null);
+        }}
         allocation={selectedAllocation}
-        actionType={actionType}
-        onVerified={handleOTPVerified}
+        onApprove={handleApproveAllocation}
+        onDecline={handleDeclineAllocation}
       />
     </div>
   );

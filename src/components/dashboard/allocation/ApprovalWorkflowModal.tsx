@@ -96,9 +96,10 @@ export function ApprovalWorkflowModal({
                   variant="outline" 
                   size="sm"
                   onClick={() => setShowLetterPreview(true)}
+                  className="bg-blue-50 hover:bg-blue-100 border-blue-200"
                 >
                   <Eye className="h-4 w-4 mr-2" />
-                  Preview Letter
+                  Preview Allocation Letter
                 </Button>
               </div>
               <div className="grid grid-cols-2 gap-4">
