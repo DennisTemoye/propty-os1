@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { FullWidthLayout } from '@/components/layouts/FullWidthLayout';
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState('');
@@ -36,7 +37,6 @@ const ResetPasswordPage = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast.success('Password successfully updated! Please log in.');
@@ -52,7 +52,10 @@ const ResetPasswordPage = () => {
   const isPasswordValid = validatePassword(password);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <FullWidthLayout 
+      backgroundClass="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+      className="min-h-screen flex items-center justify-center"
+    >
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto mb-4 w-16 h-16 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
@@ -150,7 +153,7 @@ const ResetPasswordPage = () => {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </FullWidthLayout>
   );
 };
 

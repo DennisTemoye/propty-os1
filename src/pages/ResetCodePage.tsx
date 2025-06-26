@@ -6,6 +6,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { ArrowLeft, Shield } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { FullWidthLayout } from '@/components/layouts/FullWidthLayout';
 
 const ResetCodePage = () => {
   const [code, setCode] = useState('');
@@ -23,10 +24,8 @@ const ResetCodePage = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock validation - in real app, verify with backend
       if (code === '123456') {
         toast.success('Code verified successfully!');
         navigate('/reset-password');
@@ -43,7 +42,6 @@ const ResetCodePage = () => {
   const handleResend = async () => {
     setIsResending(true);
     try {
-      // Simulate resend API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       toast.success('New verification code sent!');
       setCode('');
@@ -55,7 +53,10 @@ const ResetCodePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <FullWidthLayout 
+      backgroundClass="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+      className="min-h-screen flex items-center justify-center"
+    >
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto mb-4 w-16 h-16 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
@@ -120,7 +121,7 @@ const ResetCodePage = () => {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </FullWidthLayout>
   );
 };
 

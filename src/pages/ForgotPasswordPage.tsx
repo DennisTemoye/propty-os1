@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Mail, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { FullWidthLayout } from '@/components/layouts/FullWidthLayout';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +19,6 @@ const ForgotPasswordPage = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsSubmitted(true);
       toast.success('Reset link sent! Check your email.');
@@ -31,7 +31,10 @@ const ForgotPasswordPage = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <FullWidthLayout 
+        backgroundClass="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+        className="min-h-screen flex items-center justify-center"
+      >
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader className="text-center pb-2">
             <div className="mx-auto mb-4 w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
@@ -66,12 +69,15 @@ const ForgotPasswordPage = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </FullWidthLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <FullWidthLayout 
+      backgroundClass="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+      className="min-h-screen flex items-center justify-center"
+    >
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto mb-4">
@@ -121,7 +127,7 @@ const ForgotPasswordPage = () => {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </FullWidthLayout>
   );
 };
 
