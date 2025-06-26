@@ -83,8 +83,8 @@ const CompanyDashboard = () => {
     }
   };
 
-  // Check if current page is a detail page that needs full width
-  const isDetailPage = location.pathname.match(/^\/company\/(projects|clients|marketers)\/\d+$/);
+  // Check if current page is a detail page that needs full width - convert to boolean
+  const isDetailPage = Boolean(location.pathname.match(/^\/company\/(projects|clients|marketers)\/\d+$/));
 
   return (
     <SidebarProvider>
