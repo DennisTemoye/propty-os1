@@ -36,7 +36,7 @@ const CompanyDashboard = () => {
   const renderActiveModule = () => {
     const path = location.pathname;
     
-    // Handle detail pages
+    // Handle detail pages - these should render full-width with their own layout
     if (path.match(/^\/company\/projects\/\d+$/)) {
       return <ProjectDetailPage />;
     } else if (path.match(/^\/company\/clients\/\d+$/)) {
@@ -83,12 +83,12 @@ const CompanyDashboard = () => {
     }
   };
 
-  // Check if current page is a detail page that needs full width - convert to boolean
-  const isDetailPage = Boolean(location.pathname.match(/^\/company\/(projects|clients|marketers)\/\d+$/));
+  // Check if current page is a detail page
+  const isDetailPage = location.pathname.match(/^\/company\/(projects|clients|marketers)\/\d+$/);
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full">
+      <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900">
         <MobileWarningBanner />
         
         {/* Global Fixed Sidebar - Always present */}
@@ -97,11 +97,11 @@ const CompanyDashboard = () => {
           onClose={() => setSidebarOpen(false)} 
         />
         
-        {/* Main Content Wrapper - Always accounts for sidebar */}
-        <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
+        {/* Main Content Area */}
+        <div className={`min-h-screen transition-all duration-300 ${
           isSmallScreen ? 'ml-0' : 'ml-64'
         }`}>
-          {/* Mobile Header - Fixed when needed */}
+          {/* Mobile Header - Only show on small screens */}
           {isSmallScreen && (
             <div className="fixed top-16 sm:top-20 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 shadow-sm">
               <div className="flex items-center justify-between">
@@ -126,17 +126,22 @@ const CompanyDashboard = () => {
           )}
           
           {/* Scrollable Content Area */}
-          <main className={`min-h-screen overflow-y-auto ${
+          <main className={`min-h-screen ${
             isSmallScreen ? 'pt-32 sm:pt-36' : 'pt-0'
           }`}>
-            {/* All pages use ResponsiveContainer for consistent layout */}
-            <ResponsiveContainer 
-              fullWidth={isDetailPage}
-              className="min-h-full"
-              padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
-            >
-              {renderActiveModule()}
-            </ResponsiveContainer>
+            {/* Detail pages get full width, other pages use ResponsiveContainer */}
+            {isDetailPage ? (
+              <div className="w-full h-full">
+                {renderActiveModule()}
+              </div>
+            ) : (
+              <ResponsiveContainer 
+                className="min-h-full"
+                padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+              >
+                {renderActiveModule()}
+              </ResponsiveContainer>
+            )}
           </main>
         </div>
       </div>
