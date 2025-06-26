@@ -38,6 +38,9 @@ export function MarketerDetailView() {
   // Extract marketerId from URL params - handle both :marketerId and :id patterns
   const marketerId = params.marketerId || params.id;
   
+  console.log('MarketerDetailView - ID from params:', marketerId);
+  console.log('MarketerDetailView - Found marketer:', mockMarketer);
+  
   const [projectFilter, setProjectFilter] = useState('all');
 
   const salesData = [
@@ -79,11 +82,7 @@ export function MarketerDetailView() {
 
   const handleEditProfile = () => {
     if (marketerId) {
-      // Navigate to marketer edit page when it becomes available
-      // For now, show a toast since we don't have a marketer edit page yet
-      toast.info('Marketer profile editing functionality will be available soon');
-      // TODO: Uncomment when edit page is created
-      // navigate(`/company/marketers/${marketerId}/edit`);
+      navigate(`/company/marketers/${marketerId}/edit`);
     } else {
       toast.error('Marketer ID not found');
     }

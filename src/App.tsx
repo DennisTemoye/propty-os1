@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -26,6 +25,7 @@ import NewClientPage from './pages/NewClientPage';
 import MarketersCommissionPage from './pages/MarketersCommissionPage';
 import NewProjectPage from './pages/NewProjectPage';
 import EditProjectPage from './pages/EditProjectPage';
+import EditMarketerPage from './pages/EditMarketerPage';
 
 import './App.css';
 
@@ -60,6 +60,7 @@ function App() {
             <Route path="/company/projects/:id/blocks" element={<ProjectBlocksPage />} />
             <Route path="/company/clients/:id/edit" element={<EditClientPage />} />
             <Route path="/company/clients/new" element={<NewClientPage />} />
+            <Route path="/company/marketers/:id/edit" element={<EditMarketerPage />} />
             <Route path="/company/marketers-commission" element={<MarketersCommissionPage />} />
 
             {/* Dashboard Routes - All handled by CompanyDashboard */}
