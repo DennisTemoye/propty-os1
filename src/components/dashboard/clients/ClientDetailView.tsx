@@ -22,24 +22,21 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
 
-  const getStatusColor = (status: string) => {
+  // CRM statuses for client detail view only
+  const [crmStatus, setCrmStatus] = useState('prospect');
+
+  const getCrmStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'completed':
+      case 'prospect':
         return 'bg-blue-100 text-blue-800';
-      case 'unassigned':
+      case 'lead':
+        return 'bg-purple-100 text-purple-800';
+      case 'qualified':
+        return 'bg-green-100 text-green-800';
+      case 'customer':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'inactive':
         return 'bg-gray-100 text-gray-800';
-      case 'interested':
-        return 'bg-blue-100 text-blue-800';
-      case 'offered':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'allocated':
-        return 'bg-green-100 text-green-800';
-      case 'revoked':
-        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -47,12 +44,10 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
 
   const getKycStatusColor = (status: string) => {
     switch (status) {
-      case 'approved':
+      case 'verified':
         return 'bg-green-100 text-green-800';
-      case 'pending':
+      case 'unverified':
         return 'bg-yellow-100 text-yellow-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -96,7 +91,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
 
   const mockActivityLog = [
     { id: 1, date: '2024-01-20', action: 'Property assigned', details: 'Assigned Block A - Plot 02' },
-    { id: 2, date: '2024-01-15', action: 'KYC approved', details: 'All documents verified' },
+    { id: 2, date: '2024-01-15', action: 'KYC verified', details: 'All documents verified' },
     { id: 3, date: '2024-01-10', action: 'Client created', details: 'Profile created in system' }
   ];
 
@@ -146,8 +141,23 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <Badge className={`${getStatusColor(client.status)} px-3 py-1 text-sm font-medium`}>
-                    {client.status}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">CRM Status:</span>
+                    <Select value={crmStatus} onValueChange={setCrmStatus}>
+                      <SelectTrigger className="w-32 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="prospect">Prospect</SelectItem>
+                        <SelectItem value="lead">Lead</SelectItem>
+                        <SelectItem value="qualified">Qualified</SelectItem>
+                        <SelectItem value="customer">Customer</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Badge className={`${getCrmStatusColor(crmStatus)} px-3 py-1 text-sm font-medium`}>
+                    {crmStatus}
                   </Badge>
                   <Badge className={`${getKycStatusColor(client.kycStatus)} px-3 py-1 text-sm font-medium`}>
                     KYC {client.kycStatus}
@@ -366,8 +376,8 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
                         <h3 className="font-semibold text-lg">{project.name}</h3>
                         <p className="text-gray-600">{project.unit}</p>
                         <p className="text-sm text-gray-500">Assigned: {project.assignedDate}</p>
-                        <Badge className={getStatusColor(project.status || 'allocated')}>
-                          {project.status || 'Allocated'}
+                        <Badge className="bg-green-100 text-green-800">
+                          Allocated
                         </Badge>
                       </div>
                       

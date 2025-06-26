@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -23,8 +24,7 @@ const mockClients = [
         assignedDate: '2024-01-10'
       }
     ],
-    status: 'active',
-    kycStatus: 'approved',
+    kycStatus: 'verified',
     totalPaid: '₦15M',
     balance: '₦10M',
     nextPayment: '2024-02-15',

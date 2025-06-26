@@ -23,6 +23,7 @@ const mockClients = [
     emergencyPhone: '+234 801 234 5679',
     referralSource: 'Website',
     notes: 'Interested in premium units',
+    kycStatus: 'verified',
     projects: [
       {
         name: 'Victoria Gardens Estate',

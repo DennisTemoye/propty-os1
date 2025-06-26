@@ -24,8 +24,7 @@ export function ClientEditForm({
     phone: client.phone,
     address: client.address,
     nationalId: client.nationalId || '',
-    status: 'active',
-    kycStatus: 'approved'
+    kycStatus: client.kycStatus || 'unverified'
   });
 
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
@@ -112,40 +111,23 @@ export function ClientEditForm({
           </CardContent>
         </Card>
 
-        {/* Status Settings */}
+        {/* KYC Status Settings */}
         <Card>
           <CardHeader>
-            <CardTitle>Status Settings</CardTitle>
+            <CardTitle>KYC Status</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Client Status</label>
-                <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="unassigned">Unassigned</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">KYC Status</label>
-                <Select value={formData.kycStatus} onValueChange={(value) => handleInputChange('kycStatus', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="w-full md:w-48">
+              <label className="block text-sm font-medium text-gray-700 mb-2">KYC Status</label>
+              <Select value={formData.kycStatus} onValueChange={(value) => handleInputChange('kycStatus', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="unverified">Unverified</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>

@@ -30,8 +30,7 @@ const mockClients = [
         assignedDate: '2024-01-10'
       }
     ],
-    status: 'active',
-    kycStatus: 'approved',
+    kycStatus: 'verified',
     totalPaid: '₦15M',
     balance: '₦10M',
     nextPayment: '2024-02-15',
@@ -109,8 +108,7 @@ const mockClients = [
         assignedDate: '2024-03-10'
       }
     ],
-    status: 'active',
-    kycStatus: 'approved',
+    kycStatus: 'verified',
     totalPaid: '₦285M',
     balance: '₦415M',
     nextPayment: '2024-02-20',
@@ -138,8 +136,7 @@ const mockClients = [
         assignedDate: '2023-11-15'
       }
     ],
-    status: 'completed',
-    kycStatus: 'approved',
+    kycStatus: 'verified',
     totalPaid: '₦25M',
     balance: '₦0',
     nextPayment: null,
@@ -156,8 +153,7 @@ const mockClients = [
     nationalId: 'JKL789123456',
     passportPhoto: null,
     projects: [],
-    status: 'unassigned',
-    kycStatus: 'approved',
+    kycStatus: 'unverified',
     totalPaid: '₦0',
     balance: '₦0',
     nextPayment: null,
@@ -172,34 +168,17 @@ export function Clients() {
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [isDocumentsOpen, setIsDocumentsOpen] = useState(false);
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterKyc, setFilterKyc] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const navigate = useNavigate();
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800';
-      case 'unassigned':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   const getKycStatusColor = (status: string) => {
     switch (status) {
-      case 'approved':
+      case 'verified':
         return 'bg-green-100 text-green-800';
-      case 'pending':
+      case 'unverified':
         return 'bg-yellow-100 text-yellow-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -208,8 +187,8 @@ export function Clients() {
   const filteredClients = mockClients.filter(client => {
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          client.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || client.status === filterStatus;
-    return matchesSearch && matchesStatus;
+    const matchesKyc = filterKyc === 'all' || client.kycStatus === filterKyc;
+    return matchesSearch && matchesKyc;
   });
 
   const handleClientClick = (clientId: number) => {
@@ -251,7 +230,7 @@ export function Clients() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-gray-900">{mockClients.length}</div>
@@ -261,31 +240,23 @@ export function Clients() {
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-green-600">
-              {mockClients.filter(c => c.status === 'active').length}
+              {mockClients.filter(c => c.projects && c.projects.length > 0).length}
             </div>
-            <div className="text-sm text-gray-500">Active</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-orange-600">
-              {mockClients.filter(c => c.nextPayment && new Date(c.nextPayment) < new Date()).length}
-            </div>
-            <div className="text-sm text-gray-500">Pending Payments</div>
+            <div className="text-sm text-gray-500">With Properties</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-blue-600">
-              {mockClients.filter(c => c.status === 'completed').length}
+              {mockClients.filter(c => c.kycStatus === 'verified').length}
             </div>
-            <div className="text-sm text-gray-500">Completed</div>
+            <div className="text-sm text-gray-500">KYC Verified</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-gray-600">
-              {mockClients.filter(c => c.status === 'unassigned').length}
+              {mockClients.filter(c => !c.projects || c.projects.length === 0).length}
             </div>
             <div className="text-sm text-gray-500">Unassigned</div>
           </CardContent>
@@ -304,16 +275,14 @@ export function Clients() {
               className="pl-10 w-80"
             />
           </div>
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <Select value={filterKyc} onValueChange={setFilterKyc}>
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder="Filter by KYC" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="unassigned">Unassigned</SelectItem>
+              <SelectItem value="all">All KYC</SelectItem>
+              <SelectItem value="verified">Verified</SelectItem>
+              <SelectItem value="unverified">Unverified</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -361,11 +330,8 @@ export function Clients() {
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Badge className={getStatusColor(client.status)}>
-                      {client.status}
-                    </Badge>
                     <Badge className={getKycStatusColor(client.kycStatus)}>
-                      {client.kycStatus}
+                      KYC {client.kycStatus}
                     </Badge>
                   </div>
                 </div>
@@ -422,7 +388,7 @@ export function Clients() {
                   </div>
                 )}
                 
-                {/* Updated action buttons - removed View button */}
+                {/* Updated action buttons */}
                 <div className="flex space-x-2 mt-4 pt-3 border-t">
                   <Button 
                     variant="outline" 
@@ -455,8 +421,7 @@ export function Clients() {
                 <TableRow>
                   <TableHead>Client</TableHead>
                   <TableHead>Projects/Units</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>KYC</TableHead>
+                  <TableHead>KYC Status</TableHead>
                   <TableHead>Payment Progress</TableHead>
                   <TableHead>Next Due</TableHead>
                   <TableHead>Actions</TableHead>
@@ -499,13 +464,8 @@ export function Clients() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(client.status)}>
-                        {client.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
                       <Badge className={getKycStatusColor(client.kycStatus)}>
-                        {client.kycStatus}
+                        KYC {client.kycStatus}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -531,7 +491,7 @@ export function Clients() {
                         <span className="text-sm">{client.nextPayment}</span>
                       ) : (
                         <span className="text-sm text-gray-400">
-                          {client.status === 'completed' ? 'Complete' : 'Not set'}
+                          {client.paymentProgress === 100 ? 'Complete' : 'Not set'}
                         </span>
                       )}
                     </TableCell>
