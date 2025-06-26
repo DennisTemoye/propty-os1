@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -252,8 +253,8 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
+      <div className="w-full min-h-screen bg-gray-50 p-6">
+        <div className="w-full">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
             <Button onClick={() => navigate('/company/projects')}>
@@ -333,8 +334,8 @@ export default function ProjectDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6">
+    <div className="w-full min-h-screen bg-gray-50">
+      <div className="w-full p-6">
         {/* Top Navigation - Back button left, Action buttons right */}
         <div className="flex items-center justify-between mb-6">
           <Button 

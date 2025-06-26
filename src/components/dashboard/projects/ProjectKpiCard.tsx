@@ -1,36 +1,123 @@
 
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Building, Users, MapPin, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProjectKpiCardProps {
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: LucideIcon;
-  bgColor: string;
-  iconColor: string;
+  project: {
+    id: number;
+    name: string;
+    location: string;
+    status: string;
+    totalBlocks: number;
+    totalUnits: number;
+    availableUnits: number;
+    allocatedUnits: number;
+    totalClients: number;
+    totalRevenue: string;
+    allocationRate: number;
+    image?: string;
+  };
 }
 
-export function ProjectKpiCard({
-  title,
-  value,
-  subtitle,
-  icon: Icon,
-  bgColor,
-  iconColor,
-}: ProjectKpiCardProps) {
+export function ProjectKpiCard({ project }: ProjectKpiCardProps) {
+  const navigate = useNavigate();
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'ongoing':
+        return 'bg-green-100 text-green-800';
+      case 'completed':
+        return 'bg-blue-100 text-blue-800';
+      case 'upcoming':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getProjectImage = (project: any) => {
+    return project.image || '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+  };
+
   return (
-    <div className={`${bgColor} rounded-xl p-6 relative overflow-hidden border border-gray-100/50`}>
-      <div className="relative z-10">
-        <div className="text-sm font-medium text-gray-600 mb-2">
-          {title}
+    <Card className="hover:shadow-lg transition-shadow duration-200">
+      <CardContent className="p-0">
+        {/* Project Image */}
+        <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
+          <img 
+            src={getProjectImage(project)} 
+            alt={project.name}
+            className="w-full h-full object-cover rounded-t-lg"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+            }}
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-20 rounded-t-lg"></div>
+          <div className="absolute top-4 right-4">
+            <Badge className={getStatusColor(project.status)}>
+              {project.status}
+            </Badge>
+          </div>
         </div>
-        <div className="text-3xl font-bold text-gray-900 mb-1">{value}</div>
-        <div className="text-sm text-gray-500">{subtitle}</div>
-      </div>
-      <div className="absolute top-4 right-4 opacity-30">
-        <Icon className={`h-8 w-8 ${iconColor}`} />
-      </div>
-    </div>
+
+        {/* Project Info */}
+        <div className="p-6">
+          <div className="mb-4">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">{project.name}</h3>
+            <div className="flex items-center text-gray-600 mb-2">
+              <MapPin className="h-4 w-4 mr-1" />
+              <span className="text-sm">{project.location}</span>
+            </div>
+          </div>
+
+          {/* Key Metrics */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-1">
+                <Building className="h-4 w-4 mr-1 text-blue-600" />
+                <span className="text-sm text-gray-600">Blocks</span>
+              </div>
+              <div className="text-2xl font-bold text-gray-900">{project.totalBlocks}</div>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-1">
+                <Users className="h-4 w-4 mr-1 text-green-600" />
+                <span className="text-sm text-gray-600">Units</span>
+              </div>
+              <div className="text-2xl font-bold text-gray-900">{project.totalUnits}</div>
+            </div>
+          </div>
+
+          {/* Unit Status */}
+          <div className="mb-4">
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-gray-600">Available: {project.availableUnits}</span>
+              <span className="text-gray-600">Allocated: {project.allocatedUnits}</span>
+            </div>
+          </div>
+
+          {/* Revenue */}
+          <div className="mb-4">
+            <div className="text-sm text-gray-600 mb-1">Total Revenue</div>
+            <div className="text-lg font-semibold text-green-600">{project.totalRevenue}</div>
+          </div>
+
+          {/* View Details Button */}
+          <Button 
+            onClick={() => navigate(`/company/projects/${project.id}`)}
+            className="w-full"
+            variant="outline"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            View Details
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
