@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -8,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { ArrowLeft, MapPin, Building2, Layers, Info, Plus, Trash2, User } from 'lucide-react';
+import { ArrowLeft, MapPin, Building2, Layers, Info, Plus, Trash2, User, Calendar, Camera, Clock } from 'lucide-react';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { toast } from 'sonner';
 
@@ -46,6 +47,9 @@ const mockProjects = [
     contactPerson: 'Alice Johnson',
     contactPhone: '+234 xxx xxx xxxx',
     contactEmail: 'alice@victoriagarden.com',
+    address: 'Plot 123, Lekki Phase 1, Lagos State',
+    lga: 'Eti-Osa',
+    country: 'Nigeria',
     blocks: [
       {
         id: 'Block-A',
@@ -55,231 +59,6 @@ const mockProjects = [
         description: 'Premium duplex units with modern amenities'
       }
     ]
-  },
-  {
-    id: 2,
-    name: 'Emerald Heights',
-    location: 'Abuja, FCT',
-    city: 'Abuja',
-    state: 'Federal Capital Territory',
-    category: 'Mixed',
-    type: 'Commercial',
-    status: 'ongoing',
-    developmentStage: 'Marketing',
-    totalBlocks: 8,
-    totalUnits: 200,
-    availableUnits: 32,
-    allocatedUnits: 156,
-    reservedUnits: 12,
-    totalClients: 168,
-    totalRevenue: '₦4,200,000,000',
-    allocationRate: 78,
-    lastUpdated: '2024-01-20',
-    description: 'A mixed-use development combining residential and commercial spaces in the heart of Abuja.',
-    projectManager: 'David Wilson',
-    internalNotes: 'Commercial units showing strong interest from investors.',
-    tags: ['Mixed-Use', 'Commercial', 'Abuja'],
-    image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=1200&h=600&fit=crop'
-  },
-  {
-    id: 3,
-    name: 'Golden View Towers',
-    location: 'Victoria Island, Lagos',
-    city: 'Lagos',
-    state: 'Lagos State',
-    category: 'Housing',
-    type: 'Residential',
-    status: 'ongoing',
-    developmentStage: 'Pre-Launch',
-    totalBlocks: 12,
-    totalUnits: 300,
-    availableUnits: 37,
-    allocatedUnits: 245,
-    reservedUnits: 18,
-    totalClients: 263,
-    totalRevenue: '₦6,800,000,000',
-    allocationRate: 81,
-    lastUpdated: '2024-01-18',
-    description: 'Luxury high-rise towers offering panoramic views of Lagos lagoon and city skyline.',
-    projectManager: 'Sarah Mitchell',
-    internalNotes: 'High demand for penthouses and top floor units.',
-    tags: ['Luxury', 'High-rise', 'Victoria Island'],
-    image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1200&h=600&fit=crop'
-  },
-  {
-    id: 4,
-    name: 'Sunset Heights',
-    location: 'Ikoyi, Lagos',
-    city: 'Lagos',
-    state: 'Lagos State',
-    category: 'Housing',
-    type: 'Residential',
-    status: 'completed',
-    developmentStage: 'Handover',
-    totalBlocks: 6,
-    totalUnits: 180,
-    availableUnits: 5,
-    allocatedUnits: 167,
-    reservedUnits: 8,
-    totalClients: 175,
-    totalRevenue: '₦3,900,000,000',
-    allocationRate: 92,
-    lastUpdated: '2024-01-22',
-    description: 'Completed residential development in the prestigious Ikoyi district.',
-    projectManager: 'Michael Brown',
-    internalNotes: 'Final units ready for handover.',
-    tags: ['Completed', 'Ikoyi', 'Premium'],
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=600&fit=crop'
-  },
-  {
-    id: 5,
-    name: 'Marina Heights',
-    location: 'Marina, Lagos',
-    city: 'Lagos',
-    state: 'Lagos State',
-    category: 'Mixed',
-    type: 'Mixed-Use',
-    status: 'ongoing',
-    developmentStage: 'Planning',
-    totalBlocks: 10,
-    totalUnits: 250,
-    availableUnits: 27,
-    allocatedUnits: 198,
-    reservedUnits: 25,
-    totalClients: 223,
-    totalRevenue: '₦5,500,000,000',
-    allocationRate: 79,
-    lastUpdated: '2024-01-25',
-    description: 'Strategic mixed-use development in Lagos Marina business district.',
-    projectManager: 'Jennifer Davis',
-    internalNotes: 'Awaiting final planning approvals.',
-    tags: ['Mixed-Use', 'Marina', 'Business District'],
-    image: 'https://images.unsplash.com/photo-1503602642458-232114445914?w=1200&h=600&fit=crop'
-  },
-  {
-    id: 6,
-    name: 'Palm Grove Estate',
-    location: 'Ajah, Lagos',
-    city: 'Lagos',
-    state: 'Lagos State',
-    category: 'Housing',
-    type: 'Residential',
-    status: 'ongoing',
-    developmentStage: 'Construction',
-    totalBlocks: 15,
-    totalUnits: 400,
-    availableUnits: 75,
-    allocatedUnits: 280,
-    reservedUnits: 45,
-    totalClients: 325,
-    totalRevenue: '₦7,200,000,000',
-    allocationRate: 70,
-    lastUpdated: '2024-01-28',
-    description: 'Large-scale residential estate development in Ajah corridor.',
-    projectManager: 'Robert Taylor',
-    internalNotes: 'Phase 2 construction in progress.',
-    tags: ['Estate', 'Ajah', 'Family Homes'],
-    image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&h=600&fit=crop'
-  },
-  {
-    id: 7,
-    name: 'Royal Gardens',
-    location: 'Epe, Lagos',
-    city: 'Lagos',
-    state: 'Lagos State',
-    category: 'Land',
-    type: 'Land Project',
-    status: 'ongoing',
-    developmentStage: 'Marketing',
-    totalBlocks: 20,
-    totalUnits: 500,
-    availableUnits: 100,
-    allocatedUnits: 320,
-    reservedUnits: 80,
-    totalClients: 400,
-    totalRevenue: '₦4,800,000,000',
-    allocationRate: 64,
-    lastUpdated: '2024-01-30',
-    description: 'Premium land development project with full infrastructure.',
-    projectManager: 'Lisa Anderson',
-    internalNotes: 'Infrastructure development 80% complete.',
-    tags: ['Land', 'Infrastructure', 'Epe'],
-    image: 'https://images.unsplash.com/photo-1501127122-970c479ebc57?w=1200&h=600&fit=crop'
-  },
-  {
-    id: 8,
-    name: 'Crystal Bay',
-    location: 'Banana Island, Lagos',
-    city: 'Lagos',
-    state: 'Lagos State',
-    category: 'Housing',
-    type: 'Waterfront',
-    status: 'ongoing',
-    developmentStage: 'Marketing',
-    totalBlocks: 4,
-    totalUnits: 80,
-    availableUnits: 5,
-    allocatedUnits: 65,
-    reservedUnits: 10,
-    totalClients: 75,
-    totalRevenue: '₦8,500,000,000',
-    allocationRate: 81,
-    lastUpdated: '2024-02-01',
-    description: 'Ultra-luxury waterfront development on exclusive Banana Island.',
-    projectManager: 'Christopher Lee',
-    internalNotes: 'Limited units available, high-value clientele.',
-    tags: ['Ultra-Luxury', 'Waterfront', 'Banana Island'],
-    image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1200&h=600&fit=crop'
-  },
-  {
-    id: 9,
-    name: 'Metro Heights',
-    location: 'Ikeja, Lagos',
-    city: 'Lagos',
-    state: 'Lagos State',
-    category: 'Mixed',
-    type: 'Commercial',
-    status: 'ongoing',
-    developmentStage: 'Construction',
-    totalBlocks: 7,
-    totalUnits: 220,
-    availableUnits: 25,
-    allocatedUnits: 180,
-    reservedUnits: 15,
-    totalClients: 195,
-    totalRevenue: '₦3,800,000,000',
-    allocationRate: 81,
-    lastUpdated: '2024-02-03',
-    description: 'Modern commercial complex in Ikeja business hub.',
-    projectManager: 'Amanda White',
-    internalNotes: 'Office spaces in high demand.',
-    tags: ['Commercial', 'Ikeja', 'Business Hub'],
-    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200&h=600&fit=crop'
-  },
-  {
-    id: 10,
-    name: 'Paradise Gardens',
-    location: 'Ibadan, Oyo',
-    city: 'Ibadan',
-    state: 'Oyo State',
-    category: 'Housing',
-    type: 'Residential',
-    status: 'upcoming',
-    developmentStage: 'Pre-Launch',
-    totalBlocks: 8,
-    totalUnits: 160,
-    availableUnits: 95,
-    allocatedUnits: 45,
-    reservedUnits: 20,
-    totalClients: 65,
-    totalRevenue: '₦1,200,000,000',
-    allocationRate: 28,
-    lastUpdated: '2024-02-05',
-    description: 'Affordable housing development in Ibadan metropolitan area.',
-    projectManager: 'Daniel Garcia',
-    internalNotes: 'Pre-launch marketing campaign in preparation.',
-    tags: ['Affordable', 'Ibadan', 'Pre-Launch'],
-    image: 'https://images.unsplash.com/photo-1560185893-a55cbc9701bc?w=1200&h=600&fit=crop'
   }
 ];
 
@@ -293,31 +72,49 @@ export default function EditProjectPage() {
 
   const form = useForm({
     defaultValues: {
+      // Project Image
+      image: project?.image || '',
+      
+      // Basic Information
       name: project?.name || '',
-      location: project?.location || '',
       description: project?.description || '',
       documentTitle: project?.documentTitle || '',
       type: project?.type || '',
+      category: project?.category || '',
       status: project?.status || 'active',
       projectSize: project?.projectSize || '',
+      
+      // Location Details
+      location: project?.location || '',
+      address: project?.address || '',
+      city: project?.city || '',
+      state: project?.state || '',
+      lga: project?.lga || '',
+      country: project?.country || 'Nigeria',
+      
+      // Project Details
       developmentStage: project?.developmentStage || '',
+      totalBudget: project?.totalBudget || '',
+      totalBlocks: project?.totalBlocks?.toString() || '',
+      totalUnits: project?.totalUnits?.toString() || '',
+      
+      // Timeline & Management
       startDate: project?.startDate || '',
       expectedCompletion: project?.expectedCompletion || '',
-      totalBudget: project?.totalBudget || '',
+      projectManager: project?.projectManager || '',
       contactPerson: project?.contactPerson || '',
       contactPhone: project?.contactPhone || '',
       contactEmail: project?.contactEmail || '',
-      projectManager: project?.projectManager || '',
       internalNotes: project?.internalNotes || ''
     }
   });
 
   // Initialize blocks from project data
-  useState(() => {
+  React.useEffect(() => {
     if (project?.blocks) {
       setBlocks(project.blocks);
     }
-  });
+  }, [project]);
 
   // Watch form changes
   const watchedFields = form.watch();
@@ -408,10 +205,44 @@ export default function EditProjectPage() {
 
         {/* Form Content */}
         <div className="p-6">
-          <div className="w-full">
+          <div className="w-full space-y-8">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 
+                {/* Project Image Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Camera className="h-5 w-5 mr-2" />
+                      Project Image
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="image"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Project Image URL</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://example.com/image.jpg" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    {form.watch('image') && (
+                      <div className="mt-4">
+                        <img 
+                          src={form.watch('image')} 
+                          alt="Project preview" 
+                          className="w-full h-48 object-cover rounded-lg border"
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
                 {/* Basic Information Section */}
                 <Card>
                   <CardHeader>
@@ -438,12 +269,22 @@ export default function EditProjectPage() {
                       
                       <FormField
                         control={form.control}
-                        name="location"
+                        name="category"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Location *</FormLabel>
+                            <FormLabel>Project Category *</FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g., Lekki, Lagos" {...field} />
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Housing">Housing</SelectItem>
+                                  <SelectItem value="Mixed">Mixed</SelectItem>
+                                  <SelectItem value="Land">Land</SelectItem>
+                                  <SelectItem value="Commercial">Commercial</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -469,21 +310,7 @@ export default function EditProjectPage() {
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="documentTitle"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Document Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Certificate of Occupancy, Family Receipt" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <FormField
                         control={form.control}
                         name="type"
@@ -499,6 +326,8 @@ export default function EditProjectPage() {
                                   <SelectItem value="Residential">Residential</SelectItem>
                                   <SelectItem value="Commercial">Commercial</SelectItem>
                                   <SelectItem value="Mixed-Use">Mixed-Use</SelectItem>
+                                  <SelectItem value="Waterfront">Waterfront</SelectItem>
+                                  <SelectItem value="Land Project">Land Project</SelectItem>
                                 </SelectContent>
                               </Select>
                             </FormControl>
@@ -520,8 +349,148 @@ export default function EditProjectPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="active">Active</SelectItem>
+                                  <SelectItem value="ongoing">Ongoing</SelectItem>
+                                  <SelectItem value="completed">Completed</SelectItem>
+                                  <SelectItem value="upcoming">Upcoming</SelectItem>
                                   <SelectItem value="paused">Paused</SelectItem>
                                   <SelectItem value="sold out">Sold Out</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="projectSize"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Project Size</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., 50 hectares" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="documentTitle"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Document Title</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Certificate of Occupancy, Family Receipt, Approved Survey" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Location Details Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      Location Details
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="location"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Location *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Lekki, Lagos" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Address</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Plot 123, Lekki Phase 1" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>City *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Lagos" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>State *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Lagos State" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="lga"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>LGA</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Eti-Osa" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="country"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Country</FormLabel>
+                            <FormControl>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select country" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Nigeria">Nigeria</SelectItem>
+                                  <SelectItem value="Ghana">Ghana</SelectItem>
+                                  <SelectItem value="Kenya">Kenya</SelectItem>
+                                  <SelectItem value="South Africa">South Africa</SelectItem>
                                 </SelectContent>
                               </Select>
                             </FormControl>
@@ -545,20 +514,6 @@ export default function EditProjectPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
-                        name="projectSize"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Project Size</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., 50 hectares" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
                         name="developmentStage"
                         render={({ field }) => (
                           <FormItem>
@@ -575,6 +530,7 @@ export default function EditProjectPage() {
                                   <SelectItem value="Infrastructure">Infrastructure</SelectItem>
                                   <SelectItem value="Construction">Construction</SelectItem>
                                   <SelectItem value="Marketing">Marketing</SelectItem>
+                                  <SelectItem value="Pre-Launch">Pre-Launch</SelectItem>
                                   <SelectItem value="Sales">Sales</SelectItem>
                                   <SelectItem value="Handover">Handover</SelectItem>
                                 </SelectContent>
@@ -584,9 +540,64 @@ export default function EditProjectPage() {
                           </FormItem>
                         )}
                       />
+
+                      <FormField
+                        control={form.control}
+                        name="totalBudget"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Total Budget</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., ₦5,000,000,000" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="totalBlocks"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Total Blocks</FormLabel>
+                            <FormControl>
+                              <Input type="number" placeholder="e.g., 5" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="totalUnits"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Total Units</FormLabel>
+                            <FormControl>
+                              <Input type="number" placeholder="e.g., 150" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Timeline & Management Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Calendar className="h-5 w-5 mr-2" />
+                      Timeline & Management
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
                         name="startDate"
@@ -614,33 +625,8 @@ export default function EditProjectPage() {
                           </FormItem>
                         )}
                       />
-
-                      <FormField
-                        control={form.control}
-                        name="totalBudget"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Total Budget</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., ₦5,000,000,000" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </div>
-                  </CardContent>
-                </Card>
 
-                {/* Management & Notes Section */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <User className="h-5 w-5 mr-2" />
-                      Management & Notes
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
                     <FormField
                       control={form.control}
                       name="projectManager"
@@ -649,6 +635,50 @@ export default function EditProjectPage() {
                           <FormLabel>Project Manager</FormLabel>
                           <FormControl>
                             <Input placeholder="Project Manager Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="contactPerson"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Contact Person</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Project Manager/Lead" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="contactPhone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Contact Phone</FormLabel>
+                            <FormControl>
+                              <Input placeholder="+234 xxx xxx xxxx" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="contactEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contact Email</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="project@company.com" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -791,61 +821,6 @@ export default function EditProjectPage() {
                         ))}
                       </div>
                     )}
-                  </CardContent>
-                </Card>
-
-                {/* Contact Information Section */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <MapPin className="h-5 w-5 mr-2" />
-                      Contact Information
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="contactPerson"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Contact Person</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Project Manager/Lead" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="contactPhone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Contact Phone</FormLabel>
-                            <FormControl>
-                              <Input placeholder="+234 xxx xxx xxxx" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="contactEmail"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Contact Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="project@company.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                   </CardContent>
                 </Card>
 
