@@ -2,13 +2,6 @@
 import * as React from "react"
 import { useBreakpoints } from "./use-breakpoints"
 
-const BREAKPOINTS = {
-  mobile: 767,
-  tablet: 1023,
-  desktop: 1439,
-  largeDesktop: 1440
-}
-
 export function useResponsive() {
   const { width, height, breakpoint, isMobile, isTablet, isDesktop } = useBreakpoints();
   
@@ -19,7 +12,7 @@ export function useResponsive() {
     isTablet,
     isDesktop,
     isLargeDesktop: breakpoint === '2xl',
-    isSmallScreen: isMobile || isTablet,
+    isSmallScreen: isMobile,
     isTouchDevice: false
   });
 
@@ -33,7 +26,7 @@ export function useResponsive() {
       isTablet,
       isDesktop,
       isLargeDesktop: breakpoint === '2xl',
-      isSmallScreen: isMobile || isTablet,
+      isSmallScreen: isMobile,
       isTouchDevice
     });
   }, [width, height, breakpoint, isMobile, isTablet, isDesktop]);
