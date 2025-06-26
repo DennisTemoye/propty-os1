@@ -18,9 +18,9 @@ import { Reports } from '@/components/dashboard/Reports';
 import { Settings } from '@/components/dashboard/Settings';
 import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
 import { HelpSupport } from '@/components/dashboard/HelpSupport';
-import { CRMPipelines } from '@/components/dashboard/tools/CRMPipelines';
-import { DocumentManager } from '@/components/dashboard/tools/DocumentManager';
-import { CalendarScheduling } from '@/components/dashboard/tools/CalendarScheduling';
+import { CRMPipelinesPage } from '@/components/dashboard/tools/CRMPipelines';
+import { DocumentManagerPage } from '@/components/dashboard/tools/DocumentManager';
+import { CalendarSchedulingPage } from '@/components/dashboard/tools/CalendarScheduling';
 import { SendNotice } from '@/components/dashboard/SendNotice';
 
 // Import detail pages
@@ -112,17 +112,17 @@ export default function CompanyDashboard() {
             {/* Tool routes */}
             <Route path="/tools/crm-pipelines" element={
               <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <CRMPipelines />
+                <CRMPipelinesPage />
               </div>
             } />
             <Route path="/tools/document-manager" element={
               <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <DocumentManager />
+                <DocumentManagerPage />
               </div>
             } />
             <Route path="/tools/calendar" element={
               <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <CalendarScheduling />
+                <CalendarSchedulingPage />
               </div>
             } />
             <Route path="/tools/send-notice" element={
