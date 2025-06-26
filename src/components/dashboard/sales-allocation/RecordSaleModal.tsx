@@ -31,7 +31,6 @@ const mockClients = [
 ];
 
 export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalProps) {
-  const [salesType, setSalesType] = useState<'sale_only' | 'sale_with_allocation'>('sale_only');
   const [includeAllocation, setIncludeAllocation] = useState(false);
   
   const form = useForm({
@@ -43,9 +42,7 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
       initialPayment: '',
       saleDate: new Date().toISOString().split('T')[0],
       paymentMethod: '',
-      notes: '',
-      // Allocation fields (when included)
-      allocateImmediately: false
+      notes: ''
     }
   });
 
@@ -71,6 +68,10 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
     setIncludeAllocation(false);
   };
 
+  const handleAllocationToggle = (checked: boolean | "indeterminate") => {
+    setIncludeAllocation(checked === true);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -94,7 +95,7 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
               <Checkbox 
                 id="includeAllocation"
                 checked={includeAllocation}
-                onCheckedChange={setIncludeAllocation}
+                onCheckedChange={handleAllocationToggle}
               />
               <Label htmlFor="includeAllocation" className="flex items-center space-x-2">
                 <Handshake className="h-4 w-4 text-blue-600" />
