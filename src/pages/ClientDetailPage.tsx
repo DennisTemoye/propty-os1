@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -205,69 +204,67 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <div className="w-full bg-gray-50">
-      <div className="w-full px-4 md:px-6 py-4">
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
+    <div className="w-full px-4 md:px-6 py-4">
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/company/clients')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Clients
+          </Button>
+          
+          <div className="flex gap-2">
             <Button 
-              variant="outline" 
-              onClick={() => navigate('/company/clients')}
-              className="mb-4"
+              onClick={handleAssignProperty}
+              className="bg-green-600 hover:bg-green-700"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Clients
+              <Building className="h-4 w-4 mr-2" />
+              Assign Property
             </Button>
-            
-            <div className="flex gap-2">
-              <Button 
-                onClick={handleAssignProperty}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <Building className="h-4 w-4 mr-2" />
-                Assign Property
-              </Button>
-              <Button 
-                onClick={handleAddPayment}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <DollarSign className="h-4 w-4 mr-2" />
-                Add Payment
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={handleEdit}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Client
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={handleDelete}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Client
-              </Button>
-            </div>
+            <Button 
+              onClick={handleAddPayment}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <DollarSign className="h-4 w-4 mr-2" />
+              Add Payment
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={handleEdit}
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Client
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={handleDelete}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Client
+            </Button>
           </div>
         </div>
-        
-        <ClientDetailView client={client} />
-
-        {/* Assign Property Modal */}
-        <AssignPropertyModal 
-          isOpen={isAssignPropertyOpen}
-          onClose={() => setIsAssignPropertyOpen(false)}
-          client={client}
-        />
-
-        {/* Add Payment Modal */}
-        <AddPaymentModal 
-          isOpen={isAddPaymentOpen}
-          onClose={() => setIsAddPaymentOpen(false)}
-          client={client}
-        />
       </div>
+      
+      <ClientDetailView client={client} />
+
+      {/* Assign Property Modal */}
+      <AssignPropertyModal 
+        isOpen={isAssignPropertyOpen}
+        onClose={() => setIsAssignPropertyOpen(false)}
+        client={client}
+      />
+
+      {/* Add Payment Modal */}
+      <AddPaymentModal 
+        isOpen={isAddPaymentOpen}
+        onClose={() => setIsAddPaymentOpen(false)}
+        client={client}
+      />
     </div>
   );
 }

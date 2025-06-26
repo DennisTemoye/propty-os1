@@ -250,15 +250,13 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <div className="w-full bg-gray-50">
-        <div className="w-full px-4 md:px-6 py-4">
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
-            <Button onClick={() => navigate('/company/projects')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Projects
-            </Button>
-          </div>
+      <div className="w-full px-4 md:px-6 py-4">
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
+          <Button onClick={() => navigate('/company/projects')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Projects
+          </Button>
         </div>
       </div>
     );
@@ -331,196 +329,194 @@ export default function ProjectDetailPage() {
   };
 
   return (
-    <div className="w-full bg-gray-50">
-      <div className="w-full px-4 md:px-6 py-4">
-        {/* Top Navigation - Back button left, Action buttons right */}
-        <div className="flex items-center justify-between mb-6">
+    <div className="w-full px-4 md:px-6 py-4">
+      {/* Top Navigation - Back button left, Action buttons right */}
+      <div className="flex items-center justify-between mb-6">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/company/projects')}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Projects
+        </Button>
+
+        {/* Action Buttons */}
+        <div className="flex space-x-3">
           <Button 
-            variant="outline" 
-            onClick={() => navigate('/company/projects')}
+            onClick={handleAllocateUnit}
+            className="bg-green-600 hover:bg-green-700 text-white"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Projects
+            <UserPlus className="h-4 w-4 mr-2" />
+            Allocate Unit
           </Button>
-
-          {/* Action Buttons */}
-          <div className="flex space-x-3">
-            <Button 
-              onClick={handleAllocateUnit}
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              <UserPlus className="h-4 w-4 mr-2" />
-              Allocate Unit
-            </Button>
-            
-            <Button 
-              onClick={handleEditProject}
-              variant="outline"
-              className="border-blue-600 text-blue-600 hover:bg-blue-50"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Project
-            </Button>
-            
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button 
-                  variant="outline"
-                  className="border-red-600 text-red-600 hover:bg-red-50"
+          
+          <Button 
+            onClick={handleEditProject}
+            variant="outline"
+            className="border-blue-600 text-blue-600 hover:bg-blue-50"
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit Project
+          </Button>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="outline"
+                className="border-red-600 text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data including allocations, blocks, and units.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction 
+                  className="bg-red-600 hover:bg-red-700"
+                  onClick={handleDeleteProject}
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data including allocations, blocks, and units.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction 
-                    className="bg-red-600 hover:bg-red-700"
-                    onClick={handleDeleteProject}
-                  >
-                    Delete Project
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+                  Delete Project
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
+      </div>
 
-        {/* Project Banner Section */}
-        <div className="relative bg-white rounded-lg shadow-sm border overflow-hidden mb-6">
-          {/* Banner Image */}
-          <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600">
-            <img 
-              src={getProjectImage(project)} 
-              alt={project.name}
-              className="w-full h-full object-cover"
-              style={{ aspectRatio: '16/9' }}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
-              }}
-            />
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-            
-            {/* Banner Content - No action buttons here anymore */}
-            <div className="absolute inset-0 flex items-end">
-              <div className="p-6 text-white w-full">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <h1 className="text-4xl font-bold">{project.name}</h1>
-                    <Badge className={getDevelopmentStageColor(project.developmentStage)}>
-                      {project.developmentStage}
-                    </Badge>
+      {/* Project Banner Section */}
+      <div className="relative bg-white rounded-lg shadow-sm border overflow-hidden mb-6">
+        {/* Banner Image */}
+        <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600">
+          <img 
+            src={getProjectImage(project)} 
+            alt={project.name}
+            className="w-full h-full object-cover"
+            style={{ aspectRatio: '16/9' }}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+            }}
+          />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          
+          {/* Banner Content - No action buttons here anymore */}
+          <div className="absolute inset-0 flex items-end">
+            <div className="p-6 text-white w-full">
+              <div className="flex-1">
+                <div className="flex items-center space-x-3 mb-3">
+                  <h1 className="text-4xl font-bold">{project.name}</h1>
+                  <Badge className={getDevelopmentStageColor(project.developmentStage)}>
+                    {project.developmentStage}
+                  </Badge>
+                </div>
+                
+                <div className="flex items-center space-x-6 text-white/90 mb-3">
+                  <div className="flex items-center">
+                    <MapPin className="h-4 w-4 mr-1" />
+                    {project.city}, {project.state}
                   </div>
-                  
-                  <div className="flex items-center space-x-6 text-white/90 mb-3">
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {project.city}, {project.state}
-                    </div>
-                    <div className="flex items-center">
-                      <Building className="h-4 w-4 mr-1" />
-                      {project.totalBlocks} Blocks
-                    </div>
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-1" />
-                      {project.totalUnits} Units
-                    </div>
+                  <div className="flex items-center">
+                    <Building className="h-4 w-4 mr-1" />
+                    {project.totalBlocks} Blocks
                   </div>
+                  <div className="flex items-center">
+                    <User className="h-4 w-4 mr-1" />
+                    {project.totalUnits} Units
+                  </div>
+                </div>
 
-                  <div className="text-white/80">
-                    {project.description}
-                  </div>
+                <div className="text-white/80">
+                  {project.description}
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Enhanced KPI Quick Stats */}
-        <ProjectKPIGrid project={project} />
+      {/* Enhanced KPI Quick Stats */}
+      <ProjectKPIGrid project={project} />
 
-        {/* Project Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border">
-          <Tabs defaultValue="overview" className="w-full">
-            <div className="border-b px-6">
-              <TabsList className="grid w-full grid-cols-6 bg-transparent h-12">
-                <TabsTrigger 
-                  value="overview" 
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="layout"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Layout Designer
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="blocks"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Blocks & Units
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="sales-history"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Sales History
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="documents"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Documents
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="settings"
-                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-                >
-                  Settings
-                </TabsTrigger>
-              </TabsList>
-            </div>
+      {/* Project Navigation Tabs */}
+      <div className="bg-white rounded-lg shadow-sm border">
+        <Tabs defaultValue="overview" className="w-full">
+          <div className="border-b px-6">
+            <TabsList className="grid w-full grid-cols-6 bg-transparent h-12">
+              <TabsTrigger 
+                value="overview" 
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger 
+                value="layout"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Layout Designer
+              </TabsTrigger>
+              <TabsTrigger 
+                value="blocks"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Blocks & Units
+              </TabsTrigger>
+              <TabsTrigger 
+                value="sales-history"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Sales History
+              </TabsTrigger>
+              <TabsTrigger 
+                value="documents"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Documents
+              </TabsTrigger>
+              <TabsTrigger 
+                value="settings"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Settings
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-            <TabsContent value="overview" className="p-6">
-              <ProjectOverviewContent project={project} />
-            </TabsContent>
+          <TabsContent value="overview" className="p-6">
+            <ProjectOverviewContent project={project} />
+          </TabsContent>
 
-            <TabsContent value="layout" className="p-6">
-              <ProjectLayoutTab project={project} />
-            </TabsContent>
+          <TabsContent value="layout" className="p-6">
+            <ProjectLayoutTab project={project} />
+          </TabsContent>
 
-            <TabsContent value="blocks" className="p-6">
-              <ProjectBlocksTab project={project} />
-            </TabsContent>
+          <TabsContent value="blocks" className="p-6">
+            <ProjectBlocksTab project={project} />
+          </TabsContent>
 
-            <TabsContent value="sales-history" className="p-6">
-              <ProjectSalesHistoryTab 
-                project={project} 
-                onReallocate={handleReallocate}
-                onRevoke={handleRevoke}
-              />
-            </TabsContent>
+          <TabsContent value="sales-history" className="p-6">
+            <ProjectSalesHistoryTab 
+              project={project} 
+              onReallocate={handleReallocate}
+              onRevoke={handleRevoke}
+            />
+          </TabsContent>
 
-            <TabsContent value="documents" className="p-6">
-              <ProjectDocumentsTab project={project} />
-            </TabsContent>
+          <TabsContent value="documents" className="p-6">
+            <ProjectDocumentsTab project={project} />
+          </TabsContent>
 
-            <TabsContent value="settings" className="p-6">
-              <ProjectSettingsTab project={project} />
-            </TabsContent>
-          </Tabs>
-        </div>
+          <TabsContent value="settings" className="p-6">
+            <ProjectSettingsTab project={project} />
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Modals */}

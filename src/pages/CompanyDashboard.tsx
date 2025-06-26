@@ -24,6 +24,9 @@ import { useLocation } from 'react-router-dom';
 import { useResponsive } from '@/hooks/use-responsive';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import ProjectDetailPage from './ProjectDetailPage';
+import ClientDetailPage from './ClientDetailPage';
+import MarketerDetailPage from './MarketerDetailPage';
 
 const CompanyDashboard = () => {
   const location = useLocation();
@@ -33,6 +36,16 @@ const CompanyDashboard = () => {
   const renderActiveModule = () => {
     const path = location.pathname;
     
+    // Handle detail pages
+    if (path.match(/^\/company\/projects\/\d+$/)) {
+      return <ProjectDetailPage />;
+    } else if (path.match(/^\/company\/clients\/\d+$/)) {
+      return <ClientDetailPage />;
+    } else if (path.match(/^\/company\/marketers\/\d+$/)) {
+      return <MarketerDetailPage />;
+    }
+    
+    // Handle main module pages
     if (path === '/company/dashboard') {
       return <DashboardOverview />;
     } else if (path.startsWith('/company/projects')) {
@@ -71,9 +84,7 @@ const CompanyDashboard = () => {
   };
 
   // Check if current page is a detail page that needs full width
-  const isDetailPage = location.pathname.includes('/projects/') || 
-                      location.pathname.includes('/clients/') || 
-                      location.pathname.includes('/marketers/');
+  const isDetailPage = location.pathname.match(/^\/company\/(projects|clients|marketers)\/\d+$/);
 
   return (
     <SidebarProvider>
