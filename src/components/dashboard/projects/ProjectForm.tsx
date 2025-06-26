@@ -80,10 +80,11 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pb-20">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="basic">Basic Info</TabsTrigger>
               <TabsTrigger value="details">Project Details</TabsTrigger>
               <TabsTrigger value="blocks">Blocks & Structure</TabsTrigger>
+              <TabsTrigger value="timeline">Timeline & Management</TabsTrigger>
               <TabsTrigger value="contact">Contact Info</TabsTrigger>
             </TabsList>
 
@@ -425,6 +426,62 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                       ))}
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="timeline" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-left">
+                    <Building2 className="h-5 w-5 mr-2" />
+                    Timeline & Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="startDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-left">Start Date</FormLabel>
+                          <FormControl>
+                            <Input type="date" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="expectedCompletion"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-left">Expected Completion</FormLabel>
+                          <FormControl>
+                            <Input type="date" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="totalBudget"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-left">Total Budget</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., ₦5,000,000,000" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
