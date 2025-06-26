@@ -168,16 +168,12 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending" className="relative">
-            Pending Allocations
-            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="approvals" className="relative">
             Pending Approvals
-            <Badge className="ml-2 bg-orange-600 text-white text-xs">2</Badge>
+            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
           </TabsTrigger>
         </TabsList>
 
@@ -196,14 +192,6 @@ export function SalesAllocationOverview() {
               // This would trigger the allocation flow
             }}
           />
-        </TabsContent>
-
-        <TabsContent value="approvals" className="space-y-6">
-          <div className="text-center py-8">
-            <CheckCircle className="h-12 w-12 mx-auto text-green-600 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Pending Approvals</h3>
-            <p className="text-gray-600">Allocation actions awaiting administrative approval</p>
-          </div>
         </TabsContent>
       </Tabs>
 
