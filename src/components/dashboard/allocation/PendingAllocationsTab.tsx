@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,10 +10,6 @@ import { Clock, Search, Filter, Eye, CheckCircle, XCircle } from 'lucide-react';
 import { PendingAllocation } from '@/types/allocation';
 import { ApprovalWorkflowModal } from './ApprovalWorkflowModal';
 import { toast } from 'sonner';
-
-interface PendingAllocationsTabProps {
-  onAllocate: (sale: any) => void;
-}
 
 const mockPendingAllocations: PendingAllocation[] = [
   {
@@ -52,7 +49,7 @@ const mockPendingAllocations: PendingAllocation[] = [
   }
 ];
 
-export function PendingAllocationsTab({ onAllocate }: PendingAllocationsTabProps) {
+export function PendingAllocationsTab() {
   const [pendingAllocations, setPendingAllocations] = useState(mockPendingAllocations);
   const [searchTerm, setSearchTerm] = useState('');
   const [projectFilter, setProjectFilter] = useState('all');
@@ -208,7 +205,7 @@ export function PendingAllocationsTab({ onAllocate }: PendingAllocationsTabProps
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => onAllocate(allocation)}
+                        onClick={() => openApprovalModal(allocation)}
                         className="text-green-600 hover:text-green-700"
                       >
                         <CheckCircle className="h-4 w-4" />
