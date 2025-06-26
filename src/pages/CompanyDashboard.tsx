@@ -93,7 +93,7 @@ const CompanyDashboard = () => {
             onClose={() => setSidebarOpen(false)} 
           />
           
-          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
             {/* Mobile/Tablet Header with proper spacing */}
             {!isDesktop && (
               <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 z-30 shadow-sm">
@@ -119,7 +119,7 @@ const CompanyDashboard = () => {
             )}
             
             <main className="flex-1 overflow-auto w-full">
-              <div className="w-full h-full p-4 md:p-6 lg:p-8">
+              <div className="w-full h-full px-4 md:px-6 py-4 md:py-6">
                 {renderActiveModule()}
               </div>
             </main>

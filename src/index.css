@@ -90,14 +90,14 @@
     overflow-x: hidden;
   }
 
-  /* Ensure full-width layouts */
+  /* Ensure full-width layouts - remove container constraints */
   .container {
-    @apply w-full max-w-none px-0;
+    @apply w-full px-4 md:px-6;
   }
 
-  /* Grid responsive utilities */
+  /* Grid responsive utilities with tablet optimization */
   .responsive-grid {
-    @apply grid gap-4;
+    @apply grid gap-4 w-full;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 
@@ -111,5 +111,19 @@
     .responsive-grid {
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     }
+  }
+
+  /* Full-width dashboard and module layouts */
+  .dashboard-content {
+    @apply w-full px-4 md:px-6;
+  }
+
+  /* Remove boxed constraints globally */
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl {
+    max-width: none !important;
+    @apply w-full;
   }
 }

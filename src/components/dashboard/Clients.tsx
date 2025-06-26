@@ -192,19 +192,6 @@ export function Clients() {
     }
   };
 
-  const getKycStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   const filteredClients = mockClients.filter(client => {
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          client.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -214,6 +201,11 @@ export function Clients() {
 
   const handleClientClick = (clientId: number) => {
     navigate(`/company/clients/${clientId}`);
+  };
+
+  const handleEditClient = (e: React.MouseEvent, clientId: number) => {
+    e.stopPropagation();
+    navigate(`/company/clients/${clientId}/edit`);
   };
 
   const handleAssignProperty = (e: React.MouseEvent, client: any) => {
@@ -235,11 +227,11 @@ export function Clients() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
-          <p className="text-gray-600 mt-1">Manage client profiles, KYC, and property assignments</p>
+          <p className="text-gray-600 mt-1">Manage client profiles and property assignments</p>
         </div>
         <Button 
           className="bg-purple-600 hover:bg-purple-700"
@@ -251,7 +243,7 @@ export function Clients() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 w-full">
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-gray-900">{mockClients.length}</div>
@@ -293,7 +285,7 @@ export function Clients() {
       </div>
 
       {/* Filters and Search */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between w-full">
         <div className="flex gap-4 items-center">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -338,7 +330,7 @@ export function Clients() {
 
       {/* Clients Display */}
       {viewMode === 'cards' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {filteredClients.map((client) => (
             <Card 
               key={client.id} 
@@ -364,9 +356,6 @@ export function Clients() {
                     <Badge className={getStatusColor(client.status)}>
                       {client.status}
                     </Badge>
-                    <Badge className={getKycStatusColor(client.kycStatus)}>
-                      {client.kycStatus}
-                    </Badge>
                   </div>
                 </div>
               </CardHeader>
@@ -383,19 +372,6 @@ export function Clients() {
                           +{client.projects.length - 1} more
                         </div>
                       )}
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Payment Progress</span>
-                        <span>{client.paymentProgress}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-green-600 h-2 rounded-full"
-                          style={{ width: `${client.paymentProgress}%` }}
-                        ></div>
-                      </div>
                     </div>
                     
                     <div className="flex justify-between text-sm">
@@ -422,8 +398,16 @@ export function Clients() {
                   </div>
                 )}
                 
-                {/* Updated action buttons - removed View button */}
+                {/* Updated action buttons with Edit button */}
                 <div className="flex space-x-2 mt-4 pt-3 border-t">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={(e) => handleEditClient(e, client.id)}
+                  >
+                    Edit
+                  </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -448,7 +432,7 @@ export function Clients() {
           ))}
         </div>
       ) : (
-        <Card>
+        <Card className="w-full">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
@@ -456,7 +440,6 @@ export function Clients() {
                   <TableHead>Client</TableHead>
                   <TableHead>Projects/Units</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>KYC</TableHead>
                   <TableHead>Payment Progress</TableHead>
                   <TableHead>Next Due</TableHead>
                   <TableHead>Actions</TableHead>
@@ -504,22 +487,11 @@ export function Clients() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getKycStatusColor(client.kycStatus)}>
-                        {client.kycStatus}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
                       {client.projects && client.projects.length > 0 ? (
                         <div>
                           <div className="font-medium text-green-600">{client.totalPaid}</div>
                           <div className="text-sm text-gray-500">
                             {client.paymentProgress}% complete
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
-                            <div 
-                              className="bg-green-600 h-1 rounded-full"
-                              style={{ width: `${client.paymentProgress}%` }}
-                            ></div>
                           </div>
                         </div>
                       ) : (
@@ -537,6 +509,13 @@ export function Clients() {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={(e) => handleEditClient(e, client.id)}
+                        >
+                          Edit
+                        </Button>
                         {(!client.projects || client.projects.length === 0) && (
                           <Button 
                             size="sm" 
@@ -566,21 +545,19 @@ export function Clients() {
         </Card>
       )}
 
-      {/* Assign Property Modal */}
+      {/* Modals - keep existing code */}
       <AssignPropertyModal 
         isOpen={isAssignPropertyOpen}
         onClose={() => setIsAssignPropertyOpen(false)}
         client={selectedClient}
       />
 
-      {/* Add Payment Modal */}
       <AddPaymentModal 
         isOpen={isAddPaymentOpen}
         onClose={() => setIsAddPaymentOpen(false)}
         client={selectedClient}
       />
 
-      {/* Documents Modal */}
       <Dialog open={isDocumentsOpen} onOpenChange={setIsDocumentsOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
