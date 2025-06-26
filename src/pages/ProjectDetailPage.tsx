@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -250,7 +251,7 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <div className="w-full px-4 md:px-6 py-4">
+      <>
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
           <Button onClick={() => navigate('/company/projects')}>
@@ -258,7 +259,7 @@ export default function ProjectDetailPage() {
             Back to Projects
           </Button>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -329,7 +330,7 @@ export default function ProjectDetailPage() {
   };
 
   return (
-    <div className="w-full px-4 md:px-6 py-4">
+    <>
       {/* Top Navigation - Back button left, Action buttons right */}
       <div className="flex items-center justify-between mb-6">
         <Button 
@@ -407,7 +408,7 @@ export default function ProjectDetailPage() {
           {/* Overlay */}
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           
-          {/* Banner Content - No action buttons here anymore */}
+          {/* Banner Content */}
           <div className="absolute inset-0 flex items-end">
             <div className="p-6 text-white w-full">
               <div className="flex-1">
@@ -521,14 +522,14 @@ export default function ProjectDetailPage() {
 
       {/* Modals */}
       
-      {/* Allocate Unit Modal - Using the same form from Sales & Allocations */}
+      {/* Allocate Unit Modal */}
       <AllocateUnitModal
         isOpen={isAllocateUnitOpen}
         onClose={() => setIsAllocateUnitOpen(false)}
         onSubmit={handleAllocateSubmit}
       />
 
-      {/* Reallocate Modal - Using the same form from Sales & Allocations */}
+      {/* Reallocate Modal */}
       {reallocateData && (
         <ReallocationModal
           isOpen={isReallocateOpen}
@@ -541,7 +542,7 @@ export default function ProjectDetailPage() {
         />
       )}
 
-      {/* Revoke Allocation Modal - Using the same form from Sales & Allocations */}
+      {/* Revoke Allocation Modal */}
       {selectedAllocation && (
         <RevokeAllocationModal
           isOpen={isRevokeOpen}
@@ -553,6 +554,6 @@ export default function ProjectDetailPage() {
           onRevoke={handleRevokeSubmit}
         />
       )}
-    </div>
+    </>
   );
 }

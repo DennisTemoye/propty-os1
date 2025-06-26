@@ -85,19 +85,17 @@ const CompanyDashboard = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen w-full flex bg-gray-50 dark:bg-gray-900">
         <MobileWarningBanner />
         
-        {/* Global Fixed Sidebar - Always present */}
+        {/* Fixed Sidebar - Always present */}
         <CompanySidebar 
           isOpen={sidebarOpen} 
           onClose={() => setSidebarOpen(false)} 
         />
         
         {/* Main Content Area */}
-        <div className={`min-h-screen transition-all duration-300 ${
-          isSmallScreen ? 'ml-0' : 'ml-64'
-        }`}>
+        <div className="flex-1 flex flex-col min-h-screen">
           {/* Mobile Header - Only show on small screens */}
           {isSmallScreen && (
             <div className="fixed top-16 sm:top-20 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 shadow-sm">
@@ -122,8 +120,8 @@ const CompanyDashboard = () => {
             </div>
           )}
           
-          {/* Scrollable Content Area - All pages use ResponsiveContainer */}
-          <main className={`min-h-screen ${
+          {/* Scrollable Content Area */}
+          <main className={`flex-1 ${
             isSmallScreen ? 'pt-32 sm:pt-36' : 'pt-0'
           }`}>
             <ResponsiveContainer 

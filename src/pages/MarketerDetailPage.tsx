@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -208,7 +209,7 @@ const MarketerDetailPage = () => {
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Button variant="ghost" onClick={() => navigate('/company/marketers')}>
