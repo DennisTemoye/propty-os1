@@ -208,328 +208,326 @@ const MarketerDetailPage = () => {
   };
 
   return (
-    <div className="px-4 md:px-6 py-4">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" onClick={() => navigate('/company/marketers')}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Marketers
-          </Button>
-        </div>
+    <div className="w-full space-y-6">
+      {/* Header */}
+      <div className="flex items-center space-x-4">
+        <Button variant="ghost" onClick={() => navigate('/company/marketers')}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Marketers
+        </Button>
+      </div>
 
-        {/* Marketer Profile Header */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={marketer.avatar} alt={marketer.name} />
-                  <AvatarFallback className="text-lg">
-                    {marketer.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{marketer.name}</h1>
-                  <p className="text-lg text-gray-600 mb-2">{marketer.role}</p>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 mr-1" />
-                      {marketer.phone}
-                    </div>
-                    <div className="flex items-center">
-                      <Mail className="h-4 w-4 mr-1" />
-                      {marketer.email}
-                    </div>
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      Joined: {marketer.joinDate}
-                    </div>
+      {/* Marketer Profile Header */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={marketer.avatar} alt={marketer.name} />
+                <AvatarFallback className="text-lg">
+                  {marketer.name.split(' ').map(n => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">{marketer.name}</h1>
+                <p className="text-lg text-gray-600 mb-2">{marketer.role}</p>
+                <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
+                  <div className="flex items-center">
+                    <Phone className="h-4 w-4 mr-1" />
+                    {marketer.phone}
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {getPerformanceRankBadge()}
+                  <div className="flex items-center">
+                    <Mail className="h-4 w-4 mr-1" />
+                    {marketer.email}
+                  </div>
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    Joined: {marketer.joinDate}
                   </div>
                 </div>
+                <div className="flex items-center space-x-2">
+                  {getPerformanceRankBadge()}
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <Badge className={getStatusColor(marketer.status)}>
-                  {marketer.status}
-                </Badge>
-                <Button variant="outline" onClick={handleDownloadCommissionReport}>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Download Report
-                </Button>
-                <Button>Edit Profile</Button>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Badge className={getStatusColor(marketer.status)}>
+                {marketer.status}
+              </Badge>
+              <Button variant="outline" onClick={handleDownloadCommissionReport}>
+                <FileText className="h-4 w-4 mr-2" />
+                Download Report
+              </Button>
+              <Button>Edit Profile</Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Basic Information Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h4 className="text-sm font-medium text-gray-500 mb-1">Contact Details</h4>
+              <p className="text-sm">{marketer.email}</p>
+              <p className="text-sm">{marketer.phone}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-gray-500 mb-1">Role</h4>
+              <p className="text-sm">{marketer.role}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-gray-500 mb-1">Assigned Projects</h4>
+              <div className="flex flex-wrap gap-1">
+                {marketer.assignedProjects.map((project, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {project}
+                  </Badge>
+                ))}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Basic Information Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-1">Contact Details</h4>
-                <p className="text-sm">{marketer.email}</p>
-                <p className="text-sm">{marketer.phone}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-1">Role</h4>
-                <p className="text-sm">{marketer.role}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-1">Assigned Projects</h4>
-                <div className="flex flex-wrap gap-1">
-                  {marketer.assignedProjects.map((project, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {project}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Commission Structure</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Base Rate:</span>
-                <span className="font-medium">{marketer.commissionStructure.baserate}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Bonus Threshold:</span>
-                <span className="font-medium">{marketer.commissionStructure.bonusThreshold}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Bonus Rate:</span>
-                <span className="font-medium">{marketer.commissionStructure.bonusRate}</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Summary KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">Total Clients Converted</div>
-                  <div className="text-2xl font-bold text-blue-600">{marketer.conversions}</div>
-                </div>
-                <Users className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">Total Sales Volume</div>
-                  <div className="text-2xl font-bold text-purple-600">{marketer.totalSalesVolume}</div>
-                </div>
-                <TrendingUp className="h-8 w-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">Total Commission Earned</div>
-                  <div className="text-2xl font-bold text-orange-600">{marketer.totalCommission}</div>
-                </div>
-                <DollarSign className="h-8 w-8 text-orange-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Detailed Tabs */}
-        <Tabs defaultValue="sales" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="sales">Sales</TabsTrigger>
-            <TabsTrigger value="commissions">Commissions</TabsTrigger>
-            <TabsTrigger value="activity">Activity Log</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="sales" className="space-y-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Sales Records</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Select value={projectFilter} onValueChange={setProjectFilter}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Filter by project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Projects</SelectItem>
-                      {projects.map(project => (
-                        <SelectItem key={project} value={project}>
-                          {project}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" size="sm" onClick={handleExportSalesReport}>
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Sales Report
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Client Name</TableHead>
-                      <TableHead>Unit</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Commission</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSalesData.map((sale) => (
-                      <TableRow key={sale.id}>
-                        <TableCell className="font-medium">{sale.clientName}</TableCell>
-                        <TableCell>{sale.unit}</TableCell>
-                        <TableCell>{sale.project}</TableCell>
-                        <TableCell className="font-medium">{sale.amount}</TableCell>
-                        <TableCell>{sale.date}</TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(sale.status)}>
-                            {sale.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-medium text-green-600">{sale.commission}</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                {filteredSalesData.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    No sales records found for the selected project.
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="commissions" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Total Earned</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-purple-600">{marketer.totalCommission}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Paid</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{marketer.commissionPaid}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Pending</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-orange-600">{marketer.commissionPending}</div>
-                </CardContent>
-              </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Commission Structure</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Base Rate:</span>
+              <span className="font-medium">{marketer.commissionStructure.baserate}</span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Bonus Threshold:</span>
+              <span className="font-medium">{marketer.commissionStructure.bonusThreshold}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Bonus Rate:</span>
+              <span className="font-medium">{marketer.commissionStructure.bonusRate}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Commission Breakdown</CardTitle>
-                <Button variant="outline" size="sm" onClick={handleDownloadCommissionReport}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Download Summary
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Client</TableHead>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Sale Amount</TableHead>
-                      <TableHead>Rate</TableHead>
-                      <TableHead>Commission</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Date Earned</TableHead>
-                      <TableHead>Date Paid</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {commissions.map((commission) => (
-                      <TableRow key={commission.id}>
-                        <TableCell className="font-medium">{commission.clientName}</TableCell>
-                        <TableCell>{commission.project}</TableCell>
-                        <TableCell className="font-medium">{commission.saleAmount}</TableCell>
-                        <TableCell>{commission.rate}</TableCell>
-                        <TableCell className="font-medium text-purple-600">{commission.commissionAmount}</TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(commission.status)}>
-                            {commission.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{commission.dateEarned}</TableCell>
-                        <TableCell>{commission.datePaid || '-'}</TableCell>
-                      </TableRow>
+      {/* Summary KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-gray-500 mb-1">Total Clients Converted</div>
+                <div className="text-2xl font-bold text-blue-600">{marketer.conversions}</div>
+              </div>
+              <Users className="h-8 w-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-gray-500 mb-1">Total Sales Volume</div>
+                <div className="text-2xl font-bold text-purple-600">{marketer.totalSalesVolume}</div>
+              </div>
+              <TrendingUp className="h-8 w-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-gray-500 mb-1">Total Commission Earned</div>
+                <div className="text-2xl font-bold text-orange-600">{marketer.totalCommission}</div>
+              </div>
+              <DollarSign className="h-8 w-8 text-orange-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Detailed Tabs */}
+      <Tabs defaultValue="sales" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="sales">Sales</TabsTrigger>
+          <TabsTrigger value="commissions">Commissions</TabsTrigger>
+          <TabsTrigger value="activity">Activity Log</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="sales" className="space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Sales Records</CardTitle>
+              <div className="flex items-center space-x-2">
+                <Select value={projectFilter} onValueChange={setProjectFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Filter by project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Projects</SelectItem>
+                    {projects.map(project => (
+                      <SelectItem key={project} value={project}>
+                        {project}
+                      </SelectItem>
                     ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" size="sm" onClick={handleExportSalesReport}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Sales Report
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Client Name</TableHead>
+                    <TableHead>Unit</TableHead>
+                    <TableHead>Project</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Commission</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredSalesData.map((sale) => (
+                    <TableRow key={sale.id}>
+                      <TableCell className="font-medium">{sale.clientName}</TableCell>
+                      <TableCell>{sale.unit}</TableCell>
+                      <TableCell>{sale.project}</TableCell>
+                      <TableCell className="font-medium">{sale.amount}</TableCell>
+                      <TableCell>{sale.date}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(sale.status)}>
+                          {sale.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-medium text-green-600">{sale.commission}</TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {filteredSalesData.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  No sales records found for the selected project.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <TabsContent value="activity" className="space-y-6">
+        <TabsContent value="commissions" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Activity Log</CardTitle>
+                <CardTitle>Total Earned</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {activityLog.map((activity) => (
-                    <div key={activity.id} className="flex items-start space-x-4 p-4 border rounded-lg">
-                      <Badge className={getActivityTypeColor(activity.type)}>
-                        {activity.type}
-                      </Badge>
-                      <div className="flex-1">
-                        <div className="font-medium">{activity.action}</div>
-                        <div className="text-sm text-gray-600">{activity.description}</div>
-                        <div className="text-xs text-gray-400 mt-1">{activity.date}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <div className="text-2xl font-bold text-purple-600">{marketer.totalCommission}</div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Paid</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-600">{marketer.commissionPaid}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Pending</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-orange-600">{marketer.commissionPending}</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Commission Breakdown</CardTitle>
+              <Button variant="outline" size="sm" onClick={handleDownloadCommissionReport}>
+                <Download className="h-4 w-4 mr-2" />
+                Download Summary
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Project</TableHead>
+                    <TableHead>Sale Amount</TableHead>
+                    <TableHead>Rate</TableHead>
+                    <TableHead>Commission</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date Earned</TableHead>
+                    <TableHead>Date Paid</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {commissions.map((commission) => (
+                    <TableRow key={commission.id}>
+                      <TableCell className="font-medium">{commission.clientName}</TableCell>
+                      <TableCell>{commission.project}</TableCell>
+                      <TableCell className="font-medium">{commission.saleAmount}</TableCell>
+                      <TableCell>{commission.rate}</TableCell>
+                      <TableCell className="font-medium text-purple-600">{commission.commissionAmount}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(commission.status)}>
+                          {commission.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{commission.dateEarned}</TableCell>
+                      <TableCell>{commission.datePaid || '-'}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="activity" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Activity Log</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {activityLog.map((activity) => (
+                  <div key={activity.id} className="flex items-start space-x-4 p-4 border rounded-lg">
+                    <Badge className={getActivityTypeColor(activity.type)}>
+                      {activity.type}
+                    </Badge>
+                    <div className="flex-1">
+                      <div className="font-medium">{activity.action}</div>
+                      <div className="text-sm text-gray-600">{activity.description}</div>
+                      <div className="text-xs text-gray-400 mt-1">{activity.date}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

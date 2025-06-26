@@ -177,7 +177,7 @@ export default function ClientDetailPage() {
 
   if (!client) {
     return (
-      <div className="w-full px-4 md:px-6 py-4">
+      <div className="w-full">
         <div className="text-center text-gray-500">Client not found</div>
       </div>
     );
@@ -204,7 +204,7 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <div className="w-full px-4 md:px-6 py-4">
+    <div className="w-full">
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <Button 

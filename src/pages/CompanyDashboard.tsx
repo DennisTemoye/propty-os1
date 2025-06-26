@@ -36,7 +36,7 @@ const CompanyDashboard = () => {
   const renderActiveModule = () => {
     const path = location.pathname;
     
-    // Handle detail pages - these should render full-width with their own layout
+    // Handle detail pages - these render with the dashboard layout
     if (path.match(/^\/company\/projects\/\d+$/)) {
       return <ProjectDetailPage />;
     } else if (path.match(/^\/company\/clients\/\d+$/)) {
@@ -83,9 +83,6 @@ const CompanyDashboard = () => {
     }
   };
 
-  // Check if current page is a detail page
-  const isDetailPage = location.pathname.match(/^\/company\/(projects|clients|marketers)\/\d+$/);
-
   return (
     <SidebarProvider>
       <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900">
@@ -125,23 +122,16 @@ const CompanyDashboard = () => {
             </div>
           )}
           
-          {/* Scrollable Content Area */}
+          {/* Scrollable Content Area - All pages use ResponsiveContainer */}
           <main className={`min-h-screen ${
             isSmallScreen ? 'pt-32 sm:pt-36' : 'pt-0'
           }`}>
-            {/* Detail pages get full width, other pages use ResponsiveContainer */}
-            {isDetailPage ? (
-              <div className="w-full h-full">
-                {renderActiveModule()}
-              </div>
-            ) : (
-              <ResponsiveContainer 
-                className="min-h-full"
-                padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
-              >
-                {renderActiveModule()}
-              </ResponsiveContainer>
-            )}
+            <ResponsiveContainer 
+              className="min-h-full"
+              padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+            >
+              {renderActiveModule()}
+            </ResponsiveContainer>
           </main>
         </div>
       </div>
