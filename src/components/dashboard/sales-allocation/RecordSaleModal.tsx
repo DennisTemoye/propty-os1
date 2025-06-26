@@ -17,10 +17,10 @@ interface RecordSaleModalProps {
 }
 
 const mockProjects = [
-  { id: 'project1', name: 'Victoria Gardens', status: 'available' },
-  { id: 'project2', name: 'Emerald Heights', status: 'available' },
-  { id: 'project3', name: 'Golden View', status: 'development' },
-  { id: 'project4', name: 'Ocean Breeze', status: 'pre_launch' }
+  { id: 'project1', name: 'Victoria Gardens' },
+  { id: 'project2', name: 'Emerald Heights' },
+  { id: 'project3', name: 'Golden View' },
+  { id: 'project4', name: 'Ocean Breeze' }
 ];
 
 const mockClients = [
@@ -42,7 +42,6 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
     defaultValues: {
       clientId: '',
       projectId: '',
-      saleType: 'pre_allocation',
       unitNumber: '',
       saleAmount: '',
       initialPayment: '',
@@ -53,9 +52,6 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
     }
   });
 
-  const saleType = form.watch('saleType');
-  const selectedProject = mockProjects.find(p => p.id === form.watch('projectId'));
-
   const handleSubmit = (data: any) => {
     console.log('Recording sale:', data);
     onSubmit(data);
@@ -64,27 +60,16 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
     form.reset();
   };
 
-  const getSaleTypeDescription = (type: string) => {
-    switch (type) {
-      case 'pre_allocation':
-        return 'Sale documented before unit allocation (pre-sales, development phase)';
-      case 'with_allocation':
-        return 'Sale with immediate unit allocation';
-      default:
-        return '';
-    }
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <DollarSign className="h-5 w-5 text-green-600" />
-            <span>Record Property Sale</span>
+            <span>Record New Sale</span>
           </DialogTitle>
           <DialogDescription>
-            Document a property sale transaction with flexible allocation timing
+            Record a new property sale and automatically create allocation
           </DialogDescription>
         </DialogHeader>
 
@@ -118,10 +103,7 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
                 <SelectContent>
                   {mockProjects.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
-                      <div>
-                        <div className="font-medium">{project.name}</div>
-                        <div className="text-xs text-gray-500 capitalize">{project.status.replace('_', ' ')}</div>
-                      </div>
+                      {project.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -129,31 +111,15 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
             </div>
           </div>
 
-          <div>
-            <Label>Sale Type *</Label>
-            <Select onValueChange={(value) => form.setValue('saleType', value)} defaultValue="pre_allocation">
-              <SelectTrigger>
-                <SelectValue placeholder="Select sale type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pre_allocation">Pre-Allocation Sale</SelectItem>
-                <SelectItem value="with_allocation">Sale with Allocation</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-gray-500 mt-1">{getSaleTypeDescription(saleType)}</p>
-          </div>
-
-          {saleType === 'with_allocation' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Unit Number *</Label>
               <Input 
-                {...form.register('unitNumber', { required: saleType === 'with_allocation' })}
+                {...form.register('unitNumber', { required: true })}
                 placeholder="e.g., Block A - Plot 15"
               />
             </div>
-          )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Sale Amount (₦) *</Label>
               <Input 
@@ -162,7 +128,9 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
                 placeholder="e.g., 25000000"
               />
             </div>
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Initial Payment (₦) *</Label>
               <Input 
@@ -171,9 +139,7 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
                 placeholder="e.g., 5000000"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Marketer</Label>
               <Select onValueChange={(value) => form.setValue('marketerId', value)}>
@@ -188,6 +154,16 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Sale Date *</Label>
+              <Input 
+                type="date"
+                {...form.register('saleDate', { required: true })}
+              />
             </div>
 
             <div>
@@ -208,14 +184,6 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
           </div>
 
           <div>
-            <Label>Sale Date *</Label>
-            <Input 
-              type="date"
-              {...form.register('saleDate', { required: true })}
-            />
-          </div>
-
-          <div>
             <Label>Additional Notes</Label>
             <Textarea 
               {...form.register('notes')}
@@ -224,18 +192,16 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
             />
           </div>
 
-          <div className={`p-4 rounded-lg border ${saleType === 'pre_allocation' ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'}`}>
-            <p className={`text-sm ${saleType === 'pre_allocation' ? 'text-blue-800' : 'text-green-800'}`}>
-              <strong>Note:</strong> {saleType === 'pre_allocation' 
-                ? 'This sale will be recorded for future allocation. The client will appear in pending allocations for the allocation team to process when units become available.'
-                : 'This sale will be recorded with immediate allocation. The unit will be assigned to the client and commission calculations will be processed.'
-              }
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800">
+              <strong>Note:</strong> Recording this sale will automatically create an allocation for the client 
+              and update the unit status. Commission calculations and accounting records will be updated accordingly.
             </p>
           </div>
 
           <div className="flex gap-2 pt-4">
             <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
-              Record Sale
+              Record Sale & Allocate
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
