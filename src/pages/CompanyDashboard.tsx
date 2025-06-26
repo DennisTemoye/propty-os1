@@ -76,12 +76,12 @@ const CompanyDashboard = () => {
                       location.pathname.includes('/marketers/');
 
   return (
-    <div className="w-full h-screen overflow-hidden">
+    <div className="w-full min-h-screen overflow-hidden">
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className={`h-full flex bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+        <div className={`min-h-screen flex bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
           
-          {/* Global Sticky Sidebar */}
+          {/* Sidebar - Fixed position and scrollable */}
           <div className="flex-shrink-0">
             <CompanySidebar 
               isOpen={sidebarOpen} 
@@ -89,8 +89,8 @@ const CompanyDashboard = () => {
             />
           </div>
           
-          {/* Main Content Area */}
-          <div className={`flex-1 flex flex-col min-w-0 overflow-hidden ${!isSmallScreen ? 'ml-0' : ''}`}>
+          {/* Main Content Area - Scrollable */}
+          <div className={`flex-1 flex flex-col min-w-0 ${!isSmallScreen ? 'ml-64' : ''}`}>
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
               <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm flex-shrink-0">
@@ -116,7 +116,7 @@ const CompanyDashboard = () => {
             )}
             
             {/* Scrollable Content */}
-            <main className="flex-1 overflow-auto">
+            <main className="flex-1 overflow-y-auto">
               {isDetailPage ? (
                 // Detail pages render without container for full width
                 <div className="min-h-full">

@@ -224,10 +224,10 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop - Fixed Sticky Sidebar
+  // Desktop - Fixed Sidebar with scrollable content
   return (
     <div className={cn(
-      'h-full w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 flex-shrink-0 sticky top-0',
+      'fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 flex-shrink-0 z-30',
       className
     )}>
       <div className="h-full flex flex-col">
