@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -9,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { ArrowLeft, MapPin, Building2, Layers, Info, Plus, Trash2, User, Calendar, Camera, Clock } from 'lucide-react';
+import { ArrowLeft, MapPin, Building2, Layers, Info, Plus, Trash2, User, Calendar, Camera, Clock, Upload, X } from 'lucide-react';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { toast } from 'sonner';
 
@@ -67,15 +66,12 @@ export default function EditProjectPage() {
   const { projectId } = useParams();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [blocks, setBlocks] = useState<any[]>([]);
+  const [projectImage, setProjectImage] = useState<string>('');
   
   const project = mockProjects.find(p => p.id === parseInt(projectId || '0'));
 
   const form = useForm({
     defaultValues: {
-      // Project Image
-      image: project?.image || '',
-      
-      // Basic Information
       name: project?.name || '',
       description: project?.description || '',
       documentTitle: project?.documentTitle || '',
@@ -83,22 +79,16 @@ export default function EditProjectPage() {
       category: project?.category || '',
       status: project?.status || 'active',
       projectSize: project?.projectSize || '',
-      
-      // Location Details
       location: project?.location || '',
       address: project?.address || '',
       city: project?.city || '',
       state: project?.state || '',
       lga: project?.lga || '',
       country: project?.country || 'Nigeria',
-      
-      // Project Details
       developmentStage: project?.developmentStage || '',
       totalBudget: project?.totalBudget || '',
       totalBlocks: project?.totalBlocks?.toString() || '',
       totalUnits: project?.totalUnits?.toString() || '',
-      
-      // Timeline & Management
       startDate: project?.startDate || '',
       expectedCompletion: project?.expectedCompletion || '',
       projectManager: project?.projectManager || '',
@@ -109,10 +99,13 @@ export default function EditProjectPage() {
     }
   });
 
-  // Initialize blocks from project data
+  // Initialize blocks and image from project data
   React.useEffect(() => {
     if (project?.blocks) {
       setBlocks(project.blocks);
+    }
+    if (project?.image) {
+      setProjectImage(project.image);
     }
   }, [project]);
 
@@ -134,7 +127,7 @@ export default function EditProjectPage() {
   };
 
   const onSubmit = (data: any) => {
-    console.log('Project data:', { ...data, blocks });
+    console.log('Project data:', { ...data, blocks, image: projectImage });
     toast.success('Project updated successfully!');
     setHasUnsavedChanges(false);
     navigate(`/company/projects/${projectId}`);
@@ -158,6 +151,39 @@ export default function EditProjectPage() {
     const updatedBlocks = [...blocks];
     updatedBlocks[index] = { ...updatedBlocks[index], [field]: value };
     setBlocks(updatedBlocks);
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB');
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select a valid image file');
+        return;
+      }
+
+      // Create object URL for preview
+      const imageUrl = URL.createObjectURL(file);
+      setProjectImage(imageUrl);
+      setHasUnsavedChanges(true);
+      toast.success('Image uploaded successfully');
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setProjectImage('');
+    setHasUnsavedChanges(true);
+    // Reset file input
+    const fileInput = document.getElementById('project-image-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
 
   if (!project) {
@@ -218,28 +244,59 @@ export default function EditProjectPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="image"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Project Image URL</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://example.com/image.jpg" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                    <div className="space-y-4">
+                      {/* Image Preview */}
+                      {projectImage ? (
+                        <div className="relative">
+                          <img 
+                            src={projectImage} 
+                            alt="Project preview" 
+                            className="w-full h-48 object-cover rounded-lg border"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2"
+                            onClick={handleRemoveImage}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+                          <div className="text-center">
+                            <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                            <p className="text-gray-500">No image uploaded</p>
+                          </div>
+                        </div>
                       )}
-                    />
-                    {form.watch('image') && (
-                      <div className="mt-4">
-                        <img 
-                          src={form.watch('image')} 
-                          alt="Project preview" 
-                          className="w-full h-48 object-cover rounded-lg border"
+
+                      {/* Upload Controls */}
+                      <div className="flex items-center gap-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => document.getElementById('project-image-upload')?.click()}
+                          className="flex items-center gap-2"
+                        >
+                          <Upload className="h-4 w-4" />
+                          {projectImage ? 'Change Image' : 'Upload Image'}
+                        </Button>
+                        
+                        <input
+                          id="project-image-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
                         />
+                        
+                        <span className="text-sm text-gray-500">
+                          Supports JPG, PNG, GIF up to 5MB
+                        </span>
                       </div>
-                    )}
+                    </div>
                   </CardContent>
                 </Card>
 
