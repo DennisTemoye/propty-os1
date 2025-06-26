@@ -77,21 +77,24 @@ const CompanyDashboard = () => {
     <div className="w-full">
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+        <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
           
           <CompanySidebar 
             isOpen={sidebarOpen} 
             onClose={() => setSidebarOpen(false)} 
           />
           
-          {/* Main content with left margin for fixed sidebar on desktop */}
+          {/* Main content area with proper margin for fixed sidebar */}
           <div className={cn(
-            "flex-1 flex flex-col min-w-0 overflow-hidden w-full",
-            !isSmallScreen && "ml-64" // Add left margin for fixed sidebar on desktop
+            "min-h-screen",
+            // On desktop, add left margin to account for fixed sidebar (w-64 = 256px = 16rem)
+            !isSmallScreen && "ml-64",
+            // On mobile/tablet, full width since sidebar is overlay
+            isSmallScreen && "w-full"
           )}>
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm w-full">
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm">
                 <div className="flex items-center justify-between">
                   <Button
                     variant="ghost"
@@ -113,7 +116,7 @@ const CompanyDashboard = () => {
               </header>
             )}
             
-            <main className="flex-1 overflow-auto w-full">
+            <main className="w-full">
               {isDetailPage ? (
                 // Detail pages render without container for full width
                 renderActiveModule()
@@ -121,7 +124,7 @@ const CompanyDashboard = () => {
                 // Regular pages use ResponsiveContainer
                 <ResponsiveContainer 
                   fullWidth={true}
-                  className="h-full min-h-0 w-full"
+                  className="h-full min-h-0"
                   padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
                 >
                   {renderActiveModule()}
