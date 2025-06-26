@@ -1,21 +1,24 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient } from '@tanstack/react-query';
-import { HomePage } from '@/pages/HomePage';
-import { Auth } from '@/pages/Auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Index as HomePage } from '@/pages/Index';
+import { LoginPage as Auth } from '@/pages/LoginPage';
 import CompanyDashboard from '@/pages/CompanyDashboard';
-import { EditClientPage } from '@/pages/EditClientPage';
-import { NewClientPage } from '@/pages/NewClientPage';
-import { ClientDetailPage } from '@/pages/ClientDetailPage';
-import { NewProjectPage } from '@/pages/NewProjectPage';
-import { ProjectDetailPage } from '@/pages/ProjectDetailPage';
-import { EditProjectPage } from '@/pages/EditProjectPage';
-import { ProjectBlocksPage } from '@/pages/ProjectBlocksPage';
-import { MarketerDetailPage } from '@/pages/MarketerDetailPage';
+import EditClientPage from '@/pages/EditClientPage';
+import NewClientPage from '@/pages/NewClientPage';
+import ClientDetailPage from '@/pages/ClientDetailPage';
+import NewProjectPage from '@/pages/NewProjectPage';
+import ProjectDetailPage from '@/pages/ProjectDetailPage';
+import EditProjectPage from '@/pages/EditProjectPage';
+import ProjectBlocksPage from '@/pages/ProjectBlocksPage';
+import MarketerDetailPage from '@/pages/MarketerDetailPage';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClient>
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <div className="min-h-screen bg-background font-sans antialiased w-full">
           <div className="relative flex min-h-screen flex-col w-full">
@@ -41,7 +44,7 @@ function App() {
           </div>
         </div>
       </BrowserRouter>
-    </QueryClient>
+    </QueryClientProvider>
   );
 }
 
