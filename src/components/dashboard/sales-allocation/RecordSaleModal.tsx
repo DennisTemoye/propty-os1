@@ -1,16 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { DollarSign, Handshake, AlertCircle } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 
 interface RecordSaleModalProps {
   isOpen: boolean;
@@ -21,18 +19,25 @@ interface RecordSaleModalProps {
 const mockProjects = [
   { id: 'project1', name: 'Victoria Gardens' },
   { id: 'project2', name: 'Emerald Heights' },
-  { id: 'project3', name: 'Golden View' }
+  { id: 'project3', name: 'Golden View' },
+  { id: 'project4', name: 'Ocean Breeze' }
 ];
 
 const mockClients = [
   { id: 'client1', name: 'John Doe', email: 'john@example.com' },
   { id: 'client2', name: 'Sarah Johnson', email: 'sarah@example.com' },
-  { id: 'client3', name: 'Robert Brown', email: 'robert@example.com' }
+  { id: 'client3', name: 'Robert Brown', email: 'robert@example.com' },
+  { id: 'client4', name: 'Alice Cooper', email: 'alice@example.com' }
+];
+
+const mockMarketers = [
+  { id: 'marketer1', name: 'Jane Smith' },
+  { id: 'marketer2', name: 'Mike Davis' },
+  { id: 'marketer3', name: 'Sarah Johnson' },
+  { id: 'marketer4', name: 'Tom Wilson' }
 ];
 
 export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalProps) {
-  const [includeAllocation, setIncludeAllocation] = useState(false);
-  
   const form = useForm({
     defaultValues: {
       clientId: '',
@@ -40,6 +45,7 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
       unitNumber: '',
       saleAmount: '',
       initialPayment: '',
+      marketerId: '',
       saleDate: new Date().toISOString().split('T')[0],
       paymentMethod: '',
       notes: ''
@@ -47,29 +53,11 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
   });
 
   const handleSubmit = (data: any) => {
-    const saleData = {
-      ...data,
-      salesType: includeAllocation ? 'sale_with_allocation' : 'sale_only',
-      includeAllocation,
-      timestamp: new Date().toISOString()
-    };
-    
-    console.log('Recording sale:', saleData);
-    onSubmit(saleData);
-    
-    toast.success(
-      includeAllocation 
-        ? 'Sale recorded and allocation created!' 
-        : 'Sale recorded successfully!'
-    );
-    
+    console.log('Recording sale:', data);
+    onSubmit(data);
+    toast.success('Sale recorded successfully!');
     onClose();
     form.reset();
-    setIncludeAllocation(false);
-  };
-
-  const handleAllocationToggle = (checked: boolean | "indeterminate") => {
-    setIncludeAllocation(checked === true);
   };
 
   return (
@@ -78,41 +66,14 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <DollarSign className="h-5 w-5 text-green-600" />
-            <span>Record Property Sale</span>
+            <span>Record New Sale</span>
           </DialogTitle>
           <DialogDescription>
-            Record a property sale with optional allocation workflow
+            Record a new property sale and automatically create allocation
           </DialogDescription>
         </DialogHeader>
 
-        {/* Sales Type Selection */}
-        <Card className="mb-4">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Sales Type</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="includeAllocation"
-                checked={includeAllocation}
-                onCheckedChange={handleAllocationToggle}
-              />
-              <Label htmlFor="includeAllocation" className="flex items-center space-x-2">
-                <Handshake className="h-4 w-4 text-blue-600" />
-                <span>Include allocation with this sale</span>
-              </Label>
-            </div>
-            <p className="text-sm text-gray-600 mt-2">
-              {includeAllocation 
-                ? 'This sale will create an immediate allocation to the client'
-                : 'This sale will be recorded without creating an allocation'
-              }
-            </p>
-          </CardContent>
-        </Card>
-
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          {/* Basic Sale Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Client *</Label>
@@ -152,7 +113,7 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>Unit/Property *</Label>
+              <Label>Unit Number *</Label>
               <Input 
                 {...form.register('unitNumber', { required: true })}
                 placeholder="e.g., Block A - Plot 15"
@@ -180,6 +141,32 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
             </div>
 
             <div>
+              <Label>Marketer</Label>
+              <Select onValueChange={(value) => form.setValue('marketerId', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select marketer" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockMarketers.map((marketer) => (
+                    <SelectItem key={marketer.id} value={marketer.id}>
+                      {marketer.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Sale Date *</Label>
+              <Input 
+                type="date"
+                {...form.register('saleDate', { required: true })}
+              />
+            </div>
+
+            <div>
               <Label>Payment Method</Label>
               <Select onValueChange={(value) => form.setValue('paymentMethod', value)}>
                 <SelectTrigger>
@@ -197,14 +184,6 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
           </div>
 
           <div>
-            <Label>Sale Date *</Label>
-            <Input 
-              type="date"
-              {...form.register('saleDate', { required: true })}
-            />
-          </div>
-
-          <div>
             <Label>Additional Notes</Label>
             <Textarea 
               {...form.register('notes')}
@@ -213,33 +192,16 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
             />
           </div>
 
-          {/* Information Cards */}
-          <Card className={`${includeAllocation ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}`}>
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-2">
-                {includeAllocation ? (
-                  <Handshake className="h-5 w-5 text-blue-600 mt-0.5" />
-                ) : (
-                  <AlertCircle className="h-5 w-5 text-gray-600 mt-0.5" />
-                )}
-                <div>
-                  <p className="text-sm font-medium mb-1">
-                    {includeAllocation ? 'Sale with Allocation' : 'Sale Only'}
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    {includeAllocation 
-                      ? 'This sale will automatically create an allocation record, update unit status, and sync with the accounting module.'
-                      : 'This sale will be recorded in the system without creating an allocation. You can create an allocation later using the Allocation Flow.'
-                    }
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800">
+              <strong>Note:</strong> Recording this sale will automatically create an allocation for the client 
+              and update the unit status. Commission calculations and accounting records will be updated accordingly.
+            </p>
+          </div>
 
           <div className="flex gap-2 pt-4">
             <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
-              {includeAllocation ? 'Record Sale & Allocate' : 'Record Sale'}
+              Record Sale & Allocate
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
