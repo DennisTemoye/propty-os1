@@ -19,14 +19,14 @@ export function GlobalLayout({
   sidebar, 
   header, 
   footer,
-  fullWidth = false,
+  fullWidth = true,
   formLayout = false
 }: GlobalLayoutProps) {
   const { isSmallScreen } = useBreakpoints();
 
   return (
     <div className={cn(
-      "min-h-screen bg-background flex flex-col",
+      "min-h-screen bg-background flex flex-col w-full",
       className
     )}>
       {/* Header */}
@@ -36,12 +36,14 @@ export function GlobalLayout({
         </header>
       )}
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
+      <div className="flex flex-1 overflow-hidden w-full">
+        {/* Sidebar - Fixed on desktop, overlay on mobile/tablet */}
         {sidebar && (
           <aside className={cn(
-            "border-r bg-muted/40",
-            isSmallScreen ? "fixed inset-y-0 left-0 z-40 w-64 transform transition-transform" : "w-64 flex-shrink-0"
+            "bg-muted/40 border-r",
+            isSmallScreen 
+              ? "fixed inset-y-0 left-0 z-40 w-64 transform transition-transform" 
+              : "fixed left-0 top-0 h-screen w-[260px] z-40 overflow-y-auto"
           )}>
             {sidebar}
           </aside>
@@ -49,13 +51,15 @@ export function GlobalLayout({
 
         {/* Main Content */}
         <main className={cn(
-          "flex-1 overflow-auto",
-          sidebar && !isSmallScreen && "ml-0",
+          "flex-1 overflow-auto w-full",
+          sidebar && !isSmallScreen && "ml-[260px]",
           isSmallScreen && "w-full"
         )}>
           <div className={cn(
-            fullWidth ? "w-full" : "container mx-auto",
-            formLayout ? "max-w-4xl mx-auto p-4 md:p-6 lg:p-8" : fullWidth ? "p-4 md:p-6 lg:p-8" : "p-4 md:p-6 lg:p-8"
+            "w-full h-full min-h-0",
+            formLayout 
+              ? "max-w-4xl mx-auto p-4 md:p-6 lg:p-8" 
+              : "px-4 md:px-6 py-4 md:py-6"
           )}>
             {children}
           </div>
@@ -64,7 +68,10 @@ export function GlobalLayout({
 
       {/* Footer */}
       {footer && (
-        <footer className="border-t bg-background">
+        <footer className={cn(
+          "border-t bg-background",
+          sidebar && !isSmallScreen && "ml-[260px]"
+        )}>
           {footer}
         </footer>
       )}

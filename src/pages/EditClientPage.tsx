@@ -4,6 +4,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { ClientForm } from '@/components/dashboard/clients/ClientForm';
+import { GlobalLayout } from '@/components/layouts/GlobalLayout';
+import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { useResponsive } from '@/hooks/use-responsive';
+import { Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 const mockClients = [
   {
@@ -59,19 +65,28 @@ const mockClients = [
 export default function EditClientPage() {
   const { clientId } = useParams();
   const navigate = useNavigate();
+  const { isSmallScreen } = useResponsive();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const client = mockClients.find(c => c.id === parseInt(clientId || '1'));
 
   if (!client) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Client not found</h1>
-          <Button onClick={() => navigate('/company/clients')}>
-            Back to Clients
-          </Button>
-        </div>
-      </div>
+      <SidebarProvider>
+        <GlobalLayout
+          sidebar={<CompanySidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
+          formLayout={true}
+        >
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Client not found</h1>
+              <Button onClick={() => navigate('/company/clients')}>
+                Back to Clients
+              </Button>
+            </div>
+          </div>
+        </GlobalLayout>
+      </SidebarProvider>
     );
   }
 
@@ -79,9 +94,42 @@ export default function EditClientPage() {
     navigate(`/company/clients/${client.id}`);
   };
 
+  const mobileHeader = isSmallScreen ? (
+    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        {sidebarOpen ? (
+          <X className="h-5 w-5" />
+        ) : (
+          <Menu className="h-5 w-5" />
+        )}
+      </Button>
+      <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+        Edit Client
+      </h1>
+      <div className="w-9" />
+    </div>
+  ) : undefined;
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto p-6">
+    <SidebarProvider>
+      <GlobalLayout
+        sidebar={<CompanySidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
+        header={mobileHeader}
+        formLayout={true}
+      >
+        {/* Mobile/Tablet Sidebar Overlay */}
+        {isSmallScreen && sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-30"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         <div className="mb-6">
           <Button 
             variant="outline" 
@@ -101,7 +149,7 @@ export default function EditClientPage() {
         <div className="bg-white rounded-lg shadow-sm border p-6">
           <ClientForm client={client} onClose={handleClose} />
         </div>
-      </div>
-    </div>
+      </GlobalLayout>
+    </SidebarProvider>
   );
 }

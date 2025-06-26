@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,11 @@ import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-reac
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
+import { GlobalLayout } from '@/components/layouts/GlobalLayout';
+import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { useResponsive } from '@/hooks/use-responsive';
+import { Menu, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const mockClients = [
@@ -164,6 +170,8 @@ export default function ClientDetailPage() {
   const { clientId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isSmallScreen } = useResponsive();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   
@@ -176,7 +184,22 @@ export default function ClientDetailPage() {
   }, [location.state]);
 
   if (!client) {
-    return <div>Client not found</div>;
+    return (
+      <SidebarProvider>
+        <GlobalLayout
+          sidebar={<CompanySidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
+        >
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Client not found</h1>
+              <Button onClick={() => navigate('/company/clients')}>
+                Back to Clients
+              </Button>
+            </div>
+          </div>
+        </GlobalLayout>
+      </SidebarProvider>
+    );
   }
 
   const handleEdit = () => {
@@ -199,9 +222,42 @@ export default function ClientDetailPage() {
     setIsAddPaymentOpen(true);
   };
 
+  const mobileHeader = isSmallScreen ? (
+    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        {sidebarOpen ? (
+          <X className="h-5 w-5" />
+        ) : (
+          <Menu className="h-5 w-5" />
+        )}
+      </Button>
+      <h1 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+        {client.name}
+      </h1>
+      <div className="w-9" />
+    </div>
+  ) : undefined;
+
   return (
-    <div className="min-h-screen bg-gray-50 w-full">
-      <div className="w-full p-6">
+    <SidebarProvider>
+      <GlobalLayout
+        sidebar={<CompanySidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
+        header={mobileHeader}
+        fullWidth={true}
+      >
+        {/* Mobile/Tablet Sidebar Overlay */}
+        {isSmallScreen && sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-30"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <Button 
@@ -262,7 +318,7 @@ export default function ClientDetailPage() {
           onClose={() => setIsAddPaymentOpen(false)}
           client={client}
         />
-      </div>
-    </div>
+      </GlobalLayout>
+    </SidebarProvider>
   );
 }
