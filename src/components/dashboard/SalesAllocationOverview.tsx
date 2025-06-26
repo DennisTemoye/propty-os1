@@ -5,82 +5,71 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Handshake, 
   DollarSign, 
-  ArrowRight, 
-  Ban, 
-  Plus,
-  TrendingUp,
   Building,
   Users,
-  Calculator,
-  History,
-  Clock,
+  TrendingUp,
+  Plus,
   Bell
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
 import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
-import { HistoryTab } from './sales-allocation/HistoryTab';
 import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
 import { AllocateUnitModal } from './sales-allocation/AllocateUnitModal';
-import { ReallocationModal } from './forms/ReallocationModal';
-import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
-import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showRecordSaleModal, setShowRecordSaleModal] = useState(false);
   const [showAllocateUnitModal, setShowAllocateUnitModal] = useState(false);
-  const [showReallocationModal, setShowReallocationModal] = useState(false);
-  const [showRevokeModal, setShowRevokeModal] = useState(false);
-  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [showNotifications, setShowNotifications] = useState(false);
 
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
+    // Sync with CRM, Clients, and Projects modules
   };
 
   const handleAllocateUnit = (data: any) => {
     console.log('Allocating unit:', data);
+    // Sync with Projects and Clients modules
   };
 
-  const handleReallocation = (data: any) => {
-    console.log('Processing reallocation:', data);
-  };
-
-  const handleRevocation = (data: any) => {
-    console.log('Processing revocation:', data);
-  };
-
-  const quickActions = [
+  const kpiData = [
     {
-      title: 'Record Sale',
-      description: 'Record a new property sale',
+      title: 'Total Sales Volume',
+      value: '₦4.2B',
+      subtitle: 'This year',
       icon: DollarSign,
-      color: 'bg-green-600 hover:bg-green-700',
-      onClick: () => setShowRecordSaleModal(true)
+      color: 'text-green-700',
+      bgColor: 'bg-green-100',
+      change: '+8%'
     },
     {
-      title: 'Allocate Unit',
-      description: 'Assign a unit to a client',
-      icon: Handshake,
-      color: 'bg-blue-600 hover:bg-blue-700',
-      onClick: () => setShowAllocateUnitModal(true)
+      title: 'Units Allocated',
+      value: '156',
+      subtitle: 'Active allocations',
+      icon: Building,
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-100',
+      change: '+12%'
     },
     {
-      title: 'Re-allocate Unit',
-      description: 'Transfer unit to another client',
-      icon: ArrowRight,
-      color: 'bg-purple-600 hover:bg-purple-700',
-      onClick: () => setShowReallocationModal(true)
+      title: 'Active Clients',
+      value: '89',
+      subtitle: 'With purchases',
+      icon: Users,
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-100',
+      change: '+15%'
     },
     {
-      title: 'Revoke Allocation',
-      description: 'Cancel allocation and process refund',
-      icon: Ban,
-      color: 'bg-red-600 hover:bg-red-700',
-      onClick: () => setShowRevokeModal(true)
+      title: 'Growth Rate',
+      value: '23%',
+      subtitle: 'Monthly growth',
+      icon: TrendingUp,
+      color: 'text-orange-700',
+      bgColor: 'bg-orange-100',
+      change: '+5%'
     }
   ];
 
@@ -104,22 +93,49 @@ export function SalesAllocationOverview() {
               3
             </Badge>
           </Button>
+          
+          <Button 
+            variant="outline"
+            onClick={() => setShowAllocateUnitModal(true)}
+            className="border-purple-200 text-purple-700 hover:bg-purple-50"
+          >
+            <Building className="h-4 w-4 mr-2" />
+            Allocate Unit
+          </Button>
+          
+          <Button 
+            onClick={() => setShowRecordSaleModal(true)}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Record Sale
+          </Button>
         </div>
       </div>
 
-      {/* Quick Action Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {quickActions.map((action, index) => (
-          <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpiData.map((kpi, index) => (
+          <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6">
-              <Button 
-                className={`w-full ${action.color} text-white`}
-                onClick={action.onClick}
-              >
-                <action.icon className="h-4 w-4 mr-2" />
-                {action.title}
-              </Button>
-              <p className="text-sm text-gray-600 mt-2 text-center">{action.description}</p>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-600 mb-2">
+                    {kpi.title}
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                  <div className="text-xs text-gray-500 mb-2">{kpi.subtitle}</div>
+                  <Badge 
+                    variant="outline" 
+                    className="text-green-600 border-green-200"
+                  >
+                    {kpi.change} from last period
+                  </Badge>
+                </div>
+                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
+                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                </div>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -127,14 +143,9 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="overview">Sales Overview</TabsTrigger>
           <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
-          <TabsTrigger value="pending" className="relative">
-            Pending Approvals
-            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
-          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -143,17 +154,6 @@ export function SalesAllocationOverview() {
 
         <TabsContent value="pipeline" className="space-y-6">
           <SalesPipelineTab />
-        </TabsContent>
-
-        <TabsContent value="history" className="space-y-6">
-          <HistoryTab onRevoke={(allocation) => {
-            setSelectedAllocation(allocation);
-            setShowRevokeModal(true);
-          }} />
-        </TabsContent>
-
-        <TabsContent value="pending" className="space-y-6">
-          <PendingAllocationsTab />
         </TabsContent>
       </Tabs>
 
@@ -168,19 +168,6 @@ export function SalesAllocationOverview() {
         isOpen={showAllocateUnitModal}
         onClose={() => setShowAllocateUnitModal(false)}
         onSubmit={handleAllocateUnit}
-      />
-
-      <ReallocationModal 
-        isOpen={showReallocationModal}
-        onClose={() => setShowReallocationModal(false)}
-        onReallocate={handleReallocation}
-      />
-
-      <RevokeAllocationModal 
-        isOpen={showRevokeModal}
-        onClose={() => setShowRevokeModal(false)}
-        allocation={selectedAllocation}
-        onRevoke={handleRevocation}
       />
 
       <SystemNotifications 

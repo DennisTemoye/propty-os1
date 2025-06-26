@@ -1,149 +1,90 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Handshake, DollarSign, FileText, Users, TrendingUp, ArrowRight, History, Edit, Ban, Clock, Bell } from 'lucide-react';
+import { DollarSign, Building, Users, TrendingUp, Plus, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { NewAllocationForm } from './forms/NewAllocationForm';
-import { ReallocationModal } from './forms/ReallocationModal';
-import { ReallocationHistory } from './ReallocationHistory';
-import { UpdateAllocationStatusModal } from './forms/UpdateAllocationStatusModal';
-import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
-import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
+import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
+import { AllocateUnitModal } from './sales-allocation/AllocateUnitModal';
 import { SystemNotifications } from './notifications/SystemNotifications';
 
-const mockAllocations = [
+const mockSalesData = [
   {
     id: 1,
     clientName: 'John Doe',
     projectName: 'Victoria Gardens',
     unit: 'Block A - Plot 02',
-    status: 'allocated',
-    allocationType: 'sale',
-    price: '₦25M',
+    saleType: 'post-allocation',
+    amount: '₦25M',
     date: '2024-01-10',
-    totalPaid: '₦15M'
+    status: 'completed'
   },
   {
     id: 2,
     clientName: 'Jane Smith',
     projectName: 'Emerald Heights',
-    unit: 'Block B - Plot 12',
-    status: 'offered',
-    allocationType: 'sale',
-    price: '₦30M',
+    unit: 'Pending Assignment',
+    saleType: 'pre-allocation',
+    amount: '₦30M',
     date: '2024-01-15',
-    totalPaid: '₦5M'
-  },
-  {
-    id: 3,
-    clientName: 'Mike Johnson',
-    projectName: 'Golden View',
-    unit: 'Block C - Plot 05',
-    status: 'interested',
-    allocationType: 'reservation',
-    price: '₦20M',
-    date: '2024-01-20',
-    totalPaid: '₦2M'
+    status: 'pending'
   }
 ];
 
 export function SalesAllocation() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [showNewAllocationForm, setShowNewAllocationForm] = useState(false);
-  const [showReallocationModal, setShowReallocationModal] = useState(false);
-  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
-  const [showRevokeModal, setShowRevokeModal] = useState(false);
-  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [showRecordSaleModal, setShowRecordSaleModal] = useState(false);
+  const [showAllocateUnitModal, setShowAllocateUnitModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
 
-  // Check if we're on the /new route
   useEffect(() => {
     if (location.pathname.includes('/new')) {
-      setShowNewAllocationForm(true);
+      setShowRecordSaleModal(true);
     }
   }, [location.pathname]);
 
-  const handleNewAllocation = () => {
-    navigate('/company/sales-allocations/new');
-    setShowNewAllocationForm(true);
+  const handleRecordSale = (data: any) => {
+    console.log('Recording sale:', data);
+    // Sync with CRM, Clients, and Projects modules
+    setShowRecordSaleModal(false);
+    navigate('/company/sales');
   };
 
-  const handleReallocation = (data: any) => {
-    console.log('Processing reallocation:', data);
-  };
-
-  const handleUpdateStatus = (allocation: any) => {
-    setSelectedAllocation(allocation);
-    setShowUpdateStatusModal(true);
-  };
-
-  const handleRevokeAllocation = (allocation: any) => {
-    setSelectedAllocation(allocation);
-    setShowRevokeModal(true);
-  };
-
-  const handleStatusUpdate = (updatedAllocation: any) => {
-    console.log('Status updated:', updatedAllocation);
-    // Update the allocation in your state/backend
-  };
-
-  const handleRevocation = (revocationData: any) => {
-    console.log('Processing revocation:', revocationData);
-    // Process revocation and refund
+  const handleAllocateUnit = (data: any) => {
+    console.log('Allocating unit:', data);
+    // Sync with Projects and Clients modules
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'interested':
-        return 'bg-blue-100 text-blue-800';
-      case 'offered':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'allocated':
+      case 'completed':
         return 'bg-green-100 text-green-800';
-      case 'revoked':
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  if (showNewAllocationForm) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">New Allocation</h1>
-            <p className="text-gray-600 mt-1">Allocate a unit to a client</p>
-          </div>
-          <Button 
-            variant="outline" 
-            onClick={() => {
-              setShowNewAllocationForm(false);
-              navigate('/company/sales');
-            }}
-          >
-            Back to Sales
-          </Button>
-        </div>
-        <NewAllocationForm onClose={() => {
-          setShowNewAllocationForm(false);
-          navigate('/company/sales');
-        }} />
-      </div>
-    );
-  }
+  const getSaleTypeColor = (type: string) => {
+    return type === 'pre-allocation' 
+      ? 'bg-blue-100 text-blue-800' 
+      : 'bg-purple-100 text-purple-800';
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation</h1>
-          <p className="text-gray-600 mt-1">Manage your sales pipeline, allocations, and reallocations</p>
+          <p className="text-gray-600 mt-1">Manage sales pipeline and unit allocations</p>
         </div>
         <div className="flex space-x-2">
           <Button 
@@ -158,57 +99,30 @@ export function SalesAllocation() {
           </Button>
           <Button 
             variant="outline"
-            onClick={() => setShowReallocationModal(true)}
+            onClick={() => setShowAllocateUnitModal(true)}
             className="border-purple-200 text-purple-700 hover:bg-purple-50"
           >
-            <ArrowRight className="h-4 w-4 mr-2" />
-            Re-allocate Unit
+            <Building className="h-4 w-4 mr-2" />
+            Allocate Unit
           </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={handleNewAllocation}>
-            <Handshake className="h-4 w-4 mr-2" />
-            New Allocation
+          <Button 
+            className="bg-green-600 hover:bg-green-700 text-white" 
+            onClick={() => setShowRecordSaleModal(true)}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Record Sale
           </Button>
         </div>
       </div>
 
-      {/* Updated Stats Cards with new statuses */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-blue-600">
-                  {mockAllocations.filter(a => a.status === 'interested').length}
-                </div>
-                <div className="text-sm text-gray-500">Interested</div>
-              </div>
-              <TrendingUp className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-yellow-600">
-                  {mockAllocations.filter(a => a.status === 'offered').length}
-                </div>
-                <div className="text-sm text-gray-500">Offered</div>
-              </div>
-              <Handshake className="h-8 w-8 text-yellow-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-green-600">
-                  {mockAllocations.filter(a => a.status === 'allocated').length}
-                </div>
-                <div className="text-sm text-gray-500">Allocated</div>
+                <div className="text-2xl font-bold text-green-600">₦2.4B</div>
+                <div className="text-sm text-gray-500">Total Sales</div>
               </div>
               <DollarSign className="h-8 w-8 text-green-600" />
             </div>
@@ -219,10 +133,10 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-orange-600">₦2.4B</div>
-                <div className="text-sm text-gray-500">Total Sales</div>
+                <div className="text-2xl font-bold text-blue-600">156</div>
+                <div className="text-sm text-gray-500">Units Allocated</div>
               </div>
-              <DollarSign className="h-8 w-8 text-orange-600" />
+              <Building className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
@@ -231,10 +145,10 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-red-600">0</div>
-                <div className="text-sm text-gray-500">Revoked</div>
+                <div className="text-2xl font-bold text-purple-600">89</div>
+                <div className="text-sm text-gray-500">Active Clients</div>
               </div>
-              <Ban className="h-8 w-8 text-red-600" />
+              <Users className="h-8 w-8 text-purple-600" />
             </div>
           </CardContent>
         </Card>
@@ -243,10 +157,10 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-yellow-600">3</div>
-                <div className="text-sm text-gray-500">Pending Approval</div>
+                <div className="text-2xl font-bold text-orange-600">23%</div>
+                <div className="text-sm text-gray-500">Growth Rate</div>
               </div>
-              <Clock className="h-8 w-8 text-yellow-600" />
+              <TrendingUp className="h-8 w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
@@ -254,84 +168,15 @@ export function SalesAllocation() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="allocations">Active Allocations</TabsTrigger>
-          <TabsTrigger value="history">Reallocation History</TabsTrigger>
-          <TabsTrigger value="pending" className="relative">
-            Pending Approvals
-            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
-          </TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="overview">Sales Overview</TabsTrigger>
+          <TabsTrigger value="allocations">Unit Allocations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* Sales Pipeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Sales Pipeline</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                {['Contacted', 'Inspection', 'Offer', 'Payment', 'Closed'].map((stage, index) => (
-                  <div key={stage} className="text-center">
-                    <div className="bg-gray-100 rounded-lg p-4 mb-2">
-                      <div className="text-2xl font-bold text-gray-800">{12 - index * 2}</div>
-                      <div className="text-sm text-gray-600">{stage}</div>
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      {Math.round((12 - index * 2) / 45 * 100)}% of total
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity with clickable items */}
           <Card>
             <CardHeader>
               <CardTitle>Recent Sales Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div 
-                  className="flex items-center justify-between p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100"
-                  onClick={() => navigate('/company/clients/1')}
-                >
-                  <div>
-                    <div className="font-medium">Unit A-15 Allocated</div>
-                    <div className="text-sm text-gray-600">Client: John Doe - Victoria Gardens</div>
-                  </div>
-                  <Badge className="bg-green-100 text-green-800">Completed</Badge>
-                </div>
-                <div 
-                  className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100"
-                  onClick={() => navigate('/company/clients/2')}
-                >
-                  <div>
-                    <div className="font-medium">Payment Pending</div>
-                    <div className="text-sm text-gray-600">Client: Jane Smith - ₦3.2M due</div>
-                  </div>
-                  <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
-                </div>
-                <div 
-                  className="flex items-center justify-between p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100"
-                >
-                  <div>
-                    <div className="font-medium">Unit Re-allocated</div>
-                    <div className="text-sm text-gray-600">Block A - Plot 02 transferred to John Doe</div>
-                  </div>
-                  <Badge className="bg-purple-100 text-purple-800">Re-allocated</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="allocations" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Unit Allocations</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -339,51 +184,33 @@ export function SalesAllocation() {
                   <TableRow>
                     <TableHead>Client</TableHead>
                     <TableHead>Project/Unit</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Price</TableHead>
+                    <TableHead>Sale Type</TableHead>
+                    <TableHead>Amount</TableHead>
                     <TableHead>Date</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockAllocations.map((allocation) => (
-                    <TableRow key={allocation.id}>
-                      <TableCell>{allocation.clientName}</TableCell>
+                  {mockSalesData.map((sale) => (
+                    <TableRow key={sale.id}>
+                      <TableCell className="font-medium">{sale.clientName}</TableCell>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{allocation.projectName}</div>
-                          <div className="text-sm text-gray-500">{allocation.unit}</div>
+                          <div className="font-medium">{sale.projectName}</div>
+                          <div className="text-sm text-gray-500">{sale.unit}</div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge className={getStatusColor(allocation.status)}>
-                          {allocation.status}
+                        <Badge className={getSaleTypeColor(sale.saleType)}>
+                          {sale.saleType === 'pre-allocation' ? 'Pre-Allocation' : 'Post-Allocation'}
                         </Badge>
                       </TableCell>
-                      <TableCell>{allocation.allocationType}</TableCell>
-                      <TableCell>{allocation.price}</TableCell>
-                      <TableCell>{allocation.date}</TableCell>
+                      <TableCell className="font-medium">{sale.amount}</TableCell>
+                      <TableCell>{sale.date}</TableCell>
                       <TableCell>
-                        <div className="flex space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleUpdateStatus(allocation)}
-                          >
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          {allocation.status === 'allocated' && (
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleRevokeAllocation(allocation)}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Ban className="h-3 w-3" />
-                            </Button>
-                          )}
-                        </div>
+                        <Badge className={getStatusColor(sale.status)}>
+                          {sale.status}
+                        </Badge>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -393,39 +220,46 @@ export function SalesAllocation() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="history" className="space-y-6">
-          <ReallocationHistory />
-        </TabsContent>
-
-        <TabsContent value="pending" className="space-y-6">
-          <PendingAllocationsTab />
+        <TabsContent value="allocations" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Unit Allocation Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12">
+                <Building className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Active Allocations</h3>
+                <p className="text-gray-500 mb-4">Start by recording a sale or allocating a unit to a client</p>
+                <div className="flex justify-center space-x-4">
+                  <Button onClick={() => setShowRecordSaleModal(true)}>
+                    Record Sale
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowAllocateUnitModal(true)}>
+                    Allocate Unit
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 
-      {/* Reallocation Modal */}
-      <ReallocationModal 
-        isOpen={showReallocationModal}
-        onClose={() => setShowReallocationModal(false)}
-        onReallocate={handleReallocation}
+      {/* Modals */}
+      <RecordSaleModal 
+        isOpen={showRecordSaleModal}
+        onClose={() => {
+          setShowRecordSaleModal(false);
+          navigate('/company/sales');
+        }}
+        onSubmit={handleRecordSale}
       />
 
-      {/* Update Status Modal */}
-      <UpdateAllocationStatusModal 
-        isOpen={showUpdateStatusModal}
-        onClose={() => setShowUpdateStatusModal(false)}
-        allocation={selectedAllocation}
-        onUpdate={handleStatusUpdate}
+      <AllocateUnitModal 
+        isOpen={showAllocateUnitModal}
+        onClose={() => setShowAllocateUnitModal(false)}
+        onSubmit={handleAllocateUnit}
       />
 
-      {/* Revoke Allocation Modal */}
-      <RevokeAllocationModal 
-        isOpen={showRevokeModal}
-        onClose={() => setShowRevokeModal(false)}
-        allocation={selectedAllocation}
-        onRevoke={handleRevocation}
-      />
-
-      {/* System Notifications */}
       <SystemNotifications 
         isOpen={showNotifications}
         onClose={() => setShowNotifications(false)}
