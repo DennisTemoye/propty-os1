@@ -9,7 +9,7 @@ import {
   Ban,
   TrendingUp,
   Users,
-  Clock
+  Calculator
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -23,63 +23,64 @@ import {
   Bar
 } from 'recharts';
 
-const kpiData = [
+const mockKPIData = [
   {
-    title: 'Total Sales',
-    value: '89',
-    subtitle: 'This month',
-    icon: DollarSign,
-    color: 'text-green-700',
-    bgColor: 'bg-green-100',
-    change: '+15%',
-    changeType: 'positive'
-  },
-  {
-    title: 'Active Allocations',
-    value: '67',
-    subtitle: 'Currently allocated',
+    title: 'Total Units Allocated',
+    value: '156',
+    subtitle: 'Active allocations',
     icon: Building,
     color: 'text-blue-700',
     bgColor: 'bg-blue-100',
+    change: '+12%',
+    changeType: 'positive'
+  },
+  {
+    title: 'Total Sales Volume',
+    value: '₦4.2B',
+    subtitle: 'This year',
+    icon: DollarSign,
+    color: 'text-green-700',
+    bgColor: 'bg-green-100',
     change: '+8%',
     changeType: 'positive'
   },
   {
-    title: 'Reallocations',
-    value: '12',
+    title: 'Total Reallocations',
+    value: '23',
     subtitle: 'This month',
     icon: ArrowRight,
     color: 'text-purple-700',
     bgColor: 'bg-purple-100',
-    change: '+3%',
+    change: '+5%',
     changeType: 'positive'
   },
   {
-    title: 'Pending Approvals',
-    value: '5',
-    subtitle: 'Awaiting approval',
-    icon: Clock,
-    color: 'text-yellow-700',
-    bgColor: 'bg-yellow-100',
-    change: '-2',
+    title: 'Revoked Units',
+    value: '8',
+    subtitle: 'This quarter',
+    icon: Ban,
+    color: 'text-red-700',
+    bgColor: 'bg-red-100',
+    change: '-2%',
     changeType: 'negative'
   }
 ];
 
-const salesTrends = [
-  { month: 'Jan', sales: 28, allocations: 22, reallocations: 2 },
-  { month: 'Feb', sales: 32, allocations: 28, reallocations: 3 },
-  { month: 'Mar', sales: 45, allocations: 38, reallocations: 4 },
-  { month: 'Apr', sales: 38, allocations: 35, reallocations: 2 },
-  { month: 'May', sales: 52, allocations: 45, reallocations: 5 },
-  { month: 'Jun', sales: 48, allocations: 42, reallocations: 3 }
+const allocationTrends = [
+  { month: 'Jan', allocations: 12, sales: 8, reallocations: 2 },
+  { month: 'Feb', allocations: 15, sales: 12, reallocations: 3 },
+  { month: 'Mar', allocations: 18, sales: 15, reallocations: 4 },
+  { month: 'Apr', allocations: 22, sales: 18, reallocations: 2 },
+  { month: 'May', allocations: 25, sales: 20, reallocations: 5 },
+  { month: 'Jun', allocations: 28, sales: 24, reallocations: 3 }
 ];
 
-const projectPerformance = [
-  { project: 'Victoria Gardens', sales: 28, revenue: 840000000 },
-  { project: 'Emerald Heights', sales: 22, revenue: 660000000 },
-  { project: 'Golden View', sales: 18, revenue: 540000000 },
-  { project: 'Ocean Breeze', sales: 15, revenue: 450000000 }
+const salesByProject = [
+  { project: 'Victoria Gardens', sales: 45, revenue: 1200000000 },
+  { project: 'Emerald Heights', sales: 32, revenue: 960000000 },
+  { project: 'Golden View', sales: 28, revenue: 840000000 },
+  { project: 'Ocean Breeze', sales: 25, revenue: 750000000 },
+  { project: 'Royal Estate', sales: 20, revenue: 600000000 }
 ];
 
 export function OverviewTab() {
@@ -96,7 +97,7 @@ export function OverviewTab() {
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpiData.map((kpi, index) => (
+        {mockKPIData.map((kpi, index) => (
           <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -123,43 +124,43 @@ export function OverviewTab() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales & Allocation Trends */}
+        {/* Allocation Trends Chart */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="h-5 w-5 text-blue-600" />
-              <span>Sales & Allocation Trends</span>
+              <span>Allocation Trends Over Time</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={salesTrends}>
+              <AreaChart data={allocationTrends}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Area type="monotone" dataKey="sales" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.6} />
                 <Area type="monotone" dataKey="allocations" stackId="1" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.6} />
+                <Area type="monotone" dataKey="sales" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.6} />
                 <Area type="monotone" dataKey="reallocations" stackId="1" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.6} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Project Performance */}
+        {/* Sales by Project */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Building className="h-5 w-5 text-green-600" />
-              <span>Project Sales Performance</span>
+              <Calculator className="h-5 w-5 text-green-600" />
+              <span>Sales by Project</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={projectPerformance} layout="horizontal">
+              <BarChart data={salesByProject} layout="horizontal">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
-                <YAxis dataKey="project" type="category" width={120} />
+                <YAxis dataKey="project" type="category" width={100} />
                 <Tooltip formatter={(value) => [value, 'Sales']} />
                 <Bar dataKey="sales" fill="#10B981" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -168,57 +169,31 @@ export function OverviewTab() {
         </Card>
       </div>
 
-      {/* Recent Activity Summary */}
+      {/* Revenue Summary */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Clock className="h-5 w-5 text-purple-600" />
-            <span>Recent Activity</span>
+            <DollarSign className="h-5 w-5 text-green-600" />
+            <span>Revenue Generated by Project</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <DollarSign className="h-5 w-5 text-green-600" />
-                <div>
-                  <div className="font-medium">Sale Recorded</div>
-                  <div className="text-sm text-gray-600">Victoria Gardens - Block A Plot 15</div>
+            {salesByProject.map((project, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <Building className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <div className="font-medium">{project.project}</div>
+                    <div className="text-sm text-gray-600">{project.sales} units sold</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-green-600">{formatCurrency(project.revenue)}</div>
+                  <div className="text-sm text-gray-500">Revenue</div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="font-bold text-green-600">₦25M</div>
-                <div className="text-sm text-gray-500">2 hours ago</div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <Building className="h-5 w-5 text-blue-600" />
-                <div>
-                  <div className="font-medium">Unit Allocated</div>
-                  <div className="text-sm text-gray-600">Emerald Heights - Block B Plot 22</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="font-bold text-blue-600">John Doe</div>
-                <div className="text-sm text-gray-500">5 hours ago</div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <ArrowRight className="h-5 w-5 text-purple-600" />
-                <div>
-                  <div className="font-medium">Unit Reallocated</div>
-                  <div className="text-sm text-gray-600">Golden View - Block C Plot 08</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="font-bold text-purple-600">Sarah Johnson</div>
-                <div className="text-sm text-gray-500">1 day ago</div>
-              </div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>

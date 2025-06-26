@@ -1,16 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { DollarSign, Handshake, AlertCircle } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 
 interface RecordSaleModalProps {
   isOpen: boolean;
@@ -19,10 +17,10 @@ interface RecordSaleModalProps {
 }
 
 const mockProjects = [
-  { id: 'project1', name: 'Victoria Gardens', availableUnits: 15 },
-  { id: 'project2', name: 'Emerald Heights', availableUnits: 8 },
-  { id: 'project3', name: 'Golden View', availableUnits: 12 },
-  { id: 'project4', name: 'Ocean Breeze', availableUnits: 6 }
+  { id: 'project1', name: 'Victoria Gardens' },
+  { id: 'project2', name: 'Emerald Heights' },
+  { id: 'project3', name: 'Golden View' },
+  { id: 'project4', name: 'Ocean Breeze' }
 ];
 
 const mockClients = [
@@ -40,9 +38,6 @@ const mockMarketers = [
 ];
 
 export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalProps) {
-  const [saleType, setSaleType] = useState<'sale_only' | 'sale_with_allocation'>('sale_only');
-  const [createAllocation, setCreateAllocation] = useState(false);
-  
   const form = useForm({
     defaultValues: {
       clientId: '',
@@ -53,256 +48,140 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
       marketerId: '',
       saleDate: new Date().toISOString().split('T')[0],
       paymentMethod: '',
-      notes: '',
-      // Allocation fields
-      allocationType: 'sale',
-      allocationDate: new Date().toISOString().split('T')[0]
+      notes: ''
     }
   });
 
   const handleSubmit = (data: any) => {
-    const saleData = {
-      ...data,
-      saleType,
-      createAllocation,
-      allocationData: createAllocation ? {
-        clientId: data.clientId,
-        projectId: data.projectId,
-        unitNumber: data.unitNumber,
-        allocationType: data.allocationType,
-        allocationDate: data.allocationDate,
-        marketerId: data.marketerId
-      } : null,
-      timestamp: new Date().toISOString()
-    };
-
-    console.log('Recording sale with type:', saleType, saleData);
-    onSubmit(saleData);
-    toast.success(createAllocation ? 'Sale recorded and unit allocated!' : 'Sale recorded successfully!');
+    console.log('Recording sale:', data);
+    onSubmit(data);
+    toast.success('Sale recorded successfully!');
     onClose();
     form.reset();
-    setCreateAllocation(false);
-    setSaleType('sale_only');
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <DollarSign className="h-5 w-5 text-green-600" />
             <span>Record New Sale</span>
           </DialogTitle>
           <DialogDescription>
-            Record a property sale transaction with optional unit allocation
+            Record a new property sale and automatically create allocation
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-          {/* Sale Type Selection */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Sale Type</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div 
-                  className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                    saleType === 'sale_only' 
-                      ? 'border-blue-500 bg-blue-50' 
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => {
-                    setSaleType('sale_only');
-                    setCreateAllocation(false);
-                  }}
-                >
-                  <div className="flex items-center space-x-2">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                    <div>
-                      <h4 className="font-medium">Sale Only</h4>
-                      <p className="text-sm text-gray-600">Record sale without immediate allocation</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div 
-                  className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                    saleType === 'sale_with_allocation' 
-                      ? 'border-blue-500 bg-blue-50' 
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => {
-                    setSaleType('sale_with_allocation');
-                    setCreateAllocation(true);
-                  }}
-                >
-                  <div className="flex items-center space-x-2">
-                    <Handshake className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <h4 className="font-medium">Sale + Allocation</h4>
-                      <p className="text-sm text-gray-600">Record sale and allocate unit immediately</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Client *</Label>
+              <Select onValueChange={(value) => form.setValue('clientId', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select client" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockClients.map((client) => (
+                    <SelectItem key={client.id} value={client.id}>
+                      <div>
+                        <div className="font-medium">{client.name}</div>
+                        <div className="text-xs text-gray-500">{client.email}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Sale Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Sale Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Client *</Label>
-                  <Select onValueChange={(value) => form.setValue('clientId', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select client" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {mockClients.map((client) => (
-                        <SelectItem key={client.id} value={client.id}>
-                          <div>
-                            <div className="font-medium">{client.name}</div>
-                            <div className="text-xs text-gray-500">{client.email}</div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div>
+              <Label>Project *</Label>
+              <Select onValueChange={(value) => form.setValue('projectId', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select project" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockProjects.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                      {project.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-                <div>
-                  <Label>Project *</Label>
-                  <Select onValueChange={(value) => form.setValue('projectId', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {mockProjects.map((project) => (
-                        <SelectItem key={project.id} value={project.id}>
-                          <div>
-                            <div className="font-medium">{project.name}</div>
-                            <div className="text-xs text-gray-500">{project.availableUnits} units available</div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Unit Number *</Label>
+              <Input 
+                {...form.register('unitNumber', { required: true })}
+                placeholder="e.g., Block A - Plot 15"
+              />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Sale Amount (₦) *</Label>
-                  <Input 
-                    type="number"
-                    {...form.register('saleAmount', { required: true })}
-                    placeholder="e.g., 25000000"
-                  />
-                </div>
+            <div>
+              <Label>Sale Amount (₦) *</Label>
+              <Input 
+                type="number"
+                {...form.register('saleAmount', { required: true })}
+                placeholder="e.g., 25000000"
+              />
+            </div>
+          </div>
 
-                <div>
-                  <Label>Initial Payment (₦) *</Label>
-                  <Input 
-                    type="number"
-                    {...form.register('initialPayment', { required: true })}
-                    placeholder="e.g., 5000000"
-                  />
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Initial Payment (₦) *</Label>
+              <Input 
+                type="number"
+                {...form.register('initialPayment', { required: true })}
+                placeholder="e.g., 5000000"
+              />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Sale Date *</Label>
-                  <Input 
-                    type="date"
-                    {...form.register('saleDate', { required: true })}
-                  />
-                </div>
+            <div>
+              <Label>Marketer</Label>
+              <Select onValueChange={(value) => form.setValue('marketerId', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select marketer" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockMarketers.map((marketer) => (
+                    <SelectItem key={marketer.id} value={marketer.id}>
+                      {marketer.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-                <div>
-                  <Label>Payment Method</Label>
-                  <Select onValueChange={(value) => form.setValue('paymentMethod', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select payment method" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                      <SelectItem value="cash">Cash</SelectItem>
-                      <SelectItem value="cheque">Cheque</SelectItem>
-                      <SelectItem value="mortgage">Mortgage</SelectItem>
-                      <SelectItem value="installment">Installment Plan</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Sale Date *</Label>
+              <Input 
+                type="date"
+                {...form.register('saleDate', { required: true })}
+              />
+            </div>
 
-              <div>
-                <Label>Marketer</Label>
-                <Select onValueChange={(value) => form.setValue('marketerId', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select marketer (optional)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockMarketers.map((marketer) => (
-                      <SelectItem key={marketer.id} value={marketer.id}>
-                        {marketer.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Allocation Details - Only shown when sale_with_allocation is selected */}
-          {saleType === 'sale_with_allocation' && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center space-x-2">
-                  <Handshake className="h-4 w-4" />
-                  <span>Allocation Details</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Unit Number *</Label>
-                    <Input 
-                      {...form.register('unitNumber')}
-                      placeholder="e.g., Block A - Plot 15"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Allocation Type</Label>
-                    <Select onValueChange={(value) => form.setValue('allocationType', value)} defaultValue="sale">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="sale">Sale</SelectItem>
-                        <SelectItem value="reservation">Reservation</SelectItem>
-                        <SelectItem value="installment">Installment Plan</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Allocation Date</Label>
-                  <Input 
-                    type="date"
-                    {...form.register('allocationDate')}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          )}
+            <div>
+              <Label>Payment Method</Label>
+              <Select onValueChange={(value) => form.setValue('paymentMethod', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select payment method" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+                  <SelectItem value="cash">Cash</SelectItem>
+                  <SelectItem value="cheque">Cheque</SelectItem>
+                  <SelectItem value="mortgage">Mortgage</SelectItem>
+                  <SelectItem value="installment">Installment Plan</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
           <div>
             <Label>Additional Notes</Label>
@@ -314,25 +193,15 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
           </div>
 
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-            <div className="flex items-start space-x-2">
-              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-              <div className="text-sm text-blue-800">
-                <p className="font-medium mb-1">Integration Notes:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>Sale will be recorded in accounting module</li>
-                  <li>Commission calculations will be updated</li>
-                  <li>Client payment history will be updated</li>
-                  {saleType === 'sale_with_allocation' && (
-                    <li>Unit status will be updated and allocation created</li>
-                  )}
-                </ul>
-              </div>
-            </div>
+            <p className="text-sm text-blue-800">
+              <strong>Note:</strong> Recording this sale will automatically create an allocation for the client 
+              and update the unit status. Commission calculations and accounting records will be updated accordingly.
+            </p>
           </div>
 
           <div className="flex gap-2 pt-4">
             <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
-              {saleType === 'sale_with_allocation' ? 'Record Sale & Allocate' : 'Record Sale'}
+              Record Sale & Allocate
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel

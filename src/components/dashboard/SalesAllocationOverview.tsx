@@ -9,7 +9,12 @@ import {
   DollarSign, 
   ArrowRight, 
   Ban, 
+  Plus,
   TrendingUp,
+  Building,
+  Users,
+  Calculator,
+  History,
   Clock,
   Bell
 } from 'lucide-react';
@@ -34,25 +39,18 @@ export function SalesAllocationOverview() {
 
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
-    // This will communicate with accounting and client modules
-    if (data.createAllocation) {
-      console.log('Creating allocation for sale:', data.allocationData);
-    }
   };
 
   const handleAllocateUnit = (data: any) => {
     console.log('Allocating unit:', data);
-    // This will update unit status and client records
   };
 
   const handleReallocation = (data: any) => {
     console.log('Processing reallocation:', data);
-    // This will update allocation history and commission records
   };
 
   const handleRevocation = (data: any) => {
     console.log('Processing revocation:', data);
-    // This will process refunds and update accounting
   };
 
   const quickActions = [
@@ -64,7 +62,7 @@ export function SalesAllocationOverview() {
       onClick: () => setShowRecordSaleModal(true)
     },
     {
-      title: 'New Allocation',
+      title: 'Allocate Unit',
       description: 'Assign a unit to a client',
       icon: Handshake,
       color: 'bg-blue-600 hover:bg-blue-700',
@@ -91,8 +89,8 @@ export function SalesAllocationOverview() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation Management</h1>
-          <p className="text-gray-600 mt-1">Manage sales transactions and unit allocations</p>
+          <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation Overview</h1>
+          <p className="text-gray-600 mt-1">Comprehensive sales pipeline and allocation management</p>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -103,7 +101,7 @@ export function SalesAllocationOverview() {
           >
             <Bell className="h-4 w-4" />
             <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center">
-              2
+              3
             </Badge>
           </Button>
         </div>
@@ -132,10 +130,10 @@ export function SalesAllocationOverview() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
-          <TabsTrigger value="history">Activity History</TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending" className="relative">
             Pending Approvals
-            <Badge className="ml-2 bg-yellow-600 text-white text-xs">2</Badge>
+            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
           </TabsTrigger>
         </TabsList>
 
