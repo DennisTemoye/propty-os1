@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,10 +9,8 @@ import { ArrowLeft, Edit, MapPin, User, UserPlus, Trash2, Building } from 'lucid
 import { ProjectHeader } from '@/components/dashboard/projects/ProjectHeader';
 import { ProjectKPIGrid } from '@/components/dashboard/projects/ProjectKPIGrid';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
-import { ProjectLayoutTab } from '@/components/dashboard/projects/ProjectLayoutTab';
 import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksTab';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
-import { ProjectSettingsTab } from '@/components/dashboard/projects/ProjectSettingsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
@@ -171,21 +170,16 @@ export function ProjectDetailView() {
       <div className="bg-white rounded-lg shadow-sm border">
         <Tabs defaultValue="overview" className="w-full">
           <div className="border-b px-6">
-            <TabsList className="grid w-full grid-cols-6 bg-transparent h-12">
+            <TabsList className="grid w-full grid-cols-4 bg-transparent h-12">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="layout">Layout Designer</TabsTrigger>
               <TabsTrigger value="blocks">Blocks & Units</TabsTrigger>
               <TabsTrigger value="sales-history">Sales History</TabsTrigger>
               <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
           </div>
 
           <TabsContent value="overview" className="p-6">
             <ProjectOverviewContent project={project} />
-          </TabsContent>
-          <TabsContent value="layout" className="p-6">
-            <ProjectLayoutTab project={project} />
           </TabsContent>
           <TabsContent value="blocks" className="p-6">
             <ProjectBlocksTab project={project} />
@@ -195,9 +189,6 @@ export function ProjectDetailView() {
           </TabsContent>
           <TabsContent value="documents" className="p-6">
             <ProjectDocumentsTab project={project} />
-          </TabsContent>
-          <TabsContent value="settings" className="p-6">
-            <ProjectSettingsTab project={project} />
           </TabsContent>
         </Tabs>
       </div>
