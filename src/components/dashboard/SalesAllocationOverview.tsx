@@ -5,35 +5,26 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Handshake, 
+  FileText, 
   DollarSign, 
-  ArrowRight, 
-  Ban, 
-  Plus,
-  TrendingUp,
-  Building,
   Users,
-  Calculator,
-  History,
-  Clock,
-  Bell
+  TrendingUp,
+  Bell,
+  Clock
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
 import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
 import { HistoryTab } from './sales-allocation/HistoryTab';
 import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
-import { AllocateUnitModal } from './sales-allocation/AllocateUnitModal';
-import { ReallocationModal } from './forms/ReallocationModal';
-import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
+import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
 import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showRecordSaleModal, setShowRecordSaleModal] = useState(false);
-  const [showAllocateUnitModal, setShowAllocateUnitModal] = useState(false);
-  const [showReallocationModal, setShowReallocationModal] = useState(false);
-  const [showRevokeModal, setShowRevokeModal] = useState(false);
+  const [showAllocationFlowModal, setShowAllocationFlowModal] = useState(false);
+  const [allocationFlowType, setAllocationFlowType] = useState<'new' | 'reallocation' | 'revoke'>('new');
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -41,46 +32,30 @@ export function SalesAllocationOverview() {
     console.log('Recording sale:', data);
   };
 
-  const handleAllocateUnit = (data: any) => {
-    console.log('Allocating unit:', data);
+  const handleAllocationFlow = (type: 'new' | 'reallocation' | 'revoke', allocation?: any) => {
+    setAllocationFlowType(type);
+    setSelectedAllocation(allocation || null);
+    setShowAllocationFlowModal(true);
   };
 
-  const handleReallocation = (data: any) => {
-    console.log('Processing reallocation:', data);
-  };
-
-  const handleRevocation = (data: any) => {
-    console.log('Processing revocation:', data);
+  const handleAllocationSubmit = (data: any) => {
+    console.log('Processing allocation:', data);
   };
 
   const quickActions = [
     {
       title: 'Record Sale',
-      description: 'Record a new property sale',
+      description: 'Document a new property sale',
       icon: DollarSign,
       color: 'bg-green-600 hover:bg-green-700',
       onClick: () => setShowRecordSaleModal(true)
     },
     {
-      title: 'Allocate Unit',
-      description: 'Assign a unit to a client',
-      icon: Handshake,
+      title: 'Allocation Management',
+      description: 'Handle all allocation operations',
+      icon: Users,
       color: 'bg-blue-600 hover:bg-blue-700',
-      onClick: () => setShowAllocateUnitModal(true)
-    },
-    {
-      title: 'Re-allocate Unit',
-      description: 'Transfer unit to another client',
-      icon: ArrowRight,
-      color: 'bg-purple-600 hover:bg-purple-700',
-      onClick: () => setShowReallocationModal(true)
-    },
-    {
-      title: 'Revoke Allocation',
-      description: 'Cancel allocation and process refund',
-      icon: Ban,
-      color: 'bg-red-600 hover:bg-red-700',
-      onClick: () => setShowRevokeModal(true)
+      onClick: () => handleAllocationFlow('new')
     }
   ];
 
@@ -89,8 +64,8 @@ export function SalesAllocationOverview() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation Overview</h1>
-          <p className="text-gray-600 mt-1">Comprehensive sales pipeline and allocation management</p>
+          <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation Management</h1>
+          <p className="text-gray-600 mt-1">Professional sales documentation and allocation workflow</p>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -108,7 +83,7 @@ export function SalesAllocationOverview() {
       </div>
 
       {/* Quick Action Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {quickActions.map((action, index) => (
           <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow">
             <CardContent className="p-6">
@@ -130,15 +105,15 @@ export function SalesAllocationOverview() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="history">Activity History</TabsTrigger>
           <TabsTrigger value="pending" className="relative">
-            Pending Approvals
+            Pending Allocations
             <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <OverviewTab />
+          <OverviewTab onAllocationFlow={handleAllocationFlow} />
         </TabsContent>
 
         <TabsContent value="pipeline" className="space-y-6">
@@ -146,14 +121,11 @@ export function SalesAllocationOverview() {
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
-          <HistoryTab onRevoke={(allocation) => {
-            setSelectedAllocation(allocation);
-            setShowRevokeModal(true);
-          }} />
+          <HistoryTab onAllocationFlow={handleAllocationFlow} />
         </TabsContent>
 
         <TabsContent value="pending" className="space-y-6">
-          <PendingAllocationsTab />
+          <PendingAllocationsTab onAllocate={(allocation) => handleAllocationFlow('new', allocation)} />
         </TabsContent>
       </Tabs>
 
@@ -164,23 +136,12 @@ export function SalesAllocationOverview() {
         onSubmit={handleRecordSale}
       />
 
-      <AllocateUnitModal 
-        isOpen={showAllocateUnitModal}
-        onClose={() => setShowAllocateUnitModal(false)}
-        onSubmit={handleAllocateUnit}
-      />
-
-      <ReallocationModal 
-        isOpen={showReallocationModal}
-        onClose={() => setShowReallocationModal(false)}
-        onReallocate={handleReallocation}
-      />
-
-      <RevokeAllocationModal 
-        isOpen={showRevokeModal}
-        onClose={() => setShowRevokeModal(false)}
+      <AllocationFlowModal 
+        isOpen={showAllocationFlowModal}
+        onClose={() => setShowAllocationFlowModal(false)}
+        type={allocationFlowType}
         allocation={selectedAllocation}
-        onRevoke={handleRevocation}
+        onSubmit={handleAllocationSubmit}
       />
 
       <SystemNotifications 

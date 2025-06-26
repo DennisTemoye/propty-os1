@@ -6,30 +6,34 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Clock, Search, Filter, Eye, CheckCircle, XCircle } from 'lucide-react';
+import { Clock, Search, Eye, CheckCircle, UserPlus } from 'lucide-react';
 import { PendingAllocation } from '@/types/allocation';
 import { ApprovalWorkflowModal } from './ApprovalWorkflowModal';
 import { toast } from 'sonner';
+
+interface PendingAllocationsTabProps {
+  onAllocate: (allocation: PendingAllocation) => void;
+}
 
 const mockPendingAllocations: PendingAllocation[] = [
   {
     id: 'pending-1',
     clientName: 'John Doe',
     projectName: 'Victoria Gardens',
-    unit: 'Block A - Plot 15',
-    salesType: 'instant_allocation',
+    unit: 'Awaiting allocation',
+    salesType: 'pre_allocation',
     submittedBy: 'Jane Smith',
     submittedAt: '2024-01-15T10:30:00Z',
     status: 'pending',
     amount: '₦25,000,000',
-    notes: 'Client requested immediate allocation with payment plan'
+    notes: 'Client has completed payment, ready for allocation'
   },
   {
     id: 'pending-2',
     clientName: 'Sarah Johnson',
     projectName: 'Emerald Heights',
     unit: 'Block B - Plot 8',
-    salesType: 'sales_offer',
+    salesType: 'with_allocation',
     submittedBy: 'Mike Davis',
     submittedAt: '2024-01-15T09:15:00Z',
     status: 'pending',
@@ -39,17 +43,17 @@ const mockPendingAllocations: PendingAllocation[] = [
     id: 'pending-3',
     clientName: 'Robert Brown',
     projectName: 'Golden View',
-    unit: 'Block C - Plot 22',
-    salesType: 'reservation',
+    unit: 'Awaiting allocation',
+    salesType: 'pre_allocation',
     submittedBy: 'Sarah Wilson',
     submittedAt: '2024-01-14T16:45:00Z',
     status: 'pending',
     amount: '₦22,000,000',
-    notes: 'Priority client - fast track approval requested'
+    notes: 'Priority client - expedite allocation'
   }
 ];
 
-export function PendingAllocationsTab() {
+export function PendingAllocationsTab({ onAllocate }: PendingAllocationsTabProps) {
   const [pendingAllocations, setPendingAllocations] = useState(mockPendingAllocations);
   const [searchTerm, setSearchTerm] = useState('');
   const [projectFilter, setProjectFilter] = useState('all');
@@ -59,7 +63,7 @@ export function PendingAllocationsTab() {
 
   const filteredAllocations = pendingAllocations.filter(allocation => {
     const matchesSearch = allocation.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         allocation.unit.toLowerCase().includes(searchTerm.toLowerCase());
+                         allocation.projectName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesProject = projectFilter === 'all' || allocation.projectName === projectFilter;
     const matchesSalesType = salesTypeFilter === 'all' || allocation.salesType === salesTypeFilter;
     
@@ -97,14 +101,23 @@ export function PendingAllocationsTab() {
 
   const getSalesTypeColor = (type: string) => {
     switch (type) {
-      case 'instant_allocation':
-        return 'bg-green-100 text-green-800';
-      case 'sales_offer':
+      case 'with_allocation':
         return 'bg-blue-100 text-blue-800';
-      case 'reservation':
-        return 'bg-yellow-100 text-yellow-800';
+      case 'pre_allocation':
+        return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getSalesTypeLabel = (type: string) => {
+    switch (type) {
+      case 'with_allocation':
+        return 'With Allocation';
+      case 'pre_allocation':
+        return 'Pre-Allocation';
+      default:
+        return type;
     }
   };
 
@@ -119,10 +132,13 @@ export function PendingAllocationsTab() {
               <Clock className="h-5 w-5 text-yellow-600" />
               <CardTitle>Pending Allocations</CardTitle>
               <Badge className="bg-yellow-100 text-yellow-800">
-                {filteredAllocations.length} Pending
+                {filteredAllocations.length} Awaiting Action
               </Badge>
             </div>
           </div>
+          <p className="text-sm text-gray-600">
+            Clients with recorded sales awaiting unit allocation by the allocation team
+          </p>
         </CardHeader>
         <CardContent>
           {/* Filters */}
@@ -130,7 +146,7 @@ export function PendingAllocationsTab() {
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search clients or units..."
+                placeholder="Search clients or projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -153,9 +169,8 @@ export function PendingAllocationsTab() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Sales Types</SelectItem>
-                <SelectItem value="instant_allocation">Instant Allocation</SelectItem>
-                <SelectItem value="sales_offer">Sales Offer</SelectItem>
-                <SelectItem value="reservation">Reservation</SelectItem>
+                <SelectItem value="pre_allocation">Pre-Allocation</SelectItem>
+                <SelectItem value="with_allocation">With Allocation</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -164,11 +179,11 @@ export function PendingAllocationsTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Client & Unit</TableHead>
-                <TableHead>Project</TableHead>
+                <TableHead>Client & Project</TableHead>
+                <TableHead>Unit Status</TableHead>
                 <TableHead>Sales Type</TableHead>
                 <TableHead>Amount</TableHead>
-                <TableHead>Submitted By</TableHead>
+                <TableHead>Sales Rep</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -179,13 +194,17 @@ export function PendingAllocationsTab() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{allocation.clientName}</div>
-                      <div className="text-sm text-gray-500">{allocation.unit}</div>
+                      <div className="text-sm text-gray-500">{allocation.projectName}</div>
                     </div>
                   </TableCell>
-                  <TableCell>{allocation.projectName}</TableCell>
+                  <TableCell>
+                    <Badge className={allocation.unit === 'Awaiting allocation' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
+                      {allocation.unit}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <Badge className={getSalesTypeColor(allocation.salesType)}>
-                      {allocation.salesType.replace('_', ' ')}
+                      {getSalesTypeLabel(allocation.salesType)}
                     </Badge>
                   </TableCell>
                   <TableCell className="font-medium">{allocation.amount}</TableCell>
@@ -199,24 +218,27 @@ export function PendingAllocationsTab() {
                         variant="ghost" 
                         size="sm"
                         onClick={() => openApprovalModal(allocation)}
+                        title="View Details"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => openApprovalModal(allocation)}
-                        className="text-green-600 hover:text-green-700"
+                        onClick={() => onAllocate(allocation)}
+                        className="text-blue-600 hover:text-blue-700"
+                        title="Allocate Unit"
                       >
-                        <CheckCircle className="h-4 w-4" />
+                        <UserPlus className="h-4 w-4" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="sm"
                         onClick={() => openApprovalModal(allocation)}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-green-600 hover:text-green-700"
+                        title="Approve"
                       >
-                        <XCircle className="h-4 w-4" />
+                        <CheckCircle className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -229,6 +251,7 @@ export function PendingAllocationsTab() {
             <div className="text-center py-8 text-gray-500">
               <Clock className="h-8 w-8 mx-auto mb-2 text-gray-400" />
               <p>No pending allocations found</p>
+              <p className="text-sm">Clients with sales will appear here for allocation processing</p>
             </div>
           )}
         </CardContent>
