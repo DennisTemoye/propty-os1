@@ -5,15 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Handshake, 
   DollarSign, 
-  ArrowRight, 
-  Ban, 
   Plus,
   TrendingUp,
   Building,
   Users,
-  Calculator,
+  FileText,
   History
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
@@ -21,25 +18,20 @@ import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
 import { AllocationHistoryTab } from './sales-allocation/AllocationHistoryTab';
 import { TransferHistoryTab } from './sales-allocation/TransferHistoryTab';
 import { RevokedAllocationsTab } from './sales-allocation/RevokedAllocationsTab';
-import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
-import { AllocateUnitModal } from './sales-allocation/AllocateUnitModal';
+import { UnifiedSalesForm } from './sales/UnifiedSalesForm';
 import { ReallocationModal } from './forms/ReallocationModal';
 import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [showRecordSaleModal, setShowRecordSaleModal] = useState(false);
-  const [showAllocateUnitModal, setShowAllocateUnitModal] = useState(false);
+  const [showSalesForm, setShowSalesForm] = useState(false);
   const [showReallocationModal, setShowReallocationModal] = useState(false);
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
 
-  const handleRecordSale = (data: any) => {
+  const handleSalesSubmit = (data: any) => {
     console.log('Recording sale:', data);
-  };
-
-  const handleAllocateUnit = (data: any) => {
-    console.log('Allocating unit:', data);
+    setShowSalesForm(false);
   };
 
   const handleReallocation = (data: any) => {
@@ -53,33 +45,56 @@ export function SalesAllocationOverview() {
   const quickActions = [
     {
       title: 'Record Sale',
-      description: 'Record a new property sale',
+      description: 'Unified sales recording with smart allocation',
       icon: DollarSign,
       color: 'bg-green-600 hover:bg-green-700',
-      onClick: () => setShowRecordSaleModal(true)
+      onClick: () => setShowSalesForm(true)
     },
     {
-      title: 'Allocate Unit',
-      description: 'Assign a unit to a client',
-      icon: Handshake,
+      title: 'Instant Allocation',
+      description: 'Complete sale with immediate allocation',
+      icon: Building,
       color: 'bg-blue-600 hover:bg-blue-700',
-      onClick: () => setShowAllocateUnitModal(true)
+      onClick: () => setShowSalesForm(true)
     },
     {
-      title: 'Re-allocate Unit',
-      description: 'Transfer unit to another client',
-      icon: ArrowRight,
+      title: 'Sales Offer',
+      description: 'Generate offer letter without allocation',
+      icon: FileText,
       color: 'bg-purple-600 hover:bg-purple-700',
-      onClick: () => setShowReallocationModal(true)
+      onClick: () => setShowSalesForm(true)
     },
     {
-      title: 'Revoke Allocation',
-      description: 'Cancel allocation and process refund',
-      icon: Ban,
-      color: 'bg-red-600 hover:bg-red-700',
-      onClick: () => setShowRevokeModal(true)
+      title: 'Reservation',
+      description: 'Reserve unit for client consideration',
+      icon: Users,
+      color: 'bg-orange-600 hover:bg-orange-700',
+      onClick: () => setShowSalesForm(true)
     }
   ];
+
+  if (showSalesForm) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Record New Sale</h1>
+            <p className="text-gray-600 mt-1">Unified sales recording with smart allocation options</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setShowSalesForm(false)}
+          >
+            Back to Overview
+          </Button>
+        </div>
+        <UnifiedSalesForm 
+          onSubmit={handleSalesSubmit}
+          onCancel={() => setShowSalesForm(false)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -87,7 +102,7 @@ export function SalesAllocationOverview() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation Overview</h1>
-          <p className="text-gray-600 mt-1">Comprehensive sales pipeline and allocation management</p>
+          <p className="text-gray-600 mt-1">Unified sales pipeline with smart allocation management</p>
         </div>
       </div>
 
@@ -144,18 +159,6 @@ export function SalesAllocationOverview() {
       </Tabs>
 
       {/* Modals */}
-      <RecordSaleModal 
-        isOpen={showRecordSaleModal}
-        onClose={() => setShowRecordSaleModal(false)}
-        onSubmit={handleRecordSale}
-      />
-
-      <AllocateUnitModal 
-        isOpen={showAllocateUnitModal}
-        onClose={() => setShowAllocateUnitModal(false)}
-        onSubmit={handleAllocateUnit}
-      />
-
       <ReallocationModal 
         isOpen={showReallocationModal}
         onClose={() => setShowReallocationModal(false)}
