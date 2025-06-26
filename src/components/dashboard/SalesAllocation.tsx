@@ -97,6 +97,11 @@ export function SalesAllocation() {
     // Process revocation and refund
   };
 
+  const handlePendingAllocation = (sale: any) => {
+    console.log('Processing pending allocation:', sale);
+    // Handle the allocation process for pending sales
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'interested':
@@ -398,7 +403,7 @@ export function SalesAllocation() {
         </TabsContent>
 
         <TabsContent value="pending" className="space-y-6">
-          <PendingAllocationsTab />
+          <PendingAllocationsTab onAllocate={handlePendingAllocation} />
         </TabsContent>
       </Tabs>
 
