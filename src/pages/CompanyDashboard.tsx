@@ -63,7 +63,7 @@ const CompanyDashboard = () => {
   };
 
   return (
-    <FullWidthLayout>
+    <FullWidthLayout padding="none">
       {renderActiveModule()}
     </FullWidthLayout>
   );

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -204,7 +205,7 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <FullWidthLayout>
+    <FullWidthLayout padding="md">
       <div className="w-full">
         <div className="mb-6">
           <div className="flex items-center justify-between">

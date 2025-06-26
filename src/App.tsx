@@ -45,56 +45,58 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="proptyos-ui-theme">
-        <Router>
-          <Routes>
-            <Route path="/" element={<AppLayout />}>
-              {/* Public Routes */}
-              <Route index element={<Index />} />
-              <Route path="login" element={<LoginPage />} />
-              <Route path="superadmin-login" element={<SuperAdminLoginPage />} />
-              <Route path="signup" element={<SignupPage />} />
-              <Route path="forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="reset-code" element={<ResetCodePage />} />
-              <Route path="reset-password" element={<ResetPasswordPage />} />
-              <Route path="book-demo" element={<BookDemoPage />} />
+        <div className="min-h-screen w-full bg-white dark:bg-gray-900">
+          <Router>
+            <Routes>
+              <Route path="/" element={<AppLayout />}>
+                {/* Public Routes */}
+                <Route index element={<Index />} />
+                <Route path="login" element={<LoginPage />} />
+                <Route path="superadmin-login" element={<SuperAdminLoginPage />} />
+                <Route path="signup" element={<SignupPage />} />
+                <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="reset-code" element={<ResetCodePage />} />
+                <Route path="reset-password" element={<ResetPasswordPage />} />
+                <Route path="book-demo" element={<BookDemoPage />} />
 
-              {/* Company Routes - All will have fixed sidebar */}
-              <Route path="company">
-                <Route index element={<CompanyDashboard />} />
-                <Route path="dashboard" element={<CompanyDashboard />} />
-                <Route path="projects" element={<CompanyDashboard />} />
-                <Route path="projects/new" element={<NewProjectPage />} />
-                <Route path="projects/:projectId" element={<ProjectDetailPage />} />
-                <Route path="projects/:projectId/edit" element={<EditProjectPage />} />
-                <Route path="projects/:projectId/blocks" element={<ProjectBlocksPage />} />
-                <Route path="clients" element={<CompanyDashboard />} />
-                <Route path="clients/:clientId" element={<ClientDetailPage />} />
-                <Route path="clients/new" element={<NewClientPage />} />
-                <Route path="marketers" element={<CompanyDashboard />} />
-                <Route path="marketers-commission" element={<MarketersCommissionPage />} />
-                <Route path="marketers/:marketerId" element={<MarketerDetailPage />} />
-                <Route path="sales" element={<CompanyDashboard />} />
-                <Route path="fees" element={<CompanyDashboard />} />
-                <Route path="accounting" element={<CompanyDashboard />} />
-                <Route path="team" element={<CompanyDashboard />} />
-                <Route path="reports" element={<CompanyDashboard />} />
-                <Route path="tools/crm-pipelines" element={<CompanyDashboard />} />
-                <Route path="tools/document-manager" element={<CompanyDashboard />} />
-                <Route path="tools/calendar" element={<CompanyDashboard />} />
-                <Route path="tools/send-notice" element={<CompanyDashboard />} />
-                <Route path="settings" element={<CompanyDashboard />} />
-                <Route path="referrals" element={<CompanyDashboard />} />
-                <Route path="help" element={<CompanyDashboard />} />
+                {/* Company Routes - All will have fixed sidebar */}
+                <Route path="company">
+                  <Route index element={<CompanyDashboard />} />
+                  <Route path="dashboard" element={<CompanyDashboard />} />
+                  <Route path="projects" element={<CompanyDashboard />} />
+                  <Route path="projects/new" element={<NewProjectPage />} />
+                  <Route path="projects/:projectId" element={<ProjectDetailPage />} />
+                  <Route path="projects/:projectId/edit" element={<EditProjectPage />} />
+                  <Route path="projects/:projectId/blocks" element={<ProjectBlocksPage />} />
+                  <Route path="clients" element={<CompanyDashboard />} />
+                  <Route path="clients/:clientId" element={<ClientDetailPage />} />
+                  <Route path="clients/new" element={<NewClientPage />} />
+                  <Route path="marketers" element={<CompanyDashboard />} />
+                  <Route path="marketers-commission" element={<MarketersCommissionPage />} />
+                  <Route path="marketers/:marketerId" element={<MarketerDetailPage />} />
+                  <Route path="sales" element={<CompanyDashboard />} />
+                  <Route path="fees" element={<CompanyDashboard />} />
+                  <Route path="accounting" element={<CompanyDashboard />} />
+                  <Route path="team" element={<CompanyDashboard />} />
+                  <Route path="reports" element={<CompanyDashboard />} />
+                  <Route path="tools/crm-pipelines" element={<CompanyDashboard />} />
+                  <Route path="tools/document-manager" element={<CompanyDashboard />} />
+                  <Route path="tools/calendar" element={<CompanyDashboard />} />
+                  <Route path="tools/send-notice" element={<CompanyDashboard />} />
+                  <Route path="settings" element={<CompanyDashboard />} />
+                  <Route path="referrals" element={<CompanyDashboard />} />
+                  <Route path="help" element={<CompanyDashboard />} />
+                </Route>
+
+                {/* Super Admin Routes */}
+                <Route path="superadmin/*" element={<SuperAdminDashboard />} />
+
+                {/* 404 Route */}
+                <Route path="*" element={<NotFound />} />
               </Route>
-
-              {/* Super Admin Routes */}
-              <Route path="superadmin/*" element={<SuperAdminDashboard />} />
-
-              {/* 404 Route */}
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </Router>
+            </Routes>
+          </Router>
+        </div>
         <Toaster />
         <SonnerToaster />
       </ThemeProvider>

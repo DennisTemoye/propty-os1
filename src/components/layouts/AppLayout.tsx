@@ -15,19 +15,19 @@ export function AppLayout() {
   // Check if current route is a company route
   const isCompanyRoute = location.pathname.startsWith('/company');
   
-  // For non-company routes, render full-width without sidebar
+  // For non-company routes, render completely full-width without sidebar
   if (!isCompanyRoute) {
     return (
-      <div className="min-h-screen w-full">
+      <div className="w-full min-h-screen">
         <Outlet />
       </div>
     );
   }
 
-  // For company routes, render with fixed sidebar
+  // For company routes, render with fixed sidebar taking full width approach
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gray-50 dark:bg-gray-900">
+      <div className="w-full min-h-screen flex bg-gray-50 dark:bg-gray-900">
         {/* Mobile/Tablet Sidebar Overlay */}
         {(isMobile || isTablet) && sidebarOpen && (
           <div 
@@ -36,7 +36,7 @@ export function AppLayout() {
           />
         )}
         
-        {/* Fixed Sidebar */}
+        {/* Fixed Sidebar - Desktop */}
         <div className="fixed left-0 top-0 h-screen w-64 z-30 hidden lg:block">
           <CompanySidebar />
         </div>
@@ -50,11 +50,11 @@ export function AppLayout() {
           </div>
         )}
         
-        {/* Main Content Area */}
-        <div className="flex-1 lg:ml-64 min-h-screen">
+        {/* Main Content Area - Full Width with Sidebar Offset */}
+        <div className="w-full lg:ml-64 min-h-screen">
           {/* Mobile Header */}
           {(isMobile || isTablet) && (
-            <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 lg:hidden sticky top-0 z-20">
+            <header className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 lg:hidden sticky top-0 z-20">
               <div className="flex items-center justify-between">
                 <Button
                   variant="ghost"
@@ -76,8 +76,8 @@ export function AppLayout() {
             </header>
           )}
           
-          {/* Page Content */}
-          <main className="w-full">
+          {/* Page Content - Complete Full Width */}
+          <main className="w-full h-full">
             <Outlet />
           </main>
         </div>
