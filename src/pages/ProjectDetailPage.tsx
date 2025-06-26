@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -252,8 +253,8 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 w-full">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
             <Button onClick={() => navigate('/company/projects')}>
@@ -333,8 +334,8 @@ export default function ProjectDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen bg-gray-50 w-full">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
         {/* Top Navigation - Back button left, Action buttons right */}
         <div className="flex items-center justify-between mb-6">
           <Button 
@@ -396,9 +397,9 @@ export default function ProjectDetailPage() {
         </div>
 
         {/* Project Banner Section */}
-        <div className="relative bg-white rounded-lg shadow-sm border overflow-hidden mb-6">
+        <div className="relative bg-white rounded-lg shadow-sm border overflow-hidden mb-6 w-full">
           {/* Banner Image */}
-          <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600">
+          <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600 w-full">
             <img 
               src={getProjectImage(project)} 
               alt={project.name}
@@ -451,9 +452,9 @@ export default function ProjectDetailPage() {
         <ProjectKPIGrid project={project} />
 
         {/* Project Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border">
+        <div className="bg-white rounded-lg shadow-sm border w-full">
           <Tabs defaultValue="overview" className="w-full">
-            <div className="border-b px-6">
+            <div className="border-b px-6 w-full">
               <TabsList className="grid w-full grid-cols-6 bg-transparent h-12">
                 <TabsTrigger 
                   value="overview" 
@@ -494,19 +495,19 @@ export default function ProjectDetailPage() {
               </TabsList>
             </div>
 
-            <TabsContent value="overview" className="p-6">
+            <TabsContent value="overview" className="p-6 w-full">
               <ProjectOverviewContent project={project} />
             </TabsContent>
 
-            <TabsContent value="layout" className="p-6">
+            <TabsContent value="layout" className="p-6 w-full">
               <ProjectLayoutTab project={project} />
             </TabsContent>
 
-            <TabsContent value="blocks" className="p-6">
+            <TabsContent value="blocks" className="p-6 w-full">
               <ProjectBlocksTab project={project} />
             </TabsContent>
 
-            <TabsContent value="sales-history" className="p-6">
+            <TabsContent value="sales-history" className="p-6 w-full">
               <ProjectSalesHistoryTab 
                 project={project} 
                 onReallocate={handleReallocate}
@@ -514,11 +515,11 @@ export default function ProjectDetailPage() {
               />
             </TabsContent>
 
-            <TabsContent value="documents" className="p-6">
+            <TabsContent value="documents" className="p-6 w-full">
               <ProjectDocumentsTab project={project} />
             </TabsContent>
 
-            <TabsContent value="settings" className="p-6">
+            <TabsContent value="settings" className="p-6 w-full">
               <ProjectSettingsTab project={project} />
             </TabsContent>
           </Tabs>
