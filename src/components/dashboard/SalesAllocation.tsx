@@ -1,17 +1,18 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Handshake, DollarSign, FileText, Users, TrendingUp, ArrowRight, History, Edit, Ban } from 'lucide-react';
+import { Handshake, DollarSign, FileText, Users, TrendingUp, ArrowRight, History, Edit, Ban, Clock, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { NewAllocationForm } from './forms/NewAllocationForm';
 import { ReallocationModal } from './forms/ReallocationModal';
 import { ReallocationHistory } from './ReallocationHistory';
 import { UpdateAllocationStatusModal } from './forms/UpdateAllocationStatusModal';
 import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
+import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
+import { SystemNotifications } from './notifications/SystemNotifications';
 
 const mockAllocations = [
   {
@@ -58,6 +59,7 @@ export function SalesAllocation() {
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Check if we're on the /new route
   useEffect(() => {
@@ -146,6 +148,16 @@ export function SalesAllocation() {
         <div className="flex space-x-2">
           <Button 
             variant="outline"
+            onClick={() => setShowNotifications(true)}
+            className="relative"
+          >
+            <Bell className="h-4 w-4" />
+            <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center">
+              3
+            </Badge>
+          </Button>
+          <Button 
+            variant="outline"
             onClick={() => setShowReallocationModal(true)}
             className="border-purple-200 text-purple-700 hover:bg-purple-50"
           >
@@ -160,7 +172,7 @@ export function SalesAllocation() {
       </div>
 
       {/* Updated Stats Cards with new statuses */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -226,14 +238,30 @@ export function SalesAllocation() {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-yellow-600">3</div>
+                <div className="text-sm text-gray-500">Pending Approval</div>
+              </div>
+              <Clock className="h-8 w-8 text-yellow-600" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="allocations">Active Allocations</TabsTrigger>
           <TabsTrigger value="history">Reallocation History</TabsTrigger>
+          <TabsTrigger value="pending" className="relative">
+            Pending Approvals
+            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -368,6 +396,10 @@ export function SalesAllocation() {
         <TabsContent value="history" className="space-y-6">
           <ReallocationHistory />
         </TabsContent>
+
+        <TabsContent value="pending" className="space-y-6">
+          <PendingAllocationsTab />
+        </TabsContent>
       </Tabs>
 
       {/* Reallocation Modal */}
@@ -391,6 +423,16 @@ export function SalesAllocation() {
         onClose={() => setShowRevokeModal(false)}
         allocation={selectedAllocation}
         onRevoke={handleRevocation}
+      />
+
+      {/* System Notifications */}
+      <SystemNotifications 
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        onNotificationClick={(notification) => {
+          console.log('Notification clicked:', notification);
+          setShowNotifications(false);
+        }}
       />
     </div>
   );

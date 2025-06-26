@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Edit, MapPin, User, UserPlus, Trash2, Building } from 'lucide-react';
+import { ArrowLeft, Edit, MapPin, User, UserPlus, Trash2, Building, Clock } from 'lucide-react';
 import { ProjectHeader } from '@/components/dashboard/projects/ProjectHeader';
 import { ProjectKPIGrid } from '@/components/dashboard/projects/ProjectKPIGrid';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
@@ -170,11 +169,15 @@ export function ProjectDetailView() {
       <div className="bg-white rounded-lg shadow-sm border">
         <Tabs defaultValue="overview" className="w-full">
           <div className="border-b px-6">
-            <TabsList className="grid w-full grid-cols-4 bg-transparent h-12">
+            <TabsList className="grid w-full grid-cols-5 bg-transparent h-12">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="blocks">Blocks & Units</TabsTrigger>
               <TabsTrigger value="sales-history">Sales History</TabsTrigger>
               <TabsTrigger value="documents">Documents</TabsTrigger>
+              <TabsTrigger value="pending" className="relative">
+                Pending Approvals
+                <Badge className="ml-2 bg-yellow-600 text-white text-xs">2</Badge>
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -189,6 +192,25 @@ export function ProjectDetailView() {
           </TabsContent>
           <TabsContent value="documents" className="p-6">
             <ProjectDocumentsTab project={project} />
+          </TabsContent>
+          <TabsContent value="pending" className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Clock className="h-5 w-5 text-yellow-600" />
+                <h3 className="text-lg font-semibold">Pending Allocations for {project.name}</h3>
+              </div>
+              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <p className="text-sm text-yellow-800">
+                  This project has 2 allocations pending approval. Visit the Sales & Allocation module for detailed review and approval.
+                </p>
+                <Button 
+                  className="mt-2"
+                  onClick={() => navigate('/company/sales?tab=pending')}
+                >
+                  Review Pending Allocations
+                </Button>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

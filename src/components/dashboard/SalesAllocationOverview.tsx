@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,9 @@ import {
   Building,
   Users,
   Calculator,
-  History
+  History,
+  Clock,
+  Bell
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
 import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
@@ -25,6 +26,8 @@ import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
 import { AllocateUnitModal } from './sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from './forms/ReallocationModal';
 import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
+import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
+import { SystemNotifications } from './notifications/SystemNotifications';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -33,6 +36,7 @@ export function SalesAllocationOverview() {
   const [showReallocationModal, setShowReallocationModal] = useState(false);
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
@@ -89,6 +93,19 @@ export function SalesAllocationOverview() {
           <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation Overview</h1>
           <p className="text-gray-600 mt-1">Comprehensive sales pipeline and allocation management</p>
         </div>
+        
+        <div className="flex items-center space-x-2">
+          <Button 
+            variant="outline"
+            onClick={() => setShowNotifications(true)}
+            className="relative"
+          >
+            <Bell className="h-4 w-4" />
+            <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center">
+              3
+            </Badge>
+          </Button>
+        </div>
       </div>
 
       {/* Quick Action Buttons */}
@@ -111,12 +128,16 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
           <TabsTrigger value="allocations">Allocation History</TabsTrigger>
           <TabsTrigger value="reallocations">Re-allocation History</TabsTrigger>
           <TabsTrigger value="revoked">Revoked History</TabsTrigger>
+          <TabsTrigger value="pending" className="relative">
+            Pending Approvals
+            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -140,6 +161,10 @@ export function SalesAllocationOverview() {
 
         <TabsContent value="revoked" className="space-y-6">
           <RevokedAllocationsTab />
+        </TabsContent>
+
+        <TabsContent value="pending" className="space-y-6">
+          <PendingAllocationsTab />
         </TabsContent>
       </Tabs>
 
@@ -167,6 +192,15 @@ export function SalesAllocationOverview() {
         onClose={() => setShowRevokeModal(false)}
         allocation={selectedAllocation}
         onRevoke={handleRevocation}
+      />
+
+      <SystemNotifications 
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        onNotificationClick={(notification) => {
+          console.log('Notification clicked:', notification);
+          setShowNotifications(false);
+        }}
       />
     </div>
   );

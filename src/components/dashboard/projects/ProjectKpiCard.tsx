@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Building, Users, MapPin, Eye } from 'lucide-react';
+import { Building, Users, MapPin, Eye, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface ProjectKpiCardProps {
@@ -44,7 +43,15 @@ export function ProjectKpiCard({ project }: ProjectKpiCardProps) {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-200">
+    <Card className="hover:shadow-lg transition-shadow duration-200 relative">
+      {/* Pending Indicator */}
+      <div className="absolute top-4 left-4 z-10">
+        <Badge className="bg-yellow-600 text-white text-xs flex items-center space-x-1">
+          <Clock className="h-3 w-3" />
+          <span>2 Pending</span>
+        </Badge>
+      </div>
+
       <CardContent className="p-0">
         {/* Project Image */}
         <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
