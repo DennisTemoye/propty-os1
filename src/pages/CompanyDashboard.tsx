@@ -11,9 +11,9 @@ import { FeesCollection } from '@/components/dashboard/FeesCollection';
 import { Accounting } from '@/components/dashboard/Accounting';
 import { TeamRoles } from '@/components/dashboard/TeamRoles';
 import { Reports } from '@/components/dashboard/Reports';
-import { CRMPipelines } from '@/components/dashboard/CRMPipelines';
-import { DocumentManager } from '@/components/dashboard/DocumentManager';
-import { CalendarScheduling } from '@/components/dashboard/CalendarScheduling';
+import { CRMPipelinesPage } from '@/components/dashboard/tools/CRMPipelines';
+import { DocumentManagerPage } from '@/components/dashboard/tools/DocumentManager';
+import { CalendarSchedulingPage } from '@/components/dashboard/tools/CalendarScheduling';
 import { SendNotice } from '@/components/dashboard/SendNotice';
 import { Settings } from '@/components/dashboard/Settings';
 import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
@@ -52,11 +52,11 @@ const CompanyDashboard = () => {
     } else if (path.startsWith('/company/reports')) {
       return <Reports />;
     } else if (path.startsWith('/company/tools/crm-pipelines')) {
-      return <CRMPipelines />;
+      return <CRMPipelinesPage />;
     } else if (path.startsWith('/company/tools/document-manager')) {
-      return <DocumentManager />;
+      return <DocumentManagerPage />;
     } else if (path.startsWith('/company/tools/calendar')) {
-      return <CalendarScheduling />;
+      return <CalendarSchedulingPage />;
     } else if (path.startsWith('/company/tools/send-notice')) {
       return <SendNotice />;
     } else if (path.startsWith('/company/settings')) {
@@ -70,25 +70,14 @@ const CompanyDashboard = () => {
     }
   };
 
-  // Close sidebar when clicking outside on mobile
-  const handleOverlayClick = () => {
-    if (isMobile && sidebarOpen) {
-      setSidebarOpen(false);
-    }
-  };
+  // Check if current page is a detail page that needs full width
+  const isDetailPage = location.pathname.includes('/projects/') || location.pathname.includes('/clients/');
 
   return (
     <div className="w-full">
       <MobileWarningBanner />
       <SidebarProvider>
         <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
-          {/* Mobile/Tablet Sidebar Overlay */}
-          {isSmallScreen && sidebarOpen && (
-            <div 
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-              onClick={handleOverlayClick}
-            />
-          )}
           
           <CompanySidebar 
             isOpen={sidebarOpen} 
@@ -98,13 +87,13 @@ const CompanyDashboard = () => {
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 lg:hidden sticky top-16 sm:top-20 z-30 shadow-sm w-full">
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm w-full">
                 <div className="flex items-center justify-between">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     {sidebarOpen ? (
                       <X className="h-5 w-5" />
@@ -121,13 +110,19 @@ const CompanyDashboard = () => {
             )}
             
             <main className="flex-1 overflow-auto w-full">
-              <ResponsiveContainer 
-                fullWidth={true}
-                className="h-full min-h-0 w-full"
-                padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
-              >
-                {renderActiveModule()}
-              </ResponsiveContainer>
+              {isDetailPage ? (
+                // Detail pages render without container for full width
+                renderActiveModule()
+              ) : (
+                // Regular pages use ResponsiveContainer
+                <ResponsiveContainer 
+                  fullWidth={true}
+                  className="h-full min-h-0 w-full"
+                  padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+                >
+                  {renderActiveModule()}
+                </ResponsiveContainer>
+              )}
             </main>
           </div>
         </div>
