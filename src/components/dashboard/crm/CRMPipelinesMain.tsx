@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -123,7 +122,7 @@ export function CRMPipelinesMain() {
   const sources = ['Website', 'Referral', 'Social Media', 'Advertisement', 'Walk-in', 'Cold Call'];
 
   return (
-    <ResponsiveContainer maxWidth="full" className="min-h-screen bg-gray-50/50">
+    <ResponsiveContainer fullWidth={true} padding="responsive" className="min-h-screen bg-gray-50/50">
       <div className={`space-y-6 ${isMobile ? 'p-4' : 'p-6 lg:p-8'}`}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
