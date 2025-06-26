@@ -1,11 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Building, DollarSign } from 'lucide-react';
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
-import { ClientForm } from '@/components/dashboard/clients/ClientForm';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
 import { toast } from 'sonner';
@@ -167,7 +164,6 @@ export default function ClientDetailPage() {
   const { clientId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   
@@ -184,7 +180,7 @@ export default function ClientDetailPage() {
   }
 
   const handleEdit = () => {
-    setIsEditOpen(true);
+    navigate(`/company/clients/${clientId}/edit`);
   };
 
   const handleDelete = () => {
@@ -252,19 +248,6 @@ export default function ClientDetailPage() {
         </div>
         
         <ClientDetailView client={client} />
-
-        {/* Edit Client Modal */}
-        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Edit Client</DialogTitle>
-              <DialogDescription>
-                Update client information and details
-              </DialogDescription>
-            </DialogHeader>
-            <ClientForm client={client} onClose={() => setIsEditOpen(false)} />
-          </DialogContent>
-        </Dialog>
 
         {/* Assign Property Modal */}
         <AssignPropertyModal 
