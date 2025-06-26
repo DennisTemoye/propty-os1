@@ -76,24 +76,22 @@ const CompanyDashboard = () => {
                       location.pathname.includes('/marketers/');
 
   return (
-    <div className="w-full min-h-screen overflow-hidden">
+    <div className="w-full min-h-screen">
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className={`min-h-screen flex bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           
-          {/* Sidebar - Fixed position and scrollable */}
-          <div className="flex-shrink-0">
-            <CompanySidebar 
-              isOpen={sidebarOpen} 
-              onClose={() => setSidebarOpen(false)} 
-            />
-          </div>
+          {/* Global Fixed Sidebar - Always present */}
+          <CompanySidebar 
+            isOpen={sidebarOpen} 
+            onClose={() => setSidebarOpen(false)} 
+          />
           
-          {/* Main Content Area - Scrollable */}
-          <div className={`flex-1 flex flex-col min-w-0 ${!isSmallScreen ? 'ml-64' : ''}`}>
+          {/* Main Content Area - Always with left margin to account for fixed sidebar */}
+          <div className={`min-h-screen ${isSmallScreen ? 'ml-0 pt-16 sm:pt-20' : 'ml-64'}`}>
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm flex-shrink-0">
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 fixed top-16 sm:top-20 left-0 right-0 z-40 shadow-sm">
                 <div className="flex items-center justify-between">
                   <Button
                     variant="ghost"
@@ -115,10 +113,10 @@ const CompanyDashboard = () => {
               </header>
             )}
             
-            {/* Scrollable Content */}
-            <main className="flex-1 overflow-y-auto">
+            {/* Content Area - Scrollable */}
+            <main className={`min-h-screen overflow-y-auto ${isSmallScreen ? 'pt-16' : ''}`}>
               {isDetailPage ? (
-                // Detail pages render without container for full width
+                // Detail pages render without container for full width but still respect sidebar margin
                 <div className="min-h-full">
                   {renderActiveModule()}
                 </div>

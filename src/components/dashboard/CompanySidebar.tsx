@@ -224,7 +224,7 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop - Fixed Sidebar with scrollable content
+  // Desktop - Global Fixed Sidebar
   return (
     <div className={cn(
       'fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 flex-shrink-0 z-30',
