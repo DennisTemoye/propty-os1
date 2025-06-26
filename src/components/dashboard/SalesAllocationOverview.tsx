@@ -15,7 +15,6 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
-import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
 import { HistoryTab } from './sales-allocation/HistoryTab';
 import { SalesFlowModal } from './sales-allocation/SalesFlowModal';
 import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
@@ -171,20 +170,19 @@ export function SalesAllocationOverview() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending" className="relative">
             Pending Allocations
             <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
           </TabsTrigger>
+          <TabsTrigger value="approvals" className="relative">
+            Pending Approvals
+            <Badge className="ml-2 bg-orange-600 text-white text-xs">2</Badge>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <OverviewTab />
-        </TabsContent>
-
-        <TabsContent value="pipeline" className="space-y-6">
-          <SalesPipelineTab />
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
@@ -198,6 +196,14 @@ export function SalesAllocationOverview() {
               // This would trigger the allocation flow
             }}
           />
+        </TabsContent>
+
+        <TabsContent value="approvals" className="space-y-6">
+          <div className="text-center py-8">
+            <CheckCircle className="h-12 w-12 mx-auto text-green-600 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Pending Approvals</h3>
+            <p className="text-gray-600">Allocation actions awaiting administrative approval</p>
+          </div>
         </TabsContent>
       </Tabs>
 
