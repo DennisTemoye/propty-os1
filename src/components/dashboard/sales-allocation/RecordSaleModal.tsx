@@ -1,15 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { DollarSign, AlertCircle } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 
 interface RecordSaleModalProps {
   isOpen: boolean;
@@ -18,66 +17,44 @@ interface RecordSaleModalProps {
 }
 
 const mockProjects = [
-  { id: 'project1', name: 'Victoria Gardens', availableUnits: 25 },
-  { id: 'project2', name: 'Emerald Heights', availableUnits: 18 },
-  { id: 'project3', name: 'Golden View', availableUnits: 32 },
-  { id: 'project4', name: 'Ocean Breeze', availableUnits: 15 }
+  { id: 'project1', name: 'Victoria Gardens' },
+  { id: 'project2', name: 'Emerald Heights' },
+  { id: 'project3', name: 'Golden View' },
+  { id: 'project4', name: 'Ocean Breeze' }
 ];
 
 const mockClients = [
-  { id: 'client1', name: 'John Doe', email: 'john@example.com', crmStatus: 'qualified' },
-  { id: 'client2', name: 'Sarah Johnson', email: 'sarah@example.com', crmStatus: 'lead' },
-  { id: 'client3', name: 'Robert Brown', email: 'robert@example.com', crmStatus: 'prospect' },
-  { id: 'client4', name: 'Alice Cooper', email: 'alice@example.com', crmStatus: 'customer' }
+  { id: 'client1', name: 'John Doe', email: 'john@example.com' },
+  { id: 'client2', name: 'Sarah Johnson', email: 'sarah@example.com' },
+  { id: 'client3', name: 'Robert Brown', email: 'robert@example.com' },
+  { id: 'client4', name: 'Alice Cooper', email: 'alice@example.com' }
 ];
 
-const mockUnits = [
-  { id: 'unit1', number: 'Block A - Plot 01', projectId: 'project1', status: 'available' },
-  { id: 'unit2', number: 'Block A - Plot 02', projectId: 'project1', status: 'available' },
-  { id: 'unit3', number: 'Block B - Plot 05', projectId: 'project2', status: 'available' }
+const mockMarketers = [
+  { id: 'marketer1', name: 'Jane Smith' },
+  { id: 'marketer2', name: 'Mike Davis' },
+  { id: 'marketer3', name: 'Sarah Johnson' },
+  { id: 'marketer4', name: 'Tom Wilson' }
 ];
 
 export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalProps) {
-  const [saleType, setSaleType] = useState('pre-allocation');
   const form = useForm({
     defaultValues: {
       clientId: '',
       projectId: '',
-      unitId: '',
+      unitNumber: '',
       saleAmount: '',
       initialPayment: '',
+      marketerId: '',
       saleDate: new Date().toISOString().split('T')[0],
       paymentMethod: '',
-      notes: '',
-      saleType: 'pre-allocation'
+      notes: ''
     }
   });
 
-  const selectedProject = form.watch('projectId');
-  const availableUnits = mockUnits.filter(unit => unit.projectId === selectedProject);
-
   const handleSubmit = (data: any) => {
-    console.log('Recording sale with type:', saleType, data);
-    
-    const saleData = {
-      ...data,
-      saleType,
-      recordedAt: new Date().toISOString(),
-      recordedBy: 'Current User' // This would come from auth context
-    };
-
-    // Sync with relevant modules based on sale type
-    if (saleType === 'pre-allocation') {
-      // Update CRM status to customer
-      // Create pending allocation record
-      console.log('Creating pre-allocation sale - will update CRM and create allocation queue');
-    } else {
-      // Update unit status immediately
-      // Update client record with allocation
-      console.log('Creating post-allocation sale - immediate unit assignment');
-    }
-
-    onSubmit(saleData);
+    console.log('Recording sale:', data);
+    onSubmit(data);
     toast.success('Sale recorded successfully!');
     onClose();
     form.reset();
@@ -85,40 +62,18 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <DollarSign className="h-5 w-5 text-green-600" />
             <span>Record New Sale</span>
           </DialogTitle>
           <DialogDescription>
-            Record a property sale and manage allocation workflow
+            Record a new property sale and automatically create allocation
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-          {/* Sale Type Selection */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">Sale Type *</Label>
-            <RadioGroup value={saleType} onValueChange={setSaleType} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-gray-50">
-                <RadioGroupItem value="pre-allocation" id="pre-allocation" />
-                <div className="flex-1">
-                  <Label htmlFor="pre-allocation" className="font-medium cursor-pointer">Pre-Allocation Sale</Label>
-                  <p className="text-sm text-gray-600">Client commits to purchase before unit is assigned</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-gray-50">
-                <RadioGroupItem value="post-allocation" id="post-allocation" />
-                <div className="flex-1">
-                  <Label htmlFor="post-allocation" className="font-medium cursor-pointer">Post-Allocation Sale</Label>
-                  <p className="text-sm text-gray-600">Client purchases a specific assigned unit</p>
-                </div>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Client and Project Selection */}
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Client *</Label>
@@ -131,7 +86,7 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
                     <SelectItem key={client.id} value={client.id}>
                       <div>
                         <div className="font-medium">{client.name}</div>
-                        <div className="text-xs text-gray-500">{client.email} • {client.crmStatus}</div>
+                        <div className="text-xs text-gray-500">{client.email}</div>
                       </div>
                     </SelectItem>
                   ))}
@@ -148,10 +103,7 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
                 <SelectContent>
                   {mockProjects.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
-                      <div>
-                        <div className="font-medium">{project.name}</div>
-                        <div className="text-xs text-gray-500">{project.availableUnits} units available</div>
-                      </div>
+                      {project.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -159,27 +111,15 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
             </div>
           </div>
 
-          {/* Unit Selection - Only for Post-Allocation */}
-          {saleType === 'post-allocation' && (
-            <div>
-              <Label>Specific Unit *</Label>
-              <Select onValueChange={(value) => form.setValue('unitId', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select specific unit" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableUnits.map((unit) => (
-                    <SelectItem key={unit.id} value={unit.id}>
-                      {unit.number}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* Sale Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Unit Number *</Label>
+              <Input 
+                {...form.register('unitNumber', { required: true })}
+                placeholder="e.g., Block A - Plot 15"
+              />
+            </div>
+
             <div>
               <Label>Sale Amount (₦) *</Label>
               <Input 
@@ -188,7 +128,9 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
                 placeholder="e.g., 25000000"
               />
             </div>
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Initial Payment (₦) *</Label>
               <Input 
@@ -196,6 +138,22 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
                 {...form.register('initialPayment', { required: true })}
                 placeholder="e.g., 5000000"
               />
+            </div>
+
+            <div>
+              <Label>Marketer</Label>
+              <Select onValueChange={(value) => form.setValue('marketerId', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select marketer" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockMarketers.map((marketer) => (
+                    <SelectItem key={marketer.id} value={marketer.id}>
+                      {marketer.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -234,27 +192,16 @@ export function RecordSaleModal({ isOpen, onClose, onSubmit }: RecordSaleModalPr
             />
           </div>
 
-          {/* Information Panel */}
-          <div className={`p-4 rounded-lg border ${saleType === 'pre-allocation' ? 'border-blue-200 bg-blue-50' : 'border-purple-200 bg-purple-50'}`}>
-            <div className="flex items-start space-x-2">
-              <AlertCircle className={`h-5 w-5 mt-0.5 ${saleType === 'pre-allocation' ? 'text-blue-600' : 'text-purple-600'}`} />
-              <div>
-                <p className={`text-sm font-medium ${saleType === 'pre-allocation' ? 'text-blue-800' : 'text-purple-800'}`}>
-                  {saleType === 'pre-allocation' ? 'Pre-Allocation Sale Process:' : 'Post-Allocation Sale Process:'}
-                </p>
-                <p className={`text-sm mt-1 ${saleType === 'pre-allocation' ? 'text-blue-700' : 'text-purple-700'}`}>
-                  {saleType === 'pre-allocation' 
-                    ? 'Client will be moved to customer status in CRM. Unit allocation will be processed separately based on availability and preferences.'
-                    : 'The selected unit will be immediately allocated to the client and marked as sold. Client status will be updated accordingly.'
-                  }
-                </p>
-              </div>
-            </div>
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800">
+              <strong>Note:</strong> Recording this sale will automatically create an allocation for the client 
+              and update the unit status. Commission calculations and accounting records will be updated accordingly.
+            </p>
           </div>
 
           <div className="flex gap-2 pt-4">
             <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
-              {saleType === 'pre-allocation' ? 'Record Sale & Queue Allocation' : 'Record Sale & Allocate Unit'}
+              Record Sale & Allocate
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
