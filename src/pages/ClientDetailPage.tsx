@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit, Trash2, Building, DollarSign } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-react';
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
