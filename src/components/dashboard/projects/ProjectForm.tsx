@@ -1,19 +1,20 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Form } from '@/components/ui/form';
 import { FormInput } from '@/components/shared/FormInput';
 import { FormSelect } from '@/components/shared/FormSelect';
-import { MapPin, Building2, Layers, Info, Plus, Trash2 } from 'lucide-react';
+import { MapPin, Building2, Layers, Info, Plus, Trash2, Upload, X, FileText } from 'lucide-react';
 import { projectTypeOptions, projectStatusOptions, developmentStageOptions } from '@/forms/projectFormSchema';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
 
 interface ProjectFormProps {
   project?: any;
@@ -22,8 +23,8 @@ interface ProjectFormProps {
 }
 
 export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps) {
-  const [activeTab, setActiveTab] = useState('basic');
   const [blocks, setBlocks] = useState(project?.blocks || []);
+  const [imagePreview, setImagePreview] = useState<string | null>(project?.image || null);
   
   const form = useForm({
     defaultValues: {
@@ -79,20 +80,31 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
     onFormChange?.();
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+      onFormChange?.();
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    onFormChange?.();
+  };
+
   return (
-    <div className="relative">
+    <div className="max-w-7xl mx-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pb-20">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="basic">Basic Info</TabsTrigger>
-              <TabsTrigger value="details">Project Details</TabsTrigger>
-              <TabsTrigger value="blocks">Blocks & Structure</TabsTrigger>
-              <TabsTrigger value="timeline">Timeline & Management</TabsTrigger>
-              <TabsTrigger value="contact">Contact Info</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="basic" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Content - Left Column (2/3 width) */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Basic Information */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center text-left">
@@ -154,9 +166,8 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
 
-            <TabsContent value="details" className="space-y-4">
+              {/* Project Details */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center text-left">
@@ -181,34 +192,10 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                       options={developmentStageOptions}
                     />
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormInput
-                      control={form.control}
-                      name="startDate"
-                      label="Start Date"
-                      type="date"
-                    />
-
-                    <FormInput
-                      control={form.control}
-                      name="expectedCompletion"
-                      label="Expected Completion"
-                      type="date"
-                    />
-
-                    <FormInput
-                      control={form.control}
-                      name="totalBudget"
-                      label="Total Budget"
-                      placeholder="e.g., ₦5,000,000,000"
-                    />
-                  </div>
                 </CardContent>
               </Card>
-            </TabsContent>
 
-            <TabsContent value="blocks" className="space-y-4">
+              {/* Blocks & Structure */}
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
@@ -326,9 +313,8 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
 
-            <TabsContent value="timeline" className="space-y-4">
+              {/* Timeline & Management */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center text-left">
@@ -382,9 +368,89 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </div>
 
-            <TabsContent value="contact" className="space-y-4">
+            {/* Right Column - Media & Contact (1/3 width) */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Project Image */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg text-left">Project Image</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {imagePreview ? (
+                    <div className="relative">
+                      <img 
+                        src={imagePreview} 
+                        alt="Project preview"
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={removeImage}
+                        className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                      <div className="text-center">
+                        <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <Label htmlFor="image-upload" className="cursor-pointer">
+                          <span className="text-blue-600 hover:text-blue-700">Upload image</span>
+                        </Label>
+                        <Input
+                          id="image-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Documents */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-left">
+                    <FileText className="h-5 w-5 mr-2" />
+                    Documents
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                      <div className="text-center">
+                        <FileText className="h-6 w-6 text-gray-400 mx-auto mb-2" />
+                        <Label htmlFor="documents-upload" className="cursor-pointer">
+                          <span className="text-blue-600 hover:text-blue-700 text-sm">Upload documents</span>
+                        </Label>
+                        <Input
+                          id="documents-upload"
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          multiple
+                          className="hidden"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          PDF, DOC files
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Contact Information */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center text-left">
@@ -393,35 +459,33 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="contactPerson"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Contact Person</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Project Manager/Lead" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <FormField
+                    control={form.control}
+                    name="contactPerson"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left">Contact Person</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Project Manager/Lead" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <FormField
-                      control={form.control}
-                      name="contactPhone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Contact Phone</FormLabel>
-                          <FormControl>
-                            <Input placeholder="+234 xxx xxx xxxx" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="contactPhone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left">Contact Phone</FormLabel>
+                        <FormControl>
+                          <Input placeholder="+234 xxx xxx xxxx" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}
@@ -438,13 +502,13 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                   />
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </form>
 
         {/* Fixed Submit Button */}
         <div className="fixed bottom-0 right-0 left-64 bg-white border-t border-gray-200 p-4 z-30">
-          <div className="flex justify-end space-x-2 max-w-4xl mx-auto">
+          <div className="flex justify-end space-x-2 max-w-7xl mx-auto">
             <Button 
               type="submit" 
               className="bg-purple-600 hover:bg-purple-700"
