@@ -451,14 +451,6 @@ export function ProjectsUnits() {
                       <span className="font-medium text-green-600">{project.revenue}</span>
                     </div>
                   </div>
-
-                  {/* Progress Bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${((project.allocatedUnits || project.soldUnits) / project.totalUnits) * 100}%` }}
-                    ></div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
