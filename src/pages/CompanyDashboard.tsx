@@ -20,13 +20,13 @@ import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
 import { HelpSupport } from '@/components/dashboard/HelpSupport';
 import { MobileWarningBanner } from '@/components/common/MobileWarningBanner';
 import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
+import { ProjectDetailView } from '@/components/dashboard/ProjectDetailView';
+import { ClientDetailView } from '@/components/dashboard/ClientDetailView';
+import { MarketerDetailView } from '@/components/dashboard/MarketerDetailView';
 import { useLocation } from 'react-router-dom';
 import { useResponsive } from '@/hooks/use-responsive';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
-import ProjectDetailPage from './ProjectDetailPage';
-import ClientDetailPage from './ClientDetailPage';
-import MarketerDetailPage from './MarketerDetailPage';
 
 const CompanyDashboard = () => {
   const location = useLocation();
@@ -38,11 +38,11 @@ const CompanyDashboard = () => {
     
     // Handle detail pages - these render with the dashboard layout
     if (path.match(/^\/company\/projects\/\d+$/)) {
-      return <ProjectDetailPage />;
+      return <ProjectDetailView />;
     } else if (path.match(/^\/company\/clients\/\d+$/)) {
-      return <ClientDetailPage />;
+      return <ClientDetailView />;
     } else if (path.match(/^\/company\/marketers\/\d+$/)) {
-      return <MarketerDetailPage />;
+      return <MarketerDetailView />;
     }
     
     // Handle main module pages
