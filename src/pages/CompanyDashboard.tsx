@@ -88,22 +88,20 @@ const CompanyDashboard = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full">
+      <div className="min-h-screen w-full flex">
         <MobileWarningBanner />
         
-        {/* Global Fixed Sidebar - Always present */}
+        {/* Sidebar - Always present */}
         <CompanySidebar 
           isOpen={sidebarOpen} 
           onClose={() => setSidebarOpen(false)} 
         />
         
-        {/* Main Content Wrapper - Always accounts for sidebar */}
-        <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
-          isSmallScreen ? 'ml-0' : 'ml-64'
-        }`}>
-          {/* Mobile Header - Fixed when needed */}
+        {/* Main Content Area */}
+        <div className="flex-1 min-h-screen bg-gray-50 dark:bg-gray-900">
+          {/* Mobile Header - Only for small screens */}
           {isSmallScreen && (
-            <div className="fixed top-16 sm:top-20 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 shadow-sm">
+            <div className="sticky top-16 sm:top-20 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 shadow-sm">
               <div className="flex items-center justify-between">
                 <Button
                   variant="ghost"
@@ -125,11 +123,10 @@ const CompanyDashboard = () => {
             </div>
           )}
           
-          {/* Scrollable Content Area */}
-          <main className={`min-h-screen overflow-y-auto ${
-            isSmallScreen ? 'pt-32 sm:pt-36' : 'pt-0'
+          {/* Content Container */}
+          <main className={`min-h-screen ${
+            isSmallScreen ? 'pt-12' : 'pt-0'
           }`}>
-            {/* All pages use ResponsiveContainer for consistent layout */}
             <ResponsiveContainer 
               fullWidth={isDetailPage}
               className="min-h-full"
