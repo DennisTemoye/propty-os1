@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, MapPin, Building, Home, DollarSign, Search, Eye, Handshake } from 'lucide-react';
+import { Plus, MapPin, Building, Home, DollarSign, Search, Eye, Handshake, Clock, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const mockProjects = [
@@ -19,16 +20,17 @@ const mockProjects = [
     state: 'Lagos State',
     totalBlocks: 5,
     totalUnits: 150,
-    soldUnits: 89,
+    allocatedUnits: 89,
+    pendingAllocations: 8,
     reservedUnits: 23,
     availableUnits: 38,
     interestedUnits: 12,
     offeredUnits: 8,
-    allocatedUnits: 69,
-    revokedUnits: 0,
+    revokedUnits: 2,
     status: 'ongoing',
     developmentStage: 'Construction',
     revenue: '₦2.5B',
+    lastActivity: '2 hours ago',
     image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'
   },
   {
@@ -41,16 +43,17 @@ const mockProjects = [
     state: 'Federal Capital Territory',
     totalBlocks: 8,
     totalUnits: 200,
-    soldUnits: 156,
+    allocatedUnits: 156,
+    pendingAllocations: 5,
     reservedUnits: 12,
     availableUnits: 32,
     interestedUnits: 18,
     offeredUnits: 15,
-    allocatedUnits: 123,
-    revokedUnits: 2,
+    revokedUnits: 3,
     status: 'ongoing',
     developmentStage: 'Marketing',
     revenue: '₦4.2B',
+    lastActivity: '1 hour ago',
     image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=450&fit=crop'
   },
   {
@@ -63,12 +66,17 @@ const mockProjects = [
     state: 'Lagos State',
     totalBlocks: 12,
     totalUnits: 300,
-    soldUnits: 245,
+    allocatedUnits: 245,
+    pendingAllocations: 12,
     reservedUnits: 18,
     availableUnits: 37,
+    interestedUnits: 25,
+    offeredUnits: 20,
+    revokedUnits: 0,
     status: 'ongoing',
     developmentStage: 'Pre-Launch',
     revenue: '₦6.8B',
+    lastActivity: '30 minutes ago',
     image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'
   },
   {
@@ -81,12 +89,17 @@ const mockProjects = [
     state: 'Lagos State',
     totalBlocks: 6,
     totalUnits: 180,
-    soldUnits: 167,
+    allocatedUnits: 167,
+    pendingAllocations: 3,
     reservedUnits: 8,
     availableUnits: 5,
+    interestedUnits: 8,
+    offeredUnits: 5,
+    revokedUnits: 1,
     status: 'completed',
     developmentStage: 'Handover',
     revenue: '₦3.9B',
+    lastActivity: '3 hours ago',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=450&fit=crop'
   },
   {
@@ -99,12 +112,17 @@ const mockProjects = [
     state: 'Lagos State',
     totalBlocks: 10,
     totalUnits: 250,
-    soldUnits: 198,
+    allocatedUnits: 198,
+    pendingAllocations: 7,
     reservedUnits: 25,
     availableUnits: 27,
+    interestedUnits: 15,
+    offeredUnits: 12,
+    revokedUnits: 0,
     status: 'ongoing',
     developmentStage: 'Planning',
     revenue: '₦5.5B',
+    lastActivity: '45 minutes ago',
     image: 'https://images.unsplash.com/photo-1503602642458-232114445914?w=800&h=450&fit=crop'
   },
   {
@@ -117,12 +135,17 @@ const mockProjects = [
     state: 'Lagos State',
     totalBlocks: 15,
     totalUnits: 400,
-    soldUnits: 280,
+    allocatedUnits: 280,
+    pendingAllocations: 15,
     reservedUnits: 45,
     availableUnits: 75,
+    interestedUnits: 35,
+    offeredUnits: 25,
+    revokedUnits: 5,
     status: 'ongoing',
     developmentStage: 'Construction',
     revenue: '₦7.2B',
+    lastActivity: '1 hour ago',
     image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=450&fit=crop'
   },
   {
@@ -135,12 +158,17 @@ const mockProjects = [
     state: 'Lagos State',
     totalBlocks: 20,
     totalUnits: 500,
-    soldUnits: 320,
+    allocatedUnits: 320,
+    pendingAllocations: 20,
     reservedUnits: 80,
     availableUnits: 100,
+    interestedUnits: 40,
+    offeredUnits: 30,
+    revokedUnits: 0,
     status: 'ongoing',
     developmentStage: 'Marketing',
     revenue: '₦4.8B',
+    lastActivity: '2 hours ago',
     image: 'https://images.unsplash.com/photo-1501127122-970c479ebc57?w=800&h=450&fit=crop'
   },
   {
@@ -153,12 +181,17 @@ const mockProjects = [
     state: 'Lagos State',
     totalBlocks: 4,
     totalUnits: 80,
-    soldUnits: 65,
+    allocatedUnits: 65,
+    pendingAllocations: 2,
     reservedUnits: 10,
     availableUnits: 5,
+    interestedUnits: 8,
+    offeredUnits: 5,
+    revokedUnits: 0,
     status: 'ongoing',
     developmentStage: 'Marketing',
     revenue: '₦8.5B',
+    lastActivity: '4 hours ago',
     image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=450&fit=crop'
   },
   {
@@ -171,12 +204,17 @@ const mockProjects = [
     state: 'Lagos State',
     totalBlocks: 7,
     totalUnits: 220,
-    soldUnits: 180,
+    allocatedUnits: 180,
+    pendingAllocations: 6,
     reservedUnits: 15,
     availableUnits: 25,
+    interestedUnits: 12,
+    offeredUnits: 10,
+    revokedUnits: 0,
     status: 'ongoing',
     developmentStage: 'Construction',
     revenue: '₦3.8B',
+    lastActivity: '6 hours ago',
     image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&h=450&fit=crop'
   },
   {
@@ -189,12 +227,17 @@ const mockProjects = [
     state: 'Oyo State',
     totalBlocks: 8,
     totalUnits: 160,
-    soldUnits: 45,
+    allocatedUnits: 45,
+    pendingAllocations: 3,
     reservedUnits: 20,
     availableUnits: 95,
+    interestedUnits: 8,
+    offeredUnits: 5,
+    revokedUnits: 0,
     status: 'upcoming',
     developmentStage: 'Pre-Launch',
     revenue: '₦1.2B',
+    lastActivity: '1 day ago',
     image: 'https://images.unsplash.com/photo-1560185893-a55cbc9701bc?w=800&h=450&fit=crop'
   }
 ];
@@ -249,10 +292,16 @@ export function ProjectsUnits() {
 
   const developmentStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover', 'Completed'];
 
+  // Calculate totals for KPI cards
+  const totalProjects = mockProjects.length;
+  const totalUnits = mockProjects.reduce((sum, project) => sum + project.totalUnits, 0);
+  const totalAllocations = mockProjects.reduce((sum, project) => sum + project.allocatedUnits, 0);
+  const totalPendingAllocations = mockProjects.reduce((sum, project) => sum + (project.pendingAllocations || 0), 0);
+
   const kpiData = [
     {
       title: 'Total Projects',
-      value: '12',
+      value: totalProjects.toString(),
       subtitle: 'All registered',
       icon: Building,
       color: 'text-purple-700',
@@ -261,7 +310,7 @@ export function ProjectsUnits() {
     },
     {
       title: 'Total Units',
-      value: '1,247',
+      value: totalUnits.toLocaleString(),
       subtitle: 'Across all projects',
       icon: Home,
       color: 'text-emerald-700',
@@ -269,19 +318,19 @@ export function ProjectsUnits() {
       cardBg: 'from-emerald-50 to-emerald-100',
     },
     {
-      title: 'Units Sold',
-      value: '845',
-      subtitle: 'Successfully sold',
+      title: 'Total Allocations',
+      value: totalAllocations.toLocaleString(),
+      subtitle: 'Successfully allocated',
       icon: Handshake,
       color: 'text-blue-700',
       bgColor: 'bg-blue-100',
       cardBg: 'from-blue-50 to-blue-100',
     },
     {
-      title: 'Total Revenue',
-      value: '₦15.2B',
-      subtitle: 'All time earnings',
-      icon: DollarSign,
+      title: 'Pending Approvals',
+      value: totalPendingAllocations.toString(),
+      subtitle: 'Awaiting approval',
+      icon: AlertTriangle,
       color: 'text-amber-700',
       bgColor: 'bg-amber-100',
       cardBg: 'from-amber-50 to-amber-100',
@@ -403,6 +452,15 @@ export function ProjectsUnits() {
                     {project.developmentStage}
                   </Badge>
                 </div>
+                {/* Pending Indicator */}
+                {project.pendingAllocations > 0 && (
+                  <div className="absolute top-3 right-3">
+                    <Badge className="bg-yellow-600 text-white text-xs flex items-center space-x-1">
+                      <Clock className="h-3 w-3" />
+                      <span>{project.pendingAllocations} Pending</span>
+                    </Badge>
+                  </div>
+                )}
               </div>
 
               <CardContent className="p-6">
@@ -413,6 +471,9 @@ export function ProjectsUnits() {
                     <div className="flex items-center text-gray-600 mb-2">
                       <MapPin className="h-4 w-4 mr-2" />
                       <span>{project.city}, {project.state}</span>
+                    </div>
+                    <div className="text-xs text-gray-500 mb-2">
+                      Last activity: {project.lastActivity}
                     </div>
                   </div>
 
@@ -427,7 +488,7 @@ export function ProjectsUnits() {
                       <div className="text-xs text-gray-500">Total Units</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-green-600">{project.allocatedUnits || project.soldUnits}</div>
+                      <div className="text-lg font-bold text-green-600">{project.allocatedUnits}</div>
                       <div className="text-xs text-gray-500">Allocated</div>
                     </div>
                   </div>
@@ -435,8 +496,8 @@ export function ProjectsUnits() {
                   {/* Unit Status Summary */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Offered:</span>
-                      <span className="font-medium text-yellow-600">{project.offeredUnits || 0}</span>
+                      <span className="text-gray-600">Pending:</span>
+                      <span className="font-medium text-yellow-600">{project.pendingAllocations}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Available:</span>
@@ -465,8 +526,9 @@ export function ProjectsUnits() {
                   <TableHead>Project</TableHead>
                   <TableHead>Stage</TableHead>
                   <TableHead>Location</TableHead>
-                  <TableHead>Units Status</TableHead>
+                  <TableHead>Allocation Status</TableHead>
                   <TableHead>Revenue</TableHead>
+                  <TableHead>Last Activity</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -496,12 +558,14 @@ export function ProjectsUnits() {
                           <span className="font-medium">{project.totalUnits}</span>
                         </div>
                         <div className="text-xs text-gray-500 space-y-0.5">
-                          <div>Allocated: {project.allocatedUnits || project.soldUnits}</div>
+                          <div>Allocated: {project.allocatedUnits}</div>
+                          <div>Pending: {project.pendingAllocations}</div>
                           <div>Available: {project.availableUnits}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">{project.revenue}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{project.lastActivity}</TableCell>
                     <TableCell>
                       <Button
                         variant="outline"
