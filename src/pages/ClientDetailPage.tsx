@@ -204,8 +204,8 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 p-4 md:p-6">
-      <div className="w-full">
+    <div className="w-full min-h-screen bg-gray-50">
+      <div className="w-full max-w-none px-4 md:px-6 py-4">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <Button 
