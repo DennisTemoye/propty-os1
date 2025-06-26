@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,24 +28,21 @@ export function SalesAllocationOverview() {
   const [showAllocationModal, setShowAllocationModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Global state for synchronization
-  const [pendingAllocationsCount, setPendingAllocationsCount] = useState(23);
-  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(3);
+  // Global state for synchronization - no duplicates
+  const [pendingAllocationsCount, setPendingAllocationsCount] = useState(3); // Sales awaiting allocation
+  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(2); // Allocations pending approval
 
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
     
-    // Update counts based on sale type
+    // Only presales go to pending allocations
     if (data.salesType === 'presale') {
       setPendingAllocationsCount(prev => prev + 1);
-    }
-    
-    toast.success('Sale recorded successfully!');
-    
-    // If sale includes allocation, it goes to pending approvals
-    if (data.salesType === 'with_allocation') {
+      toast.success('Presale recorded! Client added to allocation queue.');
+    } else {
+      // Sales with immediate allocation go directly to pending approvals
       setPendingApprovalsCount(prev => prev + 1);
-      toast.info('Allocation submitted for approval');
+      toast.success('Sale with allocation recorded and sent for approval!');
     }
   };
 
@@ -74,7 +70,11 @@ export function SalesAllocationOverview() {
     // Decrease pending approvals count
     setPendingApprovalsCount(prev => Math.max(0, prev - 1));
     
-    toast.success(`Allocation ${action}d successfully!`);
+    if (action === 'approve') {
+      toast.success('Allocation approved successfully!');
+    } else {
+      toast.success('Allocation declined and team member has been notified.');
+    }
   };
 
   const kpiData = [
