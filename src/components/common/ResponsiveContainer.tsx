@@ -8,13 +8,15 @@ interface ResponsiveContainerProps {
   className?: string;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
 }
 
 export function ResponsiveContainer({ 
   children, 
   className,
-  maxWidth = '2xl',
-  padding = 'md'
+  maxWidth = 'full',
+  padding = 'md',
+  fullWidth = false
 }: ResponsiveContainerProps) {
   const { isMobile, isTablet, isSmallScreen } = useResponsive();
 
@@ -24,20 +26,21 @@ export function ResponsiveContainer({
     lg: 'max-w-screen-lg',
     xl: 'max-w-screen-xl',
     '2xl': 'max-w-screen-2xl',
-    full: 'max-w-full'
+    full: 'max-w-none w-full'
   };
 
   const paddingClasses = {
     none: '',
     sm: isMobile ? 'px-2 py-1' : isTablet ? 'px-3 py-2' : 'px-4 py-2',
-    md: isMobile ? 'px-3 py-2' : isTablet ? 'px-4 py-3' : 'px-6 py-4',
-    lg: isMobile ? 'px-4 py-3' : isTablet ? 'px-6 py-4' : 'px-8 py-6'
+    md: isMobile ? 'px-4 py-2' : isTablet ? 'px-6 py-3' : 'px-8 py-4',
+    lg: isMobile ? 'px-6 py-3' : isTablet ? 'px-8 py-4' : 'px-12 py-6'
   };
 
   return (
     <div className={cn(
-      'w-full mx-auto',
-      maxWidthClasses[maxWidth],
+      fullWidth ? 'w-full' : 'w-full mx-auto',
+      !fullWidth && maxWidthClasses[maxWidth],
+      fullWidth && 'max-w-none',
       paddingClasses[padding],
       // Prevent horizontal scroll on small screens
       isSmallScreen && 'overflow-x-hidden',

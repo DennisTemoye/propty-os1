@@ -78,7 +78,7 @@ const CompanyDashboard = () => {
   };
 
   return (
-    <>
+    <div className="w-full">
       <MobileWarningBanner />
       <SidebarProvider>
         <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
@@ -95,10 +95,10 @@ const CompanyDashboard = () => {
             onClose={() => setSidebarOpen(false)} 
           />
           
-          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 lg:hidden sticky top-16 sm:top-20 z-30 shadow-sm">
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 lg:hidden sticky top-16 sm:top-20 z-30 shadow-sm w-full">
                 <div className="flex items-center justify-between">
                   <Button
                     variant="ghost"
@@ -120,10 +120,10 @@ const CompanyDashboard = () => {
               </header>
             )}
             
-            <main className="flex-1 overflow-auto">
+            <main className="flex-1 overflow-auto w-full">
               <ResponsiveContainer 
-                maxWidth="full" 
-                className="h-full min-h-0"
+                fullWidth={true}
+                className="h-full min-h-0 w-full"
                 padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
               >
                 {renderActiveModule()}
@@ -132,7 +132,7 @@ const CompanyDashboard = () => {
           </div>
         </div>
       </SidebarProvider>
-    </>
+    </div>
   );
 };
 

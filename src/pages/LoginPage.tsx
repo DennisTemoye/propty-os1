@@ -51,7 +51,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md mb-6">
         <div className="flex items-center justify-between mb-6">
           <Link to="/" className="inline-flex items-center text-purple-600 hover:text-purple-700 dark:text-purple-400">

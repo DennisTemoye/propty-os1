@@ -9,6 +9,7 @@ interface GlobalLayoutProps {
   sidebar?: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 export function GlobalLayout({ 
@@ -16,13 +17,15 @@ export function GlobalLayout({
   className, 
   sidebar, 
   header, 
-  footer 
+  footer,
+  fullWidth = true
 }: GlobalLayoutProps) {
   const { isSmallScreen } = useBreakpoints();
 
   return (
     <div className={cn(
       "min-h-screen bg-background flex flex-col",
+      fullWidth ? "w-full" : "w-full max-w-7xl mx-auto",
       className
     )}>
       {/* Header */}
@@ -32,7 +35,7 @@ export function GlobalLayout({
         </header>
       )}
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden w-full">
         {/* Sidebar */}
         {sidebar && (
           <aside className={cn(
@@ -45,11 +48,14 @@ export function GlobalLayout({
 
         {/* Main Content */}
         <main className={cn(
-          "flex-1 overflow-auto",
+          "flex-1 overflow-auto w-full",
           sidebar && !isSmallScreen && "ml-0",
           isSmallScreen && "w-full"
         )}>
-          <div className="container mx-auto p-4 md:p-6 lg:p-8">
+          <div className={cn(
+            fullWidth ? "w-full" : "container mx-auto",
+            "p-4 md:p-6 lg:p-8"
+          )}>
             {children}
           </div>
         </main>
@@ -57,7 +63,7 @@ export function GlobalLayout({
 
       {/* Footer */}
       {footer && (
-        <footer className="border-t bg-background">
+        <footer className="border-t bg-background w-full">
           {footer}
         </footer>
       )}

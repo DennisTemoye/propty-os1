@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -100,4 +101,25 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Full width utilities */
+  .full-width {
+    width: 100vw;
+    max-width: none;
+  }
+
+  .container-full {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Remove default max-width from root */
+#root {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
