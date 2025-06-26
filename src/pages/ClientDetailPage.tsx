@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -258,7 +257,7 @@ export default function ClientDetailPage() {
           />
         )}
 
-        <div className="mb-6">
+        <div className="w-full space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <Button 
               variant="outline" 
@@ -301,23 +300,23 @@ export default function ClientDetailPage() {
               </Button>
             </div>
           </div>
+          
+          <ClientDetailView client={client} />
+
+          {/* Assign Property Modal */}
+          <AssignPropertyModal 
+            isOpen={isAssignPropertyOpen}
+            onClose={() => setIsAssignPropertyOpen(false)}
+            client={client}
+          />
+
+          {/* Add Payment Modal */}
+          <AddPaymentModal 
+            isOpen={isAddPaymentOpen}
+            onClose={() => setIsAddPaymentOpen(false)}
+            client={client}
+          />
         </div>
-        
-        <ClientDetailView client={client} />
-
-        {/* Assign Property Modal */}
-        <AssignPropertyModal 
-          isOpen={isAssignPropertyOpen}
-          onClose={() => setIsAssignPropertyOpen(false)}
-          client={client}
-        />
-
-        {/* Add Payment Modal */}
-        <AddPaymentModal 
-          isOpen={isAddPaymentOpen}
-          onClose={() => setIsAddPaymentOpen(false)}
-          client={client}
-        />
       </GlobalLayout>
     </SidebarProvider>
   );

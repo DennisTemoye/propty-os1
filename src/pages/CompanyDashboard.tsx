@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
@@ -119,7 +118,7 @@ const CompanyDashboard = () => {
             />
           )}
           
-          <div className="w-full">
+          <div className="w-full min-h-screen">
             {renderActiveModule()}
           </div>
         </GlobalLayout>
