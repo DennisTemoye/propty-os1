@@ -63,8 +63,10 @@ const CompanyDashboard = () => {
   };
 
   return (
-    <FullWidthLayout padding="none">
-      {renderActiveModule()}
+    <FullWidthLayout padding="none" background="gray">
+      <div className="full-width min-h-screen">
+        {renderActiveModule()}
+      </div>
     </FullWidthLayout>
   );
 };

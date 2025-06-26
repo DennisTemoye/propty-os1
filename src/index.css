@@ -38,19 +38,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -103,6 +96,7 @@
     @apply bg-background text-foreground;
     width: 100%;
     overflow-x: hidden;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -116,19 +110,58 @@
     min-height: 100vh;
   }
 
-  /* Responsive container utilities */
+  /* Full-width container utilities - Paystack style */
   .container-full-width {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Paystack-style responsive spacing */
+  .paystack-spacing {
+    @apply px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20;
+  }
+
+  .paystack-section {
+    @apply py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24;
+  }
+
+  /* Responsive typography - Paystack inspired */
+  .text-hero {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold;
+  }
+
+  .text-section-title {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold;
+  }
+
+  .text-card-title {
+    @apply text-lg sm:text-xl md:text-2xl font-medium;
+  }
+
+  /* Full viewport utilities */
+  .full-viewport {
+    width: 100vw;
+    min-height: 100vh;
+  }
+
+  .full-width {
     width: 100%;
     max-width: none;
   }
 
-  /* Responsive spacing utilities */
-  .responsive-padding {
-    @apply px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4 lg:px-8 lg:py-6 xl:px-12 xl:py-8;
+  /* Responsive grid system */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8;
   }
 
-  .responsive-margin {
-    @apply mx-3 my-2 sm:mx-4 sm:my-3 md:mx-6 md:my-4 lg:mx-8 lg:my-6 xl:mx-12 xl:my-8;
+  .grid-responsive-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8;
+  }
+
+  .grid-responsive-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8;
   }
 }
 
@@ -155,4 +188,39 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgb(107 114 128);
   }
+
+  /* Prevent horizontal overflow on all elements */
+  .no-overflow {
+    overflow-x: hidden;
+  }
+}
+
+/* Paystack-style animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.6s ease-out;
 }
