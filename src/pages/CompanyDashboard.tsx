@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
@@ -23,7 +24,6 @@ import { useLocation } from 'react-router-dom';
 import { useResponsive } from '@/hooks/use-responsive';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 const CompanyDashboard = () => {
   const location = useLocation();
@@ -77,21 +77,23 @@ const CompanyDashboard = () => {
     <div className="w-full">
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+        <div className={`flex min-h-screen w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
           
-          <CompanySidebar 
-            isOpen={sidebarOpen} 
-            onClose={() => setSidebarOpen(false)} 
-          />
+          {/* Sidebar Container - Fixed on desktop */}
+          <div className={`${isSmallScreen ? 'hidden' : 'fixed left-0 top-0 h-screen w-64 z-50'}`}>
+            <CompanySidebar />
+          </div>
           
-          {/* Main content area with proper margin for fixed sidebar */}
-          <div className={cn(
-            "min-h-screen",
-            // On desktop, add left margin to account for fixed sidebar (w-64 = 256px = 16rem)
-            !isSmallScreen && "ml-64",
-            // On mobile/tablet, full width since sidebar is overlay
-            isSmallScreen && "w-full"
-          )}>
+          {/* Mobile Sidebar Overlay */}
+          {isSmallScreen && (
+            <CompanySidebar 
+              isOpen={sidebarOpen} 
+              onClose={() => setSidebarOpen(false)} 
+            />
+          )}
+          
+          {/* Main Content Area */}
+          <div className={`flex-1 flex flex-col ${!isSmallScreen ? 'ml-64' : 'w-full'}`}>
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
               <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm">
@@ -116,7 +118,8 @@ const CompanyDashboard = () => {
               </header>
             )}
             
-            <main className="w-full">
+            {/* Main Content */}
+            <main className="flex-1 overflow-auto">
               {isDetailPage ? (
                 // Detail pages render without container for full width
                 renderActiveModule()
