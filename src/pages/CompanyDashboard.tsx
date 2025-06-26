@@ -1,172 +1,139 @@
 
 import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
-import { Toaster } from '@/components/ui/sonner';
 import { SidebarProvider } from '@/components/ui/sidebar';
-
-// Import all the page/component files
+import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
-import { ProjectsUnits } from '@/components/dashboard/ProjectsUnits';
+import { ProjectSites } from '@/components/dashboard/ProjectSites';
 import { Clients } from '@/components/dashboard/Clients';
-import { AgentsMarketers } from '@/components/dashboard/AgentsMarketers';
-import { SalesAllocation } from '@/components/dashboard/SalesAllocation';
+import { MarketersCommission } from '@/components/dashboard/MarketersCommission';
+import { SalesAllocationOverview } from '@/components/dashboard/SalesAllocationOverview';
 import { FeesCollection } from '@/components/dashboard/FeesCollection';
 import { Accounting } from '@/components/dashboard/Accounting';
 import { TeamRoles } from '@/components/dashboard/TeamRoles';
 import { Reports } from '@/components/dashboard/Reports';
+import { CRMPipelines } from '@/components/dashboard/CRMPipelines';
+import { DocumentManager } from '@/components/dashboard/DocumentManager';
+import { CalendarScheduling } from '@/components/dashboard/CalendarScheduling';
+import { SendNotice } from '@/components/dashboard/SendNotice';
 import { Settings } from '@/components/dashboard/Settings';
 import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
 import { HelpSupport } from '@/components/dashboard/HelpSupport';
-import { CRMPipelinesPage } from '@/components/dashboard/tools/CRMPipelines';
-import { DocumentManagerPage } from '@/components/dashboard/tools/DocumentManager';
-import { CalendarSchedulingPage } from '@/components/dashboard/tools/CalendarScheduling';
-import { SendNotice } from '@/components/dashboard/SendNotice';
+import { MobileWarningBanner } from '@/components/common/MobileWarningBanner';
+import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
+import { useLocation } from 'react-router-dom';
+import { useResponsive } from '@/hooks/use-responsive';
+import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
 
-// Import detail pages
-import ClientDetailPage from './ClientDetailPage';
-import ProjectDetailPage from './ProjectDetailPage';
-import MarketerDetailPage from './MarketerDetailPage';
-import NewClientPage from './NewClientPage';
-import NewProjectPage from './NewProjectPage';
-import EditProjectPage from './EditProjectPage';
-import ProjectBlocksPage from './ProjectBlocksPage';
-import MarketersCommissionPage from './MarketersCommissionPage';
-
-export default function CompanyDashboard() {
+const CompanyDashboard = () => {
+  const location = useLocation();
+  const { isMobile, isTablet, isSmallScreen } = useResponsive();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const renderActiveModule = () => {
+    const path = location.pathname;
+    
+    if (path === '/company/dashboard') {
+      return <DashboardOverview />;
+    } else if (path.startsWith('/company/projects')) {
+      return <ProjectSites />;
+    } else if (path.startsWith('/company/clients')) {
+      return <Clients />;
+    } else if (path.startsWith('/company/marketers') && !path.includes('/company/marketers/')) {
+      return <MarketersCommission />;
+    } else if (path.startsWith('/company/sales')) {
+      return <SalesAllocationOverview />;
+    } else if (path.startsWith('/company/fees')) {
+      return <FeesCollection />;
+    } else if (path.startsWith('/company/accounting')) {
+      return <Accounting />;
+    } else if (path.startsWith('/company/team')) {
+      return <TeamRoles />;
+    } else if (path.startsWith('/company/reports')) {
+      return <Reports />;
+    } else if (path.startsWith('/company/tools/crm-pipelines')) {
+      return <CRMPipelines />;
+    } else if (path.startsWith('/company/tools/document-manager')) {
+      return <DocumentManager />;
+    } else if (path.startsWith('/company/tools/calendar')) {
+      return <CalendarScheduling />;
+    } else if (path.startsWith('/company/tools/send-notice')) {
+      return <SendNotice />;
+    } else if (path.startsWith('/company/settings')) {
+      return <Settings />;
+    } else if (path.startsWith('/company/referrals')) {
+      return <ReferralProgram />;
+    } else if (path.startsWith('/company/help')) {
+      return <HelpSupport />;
+    } else {
+      return <DashboardOverview />;
+    }
+  };
+
+  // Close sidebar when clicking outside on mobile
+  const handleOverlayClick = () => {
+    if (isMobile && sidebarOpen) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <CompanySidebar 
-          isOpen={sidebarOpen} 
-          onClose={() => setSidebarOpen(false)} 
-        />
-        
-        {/* Main content area - remove any width constraints for full-width pages */}
-        <main className="flex-1 overflow-auto w-full">
-          <Routes>
-            <Route path="/" element={<Navigate to="/company/dashboard" replace />} />
-            <Route path="/dashboard" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <DashboardOverview />
-              </div>
-            } />
-            <Route path="/projects" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <ProjectsUnits />
-              </div>
-            } />
-            <Route path="/clients" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <Clients />
-              </div>
-            } />
-            <Route path="/marketers" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <AgentsMarketers />
-              </div>
-            } />
-            <Route path="/sales" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <SalesAllocation />
-              </div>
-            } />
-            <Route path="/fees" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <FeesCollection />
-              </div>
-            } />
-            <Route path="/accounting" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <Accounting />
-              </div>
-            } />
-            <Route path="/team" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <TeamRoles />
-              </div>
-            } />
-            <Route path="/reports" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <Reports />
-              </div>
-            } />
-            <Route path="/settings" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <Settings />
-              </div>
-            } />
-            <Route path="/referrals" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <ReferralProgram />
-              </div>
-            } />
-            <Route path="/help" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <HelpSupport />
-              </div>
-            } />
+    <div className="w-full">
+      <MobileWarningBanner />
+      <SidebarProvider>
+        <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+          {/* Mobile/Tablet Sidebar Overlay */}
+          {isSmallScreen && sidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              onClick={handleOverlayClick}
+            />
+          )}
+          
+          <CompanySidebar 
+            isOpen={sidebarOpen} 
+            onClose={() => setSidebarOpen(false)} 
+          />
+          
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
+            {/* Mobile/Tablet Header */}
+            {isSmallScreen && (
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 lg:hidden sticky top-16 sm:top-20 z-30 shadow-sm w-full">
+                <div className="flex items-center justify-between">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    {sidebarOpen ? (
+                      <X className="h-5 w-5" />
+                    ) : (
+                      <Menu className="h-5 w-5" />
+                    )}
+                  </Button>
+                  <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
+                    ProptyOS
+                  </h1>
+                  <div className="w-9" />
+                </div>
+              </header>
+            )}
             
-            {/* Tool routes */}
-            <Route path="/tools/crm-pipelines" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <CRMPipelinesPage />
-              </div>
-            } />
-            <Route path="/tools/document-manager" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <DocumentManagerPage />
-              </div>
-            } />
-            <Route path="/tools/calendar" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <CalendarSchedulingPage />
-              </div>
-            } />
-            <Route path="/tools/send-notice" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <SendNotice />
-              </div>
-            } />
-            
-            {/* Detail pages - NO container wrapper for full width */}
-            <Route path="/clients/:clientId" element={<ClientDetailPage />} />
-            <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
-            <Route path="/marketers/:marketerId" element={<MarketerDetailPage />} />
-            
-            {/* Form pages */}
-            <Route path="/clients/new" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <NewClientPage />
-              </div>
-            } />
-            <Route path="/projects/new" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <NewProjectPage />
-              </div>
-            } />
-            <Route path="/projects/:projectId/edit" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <EditProjectPage />
-              </div>
-            } />
-            <Route path="/projects/:projectId/blocks" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <ProjectBlocksPage />
-              </div>
-            } />
-            <Route path="/marketers/commission" element={
-              <div className="container mx-auto p-4 md:p-6 lg:p-8">
-                <MarketersCommissionPage />
-              </div>
-            } />
-          </Routes>
-        </main>
-        
-        <Toaster />
-      </div>
-    </SidebarProvider>
+            <main className="flex-1 overflow-auto w-full">
+              <ResponsiveContainer 
+                fullWidth={true}
+                className="h-full min-h-0 w-full"
+                padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+              >
+                {renderActiveModule()}
+              </ResponsiveContainer>
+            </main>
+          </div>
+        </div>
+      </SidebarProvider>
+    </div>
   );
-}
+};
+
+export default CompanyDashboard;
