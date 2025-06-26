@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -225,27 +224,27 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop - Always Expanded Sidebar
+  // Desktop - Fixed Sticky Sidebar
   return (
     <div className={cn(
-      'bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 w-64 flex-shrink-0',
+      'h-full w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 flex-shrink-0 sticky top-0',
       className
     )}>
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
+      <div className="h-full flex flex-col">
+        {/* Header */}
+        <div className="p-4 border-b border-blue-700 flex-shrink-0">
           <div className="flex items-center mb-2">
             <Building2 className="h-6 w-6 mr-2 text-blue-300" />
             <h2 className="text-lg font-semibold tracking-tight text-white">ProptyOS</h2>
           </div>
-          <div className="flex items-center text-sm text-blue-200">
-            <Badge variant="outline" className="text-xs border-blue-300 text-blue-200 bg-blue-900/30">
-              Built for Africa
-            </Badge>
-          </div>
+          <Badge variant="outline" className="text-xs border-blue-300 text-blue-200 bg-blue-900/30">
+            Built for Africa
+          </Badge>
         </div>
         
-        <div className="px-3">
-          <ScrollArea className="h-[calc(100vh-160px)]">
+        {/* Scrollable Navigation */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full px-3 py-4">
             <div className="space-y-1">
               {sidebarItems.map((item) => (
                 <Button

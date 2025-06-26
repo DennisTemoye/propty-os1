@@ -71,23 +71,29 @@ const CompanyDashboard = () => {
   };
 
   // Check if current page is a detail page that needs full width
-  const isDetailPage = location.pathname.includes('/projects/') || location.pathname.includes('/clients/');
+  const isDetailPage = location.pathname.includes('/projects/') || 
+                      location.pathname.includes('/clients/') || 
+                      location.pathname.includes('/marketers/');
 
   return (
-    <div className="w-full">
+    <div className="w-full h-screen overflow-hidden">
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+        <div className={`h-full flex bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
           
-          <CompanySidebar 
-            isOpen={sidebarOpen} 
-            onClose={() => setSidebarOpen(false)} 
-          />
+          {/* Global Sticky Sidebar */}
+          <div className="flex-shrink-0">
+            <CompanySidebar 
+              isOpen={sidebarOpen} 
+              onClose={() => setSidebarOpen(false)} 
+            />
+          </div>
           
-          <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
+          {/* Main Content Area */}
+          <div className={`flex-1 flex flex-col min-w-0 overflow-hidden ${!isSmallScreen ? 'ml-0' : ''}`}>
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm w-full">
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <Button
                     variant="ghost"
@@ -109,15 +115,18 @@ const CompanyDashboard = () => {
               </header>
             )}
             
-            <main className="flex-1 overflow-auto w-full">
+            {/* Scrollable Content */}
+            <main className="flex-1 overflow-auto">
               {isDetailPage ? (
                 // Detail pages render without container for full width
-                renderActiveModule()
+                <div className="min-h-full">
+                  {renderActiveModule()}
+                </div>
               ) : (
                 // Regular pages use ResponsiveContainer
                 <ResponsiveContainer 
                   fullWidth={true}
-                  className="h-full min-h-0 w-full"
+                  className="min-h-full"
                   padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
                 >
                   {renderActiveModule()}
