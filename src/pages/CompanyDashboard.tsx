@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
@@ -24,6 +23,7 @@ import { useLocation } from 'react-router-dom';
 import { useResponsive } from '@/hooks/use-responsive';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const CompanyDashboard = () => {
   const location = useLocation();
@@ -84,7 +84,11 @@ const CompanyDashboard = () => {
             onClose={() => setSidebarOpen(false)} 
           />
           
-          <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
+          {/* Main content with left margin for fixed sidebar on desktop */}
+          <div className={cn(
+            "flex-1 flex flex-col min-w-0 overflow-hidden w-full",
+            !isSmallScreen && "ml-64" // Add left margin for fixed sidebar on desktop
+          )}>
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
               <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm w-full">

@@ -63,6 +63,9 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
   const { isMobile, isTablet, isSmallScreen } = useResponsive();
   const [isAdvancedToolsOpen, setIsAdvancedToolsOpen] = useState(false);
 
+  // Mock company data - in a real app, this would come from user/company context
+  const companyName = "ProptyOS Real Estate";
+
   const isActivePath = (path: string) => {
     if (path === '/company/dashboard') {
       return location.pathname === path;
@@ -120,7 +123,7 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
           
           <div className="px-3 py-2">
             <Badge variant="outline" className="text-xs border-blue-300 text-blue-200 bg-blue-900/30">
-              Built for Africa
+              {companyName}
             </Badge>
           </div>
           
@@ -225,27 +228,27 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop - Always Expanded Sidebar
+  // Desktop - Fixed Sidebar
   return (
     <div className={cn(
-      'bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 w-64 flex-shrink-0',
+      'fixed left-0 top-0 h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 w-64 flex-shrink-0 z-30',
       className
     )}>
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
+      <div className="flex flex-col h-full">
+        <div className="px-3 py-4 border-b border-blue-700">
           <div className="flex items-center mb-2">
             <Building2 className="h-6 w-6 mr-2 text-blue-300" />
             <h2 className="text-lg font-semibold tracking-tight text-white">ProptyOS</h2>
           </div>
           <div className="flex items-center text-sm text-blue-200">
             <Badge variant="outline" className="text-xs border-blue-300 text-blue-200 bg-blue-900/30">
-              Built for Africa
+              {companyName}
             </Badge>
           </div>
         </div>
         
-        <div className="px-3">
-          <ScrollArea className="h-[calc(100vh-160px)]">
+        <ScrollArea className="flex-1 px-3">
+          <div className="py-4">
             <div className="space-y-1">
               {sidebarItems.map((item) => (
                 <Button
@@ -321,28 +324,28 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
                 Referral Program
               </Button>
             </div>
-            
-            <div className="mt-8 pt-4 border-t border-blue-700">
-              <div className="space-y-1">
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none"
-                  onClick={() => navigate('/company/help')}
-                >
-                  <HelpCircle className="mr-2 h-4 w-4" />
-                  Support / Help Center
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start text-red-300 hover:text-red-200 hover:bg-red-900/30 border-none"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
-              </div>
-            </div>
-          </ScrollArea>
+          </div>
+        </ScrollArea>
+
+        <div className="p-3 border-t border-blue-700">
+          <div className="space-y-1">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none"
+              onClick={() => navigate('/company/help')}
+            >
+              <HelpCircle className="mr-2 h-4 w-4" />
+              Support / Help Center
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start text-red-300 hover:text-red-200 hover:bg-red-900/30 border-none"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
       </div>
     </div>
