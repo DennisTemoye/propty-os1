@@ -1,15 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-react';
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
+import { ClientForm } from '@/components/dashboard/clients/ClientForm';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
-import { GlobalLayout } from '@/components/layouts/GlobalLayout';
-import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { useResponsive } from '@/hooks/use-responsive';
-import { Menu, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const mockClients = [
@@ -169,8 +167,7 @@ export default function ClientDetailPage() {
   const { clientId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isSmallScreen } = useResponsive();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   
@@ -183,26 +180,11 @@ export default function ClientDetailPage() {
   }, [location.state]);
 
   if (!client) {
-    return (
-      <SidebarProvider>
-        <GlobalLayout
-          sidebar={<CompanySidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
-        >
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">Client not found</h1>
-              <Button onClick={() => navigate('/company/clients')}>
-                Back to Clients
-              </Button>
-            </div>
-          </div>
-        </GlobalLayout>
-      </SidebarProvider>
-    );
+    return <div>Client not found</div>;
   }
 
   const handleEdit = () => {
-    navigate(`/company/clients/${client.id}/edit`);
+    setIsEditOpen(true);
   };
 
   const handleDelete = () => {
@@ -221,54 +203,21 @@ export default function ClientDetailPage() {
     setIsAddPaymentOpen(true);
   };
 
-  const mobileHeader = isSmallScreen ? (
-    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-      >
-        {sidebarOpen ? (
-          <X className="h-5 w-5" />
-        ) : (
-          <Menu className="h-5 w-5" />
-        )}
-      </Button>
-      <h1 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
-        {client.name}
-      </h1>
-      <div className="w-9" />
-    </div>
-  ) : undefined;
-
   return (
-    <SidebarProvider>
-      <GlobalLayout
-        sidebar={<CompanySidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
-        header={mobileHeader}
-        fullWidth={true}
-      >
-        {/* Mobile/Tablet Sidebar Overlay */}
-        {isSmallScreen && sidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-30"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        <div className="w-full space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
             <Button 
               variant="outline" 
               onClick={() => navigate('/company/clients')}
-              className="self-start"
+              className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Clients
             </Button>
             
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-2">
               <Button 
                 onClick={handleAssignProperty}
                 className="bg-green-600 hover:bg-green-700"
@@ -300,24 +249,37 @@ export default function ClientDetailPage() {
               </Button>
             </div>
           </div>
-          
-          <ClientDetailView client={client} />
-
-          {/* Assign Property Modal */}
-          <AssignPropertyModal 
-            isOpen={isAssignPropertyOpen}
-            onClose={() => setIsAssignPropertyOpen(false)}
-            client={client}
-          />
-
-          {/* Add Payment Modal */}
-          <AddPaymentModal 
-            isOpen={isAddPaymentOpen}
-            onClose={() => setIsAddPaymentOpen(false)}
-            client={client}
-          />
         </div>
-      </GlobalLayout>
-    </SidebarProvider>
+        
+        <ClientDetailView client={client} />
+
+        {/* Edit Client Modal */}
+        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Edit Client</DialogTitle>
+              <DialogDescription>
+                Update client information and details
+              </DialogDescription>
+            </DialogHeader>
+            <ClientForm client={client} onClose={() => setIsEditOpen(false)} />
+          </DialogContent>
+        </Dialog>
+
+        {/* Assign Property Modal */}
+        <AssignPropertyModal 
+          isOpen={isAssignPropertyOpen}
+          onClose={() => setIsAssignPropertyOpen(false)}
+          client={client}
+        />
+
+        {/* Add Payment Modal */}
+        <AddPaymentModal 
+          isOpen={isAddPaymentOpen}
+          onClose={() => setIsAddPaymentOpen(false)}
+          client={client}
+        />
+      </div>
+    </div>
   );
 }

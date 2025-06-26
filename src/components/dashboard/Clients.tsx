@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, FileText, DollarSign, User, Building, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ClientDetailView } from './clients/ClientDetailView';
 import { AssignPropertyModal } from './clients/AssignPropertyModal';
 import { AddPaymentModal } from './clients/AddPaymentModal';
 import { ClientDocumentsView } from './clients/ClientDocumentsView';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 
 const mockClients = [
@@ -172,6 +174,7 @@ export function Clients() {
   const [isDocumentsOpen, setIsDocumentsOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
@@ -184,6 +187,19 @@ export function Clients() {
         return 'bg-blue-100 text-blue-800';
       case 'unassigned':
         return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getKycStatusColor = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -219,15 +235,14 @@ export function Clients() {
   };
 
   return (
-    <div className="space-y-6 w-full">
-      {/* Fixed header with proper spacing */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
           <p className="text-gray-600 mt-1">Manage client profiles, KYC, and property assignments</p>
         </div>
         <Button 
-          className="bg-purple-600 hover:bg-purple-700 shrink-0"
+          className="bg-purple-600 hover:bg-purple-700"
           onClick={() => navigate('/company/clients/new')}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -278,137 +293,278 @@ export function Clients() {
       </div>
 
       {/* Filters and Search */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search clients..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="flex gap-4 items-center">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search clients..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-80"
+            />
+          </div>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="unassigned">Unassigned</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="unassigned">Unassigned</SelectItem>
-          </SelectContent>
-        </Select>
+        
+        <div className="flex gap-2">
+          <Button
+            variant={viewMode === 'cards' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('cards')}
+          >
+            Card View
+          </Button>
+          <Button
+            variant={viewMode === 'table' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('table')}
+          >
+            Table View
+          </Button>
+        </div>
       </div>
 
-      {/* Clients Grid - Cards Only */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredClients.map((client) => (
-          <Card 
-            key={client.id} 
-            className="hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => handleClientClick(client.id)}
-          >
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div className="flex items-start space-x-3">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
-                    <AvatarFallback>
-                      <User className="h-6 w-6" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-lg">{client.name}</CardTitle>
-                    <p className="text-sm text-gray-600">{client.email}</p>
-                    <p className="text-sm text-gray-600">{client.phone}</p>
+      {/* Clients Display */}
+      {viewMode === 'cards' ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredClients.map((client) => (
+            <Card 
+              key={client.id} 
+              className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => handleClientClick(client.id)}
+            >
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div className="flex items-start space-x-3">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
+                      <AvatarFallback>
+                        <User className="h-6 w-6" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-lg">{client.name}</CardTitle>
+                      <p className="text-sm text-gray-600">{client.email}</p>
+                      <p className="text-sm text-gray-600">{client.phone}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Badge className={getStatusColor(client.status)}>
+                      {client.status}
+                    </Badge>
+                    <Badge className={getKycStatusColor(client.kycStatus)}>
+                      {client.kycStatus}
+                    </Badge>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Badge className={getStatusColor(client.status)}>
-                    {client.status}
-                  </Badge>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {client.projects && client.projects.length > 0 ? (
-                <div className="space-y-3">
-                  {/* Show only first property with "+X more" indicator */}
-                  <div className="border-b pb-2">
-                    <div className="font-medium">{client.projects[0].name}</div>
-                    <div className="text-sm text-gray-500">{client.projects[0].unit}</div>
-                    <div className="text-xs text-gray-400">Assigned: {client.projects[0].assignedDate}</div>
-                    {client.projects.length > 1 && (
-                      <div className="text-xs text-blue-600 mt-1">
-                        +{client.projects.length - 1} more
+              </CardHeader>
+              <CardContent>
+                {client.projects && client.projects.length > 0 ? (
+                  <div className="space-y-3">
+                    {/* Show only first property with "+X more" indicator */}
+                    <div className="border-b pb-2">
+                      <div className="font-medium">{client.projects[0].name}</div>
+                      <div className="text-sm text-gray-500">{client.projects[0].unit}</div>
+                      <div className="text-xs text-gray-400">Assigned: {client.projects[0].assignedDate}</div>
+                      {client.projects.length > 1 && (
+                        <div className="text-xs text-blue-600 mt-1">
+                          +{client.projects.length - 1} more
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Payment Progress</span>
+                        <span>{client.paymentProgress}%</span>
                       </div>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Payment Progress</span>
-                      <span>{client.paymentProgress}%</span>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-green-600 h-2 rounded-full"
+                          style={{ width: `${client.paymentProgress}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-green-600 h-2 rounded-full"
-                        style={{ width: `${client.paymentProgress}%` }}
-                      ></div>
+                    
+                    <div className="flex justify-between text-sm">
+                      <span>Paid:</span>
+                      <span className="font-medium text-green-600">{client.totalPaid}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Balance:</span>
+                      <span className="font-medium">{client.balance}</span>
                     </div>
                   </div>
-                  
-                  <div className="flex justify-between text-sm">
-                    <span>Paid:</span>
-                    <span className="font-medium text-green-600">{client.totalPaid}</span>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="text-center py-4 text-gray-500">
+                      <Building className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">No property assigned</p>
+                    </div>
+                    <Button 
+                      onClick={(e) => handleAssignProperty(e, client)}
+                      className="w-full bg-green-600 hover:bg-green-700"
+                    >
+                      Assign Property
+                    </Button>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Balance:</span>
-                    <span className="font-medium">{client.balance}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="text-center py-4 text-gray-500">
-                    <Building className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">No property assigned</p>
-                  </div>
+                )}
+                
+                {/* Updated action buttons - removed View button */}
+                <div className="flex space-x-2 mt-4 pt-3 border-t">
                   <Button 
-                    onClick={(e) => handleAssignProperty(e, client)}
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={(e) => handleViewDocuments(e, client)}
                   >
-                    Assign Property
+                    <FileText className="h-3 w-3 mr-1" />
+                    Docs
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={(e) => handleAddPayment(e, client)}
+                  >
+                    <DollarSign className="h-3 w-3 mr-1" />
+                    Pay
                   </Button>
                 </div>
-              )}
-              
-              {/* Action buttons */}
-              <div className="flex space-x-2 mt-4 pt-3 border-t">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1"
-                  onClick={(e) => handleViewDocuments(e, client)}
-                >
-                  <FileText className="h-3 w-3 mr-1" />
-                  Docs
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1"
-                  onClick={(e) => handleAddPayment(e, client)}
-                >
-                  <DollarSign className="h-3 w-3 mr-1" />
-                  Pay
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Projects/Units</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>KYC</TableHead>
+                  <TableHead>Payment Progress</TableHead>
+                  <TableHead>Next Due</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredClients.map((client) => (
+                  <TableRow key={client.id} className="cursor-pointer hover:bg-gray-50"
+                           onClick={() => handleClientClick(client.id)}>
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={client.passportPhoto || ''} alt={client.name} />
+                          <AvatarFallback>
+                            <User className="h-5 w-5" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{client.name}</div>
+                          <div className="text-sm text-gray-500">{client.email}</div>
+                          <div className="text-sm text-gray-500">{client.phone}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {client.projects && client.projects.length > 0 ? (
+                        <div className="space-y-1">
+                          <div>
+                            <div className="font-medium text-sm">{client.projects[0].name}</div>
+                            <div className="text-xs text-gray-500">{client.projects[0].unit}</div>
+                          </div>
+                          {client.projects.length > 1 && (
+                            <div className="text-xs text-blue-600">
+                              +{client.projects.length - 1} more
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">Not assigned</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getStatusColor(client.status)}>
+                        {client.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getKycStatusColor(client.kycStatus)}>
+                        {client.kycStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {client.projects && client.projects.length > 0 ? (
+                        <div>
+                          <div className="font-medium text-green-600">{client.totalPaid}</div>
+                          <div className="text-sm text-gray-500">
+                            {client.paymentProgress}% complete
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
+                            <div 
+                              className="bg-green-600 h-1 rounded-full"
+                              style={{ width: `${client.paymentProgress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {client.nextPayment ? (
+                        <span className="text-sm">{client.nextPayment}</span>
+                      ) : (
+                        <span className="text-sm text-gray-400">
+                          {client.status === 'completed' ? 'Complete' : 'Not set'}
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        {(!client.projects || client.projects.length === 0) && (
+                          <Button 
+                            size="sm" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAssignProperty(e, client);
+                            }}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <Building className="h-3 w-3 mr-1" />
+                            Assign
+                          </Button>
+                        )}
+                        <Button variant="outline" size="sm" onClick={(e) => handleViewDocuments(e, client)}>
+                          <FileText className="h-3 w-3" />
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={(e) => handleAddPayment(e, client)}>
+                          <DollarSign className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Assign Property Modal */}
       <AssignPropertyModal 

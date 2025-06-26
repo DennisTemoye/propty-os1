@@ -1,340 +1,640 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Building, Users, DollarSign, FileText, UserCheck, Calculator, TrendingUp, Plus, MapPin, Calendar, CheckCircle, X, Bell, CreditCard, Send } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
+import { GradientKpiCard } from '@/components/ui/gradient-kpi-card';
 import { 
-  Building2, 
-  Users, 
-  DollarSign, 
-  TrendingUp, 
-  Home,
-  UserCheck,
-  AlertTriangle,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Calendar,
-  FileText,
-  Bell,
-  ArrowUpRight,
-  ArrowDownRight,
-  BarChart3
-} from 'lucide-react';
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
+import { NewAllocationForm } from '@/components/dashboard/forms/NewAllocationForm';
+import { NewExpenseForm } from '@/components/dashboard/forms/NewExpenseForm';
+import { SendNoticeForm } from '@/components/dashboard/notices/SendNoticeForm';
+import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
+import { useResponsive } from '@/hooks/use-responsive';
+import { useNavigate } from 'react-router-dom';
+
+const salesData = [
+  { month: 'Jan', sales: 65, revenue: 2.4, allocations: 58 },
+  { month: 'Feb', sales: 59, revenue: 2.1, allocations: 62 },
+  { month: 'Mar', sales: 80, revenue: 2.8, allocations: 75 },
+  { month: 'Apr', sales: 81, revenue: 3.2, allocations: 79 },
+  { month: 'May', sales: 56, revenue: 2.0, allocations: 54 },
+  { month: 'Jun', sales: 72, revenue: 2.6, allocations: 68 },
+];
+
+const projectStatusData = [
+  { name: 'Active Projects', value: 45, color: '#10b981' },
+  { name: 'In Planning', value: 25, color: '#3b82f6' },
+  { name: 'Pre-Launch', value: 20, color: '#f59e0b' },
+  { name: 'Completed', value: 10, color: '#8b5cf6' },
+];
+
+const financialData = [
+  { month: 'Jan', income: 450, expenses: 180, profit: 270 },
+  { month: 'Feb', income: 520, expenses: 195, profit: 325 },
+  { month: 'Mar', income: 480, expenses: 170, profit: 310 },
+  { month: 'Apr', income: 680, expenses: 220, profit: 460 },
+  { month: 'May', income: 590, expenses: 200, profit: 390 },
+  { month: 'Jun', income: 720, expenses: 240, profit: 480 },
+];
 
 export function DashboardOverview() {
-  // Mock data for KPIs
+  const navigate = useNavigate();
+  const { isMobile, isTablet, isSmallScreen, isLargeDesktop } = useResponsive();
+  const [showNotification, setShowNotification] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+
+  // KPI data with navigation handlers
   const kpiData = [
     {
       title: 'Total Projects',
-      value: '12',
-      change: '+2',
-      changeType: 'positive' as const,
-      icon: Building2,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
+      value: '24',
+      subtitle: '3 New This Quarter',
+      icon: Building,
+      gradientFrom: 'from-blue-500',
+      gradientTo: 'to-cyan-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/developments'),
     },
     {
       title: 'Active Clients',
-      value: '245',
-      change: '+18',
-      changeType: 'positive' as const,
+      value: '1,247',
+      subtitle: '89 New This Month',
       icon: Users,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      gradientFrom: 'from-emerald-500',
+      gradientTo: 'to-teal-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/clients'),
     },
     {
-      title: 'Total Revenue',
-      value: '₦15.2B',
-      change: '+12%',
-      changeType: 'positive' as const,
+      title: 'Total Sales Revenue',
+      value: '₦2.4B',
+      subtitle: '156 Units Sold',
       icon: DollarSign,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100',
+      gradientFrom: 'from-purple-500',
+      gradientTo: 'to-pink-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/accounting'),
     },
     {
-      title: 'Units Sold',
-      value: '842',
-      change: '+25',
-      changeType: 'positive' as const,
-      icon: Home,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      title: 'Pending Allocations',
+      value: '23',
+      subtitle: 'Awaiting Processing',
+      icon: FileText,
+      gradientFrom: 'from-orange-500',
+      gradientTo: 'to-amber-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/sales'),
     },
     {
-      title: 'Active Marketers',
-      value: '28',
-      change: '+3',
-      changeType: 'positive' as const,
-      icon: UserCheck,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-100',
+      title: 'Available Units',
+      value: '187',
+      subtitle: 'Ready for Allocation',
+      icon: MapPin,
+      gradientFrom: 'from-indigo-500',
+      gradientTo: 'to-purple-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/developments'),
     },
     {
-      title: 'Pending Payments',
-      value: '₦2.8B',
-      change: '-5%',
-      changeType: 'negative' as const,
-      icon: AlertTriangle,
-      color: 'text-red-600',
-      bgColor: 'bg-red-100',
+      title: 'Installment Collections',
+      value: '₦450M',
+      subtitle: '92% Collection Rate',
+      icon: Calculator,
+      gradientFrom: 'from-green-500',
+      gradientTo: 'to-emerald-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/accounting'),
+    },
+    {
+      title: 'Completed Deals',
+      value: '89',
+      subtitle: 'This Quarter',
+      icon: CheckCircle,
+      gradientFrom: 'from-teal-500',
+      gradientTo: 'to-cyan-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/sales'),
+    },
+    {
+      title: 'Scheduled Inspections',
+      value: '34',
+      subtitle: 'Next 7 Days',
+      icon: Calendar,
+      gradientFrom: 'from-rose-500',
+      gradientTo: 'to-pink-400',
+      iconBgColor: 'bg-white/20',
+      iconColor: 'text-white',
+      onClick: () => navigate('/company/calendar'),
     },
   ];
 
-  const recentActivities = [
-    {
-      id: 1,
-      type: 'sale',
-      title: 'New unit allocation',
-      description: 'Block A Unit 05 allocated to John Doe - Victoria Gardens',
-      time: '2 hours ago',
-      icon: Home,
-      status: 'success'
-    },
-    {
-      id: 2,
-      type: 'payment',
-      title: 'Payment received',
-      description: '₦15M payment from Jane Smith - Emerald Heights',
-      time: '4 hours ago',
-      icon: DollarSign,
-      status: 'success'
-    },
-    {
-      id: 3,
-      type: 'client',
-      title: 'New client registered',
-      description: 'Michael Johnson completed KYC verification',
-      time: '6 hours ago',
-      icon: Users,
-      status: 'info'
-    },
-    {
-      id: 4,
-      type: 'project',
-      title: 'Project milestone',
-      description: 'Golden View Towers - Block C construction completed',
-      time: '1 day ago',
-      icon: Building2,
-      status: 'success'
-    },
-    {
-      id: 5,
-      type: 'alert',
-      title: 'Payment overdue',
-      description: 'Sarah Williams - ₦5M payment overdue by 7 days',
-      time: '2 days ago',
-      icon: AlertTriangle,
-      status: 'warning'
+  const handleNewAction = (action: string) => {
+    console.log(`Creating new ${action}`);
+    if (action === 'payment') {
+      setShowPaymentModal(true);
+    } else if (action === 'client') {
+      navigate('/company/clients/new');
+    } else if (action === 'development') {
+      navigate('/company/projects/new');
+    } else {
+      setActiveModal(action);
     }
-  ];
+  };
 
-  const projectsData = [
-    {
-      name: 'Victoria Gardens',
-      location: 'Lekki, Lagos',
-      progress: 75,
-      status: 'ongoing',
-      totalUnits: 150,
-      soldUnits: 112,
-      revenue: '₦2.5B'
-    },
-    {
-      name: 'Emerald Heights',
-      location: 'Abuja, FCT',
-      progress: 60,
-      status: 'ongoing',
-      totalUnits: 200,
-      soldUnits: 156,
-      revenue: '₦4.2B'
-    },
-    {
-      name: 'Golden View Towers',
-      location: 'Victoria Island',
-      progress: 90,
-      status: 'ongoing',
-      totalUnits: 300,
-      soldUnits: 245,
-      revenue: '₦6.8B'
+  const closeModal = () => {
+    setActiveModal(null);
+  };
+
+  // Mock client data for payment modal (in real app, this would come from props or context)
+  const mockClient = {
+    id: '1',
+    name: 'General Payment Entry',
+    email: 'payment@company.com'
+  };
+
+  const getModalTitle = (action: string) => {
+    switch (action) {
+      case 'project_site': return 'Create New Project Site';
+      case 'client': return 'Create New Client';
+      case 'allocation': return 'Create New Allocation';
+      case 'expense': return 'Record New Expense';
+      case 'notice': return 'Send New Notice';
+      default: return 'Create New';
     }
-  ];
+  };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'success':
-        return 'text-green-600 bg-green-100';
-      case 'warning':
-        return 'text-yellow-600 bg-yellow-100';
-      case 'info':
-        return 'text-blue-600 bg-blue-100';
+  const getModalDescription = (action: string) => {
+    switch (action) {
+      case 'project_site': return 'Add a new project site to track development progress';
+      case 'client': return 'Add a new client to your database';
+      case 'allocation': return 'Allocate a unit to a client';
+      case 'expense': return 'Record a new business expense';
+      case 'notice': return 'Send a notice to clients or staff members';
+      default: return '';
+    }
+  };
+
+  const renderModalContent = (action: string) => {
+    switch (action) {
+      case 'project_site':
+        return <div>Project Site Form - To be implemented</div>;
+      case 'client':
+        return <NewClientForm onClose={closeModal} />;
+      case 'allocation':
+        return <NewAllocationForm onClose={closeModal} />;
+      case 'expense':
+        return <NewExpenseForm onClose={closeModal} />;
+      case 'notice':
+        return <SendNoticeForm />;
       default:
-        return 'text-gray-600 bg-gray-100';
+        return null;
     }
   };
 
   return (
-    <div className="w-full space-y-8">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-          <p className="text-gray-600 mt-1">Welcome back! Here's what's happening with your business.</p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Notification Bar */}
+      {showNotification && (
+        <div className="bg-blue-600 dark:bg-blue-700 text-white px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between rounded-lg mb-4">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <Bell className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+            <span className={`font-medium ${isMobile ? 'text-sm' : ''} truncate`}>
+              {isMobile ? 'Referral program live! Earn rewards.' : '🎉 Referral program is now live! Earn rewards for every successful referral.'}
+            </span>
+          </div>
+          <Button
+            variant="ghost"
+            size={isMobile ? "sm" : "icon"}
+            onClick={() => setShowNotification(false)}
+            className="text-white hover:bg-blue-700 dark:hover:bg-blue-600 flex-shrink-0"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" className="flex items-center">
-            <Calendar className="h-4 w-4 mr-2" />
-            Last 30 days
-          </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <FileText className="h-4 w-4 mr-2" />
-            Export Report
-          </Button>
+      )}
+
+      {/* Header Section */}
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 sm:px-6 py-4 sm:py-6 mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className={`font-bold text-gray-900 dark:text-white ${isMobile ? 'text-xl' : isTablet ? 'text-2xl' : 'text-3xl'}`}>
+              Dashboard
+            </h1>
+            <p className={`text-gray-600 dark:text-gray-300 mt-1 ${isMobile ? 'text-sm' : ''}`}>
+              Real Estate Sales & Project Management Overview
+            </p>
+          </div>
+          <div className="flex items-center space-x-3 w-full sm:w-auto">
+            {!isMobile && <ThemeToggle />}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className={`bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${isMobile ? 'flex-1 text-sm py-2' : 'px-6 py-3'}`}>
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
+                  {isMobile ? 'New' : 'New'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                className="w-48 sm:w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl z-50"
+                align="end"
+              >
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('development')}
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <Building className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
+                  <span className="font-medium text-sm">New Project</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('client')}
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <Users className="h-4 w-4 text-blue-600" />
+                  <span className="font-medium">New Client</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('allocation')}
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <MapPin className="h-4 w-4 text-green-600" />
+                  <span className="font-medium">New Allocation</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('expense')}
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <DollarSign className="h-4 w-4 text-red-600" />
+                  <span className="font-medium">New Expense</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('payment')}
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <CreditCard className="h-4 w-4 text-emerald-600" />
+                  <span className="font-medium">New Payment</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleNewAction('notice')}
+                  className="flex items-center space-x-3 p-2 sm:p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <Send className="h-4 w-4 text-orange-600" />
+                  <span className="font-medium">New Notice</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
-      {/* KPI Cards Grid - Full Width */}
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-        {kpiData.map((kpi, index) => (
-          <Card key={index} className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-600 mb-1">{kpi.title}</p>
-                  <div className="flex items-center space-x-2">
-                    <h3 className="text-2xl font-bold text-gray-900">{kpi.value}</h3>
-                    <div className={`flex items-center text-sm font-medium ${
-                      kpi.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {kpi.changeType === 'positive' ? (
-                        <ArrowUpRight className="h-3 w-3 mr-1" />
-                      ) : (
-                        <ArrowDownRight className="h-3 w-3 mr-1" />
-                      )}
-                      {kpi.change}
-                    </div>
-                  </div>
-                </div>
-                <div className={`p-3 rounded-xl ${kpi.bgColor}`}>
-                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
-                </div>
-              </div>
+      <div className="space-y-6 sm:space-y-8">
+        {/* KPI Cards - Responsive Grid */}
+        <div className={`grid gap-3 sm:gap-4 lg:gap-6 ${
+          isMobile 
+            ? 'grid-cols-2' 
+            : isTablet 
+              ? 'grid-cols-2 lg:grid-cols-3' 
+              : isLargeDesktop
+                ? 'grid-cols-4'
+                : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+        }`}>
+          {kpiData.map((kpi, index) => (
+            <div
+              key={index}
+              onClick={kpi.onClick}
+              className="cursor-pointer transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-xl"
+              tabIndex={0}
+              role="button"
+              aria-label={`Navigate to ${kpi.title}`}
+            >
+              <GradientKpiCard
+                title={kpi.title}
+                value={kpi.value}
+                subtitle={isMobile ? '' : kpi.subtitle}
+                icon={kpi.icon}
+                gradientFrom={kpi.gradientFrom}
+                gradientTo={kpi.gradientTo}
+                iconBgColor={kpi.iconBgColor}
+                iconColor={kpi.iconColor}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Main Analytics Charts - Responsive Layout */}
+        <div className={`grid gap-4 sm:gap-6 ${
+          isMobile || isTablet 
+            ? 'grid-cols-1' 
+            : 'grid-cols-1 lg:grid-cols-2'
+        }`}>
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl overflow-hidden">
+            <CardHeader className="pb-2 sm:pb-4">
+              <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
+                Sales & Allocations Performance
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 sm:p-6">
+              <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 250 : 300}>
+                <BarChart data={salesData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="month" stroke="#64748b" fontSize={isMobile ? 10 : 12} />
+                  <YAxis stroke="#64748b" fontSize={isMobile ? 10 : 12} />
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      value, 
+                      name === 'sales' ? 'Units Sold' : 
+                      name === 'allocations' ? 'Allocations' : 'Revenue (₦M)'
+                    ]}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: 'none', 
+                      borderRadius: '12px', 
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                      fontSize: isMobile ? '12px' : '14px'
+                    }}
+                  />
+                  <Bar dataKey="sales" fill="#8b5cf6" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey="allocations" fill="#06b6d4" radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
-        ))}
-      </div>
 
-      {/* Main Content Grid - Full Width */}
-      <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Project Performance - Takes 2 columns */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-xl font-semibold">Project Performance</CardTitle>
-              <Button variant="outline" size="sm">
-                <BarChart3 className="h-4 w-4 mr-1" />
-                View All
-              </Button>
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl overflow-hidden">
+            <CardHeader className="pb-2 sm:pb-4">
+              <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
+                Financial Overview (₦M)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 sm:p-6">
+              <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 250 : 300}>
+                <AreaChart data={financialData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="month" stroke="#64748b" fontSize={isMobile ? 10 : 12} />
+                  <YAxis stroke="#64748b" fontSize={isMobile ? 10 : 12} />
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      `₦${value}M`, 
+                      name === 'income' ? 'Income' : 
+                      name === 'expenses' ? 'Expenses' : 'Profit'
+                    ]}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: 'none', 
+                      borderRadius: '12px', 
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                      fontSize: isMobile ? '12px' : '14px'
+                    }}
+                  />
+                  <Area type="monotone" dataKey="income" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} />
+                  <Area type="monotone" dataKey="expenses" stackId="2" stroke="#ef4444" fill="#ef4444" fillOpacity={0.6} />
+                  <Area type="monotone" dataKey="profit" stackId="3" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.8} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Secondary Analytics - Responsive Grid */}
+        <div className={`grid gap-4 sm:gap-6 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 lg:grid-cols-3'}`}>
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
+            <CardHeader className="pb-2 sm:pb-4">
+              <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
+                Project Status Distribution
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                {projectsData.map((project, index) => (
-                  <div key={index} className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{project.name}</h4>
-                        <p className="text-sm text-gray-600">{project.location}</p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium text-gray-900">{project.revenue}</div>
-                        <div className="text-xs text-gray-500">{project.soldUnits}/{project.totalUnits} units sold</div>
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Progress</span>
-                        <span className="font-medium">{project.progress}%</span>
-                      </div>
-                      <Progress value={project.progress} className="h-2" />
-                    </div>
+              <ResponsiveContainer width="100%" height={isMobile ? 180 : isTablet ? 200 : 250}>
+                <PieChart>
+                  <Pie
+                    data={projectStatusData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={isMobile ? 60 : isTablet ? 80 : 100}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={isMobile ? false : ({ name, value }) => `${name}: ${value}%`}
+                  >
+                    {projectStatusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: 'none', 
+                      borderRadius: '12px', 
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                      fontSize: isMobile ? '12px' : '14px'
+                    }} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl ${
+            isMobile ? '' : 'lg:col-span-2'
+          }`}>
+            <CardHeader>
+              <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
+                Recent Activity Log
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3 sm:space-y-4 max-h-80 overflow-y-auto">
+                <div className="flex items-center space-x-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border-l-4 border-green-500">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">New client allocation completed</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">John Doe - Victoria Gardens Block A, Unit 12</p>
                   </div>
-                ))}
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">5 min ago</span>
+                </div>
+                <div className="flex items-center space-x-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border-l-4 border-blue-500">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Payment received</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">₦2.5M initial payment - Lagos Estate Project</p>
+                  </div>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">1 hour ago</span>
+                </div>
+                <div className="flex items-center space-x-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl border-l-4 border-purple-500">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Site inspection scheduled</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">Sunrise Estate - Tomorrow 10:00 AM</p>
+                  </div>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">2 hours ago</span>
+                </div>
+                <div className="flex items-center space-x-4 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-xl border-l-4 border-orange-500">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Document uploaded</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">Survey plan - Greenfield Heights</p>
+                  </div>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">4 hours ago</span>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Recent Activities - Takes 1 column */}
-        <div className="lg:col-span-1">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-xl font-semibold">Recent Activities</CardTitle>
-              <Button variant="outline" size="sm">
-                <Bell className="h-4 w-4 mr-1" />
-                View All
-              </Button>
+        {/* Quick Actions & Performance Metrics */}
+        <div className={`grid gap-4 sm:gap-6 ${
+          isMobile 
+            ? 'grid-cols-1' 
+            : isTablet 
+              ? 'grid-cols-1' 
+              : 'grid-cols-1 lg:grid-cols-2'
+        }`}>
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Top Performing Projects</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-3">
-                    <div className={`p-2 rounded-lg ${getStatusColor(activity.status)}`}>
-                      <activity.icon className="h-4 w-4" />
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-100 dark:border-green-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/1')}>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <Building className="h-6 w-6 text-white" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-gray-900 truncate">
-                        {activity.title}
-                      </h4>
-                      <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-                        {activity.description}
-                      </p>
-                      <div className="flex items-center mt-2 text-xs text-gray-500">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {activity.time}
-                      </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-white">Victoria Gardens</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">85% units sold • 127 allocations</p>
                     </div>
                   </div>
-                ))}
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-green-600">₦1.2B</span>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/2')}>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <Building className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-white">Lagos Estate</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">72% units sold • 98 allocations</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-blue-600">₦890M</span>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-100 dark:border-purple-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/3')}>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <Building className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-white">Sunrise Estate</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">68% units sold • 76 allocations</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-purple-600">₦650M</span>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">Client Allocation Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Allocated Units</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white">456</span>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Fully Paid</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div className="bg-green-500 h-2 rounded-full" style={{ width: '65%' }}></div>
+                      </div>
+                      <span className="text-sm font-medium dark:text-white">298</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">On Payment Plan</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div className="bg-blue-500 h-2 rounded-full" style={{ width: '25%' }}></div>
+                      </div>
+                      <span className="text-sm font-medium dark:text-white">134</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Pending Documentation</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div className="bg-orange-500 h-2 rounded-full" style={{ width: '10%' }}></div>
+                      </div>
+                      <span className="text-sm font-medium dark:text-white">24</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-4 border-t dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Collection Rate</span>
+                    <span className="text-xl font-bold text-green-600">92.3%</span>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Quick Actions - Full Width */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold">Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <Button variant="outline" className="h-20 flex-col space-y-2">
-              <Building2 className="h-6 w-6" />
-              <span className="text-sm">New Project</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex-col space-y-2">
-              <Users className="h-6 w-6" />
-              <span className="text-sm">Add Client</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex-col space-y-2">
-              <Home className="h-6 w-6" />
-              <span className="text-sm">Allocate Unit</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex-col space-y-2">
-              <DollarSign className="h-6 w-6" />
-              <span className="text-sm">Record Payment</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex-col space-y-2">
-              <FileText className="h-6 w-6" />
-              <span className="text-sm">Generate Report</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex-col space-y-2">
-              <UserCheck className="h-6 w-6" />
-              <span className="text-sm">Add Marketer</span>
-            </Button>
+      {/* Payment Modal */}
+      <AddPaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        client={mockClient}
+      />
+
+      {/* Centered Modal for Forms */}
+      <Dialog open={!!activeModal} onOpenChange={closeModal}>
+        <DialogContent className={`${
+          isMobile 
+            ? 'max-w-[95vw] max-h-[90vh] m-2' 
+            : 'max-w-2xl max-h-[90vh]'
+        } overflow-y-auto`}>
+          <DialogHeader>
+            <DialogTitle className={isMobile ? 'text-lg' : 'text-xl'}>
+              {activeModal ? getModalTitle(activeModal) : ''}
+            </DialogTitle>
+            <DialogDescription className={isMobile ? 'text-sm' : ''}>
+              {activeModal ? getModalDescription(activeModal) : ''}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 sm:mt-6">
+            {activeModal && renderModalContent(activeModal)}
           </div>
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

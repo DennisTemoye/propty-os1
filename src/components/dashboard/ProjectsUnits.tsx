@@ -293,7 +293,7 @@ export function ProjectsUnits() {
   };
 
   return (
-    <div className="w-full min-h-screen space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
@@ -309,7 +309,7 @@ export function ProjectsUnits() {
       </div>
 
       {/* Project Summary Cards */}
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
           <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
             <CardContent className="p-6">
@@ -321,7 +321,6 @@ export function ProjectsUnits() {
                   <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
                   <div className="text-xs text-gray-500">{kpi.subtitle}</div>
                 </div>
-                
                 <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
                   <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
                 </div>
@@ -332,7 +331,7 @@ export function ProjectsUnits() {
       </div>
 
       {/* Search and Filters */}
-      <Card className="w-full bg-white">
+      <Card className="bg-white">
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <div className="flex gap-4 w-full md:w-auto">
@@ -379,11 +378,11 @@ export function ProjectsUnits() {
 
       {/* Projects Display */}
       {viewMode === 'grid' ? (
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredProjects.map((project) => (
             <Card 
               key={project.id} 
-              className="hover:shadow-lg transition-all duration-300 cursor-pointer bg-white overflow-hidden group w-full"
+              className="hover:shadow-lg transition-all duration-300 cursor-pointer bg-white overflow-hidden group"
               onClick={() => handleProjectClick(project.id)}
             >
               {/* Project Image */}
@@ -452,74 +451,80 @@ export function ProjectsUnits() {
                       <span className="font-medium text-green-600">{project.revenue}</span>
                     </div>
                   </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${((project.allocatedUnits || project.soldUnits) / project.totalUnits) * 100}%` }}
+                    ></div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       ) : (
-        <Card className="w-full bg-white">
+        <Card className="bg-white">
           <CardContent className="p-0">
-            <div className="w-full overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Project</TableHead>
-                    <TableHead>Stage</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Units Status</TableHead>
-                    <TableHead>Revenue</TableHead>
-                    <TableHead>Actions</TableHead>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Project</TableHead>
+                  <TableHead>Stage</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Units Status</TableHead>
+                  <TableHead>Revenue</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredProjects.map((project) => (
+                  <TableRow 
+                    key={project.id} 
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => handleProjectClick(project.id)}
+                  >
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-sm text-gray-500">{project.type}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getDevelopmentStageColor(project.developmentStage)}>
+                        {project.developmentStage}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{project.location}</TableCell>
+                    <TableCell>
+                      <div className="text-sm space-y-1">
+                        <div className="flex justify-between">
+                          <span>Total:</span>
+                          <span className="font-medium">{project.totalUnits}</span>
+                        </div>
+                        <div className="text-xs text-gray-500 space-y-0.5">
+                          <div>Allocated: {project.allocatedUnits || project.soldUnits}</div>
+                          <div>Available: {project.availableUnits}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{project.revenue}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => handleViewDetails(e, project.id)}
+                        className="h-8 px-3"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        View Details
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredProjects.map((project) => (
-                    <TableRow 
-                      key={project.id} 
-                      className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleProjectClick(project.id)}
-                    >
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{project.name}</div>
-                          <div className="text-sm text-gray-500">{project.type}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getDevelopmentStageColor(project.developmentStage)}>
-                          {project.developmentStage}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{project.location}</TableCell>
-                      <TableCell>
-                        <div className="text-sm space-y-1">
-                          <div className="flex justify-between">
-                            <span>Total:</span>
-                            <span className="font-medium">{project.totalUnits}</span>
-                          </div>
-                          <div className="text-xs text-gray-500 space-y-0.5">
-                            <div>Allocated: {project.allocatedUnits || project.soldUnits}</div>
-                            <div>Available: {project.availableUnits}</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-medium">{project.revenue}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => handleViewDetails(e, project.id)}
-                          className="h-8 px-3"
-                        >
-                          <Eye className="h-3 w-3 mr-1" />
-                          View Details
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       )}
