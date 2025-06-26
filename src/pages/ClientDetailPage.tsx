@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit, Trash2, Building, DollarSign } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign, X, Menu } from 'lucide-react';
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
 import { toast } from 'sonner';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
+import { MobileWarningBanner } from '@/components/common/MobileWarningBanner';
+import { useResponsive } from '@/hooks/use-responsive';
 
 const mockClients = [
   {
@@ -164,6 +168,8 @@ export default function ClientDetailPage() {
   const { clientId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isMobile, isTablet, isSmallScreen } = useResponsive();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   
@@ -200,69 +206,110 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50">
-      <div className="w-full max-w-none px-4 md:px-6 py-4">
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/company/clients')}
-              className="mb-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Clients
-            </Button>
+    <div className="w-full">
+      <MobileWarningBanner />
+      <SidebarProvider>
+        <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+          
+          <CompanySidebar 
+            isOpen={sidebarOpen} 
+            onClose={() => setSidebarOpen(false)} 
+          />
+          
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
+            {/* Mobile/Tablet Header */}
+            {isSmallScreen && (
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm w-full">
+                <div className="flex items-center justify-between">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    {sidebarOpen ? (
+                      <X className="h-5 w-5" />
+                    ) : (
+                      <Menu className="h-5 w-5" />
+                    )}
+                  </Button>
+                  <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
+                    Client Details
+                  </h1>
+                  <div className="w-9" />
+                </div>
+              </header>
+            )}
             
-            <div className="flex gap-2">
-              <Button 
-                onClick={handleAssignProperty}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <Building className="h-4 w-4 mr-2" />
-                Assign Property
-              </Button>
-              <Button 
-                onClick={handleAddPayment}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <DollarSign className="h-4 w-4 mr-2" />
-                Add Payment
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={handleEdit}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Client
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={handleDelete}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Client
-              </Button>
-            </div>
+            <main className="flex-1 overflow-auto w-full">
+              <div className="w-full min-h-screen bg-gray-50">
+                <div className="w-full max-w-none px-4 md:px-6 py-4">
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => navigate('/company/clients')}
+                        className="mb-4"
+                      >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Back to Clients
+                      </Button>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={handleAssignProperty}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          <Building className="h-4 w-4 mr-2" />
+                          Assign Property
+                        </Button>
+                        <Button 
+                          onClick={handleAddPayment}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          <DollarSign className="h-4 w-4 mr-2" />
+                          Add Payment
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          onClick={handleEdit}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Client
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          onClick={handleDelete}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Client
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <ClientDetailView client={client} />
+
+                  {/* Assign Property Modal */}
+                  <AssignPropertyModal 
+                    isOpen={isAssignPropertyOpen}
+                    onClose={() => setIsAssignPropertyOpen(false)}
+                    client={client}
+                  />
+
+                  {/* Add Payment Modal */}
+                  <AddPaymentModal 
+                    isOpen={isAddPaymentOpen}
+                    onClose={() => setIsAddPaymentOpen(false)}
+                    client={client}
+                  />
+                </div>
+              </div>
+            </main>
           </div>
         </div>
-        
-        <ClientDetailView client={client} />
-
-        {/* Assign Property Modal */}
-        <AssignPropertyModal 
-          isOpen={isAssignPropertyOpen}
-          onClose={() => setIsAssignPropertyOpen(false)}
-          client={client}
-        />
-
-        {/* Add Payment Modal */}
-        <AddPaymentModal 
-          isOpen={isAddPaymentOpen}
-          onClose={() => setIsAddPaymentOpen(false)}
-          client={client}
-        />
-      </div>
+      </SidebarProvider>
     </div>
   );
 }

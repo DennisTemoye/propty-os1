@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
@@ -72,73 +71,63 @@ const CompanyDashboard = () => {
   };
 
   // Check if current page is a detail page that needs full width
-  const isDetailPage = location.pathname.includes('/projects/') || 
-                      location.pathname.includes('/clients/') || 
-                      location.pathname.includes('/marketers/');
+  const isDetailPage = location.pathname.includes('/projects/') || location.pathname.includes('/clients/');
 
   return (
     <div className="w-full">
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className={cn(
-          "min-h-screen bg-gray-50 dark:bg-gray-900 w-full",
-          isSmallScreen ? 'pt-16 sm:pt-20' : ''
-        )}>
-          {/* Two-div layout structure */}
-          <div className="flex w-full">
-            {/* SidebarWrapper - Fixed width container */}
-            <div className={cn(
-              "flex-shrink-0",
-              isSmallScreen ? "w-0" : "w-64"
-            )}>
-              <CompanySidebar 
-                isOpen={sidebarOpen} 
-                onClose={() => setSidebarOpen(false)} 
-              />
-            </div>
-            
-            {/* ContentWrapper - Flexible width container */}
-            <div className="flex-1 flex flex-col min-w-0 w-full">
-              {/* Mobile/Tablet Header */}
-              {isSmallScreen && (
-                <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm w-full">
-                  <div className="flex items-center justify-between">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSidebarOpen(!sidebarOpen)}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      {sidebarOpen ? (
-                        <X className="h-5 w-5" />
-                      ) : (
-                        <Menu className="h-5 w-5" />
-                      )}
-                    </Button>
-                    <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
-                      ProptyOS
-                    </h1>
-                    <div className="w-9" />
-                  </div>
-                </header>
-              )}
-              
-              <main className="flex-1 overflow-auto w-full">
-                {isDetailPage ? (
-                  // Detail pages render without container for full width
-                  renderActiveModule()
-                ) : (
-                  // Regular pages use ResponsiveContainer
-                  <ResponsiveContainer 
-                    fullWidth={true}
-                    className="h-full min-h-0 w-full"
-                    padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+        <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+          
+          <CompanySidebar 
+            isOpen={sidebarOpen} 
+            onClose={() => setSidebarOpen(false)} 
+          />
+          
+          {/* Main content with left margin for fixed sidebar on desktop */}
+          <div className={cn(
+            "flex-1 flex flex-col min-w-0 overflow-hidden w-full",
+            !isSmallScreen && "ml-64" // Add left margin for fixed sidebar on desktop
+          )}>
+            {/* Mobile/Tablet Header */}
+            {isSmallScreen && (
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm w-full">
+                <div className="flex items-center justify-between">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
-                    {renderActiveModule()}
-                  </ResponsiveContainer>
-                )}
-              </main>
-            </div>
+                    {sidebarOpen ? (
+                      <X className="h-5 w-5" />
+                    ) : (
+                      <Menu className="h-5 w-5" />
+                    )}
+                  </Button>
+                  <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
+                    ProptyOS
+                  </h1>
+                  <div className="w-9" />
+                </div>
+              </header>
+            )}
+            
+            <main className="flex-1 overflow-auto w-full">
+              {isDetailPage ? (
+                // Detail pages render without container for full width
+                renderActiveModule()
+              ) : (
+                // Regular pages use ResponsiveContainer
+                <ResponsiveContainer 
+                  fullWidth={true}
+                  className="h-full min-h-0 w-full"
+                  padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+                >
+                  {renderActiveModule()}
+                </ResponsiveContainer>
+              )}
+            </main>
           </div>
         </div>
       </SidebarProvider>
