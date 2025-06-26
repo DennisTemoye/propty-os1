@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -377,6 +378,7 @@ export default function ProjectDetailPage() {
           />
         )}
 
+        {/* Full Width Project Content - No width constraints */}
         <div className="w-full space-y-6">
           {/* Top Navigation - Back button left, Action buttons right */}
           <div className="flex items-center justify-between">
@@ -438,7 +440,7 @@ export default function ProjectDetailPage() {
             </div>
           </div>
 
-          {/* Project Banner Section */}
+          {/* Project Banner Section - Full Width */}
           <div className="relative bg-white rounded-lg shadow-sm border overflow-hidden">
             {/* Banner Image */}
             <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600">
@@ -490,10 +492,10 @@ export default function ProjectDetailPage() {
             </div>
           </div>
 
-          {/* Enhanced KPI Quick Stats */}
+          {/* Enhanced KPI Quick Stats - Full Width */}
           <ProjectKPIGrid project={project} />
 
-          {/* Project Navigation Tabs */}
+          {/* Project Navigation Tabs - Full Width */}
           <div className="bg-white rounded-lg shadow-sm border">
             <Tabs defaultValue="overview" className="w-full">
               <div className="border-b px-6">

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
@@ -69,12 +70,6 @@ const CompanyDashboard = () => {
     }
   };
 
-  const handleOverlayClick = () => {
-    if (isSmallScreen && sidebarOpen) {
-      setSidebarOpen(false);
-    }
-  };
-
   const mobileHeader = isSmallScreen ? (
     <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
       <Button
@@ -114,13 +109,12 @@ const CompanyDashboard = () => {
           {isSmallScreen && sidebarOpen && (
             <div 
               className="fixed inset-0 bg-black/50 z-30"
-              onClick={handleOverlayClick}
+              onClick={() => setSidebarOpen(false)}
             />
           )}
           
-          <div className="w-full min-h-screen">
-            {renderActiveModule()}
-          </div>
+          {/* Full Width Content - No additional wrappers */}
+          {renderActiveModule()}
         </GlobalLayout>
       </SidebarProvider>
     </>
