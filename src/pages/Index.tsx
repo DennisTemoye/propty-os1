@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { FullWidthLayout } from '@/components/layouts/FullWidthLayout';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
 import TrustedBySection from '../components/TrustedBySection';
@@ -15,7 +14,7 @@ import Footer from '../components/Footer';
 
 const Index = () => {
   return (
-    <FullWidthLayout padding="none" background="default">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       <Header />
       <HeroSection />
       <TrustedBySection />
@@ -27,7 +26,7 @@ const Index = () => {
       <FAQSection />
       <FinalCTASection />
       <Footer />
-    </FullWidthLayout>
+    </div>
   );
 };
 

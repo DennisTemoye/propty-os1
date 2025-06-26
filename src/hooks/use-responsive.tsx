@@ -2,10 +2,10 @@
 import * as React from "react"
 
 const BREAKPOINTS = {
-  mobile: 768,
-  tablet: 1024,
-  desktop: 1440,
-  largeDesktop: 1441
+  mobile: 767,
+  tablet: 1023,
+  desktop: 1439,
+  largeDesktop: 1440
 }
 
 export function useResponsive() {
@@ -38,11 +38,11 @@ export function useResponsive() {
       setScreenSize({
         width,
         height,
-        isMobile: width < BREAKPOINTS.mobile,
-        isTablet: width >= BREAKPOINTS.mobile && width < BREAKPOINTS.tablet,
-        isDesktop: width >= BREAKPOINTS.tablet && width < BREAKPOINTS.desktop,
+        isMobile: width <= BREAKPOINTS.mobile,
+        isTablet: width > BREAKPOINTS.mobile && width <= BREAKPOINTS.tablet,
+        isDesktop: width > BREAKPOINTS.tablet && width <= BREAKPOINTS.desktop,
         isLargeDesktop: width >= BREAKPOINTS.largeDesktop,
-        isSmallScreen: width < BREAKPOINTS.tablet,
+        isSmallScreen: width <= BREAKPOINTS.tablet,
         isTouchDevice
       })
     }

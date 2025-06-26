@@ -13,10 +13,10 @@ interface ResponsiveContainerProps {
 export function ResponsiveContainer({ 
   children, 
   className,
-  maxWidth = 'full',
+  maxWidth = '2xl',
   padding = 'md'
 }: ResponsiveContainerProps) {
-  const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
+  const { isMobile, isTablet, isSmallScreen } = useResponsive();
 
   const maxWidthClasses = {
     sm: 'max-w-screen-sm',
@@ -24,50 +24,23 @@ export function ResponsiveContainer({
     lg: 'max-w-screen-lg',
     xl: 'max-w-screen-xl',
     '2xl': 'max-w-screen-2xl',
-    full: 'w-full'
+    full: 'max-w-full'
   };
 
-  const getPaddingClasses = () => {
-    if (padding === 'none') return '';
-    
-    // Responsive padding based on screen size
-    if (isMobile) {
-      return {
-        sm: 'px-3 py-2',
-        md: 'px-4 py-3',
-        lg: 'px-6 py-4'
-      }[padding];
-    } else if (isTablet) {
-      return {
-        sm: 'px-4 py-3',
-        md: 'px-6 py-4',
-        lg: 'px-8 py-6'
-      }[padding];
-    } else if (isDesktop) {
-      return {
-        sm: 'px-6 py-4',
-        md: 'px-8 py-6',
-        lg: 'px-12 py-8'
-      }[padding];
-    } else if (isLargeDesktop) {
-      return {
-        sm: 'px-8 py-6',
-        md: 'px-12 py-8',
-        lg: 'px-16 py-12'
-      }[padding];
-    }
-    
-    // Default fallback
-    return 'px-6 py-4';
+  const paddingClasses = {
+    none: '',
+    sm: isMobile ? 'px-2 py-1' : isTablet ? 'px-3 py-2' : 'px-4 py-2',
+    md: isMobile ? 'px-3 py-2' : isTablet ? 'px-4 py-3' : 'px-6 py-4',
+    lg: isMobile ? 'px-4 py-3' : isTablet ? 'px-6 py-4' : 'px-8 py-6'
   };
 
   return (
     <div className={cn(
       'w-full mx-auto',
       maxWidthClasses[maxWidth],
-      getPaddingClasses(),
-      // Prevent horizontal scroll on all screens
-      'overflow-x-hidden',
+      paddingClasses[padding],
+      // Prevent horizontal scroll on small screens
+      isSmallScreen && 'overflow-x-hidden',
       className
     )}>
       {children}

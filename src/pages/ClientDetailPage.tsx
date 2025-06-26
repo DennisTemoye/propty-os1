@@ -3,12 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Edit, Trash2, Building, DollarSign } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-react';
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
 import { ClientForm } from '@/components/dashboard/clients/ClientForm';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
-import { FullWidthLayout } from '@/components/layouts/FullWidthLayout';
 import { toast } from 'sonner';
 
 const mockClients = [
@@ -205,8 +204,8 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <FullWidthLayout padding="md">
-      <div className="w-full">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <Button 
@@ -281,6 +280,6 @@ export default function ClientDetailPage() {
           client={client}
         />
       </div>
-    </FullWidthLayout>
+    </div>
   );
 }
