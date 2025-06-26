@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Phone, Mail, Users, DollarSign, TrendingUp, Calendar, FileText, Download, Eye, Trophy } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Users, DollarSign, TrendingUp, Calendar, FileText, Download, Eye, Trophy, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
 const mockMarketer = {
@@ -74,6 +73,11 @@ export function MarketerDetailView() {
     }
   };
 
+  const handleEditProfile = () => {
+    // For now, show a toast since we don't have a marketer edit page yet
+    toast.info('Marketer profile editing functionality will be available soon');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center">
@@ -125,7 +129,10 @@ export function MarketerDetailView() {
                 <FileText className="h-4 w-4 mr-2" />
                 Download Report
               </Button>
-              <Button>Edit Profile</Button>
+              <Button onClick={handleEditProfile}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Profile
+              </Button>
             </div>
           </div>
         </CardContent>
