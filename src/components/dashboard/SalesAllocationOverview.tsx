@@ -19,6 +19,7 @@ import { HistoryTab } from './sales-allocation/HistoryTab';
 import { SalesFlowModal } from './sales-allocation/SalesFlowModal';
 import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
 import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
+import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 
 export function SalesAllocationOverview() {
@@ -168,12 +169,16 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
-          <TabsTrigger value="pending" className="relative">
+          <TabsTrigger value="pending-allocations" className="relative">
+            Pending Allocations
+            <Badge className="ml-2 bg-orange-600 text-white text-xs">3</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="pending-approvals" className="relative">
             Pending Approvals
-            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
+            <Badge className="ml-2 bg-yellow-600 text-white text-xs">2</Badge>
           </TabsTrigger>
         </TabsList>
 
@@ -185,13 +190,17 @@ export function SalesAllocationOverview() {
           <HistoryTab />
         </TabsContent>
 
-        <TabsContent value="pending" className="space-y-6">
+        <TabsContent value="pending-allocations" className="space-y-6">
           <PendingAllocationsTab 
             onAllocate={(data) => {
               console.log('Processing pending allocation:', data);
               // This would trigger the allocation flow
             }}
           />
+        </TabsContent>
+
+        <TabsContent value="pending-approvals" className="space-y-6">
+          <PendingApprovalsTab />
         </TabsContent>
       </Tabs>
 
