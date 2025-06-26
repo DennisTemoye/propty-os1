@@ -330,9 +330,9 @@ export default function EditProjectPage() {
           </div>
         </div>
 
-        {/* Form Content */}
+        {/* Form Content - Made wider by removing max-width constraint */}
         <div className="p-6">
-          <div className="max-w-4xl mx-auto">
+          <div className="w-full">
             <ProjectForm 
               project={project}
               onClose={handleFormSubmit}
