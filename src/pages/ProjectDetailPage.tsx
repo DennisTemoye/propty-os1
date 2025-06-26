@@ -253,7 +253,7 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <div className="w-full min-h-screen bg-gray-50 p-6">
+      <div className="w-full min-h-screen bg-gray-50 p-4 md:p-6">
         <div className="w-full">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h2>
@@ -335,7 +335,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
-      <div className="w-full p-6">
+      <div className="w-full p-4 md:p-6">
         {/* Top Navigation - Back button left, Action buttons right */}
         <div className="flex items-center justify-between mb-6">
           <Button 
