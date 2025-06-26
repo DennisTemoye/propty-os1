@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './components/ThemeProvider';
 import { Toaster } from './components/ui/toaster';
 import { Toaster as SonnerToaster } from 'sonner';
+import { AppLayout } from './components/layouts/AppLayout';
 
 // Pages
 import Index from './pages/Index';
@@ -46,32 +47,52 @@ function App() {
       <ThemeProvider defaultTheme="light" storageKey="proptyos-ui-theme">
         <Router>
           <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/superadmin-login" element={<SuperAdminLoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-code" element={<ResetCodePage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/book-demo" element={<BookDemoPage />} />
+            <Route path="/" element={<AppLayout />}>
+              {/* Public Routes */}
+              <Route index element={<Index />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="superadmin-login" element={<SuperAdminLoginPage />} />
+              <Route path="signup" element={<SignupPage />} />
+              <Route path="forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="reset-code" element={<ResetCodePage />} />
+              <Route path="reset-password" element={<ResetPasswordPage />} />
+              <Route path="book-demo" element={<BookDemoPage />} />
 
-            {/* Dashboard Routes */}
-            <Route path="/company/*" element={<CompanyDashboard />} />
-            <Route path="/company/projects/new" element={<NewProjectPage />} />
-            <Route path="/company/projects/:projectId" element={<ProjectDetailPage />} />
-            <Route path="/company/projects/:projectId/edit" element={<EditProjectPage />} />
-            <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
-            <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
-            <Route path="/company/clients/new" element={<NewClientPage />} />
-            <Route path="/company/marketers-commission" element={<MarketersCommissionPage />} />
-            <Route path="/company/marketers/:marketerId" element={<MarketerDetailPage />} />
+              {/* Company Routes - All will have fixed sidebar */}
+              <Route path="company">
+                <Route index element={<CompanyDashboard />} />
+                <Route path="dashboard" element={<CompanyDashboard />} />
+                <Route path="projects" element={<CompanyDashboard />} />
+                <Route path="projects/new" element={<NewProjectPage />} />
+                <Route path="projects/:projectId" element={<ProjectDetailPage />} />
+                <Route path="projects/:projectId/edit" element={<EditProjectPage />} />
+                <Route path="projects/:projectId/blocks" element={<ProjectBlocksPage />} />
+                <Route path="clients" element={<CompanyDashboard />} />
+                <Route path="clients/:clientId" element={<ClientDetailPage />} />
+                <Route path="clients/new" element={<NewClientPage />} />
+                <Route path="marketers" element={<CompanyDashboard />} />
+                <Route path="marketers-commission" element={<MarketersCommissionPage />} />
+                <Route path="marketers/:marketerId" element={<MarketerDetailPage />} />
+                <Route path="sales" element={<CompanyDashboard />} />
+                <Route path="fees" element={<CompanyDashboard />} />
+                <Route path="accounting" element={<CompanyDashboard />} />
+                <Route path="team" element={<CompanyDashboard />} />
+                <Route path="reports" element={<CompanyDashboard />} />
+                <Route path="tools/crm-pipelines" element={<CompanyDashboard />} />
+                <Route path="tools/document-manager" element={<CompanyDashboard />} />
+                <Route path="tools/calendar" element={<CompanyDashboard />} />
+                <Route path="tools/send-notice" element={<CompanyDashboard />} />
+                <Route path="settings" element={<CompanyDashboard />} />
+                <Route path="referrals" element={<CompanyDashboard />} />
+                <Route path="help" element={<CompanyDashboard />} />
+              </Route>
 
-            {/* Super Admin Routes */}
-            <Route path="/superadmin/*" element={<SuperAdminDashboard />} />
+              {/* Super Admin Routes */}
+              <Route path="superadmin/*" element={<SuperAdminDashboard />} />
 
-            {/* 404 Route */}
-            <Route path="*" element={<NotFound />} />
+              {/* 404 Route */}
+              <Route path="*" element={<NotFound />} />
+            </Route>
           </Routes>
         </Router>
         <Toaster />
