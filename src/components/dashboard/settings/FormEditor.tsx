@@ -85,40 +85,28 @@ export function FormEditor() {
       category: 'Core Forms',
       icon: <Building className="h-5 w-5" />,
       fields: [
-        // Project Image
-        { id: '1', name: 'image', label: 'Project Image URL', type: 'text', required: false, visible: true, placeholder: 'https://example.com/image.jpg' },
-        
         // Basic Information
-        { id: '2', name: 'projectName', label: 'Project Name', type: 'text', required: true, visible: true, placeholder: 'e.g., Victoria Gardens Estate' },
-        { id: '3', name: 'category', label: 'Project Category', type: 'select', required: true, visible: true, options: ['Housing', 'Mixed', 'Land', 'Commercial'] },
+        { id: '1', name: 'name', label: 'Project Name', type: 'text', required: true, visible: true, placeholder: 'e.g., Victoria Gardens Estate' },
+        { id: '2', name: 'location', label: 'Location', type: 'text', required: true, visible: true, placeholder: 'e.g., Lekki, Lagos' },
+        { id: '3', name: 'category', label: 'Project Category', type: 'select', required: true, visible: true, options: ['Housing', 'Land', 'Both'] },
         { id: '4', name: 'description', label: 'Project Description', type: 'textarea', required: false, visible: true, placeholder: 'Brief description of the project...' },
-        { id: '5', name: 'type', label: 'Project Type', type: 'select', required: true, visible: true, options: ['Residential', 'Commercial', 'Mixed-Use', 'Waterfront', 'Land Project'] },
-        { id: '6', name: 'status', label: 'Project Status', type: 'select', required: false, visible: true, options: ['Active', 'Ongoing', 'Completed', 'Upcoming', 'Paused', 'Sold Out'] },
-        { id: '7', name: 'projectSize', label: 'Project Size', type: 'text', required: false, visible: true, placeholder: 'e.g., 50 hectares' },
-        { id: '8', name: 'documentTitle', label: 'Document Title', type: 'text', required: false, visible: true, placeholder: 'e.g., Certificate of Occupancy, Family Receipt' },
-        
-        // Location Details
-        { id: '9', name: 'location', label: 'Location', type: 'text', required: true, visible: true, placeholder: 'e.g., Lekki, Lagos' },
-        { id: '10', name: 'address', label: 'Full Address', type: 'text', required: false, visible: true, placeholder: 'e.g., Plot 123, Lekki Phase 1' },
-        { id: '11', name: 'city', label: 'City', type: 'text', required: true, visible: true, placeholder: 'e.g., Lagos' },
-        { id: '12', name: 'state', label: 'State', type: 'text', required: true, visible: true, placeholder: 'e.g., Lagos State' },
-        { id: '13', name: 'lga', label: 'LGA', type: 'text', required: false, visible: true, placeholder: 'e.g., Eti-Osa' },
-        { id: '14', name: 'country', label: 'Country', type: 'select', required: false, visible: true, options: ['Nigeria', 'Ghana', 'Kenya', 'South Africa'] },
+        { id: '5', name: 'documentTitle', label: 'Document Title', type: 'text', required: false, visible: true, placeholder: 'e.g., Certificate of Occupancy, Family Receipt' },
         
         // Project Details
-        { id: '15', name: 'developmentStage', label: 'Development Stage', type: 'select', required: false, visible: true, options: ['Land Acquisition', 'Planning & Approvals', 'Subdivision', 'Infrastructure', 'Construction', 'Marketing', 'Pre-Launch', 'Sales', 'Handover'] },
-        { id: '16', name: 'totalBudget', label: 'Total Budget', type: 'text', required: false, visible: true, placeholder: 'e.g., ₦5,000,000,000' },
-        { id: '17', name: 'totalBlocks', label: 'Total Blocks', type: 'number', required: false, visible: true, placeholder: 'e.g., 5' },
-        { id: '18', name: 'totalUnits', label: 'Total Units', type: 'number', required: false, visible: true, placeholder: 'e.g., 150' },
+        { id: '6', name: 'status', label: 'Project Status', type: 'select', required: true, visible: true, options: ['Acquisition', 'Documentation', 'Planning', 'Construction', 'Presale', 'Selling', 'Pause Sales', 'Sold Out'] },
+        { id: '7', name: 'projectSize', label: 'Project Size', type: 'text', required: false, visible: true, placeholder: 'e.g., 50 hectares or 150 units' },
+        { id: '8', name: 'projectManager', label: 'Project Manager', type: 'select', required: false, visible: true, options: ['Alice Johnson', 'John Smith', 'Sarah Wilson', 'Mike Brown', 'Emily Davis'] },
+        { id: '9', name: 'tags', label: 'Tags', type: 'text', required: false, visible: true, placeholder: 'e.g., Premium, Luxury, Family (comma separated)' },
         
         // Timeline & Management
-        { id: '19', name: 'startDate', label: 'Start Date', type: 'date', required: false, visible: true },
-        { id: '20', name: 'expectedCompletion', label: 'Expected Completion', type: 'date', required: false, visible: true },
-        { id: '21', name: 'projectManager', label: 'Project Manager', type: 'text', required: false, visible: true, placeholder: 'Project Manager Name' },
-        { id: '22', name: 'contactPerson', label: 'Contact Person', type: 'text', required: false, visible: true, placeholder: 'Project Manager/Lead' },
-        { id: '23', name: 'contactPhone', label: 'Contact Phone', type: 'phone', required: false, visible: true, placeholder: '+234 xxx xxx xxxx' },
-        { id: '24', name: 'contactEmail', label: 'Contact Email', type: 'email', required: false, visible: true, placeholder: 'project@company.com' },
-        { id: '25', name: 'internalNotes', label: 'Internal Notes', type: 'textarea', required: false, visible: true, placeholder: 'Internal notes and remarks...' },
+        { id: '10', name: 'startDate', label: 'Start Date', type: 'date', required: false, visible: true },
+        { id: '11', name: 'expectedCompletion', label: 'Expected Completion', type: 'date', required: false, visible: true },
+        { id: '12', name: 'totalBudget', label: 'Total Budget', type: 'text', required: false, visible: true, placeholder: 'e.g., ₦5,000,000,000' },
+        
+        // Contact Information
+        { id: '13', name: 'contactPerson', label: 'Contact Person', type: 'text', required: false, visible: true, placeholder: 'Project Manager/Lead' },
+        { id: '14', name: 'contactPhone', label: 'Contact Phone', type: 'phone', required: false, visible: true, placeholder: '+234 xxx xxx xxxx' },
+        { id: '15', name: 'contactEmail', label: 'Contact Email', type: 'email', required: false, visible: true, placeholder: 'project@company.com' },
       ]
     },
     {
