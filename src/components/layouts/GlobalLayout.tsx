@@ -29,29 +29,34 @@ export function GlobalLayout({
       "min-h-screen bg-background flex flex-col w-full",
       className
     )}>
-      {/* Header */}
-      {header && (
+      {/* Header - only shown on small screens when sidebar is present */}
+      {header && isSmallScreen && (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           {header}
         </header>
       )}
 
-      <div className="flex flex-1 overflow-hidden w-full">
+      <div className="flex flex-1 w-full min-h-0">
         {/* Sidebar - Fixed on desktop, overlay on mobile/tablet */}
         {sidebar && (
-          <aside className={cn(
-            "bg-muted/40 border-r",
-            isSmallScreen 
-              ? "fixed inset-y-0 left-0 z-40 w-64 transform transition-transform" 
-              : "fixed left-0 top-0 h-screen w-[260px] z-40 overflow-y-auto"
-          )}>
-            {sidebar}
-          </aside>
+          <>
+            {isSmallScreen ? (
+              // Mobile/Tablet overlay sidebar
+              <aside className="fixed inset-y-0 left-0 z-40 w-64 transform transition-transform bg-white border-r">
+                {sidebar}
+              </aside>
+            ) : (
+              // Desktop fixed sidebar
+              <aside className="fixed left-0 top-0 h-screen w-[260px] z-40 bg-white border-r overflow-y-auto">
+                {sidebar}
+              </aside>
+            )}
+          </>
         )}
 
         {/* Main Content */}
         <main className={cn(
-          "flex-1 overflow-auto w-full",
+          "flex-1 w-full min-h-screen",
           sidebar && !isSmallScreen && "ml-[260px]",
           isSmallScreen && "w-full"
         )}>

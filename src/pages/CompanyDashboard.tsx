@@ -27,7 +27,7 @@ import { Menu, X } from 'lucide-react';
 
 const CompanyDashboard = () => {
   const location = useLocation();
-  const { isMobile, isTablet, isSmallScreen } = useResponsive();
+  const { isSmallScreen } = useResponsive();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderActiveModule = () => {
@@ -119,7 +119,7 @@ const CompanyDashboard = () => {
             />
           )}
           
-          <div className="w-full h-full">
+          <div className="w-full">
             {renderActiveModule()}
           </div>
         </GlobalLayout>

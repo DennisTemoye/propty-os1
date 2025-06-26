@@ -84,7 +84,7 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     }
   };
 
-  // Mobile/Tablet sidebar - overlay style
+  // Mobile/Tablet sidebar - overlay/slide-out style
   if (isSmallScreen) {
     return (
       <div className={cn(
@@ -206,7 +206,7 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop sidebar - fixed positioning
+  // Desktop sidebar - always visible and fixed
   return (
     <div className={cn(
       'h-full w-full bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900',
@@ -283,7 +283,7 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
                   ))}
                 </CollapsibleContent>
               </Collapsible>
-
+              
               <Button 
                 variant="ghost" 
                 className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none"
