@@ -220,14 +220,14 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop and Tablet sidebar
+  // Desktop and Tablet sidebar - always visible
   return (
     <div className={cn(
-      'bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800',
+      'bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 h-full',
       isTablet ? 'w-16' : 'w-64',
       className
     )}>
-      <div className="space-y-4 py-4">
+      <div className="space-y-4 py-4 h-full flex flex-col">
         <div className="px-3 py-2">
           <div className="flex items-center mb-2">
             <Building2 className="h-6 w-6 mr-2 text-blue-300" />
@@ -244,8 +244,8 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
           )}
         </div>
         
-        <div className="px-3">
-          <ScrollArea className="h-[calc(100vh-160px)]">
+        <div className="px-3 flex-1">
+          <ScrollArea className="h-full">
             <div className="space-y-1">
               {sidebarItems.map((item) => (
                 <Button

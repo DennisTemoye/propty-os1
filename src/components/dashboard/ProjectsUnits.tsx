@@ -293,7 +293,7 @@ export function ProjectsUnits() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
@@ -321,6 +321,7 @@ export function ProjectsUnits() {
                   <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
                   <div className="text-xs text-gray-500">{kpi.subtitle}</div>
                 </div>
+                
                 <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
                   <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
                 </div>
@@ -378,7 +379,7 @@ export function ProjectsUnits() {
 
       {/* Projects Display */}
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredProjects.map((project) => (
             <Card 
               key={project.id} 
@@ -450,14 +451,6 @@ export function ProjectsUnits() {
                       <span className="text-gray-600">Revenue:</span>
                       <span className="font-medium text-green-600">{project.revenue}</span>
                     </div>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${((project.allocatedUnits || project.soldUnits) / project.totalUnits) * 100}%` }}
-                    ></div>
                   </div>
                 </div>
               </CardContent>

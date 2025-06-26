@@ -9,6 +9,8 @@ interface GlobalLayoutProps {
   sidebar?: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  fullWidth?: boolean;
+  formLayout?: boolean;
 }
 
 export function GlobalLayout({ 
@@ -16,7 +18,9 @@ export function GlobalLayout({
   className, 
   sidebar, 
   header, 
-  footer 
+  footer,
+  fullWidth = false,
+  formLayout = false
 }: GlobalLayoutProps) {
   const { isSmallScreen } = useBreakpoints();
 
@@ -49,7 +53,10 @@ export function GlobalLayout({
           sidebar && !isSmallScreen && "ml-0",
           isSmallScreen && "w-full"
         )}>
-          <div className="container mx-auto p-4 md:p-6 lg:p-8">
+          <div className={cn(
+            fullWidth ? "w-full" : "container mx-auto",
+            formLayout ? "max-w-4xl mx-auto p-4 md:p-6 lg:p-8" : fullWidth ? "p-4 md:p-6 lg:p-8" : "p-4 md:p-6 lg:p-8"
+          )}>
             {children}
           </div>
         </main>

@@ -1,11 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-react';
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
-import { ClientForm } from '@/components/dashboard/clients/ClientForm';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
 import { toast } from 'sonner';
@@ -167,7 +164,6 @@ export default function ClientDetailPage() {
   const { clientId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   
@@ -184,7 +180,7 @@ export default function ClientDetailPage() {
   }
 
   const handleEdit = () => {
-    setIsEditOpen(true);
+    navigate(`/company/clients/${client.id}/edit`);
   };
 
   const handleDelete = () => {
@@ -204,20 +200,20 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 w-full">
+      <div className="w-full p-6">
         <div className="mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <Button 
               variant="outline" 
               onClick={() => navigate('/company/clients')}
-              className="mb-4"
+              className="self-start"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Clients
             </Button>
             
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button 
                 onClick={handleAssignProperty}
                 className="bg-green-600 hover:bg-green-700"
@@ -252,19 +248,6 @@ export default function ClientDetailPage() {
         </div>
         
         <ClientDetailView client={client} />
-
-        {/* Edit Client Modal */}
-        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Edit Client</DialogTitle>
-              <DialogDescription>
-                Update client information and details
-              </DialogDescription>
-            </DialogHeader>
-            <ClientForm client={client} onClose={() => setIsEditOpen(false)} />
-          </DialogContent>
-        </Dialog>
 
         {/* Assign Property Modal */}
         <AssignPropertyModal 

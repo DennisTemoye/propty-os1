@@ -23,6 +23,7 @@ import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import ProjectBlocksPage from './pages/ProjectBlocksPage';
 import ClientDetailPage from './pages/ClientDetailPage';
+import EditClientPage from './pages/EditClientPage';
 import NewClientPage from './pages/NewClientPage';
 import MarketersCommissionPage from './pages/MarketersCommissionPage';
 import MarketerDetailPage from './pages/MarketerDetailPage';
@@ -63,6 +64,7 @@ function App() {
             <Route path="/company/projects/:projectId/edit" element={<EditProjectPage />} />
             <Route path="/company/projects/:projectId/blocks" element={<ProjectBlocksPage />} />
             <Route path="/company/clients/:clientId" element={<ClientDetailPage />} />
+            <Route path="/company/clients/:clientId/edit" element={<EditClientPage />} />
             <Route path="/company/clients/new" element={<NewClientPage />} />
             <Route path="/company/marketers-commission" element={<MarketersCommissionPage />} />
             <Route path="/company/marketers/:marketerId" element={<MarketerDetailPage />} />
