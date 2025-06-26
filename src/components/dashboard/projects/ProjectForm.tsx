@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { MapPin, Building2, Layers, Info, Plus, Trash2, FileText } from 'lucide-react';
+import { Form } from '@/components/ui/form';
+import { FormInput } from '@/components/shared/FormInput';
+import { FormSelect } from '@/components/shared/FormSelect';
+import { MapPin, Building2, Layers, Info, Plus, Trash2 } from 'lucide-react';
+import { projectTypeOptions, projectStatusOptions, developmentStageOptions } from '@/forms/projectFormSchema';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 
 interface ProjectFormProps {
   project?: any;
@@ -98,112 +102,54 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
+                    <FormInput
                       control={form.control}
                       name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Project Name *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Victoria Gardens Estate" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Project Name"
+                      placeholder="e.g., Victoria Gardens Estate"
+                      required
                     />
                     
-                    <FormField
+                    <FormInput
                       control={form.control}
                       name="location"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Location *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Lekki, Lagos" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Location"
+                      placeholder="e.g., Lekki, Lagos"
+                      required
                     />
                   </div>
 
-                  <FormField
+                  <FormInput
                     control={form.control}
                     name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-left">Project Description</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Brief description of the project..."
-                            className="min-h-[100px]"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    label="Project Description"
+                    placeholder="Brief description of the project..."
+                    type="textarea"
                   />
 
-                  <FormField
+                  <FormInput
                     control={form.control}
                     name="documentTitle"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-left">Document Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., Certificate of Occupancy, Family Receipt, Approved Survey" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    label="Document Title"
+                    placeholder="e.g., Certificate of Occupancy, Family Receipt, Approved Survey"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
+                    <FormSelect
                       control={form.control}
                       name="type"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Project Type *</FormLabel>
-                          <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Residential">Residential</SelectItem>
-                                <SelectItem value="Commercial">Commercial</SelectItem>
-                                <SelectItem value="Mixed-Use">Mixed-Use</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Project Type"
+                      placeholder="Select type"
+                      options={projectTypeOptions}
+                      required
                     />
 
-                    <FormField
+                    <FormSelect
                       control={form.control}
                       name="status"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Project Status</FormLabel>
-                          <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="paused">Paused</SelectItem>
-                                <SelectItem value="sold out">Sold Out</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Project Status"
+                      placeholder="Select status"
+                      options={projectStatusOptions}
                     />
                   </div>
                 </CardContent>
@@ -220,90 +166,42 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
+                    <FormInput
                       control={form.control}
                       name="projectSize"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Project Size</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., 50 hectares" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Project Size"
+                      placeholder="e.g., 50 hectares"
                     />
 
-                    <FormField
+                    <FormSelect
                       control={form.control}
                       name="developmentStage"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Development Stage</FormLabel>
-                          <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select stage" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Land Acquisition">Land Acquisition</SelectItem>
-                                <SelectItem value="Planning & Approvals">Planning & Approvals</SelectItem>
-                                <SelectItem value="Subdivision">Subdivision</SelectItem>
-                                <SelectItem value="Infrastructure">Infrastructure</SelectItem>
-                                <SelectItem value="Construction">Construction</SelectItem>
-                                <SelectItem value="Marketing">Marketing</SelectItem>
-                                <SelectItem value="Sales">Sales</SelectItem>
-                                <SelectItem value="Handover">Handover</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Development Stage"
+                      placeholder="Select stage"
+                      options={developmentStageOptions}
                     />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField
+                    <FormInput
                       control={form.control}
                       name="startDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Start Date</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Start Date"
+                      type="date"
                     />
 
-                    <FormField
+                    <FormInput
                       control={form.control}
                       name="expectedCompletion"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Expected Completion</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Expected Completion"
+                      type="date"
                     />
 
-                    <FormField
+                    <FormInput
                       control={form.control}
                       name="totalBudget"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-left">Total Budget</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., ₦5,000,000,000" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="Total Budget"
+                      placeholder="e.g., ₦5,000,000,000"
                     />
                   </div>
                 </CardContent>
