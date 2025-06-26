@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
@@ -71,23 +72,29 @@ const CompanyDashboard = () => {
   };
 
   // Check if current page is a detail page that needs full width
-  const isDetailPage = location.pathname.includes('/projects/') || location.pathname.includes('/clients/');
+  const isDetailPage = location.pathname.includes('/projects/') || location.pathname.includes('/clients/') || location.pathname.includes('/marketers/');
 
   return (
     <div className="w-full">
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+        <div className={`min-h-screen w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
           
-          <CompanySidebar 
-            isOpen={sidebarOpen} 
-            onClose={() => setSidebarOpen(false)} 
-          />
-          
-          {/* Main content with left margin for fixed sidebar on desktop */}
+          {/* Sidebar - Fixed positioning for desktop, overlay for mobile */}
           <div className={cn(
-            "flex-1 flex flex-col min-w-0 overflow-hidden w-full",
-            !isSmallScreen && "ml-64" // Add left margin for fixed sidebar on desktop
+            "fixed left-0 top-0 z-40 h-full",
+            isSmallScreen ? "w-0" : "w-64"
+          )}>
+            <CompanySidebar 
+              isOpen={sidebarOpen} 
+              onClose={() => setSidebarOpen(false)} 
+            />
+          </div>
+          
+          {/* Content Area - Always accounts for sidebar width on desktop */}
+          <div className={cn(
+            "flex flex-col min-h-screen w-full",
+            !isSmallScreen && "ml-64" // Push content right by sidebar width on desktop
           )}>
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
@@ -113,6 +120,7 @@ const CompanyDashboard = () => {
               </header>
             )}
             
+            {/* Main Content */}
             <main className="flex-1 overflow-auto w-full">
               {isDetailPage ? (
                 // Detail pages render without container for full width

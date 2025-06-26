@@ -228,10 +228,10 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop - Fixed Sidebar
+  // Desktop - Fixed Sidebar that fills the allocated space
   return (
     <div className={cn(
-      'fixed left-0 top-0 h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 w-64 flex-shrink-0 z-30',
+      'h-full w-full bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 flex-shrink-0',
       className
     )}>
       <div className="flex flex-col h-full">
