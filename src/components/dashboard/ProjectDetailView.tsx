@@ -48,8 +48,11 @@ const mockProjects = [
 ];
 
 export function ProjectDetailView() {
-  const { projectId } = useParams();
+  const params = useParams();
   const navigate = useNavigate();
+  
+  // Extract projectId from URL params - handle both :projectId and :id patterns
+  const projectId = params.projectId || params.id;
   
   const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
   const [isReallocateOpen, setIsReallocateOpen] = useState(false);
@@ -72,7 +75,13 @@ export function ProjectDetailView() {
   }
 
   const handleAllocateUnit = () => setIsAllocateUnitOpen(true);
-  const handleEditProject = () => navigate(`/company/projects/${projectId}/edit`);
+  const handleEditProject = () => {
+    if (projectId) {
+      navigate(`/company/projects/${projectId}/edit`);
+    } else {
+      toast.error('Project ID not found');
+    }
+  };
   const handleReallocate = (unitId: string, clientName: string) => {
     setReallocateData({ unitId, clientName });
     setIsReallocateOpen(true);

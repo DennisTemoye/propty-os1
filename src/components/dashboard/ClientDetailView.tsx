@@ -36,9 +36,13 @@ const mockClients = [
 ];
 
 export function ClientDetailView() {
-  const { clientId } = useParams();
+  const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Extract clientId from URL params - handle both :clientId and :id patterns
+  const clientId = params.clientId || params.id;
+  
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   
@@ -62,7 +66,13 @@ export function ClientDetailView() {
     );
   }
 
-  const handleEdit = () => navigate(`/company/clients/${clientId}/edit`);
+  const handleEdit = () => {
+    if (clientId) {
+      navigate(`/company/clients/${clientId}/edit`);
+    } else {
+      toast.error('Client ID not found');
+    }
+  };
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this client? This action cannot be undone.')) {
       toast.success('Client deleted successfully');

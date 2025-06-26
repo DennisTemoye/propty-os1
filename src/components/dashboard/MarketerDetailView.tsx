@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,8 +32,12 @@ const mockMarketer = {
 };
 
 export function MarketerDetailView() {
-  const { marketerId } = useParams();
+  const params = useParams();
   const navigate = useNavigate();
+  
+  // Extract marketerId from URL params - handle both :marketerId and :id patterns
+  const marketerId = params.marketerId || params.id;
+  
   const [projectFilter, setProjectFilter] = useState('all');
 
   const salesData = [
@@ -75,11 +78,15 @@ export function MarketerDetailView() {
   };
 
   const handleEditProfile = () => {
-    // Navigate to marketer edit page when it becomes available
-    // For now, show a toast since we don't have a marketer edit page yet
-    toast.info('Marketer profile editing functionality will be available soon');
-    // TODO: Uncomment when edit page is created
-    // navigate(`/company/marketers/${marketerId}/edit`);
+    if (marketerId) {
+      // Navigate to marketer edit page when it becomes available
+      // For now, show a toast since we don't have a marketer edit page yet
+      toast.info('Marketer profile editing functionality will be available soon');
+      // TODO: Uncomment when edit page is created
+      // navigate(`/company/marketers/${marketerId}/edit`);
+    } else {
+      toast.error('Marketer ID not found');
+    }
   };
 
   return (
