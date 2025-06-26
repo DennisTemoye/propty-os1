@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,8 +5,6 @@ import { ArrowLeft, Edit, Trash2, Building, Plus, DollarSign } from 'lucide-reac
 import { ClientDetailView } from '@/components/dashboard/clients/ClientDetailView';
 import { AssignPropertyModal } from '@/components/dashboard/clients/AssignPropertyModal';
 import { AddPaymentModal } from '@/components/dashboard/clients/AddPaymentModal';
-import { GlobalLayout } from '@/components/layouts/GlobalLayout';
-import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { toast } from 'sonner';
 
 const mockClients = [
@@ -179,11 +176,7 @@ export default function ClientDetailPage() {
   }, [location.state]);
 
   if (!client) {
-    return (
-      <GlobalLayout sidebar={<CompanySidebar />}>
-        <div>Client not found</div>
-      </GlobalLayout>
-    );
+    return <div>Client not found</div>;
   }
 
   const handleEdit = () => {
@@ -207,67 +200,69 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <GlobalLayout sidebar={<CompanySidebar />}>
-      <div className="mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/company/clients')}
-            className="self-start"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Clients
-          </Button>
-          
-          <div className="flex flex-wrap gap-2">
+    <div className="min-h-screen bg-gray-50 w-full">
+      <div className="w-full p-6">
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <Button 
-              onClick={handleAssignProperty}
-              className="bg-green-600 hover:bg-green-700"
+              variant="outline" 
+              onClick={() => navigate('/company/clients')}
+              className="self-start"
             >
-              <Building className="h-4 w-4 mr-2" />
-              Assign Property
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Clients
             </Button>
-            <Button 
-              onClick={handleAddPayment}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <DollarSign className="h-4 w-4 mr-2" />
-              Add Payment
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={handleEdit}
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Client
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={handleDelete}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Client
-            </Button>
+            
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                onClick={handleAssignProperty}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Building className="h-4 w-4 mr-2" />
+                Assign Property
+              </Button>
+              <Button 
+                onClick={handleAddPayment}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <DollarSign className="h-4 w-4 mr-2" />
+                Add Payment
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={handleEdit}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Client
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={handleDelete}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Client
+              </Button>
+            </div>
           </div>
         </div>
+        
+        <ClientDetailView client={client} />
+
+        {/* Assign Property Modal */}
+        <AssignPropertyModal 
+          isOpen={isAssignPropertyOpen}
+          onClose={() => setIsAssignPropertyOpen(false)}
+          client={client}
+        />
+
+        {/* Add Payment Modal */}
+        <AddPaymentModal 
+          isOpen={isAddPaymentOpen}
+          onClose={() => setIsAddPaymentOpen(false)}
+          client={client}
+        />
       </div>
-      
-      <ClientDetailView client={client} />
-
-      {/* Assign Property Modal */}
-      <AssignPropertyModal 
-        isOpen={isAssignPropertyOpen}
-        onClose={() => setIsAssignPropertyOpen(false)}
-        client={client}
-      />
-
-      {/* Add Payment Modal */}
-      <AddPaymentModal 
-        isOpen={isAddPaymentOpen}
-        onClose={() => setIsAddPaymentOpen(false)}
-        client={client}
-      />
-    </GlobalLayout>
+    </div>
   );
 }

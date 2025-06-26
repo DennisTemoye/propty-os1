@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -80,26 +81,26 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
 
   const handleNavigate = (path: string) => {
     navigate(path);
-    if ((isMobile || isTablet) && onClose) {
+    if (isMobile && onClose) {
       onClose();
     }
   };
 
-  // Show mobile/tablet overlay sidebar
-  if (isMobile || isTablet) {
+  // Mobile overlay
+  if (isMobile) {
     return (
       <>
         {/* Backdrop */}
         {isOpen && (
           <div 
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
             onClick={onClose}
           />
         )}
         
         {/* Sidebar Drawer */}
         <div className={cn(
-          'fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 z-50 transform transition-transform duration-300 md:hidden',
+          'fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 z-50 transform transition-transform duration-300 lg:hidden',
           isOpen ? 'translate-x-0' : '-translate-x-full',
           className
         )}>
@@ -219,23 +220,28 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop sidebar - Always visible and fixed
+  // Desktop and Tablet sidebar - always visible
   return (
     <div className={cn(
-      'bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 h-full w-64 flex-shrink-0',
+      'bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 h-full',
+      isTablet ? 'w-16' : 'w-64',
       className
     )}>
       <div className="space-y-4 py-4 h-full flex flex-col">
         <div className="px-3 py-2">
           <div className="flex items-center mb-2">
             <Building2 className="h-6 w-6 mr-2 text-blue-300" />
-            <h2 className="text-lg font-semibold tracking-tight text-white">ProptyOS</h2>
+            {!isTablet && (
+              <h2 className="text-lg font-semibold tracking-tight text-white">ProptyOS</h2>
+            )}
           </div>
-          <div className="flex items-center text-sm text-blue-200">
-            <Badge variant="outline" className="text-xs border-blue-300 text-blue-200">
-              Built for Africa
-            </Badge>
-          </div>
+          {!isTablet && (
+            <div className="flex items-center text-sm text-blue-200">
+              <Badge variant="outline" className="text-xs border-blue-300 text-blue-200">
+                Built for Africa
+              </Badge>
+            </div>
+          )}
         </div>
         
         <div className="px-3 flex-1">
@@ -246,73 +252,85 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
                   key={item.path}
                   variant={isActivePath(item.path) ? 'secondary' : 'ghost'}
                   className={cn(
-                    'w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
-                    isActivePath(item.path) && 'bg-blue-700 text-white shadow-lg'
+                    'w-full text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
+                    isActivePath(item.path) && 'bg-blue-700 text-white shadow-lg',
+                    isTablet ? 'justify-center px-2' : 'justify-start'
                   )}
                   onClick={() => navigate(item.path)}
+                  title={isTablet ? item.label : undefined}
                 >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.label}
+                  <item.icon className={cn('h-4 w-4', !isTablet && 'mr-2')} />
+                  {!isTablet && item.label}
                 </Button>
               ))}
               
-              <Collapsible 
-                open={isAdvancedToolsOpen} 
-                onOpenChange={setIsAdvancedToolsOpen}
-                className="mt-2"
-              >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant={isAdvancedToolsActive() ? 'secondary' : 'ghost'}
-                    className={cn(
-                      'w-full justify-between text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
-                      isAdvancedToolsActive() && 'bg-blue-700 text-white shadow-lg'
-                    )}
-                  >
-                    <div className="flex items-center">
-                      <Wrench className="mr-2 h-4 w-4" />
-                      Advanced Tools
-                    </div>
-                    <ChevronDown className={cn(
-                      "h-4 w-4 transition-transform duration-200 text-blue-200",
-                      isAdvancedToolsOpen && "rotate-180"
-                    )} />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-1 mt-1">
-                  {advancedToolsItems.map((item) => (
+              {!isTablet && (
+                <Collapsible 
+                  open={isAdvancedToolsOpen} 
+                  onOpenChange={setIsAdvancedToolsOpen}
+                  className="mt-2"
+                >
+                  <CollapsibleTrigger asChild>
                     <Button
-                      key={item.path}
-                      variant={isActivePath(item.path) ? 'secondary' : 'ghost'}
+                      variant={isAdvancedToolsActive() ? 'secondary' : 'ghost'}
                       className={cn(
-                        'w-full justify-start pl-8 text-sm text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
-                        isActivePath(item.path) && 'bg-blue-700 text-white shadow-lg'
+                        'w-full justify-between text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
+                        isAdvancedToolsActive() && 'bg-blue-700 text-white shadow-lg'
                       )}
-                      onClick={() => navigate(item.path)}
                     >
-                      <item.icon className="mr-2 h-3 w-3" />
-                      {item.label}
+                      <div className="flex items-center">
+                        <Wrench className="mr-2 h-4 w-4" />
+                        Advanced Tools
+                      </div>
+                      <ChevronDown className={cn(
+                        "h-4 w-4 transition-transform duration-200 text-blue-200",
+                        isAdvancedToolsOpen && "rotate-180"
+                      )} />
                     </Button>
-                  ))}
-                </CollapsibleContent>
-              </Collapsible>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-1 mt-1">
+                    {advancedToolsItems.map((item) => (
+                      <Button
+                        key={item.path}
+                        variant={isActivePath(item.path) ? 'secondary' : 'ghost'}
+                        className={cn(
+                          'w-full justify-start pl-8 text-sm text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
+                          isActivePath(item.path) && 'bg-blue-700 text-white shadow-lg'
+                        )}
+                        onClick={() => navigate(item.path)}
+                      >
+                        <item.icon className="mr-2 h-3 w-3" />
+                        {item.label}
+                      </Button>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
 
               <Button 
                 variant="ghost" 
-                className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none"
+                className={cn(
+                  'w-full text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
+                  isTablet ? 'justify-center px-2' : 'justify-start'
+                )}
                 onClick={() => navigate('/company/settings')}
+                title={isTablet ? 'Settings' : undefined}
               >
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
+                <Settings className={cn('h-4 w-4', !isTablet && 'mr-2')} />
+                {!isTablet && 'Settings'}
               </Button>
               
               <Button 
                 variant="ghost" 
-                className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none"
+                className={cn(
+                  'w-full text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
+                  isTablet ? 'justify-center px-2' : 'justify-start'
+                )}
                 onClick={() => navigate('/company/referrals')}
+                title={isTablet ? 'Referral Program' : undefined}
               >
-                <Gift className="mr-2 h-4 w-4" />
-                Referral Program
+                <Gift className={cn('h-4 w-4', !isTablet && 'mr-2')} />
+                {!isTablet && 'Referral Program'}
               </Button>
             </div>
             
@@ -320,19 +338,27 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
               <div className="space-y-1">
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none"
+                  className={cn(
+                    'w-full text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
+                    isTablet ? 'justify-center px-2' : 'justify-start'
+                  )}
                   onClick={() => navigate('/company/help')}
+                  title={isTablet ? 'Support / Help Center' : undefined}
                 >
-                  <HelpCircle className="mr-2 h-4 w-4" />
-                  Support / Help Center
+                  <HelpCircle className={cn('h-4 w-4', !isTablet && 'mr-2')} />
+                  {!isTablet && 'Support / Help Center'}
                 </Button>
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-start text-red-300 hover:text-red-200 hover:bg-red-900/30 border-none"
+                  className={cn(
+                    'w-full text-red-300 hover:text-red-200 hover:bg-red-900/30 border-none',
+                    isTablet ? 'justify-center px-2' : 'justify-start'
+                  )}
                   onClick={handleLogout}
+                  title={isTablet ? 'Logout' : undefined}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  <LogOut className={cn('h-4 w-4', !isTablet && 'mr-2')} />
+                  {!isTablet && 'Logout'}
                 </Button>
               </div>
             </div>
