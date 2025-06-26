@@ -1,234 +1,242 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  TrendingUp, 
-  Users, 
   Building, 
   DollarSign, 
-  ArrowUpRight, 
-  ArrowDownRight,
-  Eye,
-  FileText,
-  Calendar,
-  MapPin
+  ArrowRight, 
+  Ban,
+  TrendingUp,
+  Users,
+  Calculator,
+  Clock,
+  CheckCircle
 } from 'lucide-react';
 import { 
-  BarChart, 
-  Bar, 
+  AreaChart, 
+  Area, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
+  BarChart,
+  Bar,
   PieChart,
   Pie,
-  Cell,
-  LineChart,
-  Line
+  Cell
 } from 'recharts';
-import { useNavigationHelper } from './NavigationHelper';
 
-const salesData = [
-  { month: 'Jan', sales: 12, allocations: 10 },
-  { month: 'Feb', sales: 18, allocations: 15 },
-  { month: 'Mar', sales: 25, allocations: 22 },
-  { month: 'Apr', sales: 20, allocations: 18 },
-  { month: 'May', sales: 32, allocations: 28 },
-  { month: 'Jun', sales: 28, allocations: 25 }
-];
-
-const allocationData = [
-  { name: 'Allocated', value: 156, color: '#10b981' },
-  { name: 'Available', value: 89, color: '#6b7280' },
-  { name: 'Reserved', value: 23, color: '#f59e0b' }
-];
-
-const projectData = [
-  { name: 'Victoria Gardens', sales: 45, allocation: 85 },
-  { name: 'Emerald Heights', sales: 32, allocation: 92 },
-  { name: 'Golden View', sales: 28, allocation: 78 },
-  { name: 'Ocean Breeze', sales: 15, allocation: 60 }
-];
-
-const recentActivities = [
+const mockKPIData = [
   {
-    id: 1,
-    type: 'sale',
-    description: 'New sale recorded for John Doe',
-    project: 'Victoria Gardens',
-    amount: '₦25M',
-    time: '2 hours ago',
-    status: 'completed'
+    title: 'Total Sales Recorded',
+    value: '234',
+    subtitle: 'All time',
+    icon: DollarSign,
+    color: 'text-green-700',
+    bgColor: 'bg-green-100',
+    change: '+18%',
+    changeType: 'positive'
   },
   {
-    id: 2,
-    type: 'allocation',
-    description: 'Unit allocated to Sarah Johnson',
-    project: 'Emerald Heights',
-    unit: 'Block A - Plot 15',
-    time: '4 hours ago',
-    status: 'pending'
+    title: 'Units Allocated',
+    value: '156',
+    subtitle: 'Active allocations',
+    icon: Building,
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-100',
+    change: '+12%',
+    changeType: 'positive'
   },
   {
-    id: 3,
-    type: 'reallocation',
-    description: 'Unit reallocated from Mike to Alice',
-    project: 'Golden View',
-    unit: 'Block B - Plot 8',
-    time: '1 day ago',
-    status: 'approved'
+    title: 'Pending Allocations',
+    value: '23',
+    subtitle: 'Awaiting assignment',
+    icon: Clock,
+    color: 'text-orange-700',
+    bgColor: 'bg-orange-100',
+    change: '+5%',
+    changeType: 'positive'
+  },
+  {
+    title: 'Completed This Month',
+    value: '45',
+    subtitle: 'Sales + Allocations',
+    icon: CheckCircle,
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-100',
+    change: '+15%',
+    changeType: 'positive'
   }
 ];
 
+const salesAllocationTrends = [
+  { month: 'Jan', sales: 18, allocations: 12, pending: 6 },
+  { month: 'Feb', sales: 22, allocations: 18, pending: 4 },
+  { month: 'Mar', sales: 28, allocations: 22, pending: 6 },
+  { month: 'Apr', sales: 35, allocations: 28, pending: 7 },
+  { month: 'May', sales: 42, allocations: 35, pending: 7 },
+  { month: 'Jun', sales: 48, allocations: 40, pending: 8 }
+];
+
+const salesTypeData = [
+  { name: 'Presale', value: 78, color: '#3B82F6' },
+  { name: 'With Allocation', value: 156, color: '#10B981' }
+];
+
+const projectPerformance = [
+  { project: 'Victoria Gardens', sales: 45, allocations: 38, pending: 7 },
+  { project: 'Emerald Heights', sales: 32, allocations: 28, pending: 4 },
+  { project: 'Golden View', sales: 28, allocations: 25, pending: 3 },
+  { project: 'Ocean Breeze', sales: 25, allocations: 20, pending: 5 },
+  { project: 'Royal Estate', sales: 20, allocations: 18, pending: 2 }
+];
+
 export function OverviewTab() {
-  const [activeChart, setActiveChart] = useState('sales');
-  const { 
-    navigateToProjects, 
-    navigateToClients, 
-    navigateToReports,
-    navigateToProjectDetail,
-    navigateToClientDetail,
-    showComingSoon
-  } = useNavigationHelper();
-
-  const getActivityColor = (type: string) => {
-    switch (type) {
-      case 'sale': return 'bg-green-100 text-green-800';
-      case 'allocation': return 'bg-blue-100 text-blue-800';
-      case 'reallocation': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
   };
 
   return (
     <div className="space-y-6">
-      {/* Charts Section */}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {mockKPIData.map((kpi, index) => (
+          <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-600 mb-2">
+                    {kpi.title}
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                  <div className="text-xs text-gray-500 mb-2">{kpi.subtitle}</div>
+                  <Badge 
+                    variant="outline" 
+                    className={kpi.changeType === 'positive' ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'}
+                  >
+                    {kpi.change} from last period
+                  </Badge>
+                </div>
+                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
+                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales & Allocations Trend */}
+        {/* Sales & Allocation Trends */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Sales & Allocations Trend</CardTitle>
-              <Tabs value={activeChart} onValueChange={setActiveChart} className="w-auto">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="sales">6 Months</TabsTrigger>
-                  <TabsTrigger value="yearly">Yearly</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
+            <CardTitle className="flex items-center space-x-2">
+              <TrendingUp className="h-5 w-5 text-blue-600" />
+              <span>Sales & Allocation Trends</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={salesData}>
+              <AreaChart data={salesAllocationTrends}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="sales" fill="#10b981" name="Sales" />
-                <Bar dataKey="allocations" fill="#3b82f6" name="Allocations" />
-              </BarChart>
+                <Area type="monotone" dataKey="sales" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.6} />
+                <Area type="monotone" dataKey="allocations" stackId="1" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.6} />
+                <Area type="monotone" dataKey="pending" stackId="1" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.6} />
+              </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Unit Allocation Distribution */}
+        {/* Sales Type Distribution */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Unit Distribution</CardTitle>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={navigateToProjects}
-              >
-                <Eye className="h-4 w-4 mr-1" />
-                View All
-              </Button>
-            </div>
+            <CardTitle className="flex items-center space-x-2">
+              <Calculator className="h-5 w-5 text-green-600" />
+              <span>Sales Type Distribution</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={allocationData}
+                  data={salesTypeData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={100}
-                  dataKey="value"
+                  labelLine={false}
                   label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
                 >
-                  {allocationData.map((entry, index) => (
+                  {salesTypeData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
+            <div className="mt-4 space-y-2">
+              {salesTypeData.map((item, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-sm">{item.name}</span>
+                  </div>
+                  <span className="text-sm font-medium">{item.value}</span>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Project Performance */}
+      {/* Project Performance Summary */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Project Performance</CardTitle>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={navigateToProjects}
-            >
-              <Building className="h-4 w-4 mr-1" />
-              Manage Projects
-            </Button>
-          </div>
+          <CardTitle className="flex items-center space-x-2">
+            <Building className="h-5 w-5 text-purple-600" />
+            <span>Project Performance Summary</span>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {projectData.map((project, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3">
-                    <h3 className="font-medium">{project.name}</h3>
-                    <Badge variant="outline">{project.sales} Sales</Badge>
-                  </div>
-                  <div className="mt-2">
-                    <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                      <span>Allocation Rate</span>
-                      <span>{project.allocation}%</span>
+            {projectPerformance.map((project, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <Building className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <div className="font-medium">{project.project}</div>
+                    <div className="text-sm text-gray-600">
+                      {project.allocations} allocated of {project.sales} sales
                     </div>
-                    <Progress value={project.allocation} className="h-2" />
                   </div>
                 </div>
-                <div className="flex space-x-2 ml-4">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigateToProjectDetail(project.name)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => showComingSoon('Project Reports')}
-                  >
-                    <FileText className="h-4 w-4" />
-                  </Button>
+                <div className="flex items-center space-x-4">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-green-600">{project.sales}</div>
+                    <div className="text-xs text-gray-500">Sales</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-blue-600">{project.allocations}</div>
+                    <div className="text-xs text-gray-500">Allocated</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-orange-600">{project.pending}</div>
+                    <div className="text-xs text-gray-500">Pending</div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -236,94 +244,37 @@ export function OverviewTab() {
         </CardContent>
       </Card>
 
-      {/* Recent Activities */}
+      {/* Recent Activity */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Recent Activities</CardTitle>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => showComingSoon('Activity Log')}
-            >
-              <Calendar className="h-4 w-4 mr-1" />
-              View All
-            </Button>
-          </div>
+          <CardTitle>Recent Activity</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div key={activity.id} className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <Badge className={getActivityColor(activity.type)}>
-                      {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-                    </Badge>
-                    <Badge variant="outline" className={getStatusColor(activity.status)}>
-                      {activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
-                    </Badge>
-                  </div>
-                  <p className="text-sm font-medium text-gray-900">{activity.description}</p>
-                  <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{activity.project}</span>
-                    </div>
-                    {activity.amount && (
-                      <div className="flex items-center space-x-1">
-                        <DollarSign className="h-3 w-3" />
-                        <span>{activity.amount}</span>
-                      </div>
-                    )}
-                    {activity.unit && (
-                      <div className="flex items-center space-x-1">
-                        <Building className="h-3 w-3" />
-                        <span>{activity.unit}</span>
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => showComingSoon('Activity Details')}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div>
+                <div className="font-medium">Presale Recorded</div>
+                <div className="text-sm text-gray-600">Victoria Gardens - Client: John Doe</div>
               </div>
-            ))}
+              <Badge className="bg-green-100 text-green-800">Presale</Badge>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div>
+                <div className="font-medium">Unit Allocated</div>
+                <div className="text-sm text-gray-600">Block A - Plot 15 to Sarah Johnson</div>
+              </div>
+              <Badge className="bg-blue-100 text-blue-800">Allocated</Badge>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+              <div>
+                <div className="font-medium">Pending Allocation</div>
+                <div className="text-sm text-gray-600">Golden View - Client: Robert Brown</div>
+              </div>
+              <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
+            </div>
           </div>
         </CardContent>
       </Card>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={navigateToClients}>
-          <CardContent className="p-6 text-center">
-            <Users className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-            <h3 className="font-medium mb-1">Manage Clients</h3>
-            <p className="text-sm text-gray-600">View and manage client records</p>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={navigateToProjects}>
-          <CardContent className="p-6 text-center">
-            <Building className="h-8 w-8 mx-auto mb-2 text-green-600" />
-            <h3 className="font-medium mb-1">Project Units</h3>
-            <p className="text-sm text-gray-600">Manage project inventories</p>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={navigateToReports}>
-          <CardContent className="p-6 text-center">
-            <TrendingUp className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-            <h3 className="font-medium mb-1">Sales Reports</h3>
-            <p className="text-sm text-gray-600">Generate detailed reports</p>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
