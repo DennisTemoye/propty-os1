@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -72,11 +71,18 @@ export default function EditProjectPage() {
   };
 
   const handleBack = () => {
-    confirmNavigation(`/company/projects/${project.id}`);
+    confirmNavigation('/company/projects');
   };
 
   return (
     <DashboardLayout>
+      <PageHeader
+        title={`Edit Project: ${project.name}`}
+        description="Update project information and details"
+        backUrl="/company/projects"
+        onBack={handleBack}
+      />
+      
       <div className="max-w-none px-4 md:px-6 py-4">
         <ProjectForm
           project={project}
