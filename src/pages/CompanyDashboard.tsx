@@ -129,21 +129,24 @@ const CompanyDashboard = () => {
           <main className={`min-h-screen overflow-y-auto ${
             isSmallScreen ? 'pt-32 sm:pt-36' : 'pt-0'
           }`}>
-            {isDetailPage ? (
-              // Detail pages render with full width within the content area
-              <div className="w-full">
-                {renderActiveModule()}
-              </div>
-            ) : (
-              // Regular pages use ResponsiveContainer
-              <ResponsiveContainer 
-                fullWidth={true}
-                className="min-h-full"
-                padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
-              >
-                {renderActiveModule()}
-              </ResponsiveContainer>
-            )}
+            {/* All content is wrapped in ResponsiveContainer or handled with full width */}
+            <div className="w-full h-full">
+              {isDetailPage ? (
+                // Detail pages render with full width within the content area
+                <div className="w-full">
+                  {renderActiveModule()}
+                </div>
+              ) : (
+                // Regular pages use ResponsiveContainer
+                <ResponsiveContainer 
+                  fullWidth={true}
+                  className="min-h-full"
+                  padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+                >
+                  {renderActiveModule()}
+                </ResponsiveContainer>
+              )}
+            </div>
           </main>
         </div>
       </div>
