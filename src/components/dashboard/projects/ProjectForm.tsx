@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Form } from '@/components/ui/form';
 import { FormInput } from '@/components/shared/FormInput';
 import { FormSelect } from '@/components/shared/FormSelect';
-import { MapPin, Building2, Layers, Info, Plus, Trash2, Upload, X, FileText } from 'lucide-react';
+import { MapPin, Building2, Layers, Info, Plus, Trash2, Upload, X, FileText, Download, Eye } from 'lucide-react';
 import { projectTypeOptions, projectStatusOptions, developmentStageOptions } from '@/forms/projectFormSchema';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -22,9 +21,38 @@ interface ProjectFormProps {
   onFormChange?: () => void;
 }
 
+// Mock documents for demonstration
+const mockDocuments = [
+  {
+    id: 1,
+    name: 'Building Permit.pdf',
+    type: 'PDF',
+    size: '2.1 MB',
+    uploadDate: '2024-01-15',
+    category: 'Legal'
+  },
+  {
+    id: 2,
+    name: 'Site Layout.dwg',
+    type: 'DWG',
+    size: '5.8 MB',
+    uploadDate: '2024-01-10',
+    category: 'Technical'
+  },
+  {
+    id: 3,
+    name: 'Environmental Certificate.pdf',
+    type: 'PDF',
+    size: '1.2 MB',
+    uploadDate: '2024-01-05',
+    category: 'Legal'
+  }
+];
+
 export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps) {
   const [blocks, setBlocks] = useState(project?.blocks || []);
   const [imagePreview, setImagePreview] = useState<string | null>(project?.image || null);
+  const [documents, setDocuments] = useState(project?.documents || mockDocuments);
   
   const form = useForm({
     defaultValues: {
@@ -97,8 +125,36 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
     onFormChange?.();
   };
 
+  const handleDocumentUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const newDocument = {
+        id: documents.length + 1,
+        name: file.name,
+        type: file.name.split('.').pop()?.toUpperCase() || 'FILE',
+        size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+        uploadDate: new Date().toISOString().split('T')[0],
+        category: 'General'
+      };
+      setDocuments([...documents, newDocument]);
+      onFormChange?.();
+      toast.success('Document uploaded successfully!');
+    }
+  };
+
+  const removeDocument = (id: number) => {
+    setDocuments(documents.filter(doc => doc.id !== id));
+    onFormChange?.();
+    toast.success('Document removed successfully!');
+  };
+
+  const downloadDocument = (doc: any) => {
+    console.log('Downloading:', doc.name);
+    toast.info(`Downloading ${doc.name}...`);
+  };
+
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -428,6 +484,47 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
+                    {/* Existing Documents */}
+                    {documents.length > 0 && (
+                      <div className="space-y-2 mb-4">
+                        <h4 className="text-sm font-medium text-gray-700">Uploaded Documents</h4>
+                        {documents.map((doc) => (
+                          <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <FileText className="h-5 w-5 text-blue-600" />
+                              <div>
+                                <div className="text-sm font-medium">{doc.name}</div>
+                                <div className="text-xs text-gray-500">
+                                  {doc.category} • {doc.size} • {doc.uploadDate}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => downloadDocument(doc)}
+                                className="h-8 w-8 p-0"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeDocument(doc.id)}
+                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Upload New Document */}
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
                       <div className="text-center">
                         <FileText className="h-6 w-6 text-gray-400 mx-auto mb-2" />
@@ -438,7 +535,7 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
                           id="documents-upload"
                           type="file"
                           accept=".pdf,.doc,.docx"
-                          multiple
+                          onChange={handleDocumentUpload}
                           className="hidden"
                         />
                         <p className="text-xs text-gray-500 mt-1">
@@ -508,7 +605,7 @@ export function ProjectForm({ project, onClose, onFormChange }: ProjectFormProps
 
         {/* Fixed Submit Button */}
         <div className="fixed bottom-0 right-0 left-64 bg-white border-t border-gray-200 p-4 z-30">
-          <div className="flex justify-end space-x-2 max-w-7xl mx-auto">
+          <div className="flex justify-end space-x-2 max-w-4xl mx-auto">
             <Button 
               type="submit" 
               className="bg-purple-600 hover:bg-purple-700"
