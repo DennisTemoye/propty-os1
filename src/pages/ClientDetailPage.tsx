@@ -177,8 +177,12 @@ export default function ClientDetailPage() {
   }, [location.state]);
 
   if (!client) {
-    return <div>Client not found</div>;
-  };
+    return (
+      <div className="w-full px-4 md:px-6 py-4">
+        <div className="text-center text-gray-500">Client not found</div>
+      </div>
+    );
+  }
 
   const handleEdit = () => {
     navigate(`/company/clients/${clientId}/edit`);
@@ -201,8 +205,8 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <div className="w-full min-h-full bg-gray-50">
-      <div className="w-full max-w-none px-4 md:px-6 py-4">
+    <div className="w-full bg-gray-50">
+      <div className="w-full px-4 md:px-6 py-4">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <Button 

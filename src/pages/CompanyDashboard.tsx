@@ -76,65 +76,67 @@ const CompanyDashboard = () => {
                       location.pathname.includes('/marketers/');
 
   return (
-    <div className="w-full min-h-screen">
-      <MobileWarningBanner />
-      <SidebarProvider>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-          
-          {/* Global Fixed Sidebar - Always present */}
-          <CompanySidebar 
-            isOpen={sidebarOpen} 
-            onClose={() => setSidebarOpen(false)} 
-          />
-          
-          {/* Main Content Area - Always with left margin to account for fixed sidebar */}
-          <div className={`min-h-screen ${isSmallScreen ? 'ml-0 pt-16 sm:pt-20' : 'ml-64'}`}>
-            {/* Mobile/Tablet Header */}
-            {isSmallScreen && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 fixed top-16 sm:top-20 left-0 right-0 z-40 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    {sidebarOpen ? (
-                      <X className="h-5 w-5" />
-                    ) : (
-                      <Menu className="h-5 w-5" />
-                    )}
-                  </Button>
-                  <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
-                    ProptyOS
-                  </h1>
-                  <div className="w-9" />
-                </div>
-              </header>
-            )}
-            
-            {/* Content Area - Scrollable */}
-            <main className={`min-h-screen overflow-y-auto ${isSmallScreen ? 'pt-16' : ''}`}>
-              {isDetailPage ? (
-                // Detail pages render without container for full width but still respect sidebar margin
-                <div className="min-h-full">
-                  {renderActiveModule()}
-                </div>
-              ) : (
-                // Regular pages use ResponsiveContainer
-                <ResponsiveContainer 
-                  fullWidth={true}
-                  className="min-h-full"
-                  padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+    <SidebarProvider>
+      <div className="min-h-screen w-full">
+        <MobileWarningBanner />
+        
+        {/* Global Fixed Sidebar - Always present */}
+        <CompanySidebar 
+          isOpen={sidebarOpen} 
+          onClose={() => setSidebarOpen(false)} 
+        />
+        
+        {/* Main Content Wrapper - Always accounts for sidebar */}
+        <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
+          isSmallScreen ? 'ml-0' : 'ml-64'
+        }`}>
+          {/* Mobile Header - Fixed when needed */}
+          {isSmallScreen && (
+            <div className="fixed top-16 sm:top-20 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 shadow-sm">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  {renderActiveModule()}
-                </ResponsiveContainer>
-              )}
-            </main>
-          </div>
+                  {sidebarOpen ? (
+                    <X className="h-5 w-5" />
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
+                </Button>
+                <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
+                  ProptyOS
+                </h1>
+                <div className="w-9" />
+              </div>
+            </div>
+          )}
+          
+          {/* Scrollable Content Area */}
+          <main className={`min-h-screen overflow-y-auto ${
+            isSmallScreen ? 'pt-32 sm:pt-36' : 'pt-0'
+          }`}>
+            {isDetailPage ? (
+              // Detail pages render with full width within the content area
+              <div className="w-full">
+                {renderActiveModule()}
+              </div>
+            ) : (
+              // Regular pages use ResponsiveContainer
+              <ResponsiveContainer 
+                fullWidth={true}
+                className="min-h-full"
+                padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+              >
+                {renderActiveModule()}
+              </ResponsiveContainer>
+            )}
+          </main>
         </div>
-      </SidebarProvider>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
 

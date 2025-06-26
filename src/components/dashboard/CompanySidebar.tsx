@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -224,10 +225,10 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
     );
   }
 
-  // Desktop - Global Fixed Sidebar
+  // Desktop - Global Fixed Sidebar (256px wide)
   return (
     <div className={cn(
-      'fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 flex-shrink-0 z-30',
+      'fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-800 z-30',
       className
     )}>
       <div className="h-full flex flex-col">
