@@ -130,27 +130,27 @@ export function SalesFlowModal({ isOpen, onClose, onSubmit }: SalesFlowModalProp
                 <SelectValue placeholder="Select sales type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="presale">
+                <SelectItem value="offer_only">
                   <div>
-                    <div className="font-medium">Presale (No Allocation Yet)</div>
-                    <div className="text-xs text-gray-500">Sale recorded, unit allocation pending</div>
+                    <div className="font-medium">Offer Only</div>
+                    <div className="text-xs text-gray-500">Create offer letter, no unit allocation yet</div>
                   </div>
                 </SelectItem>
-                <SelectItem value="with_allocation">
+                <SelectItem value="offer_allocation">
                   <div>
-                    <div className="font-medium">Sale with Allocation</div>
-                    <div className="text-xs text-gray-500">Sale and unit assignment together</div>
+                    <div className="font-medium">Offer + Allocation</div>
+                    <div className="text-xs text-gray-500">Sales recorded and forwarded as pending allocation</div>
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {salesType === 'with_allocation' && (
+          {salesType === 'offer_allocation' && (
             <div>
               <Label>Unit Number *</Label>
               <Input 
-                {...form.register('unitNumber', { required: salesType === 'with_allocation' })}
+                {...form.register('unitNumber', { required: salesType === 'offer_allocation' })}
                 placeholder="e.g., Block A - Plot 15"
               />
             </div>
@@ -167,12 +167,15 @@ export function SalesFlowModal({ isOpen, onClose, onSubmit }: SalesFlowModalProp
             </div>
 
             <div>
-              <Label>Initial Payment (₦) *</Label>
+              <Label>Initial Payment (₦) {salesType === 'offer_only' ? '' : '*'}</Label>
               <Input 
                 type="number"
-                {...form.register('initialPayment', { required: true })}
+                {...form.register('initialPayment', { required: salesType === 'offer_allocation' })}
                 placeholder="e.g., 5000000"
               />
+              {salesType === 'offer_only' && (
+                <p className="text-xs text-gray-500 mt-1">Optional for offer only</p>
+              )}
             </div>
           </div>
 
@@ -228,15 +231,15 @@ export function SalesFlowModal({ isOpen, onClose, onSubmit }: SalesFlowModalProp
           </div>
 
           <div className={`p-4 rounded-lg border ${
-            salesType === 'presale' ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'
+            salesType === 'offer_only' ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'
           }`}>
             <p className={`text-sm ${
-              salesType === 'presale' ? 'text-blue-800' : 'text-green-800'
+              salesType === 'offer_only' ? 'text-blue-800' : 'text-orange-800'
             }`}>
               <strong>Note:</strong> {
-                salesType === 'presale' 
-                  ? 'This sale will be recorded without unit allocation. The allocation team can assign units later when ready.'
-                  : 'This sale will include unit allocation and trigger the allocation approval workflow.'
+                salesType === 'offer_only' 
+                  ? 'This will create an offer letter for the client without unit allocation. The offer will appear in Pending Offers.'
+                  : 'This will record the sale and forward it to both Pending Offers and Pending Allocations for processing.'
               }
             </p>
           </div>

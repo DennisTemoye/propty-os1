@@ -11,7 +11,8 @@ import {
   Clock,
   Bell,
   Users,
-  CheckCircle
+  CheckCircle,
+  FileText
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
 import { HistoryTab } from './sales-allocation/HistoryTab';
@@ -21,6 +22,7 @@ import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 import { toast } from 'sonner';
+import { PendingOffersTab } from './allocation/PendingOffersTab';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -28,21 +30,21 @@ export function SalesAllocationOverview() {
   const [showAllocationModal, setShowAllocationModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Global state for synchronization - no duplicates
-  const [pendingAllocationsCount, setPendingAllocationsCount] = useState(3); // Sales awaiting allocation
+  // Global state for synchronization - updated structure
+  const [pendingOffersCount, setPendingOffersCount] = useState(3); // Offers awaiting client response
+  const [pendingAllocationsCount, setPendingAllocationsCount] = useState(2); // Sales awaiting unit allocation
   const [pendingApprovalsCount, setPendingApprovalsCount] = useState(2); // Allocations pending approval
 
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
     
-    // Only presales go to pending allocations
-    if (data.salesType === 'presale') {
+    if (data.salesType === 'offer_only') {
+      setPendingOffersCount(prev => prev + 1);
+      toast.success('Offer recorded! Offer letter will be generated for client.');
+    } else if (data.salesType === 'offer_allocation') {
+      setPendingOffersCount(prev => prev + 1);
       setPendingAllocationsCount(prev => prev + 1);
-      toast.success('Presale recorded! Client added to allocation queue.');
-    } else {
-      // Sales with immediate allocation go directly to pending approvals
-      setPendingApprovalsCount(prev => prev + 1);
-      toast.success('Sale with allocation recorded and sent for approval!');
+      toast.success('Sale recorded! Added to both pending offers and pending allocations.');
     }
   };
 
@@ -62,6 +64,14 @@ export function SalesAllocationOverview() {
     setPendingApprovalsCount(prev => prev + 1);
     
     toast.success('Allocation initiated and sent for approval!');
+  };
+
+  const handleOfferAction = (data: any) => {
+    console.log('Processing offer action:', data);
+    
+    // Decrease pending offers count when offer is sent
+    setPendingOffersCount(prev => Math.max(0, prev - 1));
+    toast.success('Offer letter sent to client!');
   };
 
   const handleApprovalAction = (allocationId: string, action: 'approve' | 'decline') => {
@@ -99,9 +109,19 @@ export function SalesAllocationOverview() {
       changeType: 'positive'
     },
     {
-      title: 'Pending Sales',
+      title: 'Pending Offers',
+      value: pendingOffersCount.toString(),
+      subtitle: 'Awaiting client response',
+      icon: FileText,
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-100',
+      change: '+3%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Pending Allocations',
       value: pendingAllocationsCount.toString(),
-      subtitle: 'Awaiting allocation',
+      subtitle: 'Awaiting unit assignment',
       icon: Clock,
       color: 'text-orange-700',
       bgColor: 'bg-orange-100',
@@ -146,7 +166,7 @@ export function SalesAllocationOverview() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {kpiData.map((kpi, index) => (
           <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6">
@@ -185,7 +205,7 @@ export function SalesAllocationOverview() {
               Record Sale
             </Button>
             <p className="text-sm text-gray-600 mt-2 text-center">
-              Document property sales with or without unit allocation
+              Create offers or record sales with optional unit allocation
             </p>
           </CardContent>
         </Card>
@@ -208,9 +228,17 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="offers" className="relative">
+            Pending Offers
+            {pendingOffersCount > 0 && (
+              <Badge className="ml-2 bg-blue-600 text-white text-xs">
+                {pendingOffersCount}
+              </Badge>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="pending" className="relative">
             Pending Allocations
             {pendingAllocationsCount > 0 && (
@@ -235,6 +263,12 @@ export function SalesAllocationOverview() {
 
         <TabsContent value="history" className="space-y-6">
           <HistoryTab />
+        </TabsContent>
+
+        <TabsContent value="offers" className="space-y-6">
+          <PendingOffersTab 
+            onSendOffer={handleOfferAction}
+          />
         </TabsContent>
 
         <TabsContent value="pending" className="space-y-6">
