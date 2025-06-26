@@ -18,7 +18,7 @@ export function AppLayout() {
   // For non-company routes, render completely full-width without sidebar
   if (!isCompanyRoute) {
     return (
-      <div className="w-full min-h-screen">
+      <div className="w-full min-h-screen bg-white dark:bg-gray-900">
         <Outlet />
       </div>
     );
@@ -51,7 +51,7 @@ export function AppLayout() {
         )}
         
         {/* Main Content Area - Full Width with Sidebar Offset */}
-        <div className="w-full lg:ml-64 min-h-screen">
+        <div className="w-full lg:ml-64 min-h-screen flex flex-col">
           {/* Mobile Header */}
           {(isMobile || isTablet) && (
             <header className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 lg:hidden sticky top-0 z-20">
@@ -77,7 +77,7 @@ export function AppLayout() {
           )}
           
           {/* Page Content - Complete Full Width */}
-          <main className="w-full h-full">
+          <main className="flex-1 w-full overflow-x-hidden">
             <Outlet />
           </main>
         </div>
