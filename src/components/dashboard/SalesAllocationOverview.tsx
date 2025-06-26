@@ -15,6 +15,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
+import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
 import { HistoryTab } from './sales-allocation/HistoryTab';
 import { SalesFlowModal } from './sales-allocation/SalesFlowModal';
 import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
@@ -168,17 +169,22 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending" className="relative">
-            Pending Approvals
+            Pending Allocations
             <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <OverviewTab />
+        </TabsContent>
+
+        <TabsContent value="pipeline" className="space-y-6">
+          <SalesPipelineTab />
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
