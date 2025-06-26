@@ -18,11 +18,11 @@ export function GlobalLayout({
   header, 
   footer 
 }: GlobalLayoutProps) {
-  const { isSmallScreen, isTablet } = useBreakpoints();
+  const { isSmallScreen } = useBreakpoints();
 
   return (
     <div className={cn(
-      "min-h-screen bg-background flex flex-col w-full",
+      "min-h-screen bg-background flex flex-col",
       className
     )}>
       {/* Header */}
@@ -32,24 +32,24 @@ export function GlobalLayout({
         </header>
       )}
 
-      <div className="flex flex-1 overflow-hidden w-full">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         {sidebar && (
           <aside className={cn(
-            "border-r bg-muted/40 flex-shrink-0",
-            isSmallScreen ? "fixed inset-y-0 left-0 z-40 w-64 transform transition-transform" : 
-            isTablet ? "w-16" : "w-64"
+            "border-r bg-muted/40",
+            isSmallScreen ? "fixed inset-y-0 left-0 z-40 w-64 transform transition-transform" : "w-64 flex-shrink-0"
           )}>
             {sidebar}
           </aside>
         )}
 
-        {/* Main Content - Full Width */}
+        {/* Main Content */}
         <main className={cn(
-          "flex-1 overflow-auto w-full",
-          "px-4 md:px-6"
+          "flex-1 overflow-auto",
+          sidebar && !isSmallScreen && "ml-0",
+          isSmallScreen && "w-full"
         )}>
-          <div className="w-full h-full py-4 md:py-6">
+          <div className="container mx-auto p-4 md:p-6 lg:p-8">
             {children}
           </div>
         </main>
@@ -57,7 +57,7 @@ export function GlobalLayout({
 
       {/* Footer */}
       {footer && (
-        <footer className="border-t bg-background w-full">
+        <footer className="border-t bg-background">
           {footer}
         </footer>
       )}

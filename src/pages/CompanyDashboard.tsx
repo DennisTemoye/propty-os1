@@ -19,6 +19,7 @@ import { Settings } from '@/components/dashboard/Settings';
 import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
 import { HelpSupport } from '@/components/dashboard/HelpSupport';
 import { MobileWarningBanner } from '@/components/common/MobileWarningBanner';
+import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
 import { useLocation } from 'react-router-dom';
 import { useResponsive } from '@/hooks/use-responsive';
 import { Button } from '@/components/ui/button';
@@ -26,7 +27,7 @@ import { Menu, X } from 'lucide-react';
 
 const CompanyDashboard = () => {
   const location = useLocation();
-  const { isMobile, isTablet, isDesktop } = useResponsive();
+  const { isMobile, isTablet, isSmallScreen } = useResponsive();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderActiveModule = () => {
@@ -69,8 +70,9 @@ const CompanyDashboard = () => {
     }
   };
 
+  // Close sidebar when clicking outside on mobile
   const handleOverlayClick = () => {
-    if (sidebarOpen) {
+    if (isMobile && sidebarOpen) {
       setSidebarOpen(false);
     }
   };
@@ -79,11 +81,11 @@ const CompanyDashboard = () => {
     <>
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className="min-h-screen flex w-full bg-gray-50 dark:bg-gray-900">
+        <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
           {/* Mobile/Tablet Sidebar Overlay */}
-          {!isDesktop && sidebarOpen && (
+          {isSmallScreen && sidebarOpen && (
             <div 
-              className="fixed inset-0 bg-black/50 z-40"
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
               onClick={handleOverlayClick}
             />
           )}
@@ -93,16 +95,16 @@ const CompanyDashboard = () => {
             onClose={() => setSidebarOpen(false)} 
           />
           
-          <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
-            {/* Mobile/Tablet Header with proper spacing */}
-            {!isDesktop && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 z-30 shadow-sm">
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+            {/* Mobile/Tablet Header */}
+            {isSmallScreen && (
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 lg:hidden sticky top-16 sm:top-20 z-30 shadow-sm">
                 <div className="flex items-center justify-between">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     {sidebarOpen ? (
                       <X className="h-5 w-5" />
@@ -110,7 +112,7 @@ const CompanyDashboard = () => {
                       <Menu className="h-5 w-5" />
                     )}
                   </Button>
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                  <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
                     ProptyOS
                   </h1>
                   <div className="w-9" />
@@ -118,10 +120,14 @@ const CompanyDashboard = () => {
               </header>
             )}
             
-            <main className="flex-1 overflow-auto w-full">
-              <div className="w-full h-full px-4 md:px-6 py-4 md:py-6">
+            <main className="flex-1 overflow-auto">
+              <ResponsiveContainer 
+                maxWidth="full" 
+                className="h-full min-h-0"
+                padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+              >
                 {renderActiveModule()}
-              </div>
+              </ResponsiveContainer>
             </main>
           </div>
         </div>
