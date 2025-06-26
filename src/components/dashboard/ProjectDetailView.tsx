@@ -5,13 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Edit, MapPin, User, Trash2, Building, FileText } from 'lucide-react';
+import { ArrowLeft, Edit, MapPin, User, UserPlus, Trash2, Building } from 'lucide-react';
 import { ProjectHeader } from '@/components/dashboard/projects/ProjectHeader';
 import { ProjectKPIGrid } from '@/components/dashboard/projects/ProjectKPIGrid';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
 import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksTab';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
+import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
+import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
+import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
 import { toast } from 'sonner';
 
 const mockProjects = [
@@ -23,7 +26,7 @@ const mockProjects = [
     state: 'Lagos State',
     category: 'Housing',
     type: 'Residential',
-    status: 'Construction',
+    status: 'ongoing',
     developmentStage: 'Construction',
     totalBlocks: 5,
     totalUnits: 150,
@@ -49,6 +52,12 @@ export function ProjectDetailView() {
   // Extract projectId from URL params - handle both :projectId and :id patterns
   const projectId = params.projectId || params.id;
   
+  const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
+  const [isReallocateOpen, setIsReallocateOpen] = useState(false);
+  const [isRevokeOpen, setIsRevokeOpen] = useState(false);
+  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
+  const [reallocateData, setReallocateData] = useState<any>(null);
+  
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
   if (!project) {
@@ -63,17 +72,21 @@ export function ProjectDetailView() {
     );
   }
 
+  const handleAllocateUnit = () => setIsAllocateUnitOpen(true);
   const handleEditProject = () => {
     navigate(`/company/projects/${project.id}/edit`);
   };
-  
+  const handleReallocate = (unitId: string, clientName: string) => {
+    setReallocateData({ unitId, clientName });
+    setIsReallocateOpen(true);
+  };
+  const handleRevoke = (allocation: any) => {
+    setSelectedAllocation(allocation);
+    setIsRevokeOpen(true);
+  };
   const handleDeleteProject = () => {
     toast.success(`Project "${project.name}" has been deleted successfully.`);
     navigate('/company/projects');
-  };
-
-  const handleViewSalesModule = () => {
-    navigate('/company/sales');
   };
 
   return (
@@ -86,9 +99,9 @@ export function ProjectDetailView() {
         </Button>
 
         <div className="flex space-x-3">
-          <Button onClick={handleViewSalesModule} className="bg-green-600 hover:bg-green-700">
-            <FileText className="h-4 w-4 mr-2" />
-            Manage Sales
+          <Button onClick={handleAllocateUnit} className="bg-green-600 hover:bg-green-700">
+            <UserPlus className="h-4 w-4 mr-2" />
+            Allocate Unit
           </Button>
           <Button onClick={handleEditProject} variant="outline">
             <Edit className="h-4 w-4 mr-2" />
@@ -128,7 +141,7 @@ export function ProjectDetailView() {
             <div className="p-6 text-white w-full">
               <div className="flex items-center space-x-3 mb-3">
                 <h1 className="text-4xl font-bold">{project.name}</h1>
-                <Badge variant="secondary">{project.status}</Badge>
+                <Badge variant="secondary">{project.developmentStage}</Badge>
               </div>
               <div className="flex items-center space-x-6 text-white/90 mb-3">
                 <div className="flex items-center">
@@ -172,25 +185,55 @@ export function ProjectDetailView() {
             <ProjectBlocksTab project={project} />
           </TabsContent>
           <TabsContent value="sales-history" className="p-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium text-blue-900">Sales Management</h3>
-                  <p className="text-blue-700 text-sm">All sales, allocations, and client management are handled in the Sales & Allocation module.</p>
-                </div>
-                <Button onClick={handleViewSalesModule} className="bg-blue-600 hover:bg-blue-700">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Go to Sales Module
-                </Button>
-              </div>
-            </div>
-            <ProjectSalesHistoryTab project={project} />
+            <ProjectSalesHistoryTab project={project} onReallocate={handleReallocate} onRevoke={handleRevoke} />
           </TabsContent>
           <TabsContent value="documents" className="p-6">
             <ProjectDocumentsTab project={project} />
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Modals */}
+      <AllocateUnitModal
+        isOpen={isAllocateUnitOpen}
+        onClose={() => setIsAllocateUnitOpen(false)}
+        onSubmit={() => {
+          toast.success('Unit allocated successfully!');
+          setIsAllocateUnitOpen(false);
+        }}
+      />
+
+      {reallocateData && (
+        <ReallocationModal
+          isOpen={isReallocateOpen}
+          onClose={() => {
+            setIsReallocateOpen(false);
+            setReallocateData(null);
+          }}
+          allocation={reallocateData}
+          onReallocate={() => {
+            toast.success('Unit reallocated successfully!');
+            setIsReallocateOpen(false);
+            setReallocateData(null);
+          }}
+        />
+      )}
+
+      {selectedAllocation && (
+        <RevokeAllocationModal
+          isOpen={isRevokeOpen}
+          onClose={() => {
+            setIsRevokeOpen(false);
+            setSelectedAllocation(null);
+          }}
+          allocation={selectedAllocation}
+          onRevoke={() => {
+            toast.success('Allocation revoked successfully!');
+            setIsRevokeOpen(false);
+            setSelectedAllocation(null);
+          }}
+        />
+      )}
     </div>
   );
 }

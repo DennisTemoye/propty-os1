@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Eye, Users, DollarSign, TrendingUp, Calendar } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { RotateCcw, X, Eye, Users, DollarSign, TrendingUp, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface ProjectSalesHistoryTabProps {
   project: {
@@ -17,6 +19,8 @@ interface ProjectSalesHistoryTabProps {
     availableUnits: number;
     reservedUnits: number;
   };
+  onReallocate?: (unitId: string, clientName: string) => void;
+  onRevoke?: (allocation: any) => void;
 }
 
 const mockAllocatedUnits = [
@@ -90,12 +94,28 @@ const mockOfferedUnits = [
   }
 ];
 
-export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps) {
+export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: ProjectSalesHistoryTabProps) {
   const [activeTab, setActiveTab] = useState('allocated');
   const navigate = useNavigate();
 
   const handleViewClient = (clientId: number) => {
     navigate(`/company/clients/${clientId}`);
+  };
+
+  const handleReallocate = (unitId: string, clientName: string) => {
+    if (onReallocate) {
+      onReallocate(unitId, clientName);
+    } else {
+      toast.success(`Reallocation initiated for ${unitId} from ${clientName}`);
+    }
+  };
+
+  const handleRevoke = (allocation: any) => {
+    if (onRevoke) {
+      onRevoke(allocation);
+    } else {
+      toast.success(`Allocation revoked for ${allocation.unitId} from ${allocation.clientName}`);
+    }
   };
 
   const getPaymentStatusColor = (status: string) => {
@@ -151,7 +171,7 @@ export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps)
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="allocated">Full Allocation Sales</TabsTrigger>
-          <TabsTrigger value="offered">Offered Units</TabsTrigger>
+          <TabsTrigger value="offered">Unallocated Sales</TabsTrigger>
         </TabsList>
 
         <TabsContent value="allocated" className="space-y-6">
@@ -243,14 +263,48 @@ export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps)
                       <TableCell>{unit.marketer}</TableCell>
                       <TableCell className="font-medium">{unit.amount}</TableCell>
                       <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewClient(unit.clientId)}
-                        >
-                          <Eye className="h-3 w-3 mr-1" />
-                          View Client
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewClient(unit.clientId)}
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleReallocate(unit.unitId, unit.clientName)}
+                          >
+                            <RotateCcw className="h-3 w-3" />
+                          </Button>
+                          
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Revoke Allocation</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to revoke the allocation of {unit.unitId} from {unit.clientName}? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction 
+                                  className="bg-red-600 hover:bg-red-700"
+                                  onClick={() => handleRevoke(unit)}
+                                >
+                                  Revoke Allocation
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -261,7 +315,7 @@ export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps)
         </TabsContent>
 
         <TabsContent value="offered" className="space-y-6">
-          {/* Offered Units Stats Cards */}
+          {/* Unallocated Sales Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
               <CardContent className="p-4">
@@ -312,10 +366,10 @@ export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps)
             </Card>
           </div>
 
-          {/* Offered Units Table */}
+          {/* Unallocated Sales Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Offered Units Details</CardTitle>
+              <CardTitle>Unallocated Sales Details</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -351,14 +405,48 @@ export function ProjectSalesHistoryTab({ project }: ProjectSalesHistoryTabProps)
                       <TableCell className="font-medium">{unit.amount}</TableCell>
                       <TableCell>{unit.expiryDate}</TableCell>
                       <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewClient(unit.clientId)}
-                        >
-                          <Eye className="h-3 w-3 mr-1" />
-                          View Client
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewClient(unit.clientId)}
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleReallocate(unit.unitId, unit.clientName)}
+                          >
+                            <RotateCcw className="h-3 w-3" />
+                          </Button>
+                          
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Revoke Offer</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to revoke the offer of {unit.unitId} to {unit.clientName}? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction 
+                                  className="bg-red-600 hover:bg-red-700"
+                                  onClick={() => handleRevoke(unit)}
+                                >
+                                  Revoke Offer
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

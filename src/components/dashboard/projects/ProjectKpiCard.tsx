@@ -16,7 +16,9 @@ interface ProjectKpiCardProps {
     totalUnits: number;
     availableUnits: number;
     allocatedUnits: number;
-    reservedUnits: number;
+    totalClients: number;
+    totalRevenue: string;
+    allocationRate: number;
     image?: string;
   };
 }
@@ -25,23 +27,13 @@ export function ProjectKpiCard({ project }: ProjectKpiCardProps) {
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'acquisition':
-        return 'bg-orange-100 text-orange-800';
-      case 'documentation':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'planning':
-        return 'bg-blue-100 text-blue-800';
-      case 'construction':
-        return 'bg-purple-100 text-purple-800';
-      case 'presale':
-        return 'bg-indigo-100 text-indigo-800';
-      case 'selling':
+    switch (status) {
+      case 'ongoing':
         return 'bg-green-100 text-green-800';
-      case 'pause sales':
-        return 'bg-gray-100 text-gray-800';
-      case 'sold out':
-        return 'bg-red-100 text-red-800';
+      case 'completed':
+        return 'bg-blue-100 text-blue-800';
+      case 'upcoming':
+        return 'bg-yellow-100 text-yellow-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -101,15 +93,18 @@ export function ProjectKpiCard({ project }: ProjectKpiCardProps) {
             </div>
           </div>
 
-          {/* Unit Status Breakdown */}
-          <div className="mb-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-green-600">Available: {project.availableUnits}</span>
-              <span className="text-blue-600">Allocated: {project.allocatedUnits}</span>
+          {/* Unit Status */}
+          <div className="mb-4">
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-gray-600">Available: {project.availableUnits}</span>
+              <span className="text-gray-600">Allocated: {project.allocatedUnits}</span>
             </div>
-            <div className="flex justify-center text-sm">
-              <span className="text-yellow-600">Reserved: {project.reservedUnits}</span>
-            </div>
+          </div>
+
+          {/* Revenue */}
+          <div className="mb-4">
+            <div className="text-sm text-gray-600 mb-1">Total Revenue</div>
+            <div className="text-lg font-semibold text-green-600">{project.totalRevenue}</div>
           </div>
 
           {/* View Details Button */}
