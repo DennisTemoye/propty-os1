@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,9 +20,7 @@ import {
 } from 'lucide-react';
 import { OverviewTab } from './sales-allocation/OverviewTab';
 import { SalesPipelineTab } from './sales-allocation/SalesPipelineTab';
-import { AllocationHistoryTab } from './sales-allocation/AllocationHistoryTab';
-import { TransferHistoryTab } from './sales-allocation/TransferHistoryTab';
-import { RevokedAllocationsTab } from './sales-allocation/RevokedAllocationsTab';
+import { HistoryTab } from './sales-allocation/HistoryTab';
 import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
 import { AllocateUnitModal } from './sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from './forms/ReallocationModal';
@@ -128,12 +127,10 @@ export function SalesAllocationOverview() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
-          <TabsTrigger value="allocations">Allocation History</TabsTrigger>
-          <TabsTrigger value="reallocations">Re-allocation History</TabsTrigger>
-          <TabsTrigger value="revoked">Revoked History</TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending" className="relative">
             Pending Approvals
             <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
@@ -148,19 +145,11 @@ export function SalesAllocationOverview() {
           <SalesPipelineTab />
         </TabsContent>
 
-        <TabsContent value="allocations" className="space-y-6">
-          <AllocationHistoryTab onRevoke={(allocation) => {
+        <TabsContent value="history" className="space-y-6">
+          <HistoryTab onRevoke={(allocation) => {
             setSelectedAllocation(allocation);
             setShowRevokeModal(true);
           }} />
-        </TabsContent>
-
-        <TabsContent value="reallocations" className="space-y-6">
-          <TransferHistoryTab />
-        </TabsContent>
-
-        <TabsContent value="revoked" className="space-y-6">
-          <RevokedAllocationsTab />
         </TabsContent>
 
         <TabsContent value="pending" className="space-y-6">
