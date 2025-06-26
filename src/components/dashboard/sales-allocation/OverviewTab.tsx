@@ -2,15 +2,14 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { 
   Building, 
   DollarSign, 
-  Users,
-  Clock,
+  ArrowRight, 
+  Ban,
   TrendingUp,
-  ArrowRight,
-  Ban
+  Users,
+  Calculator
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -24,75 +23,75 @@ import {
   Bar
 } from 'recharts';
 
-interface OverviewTabProps {
-  onAllocationFlow: (type: 'new' | 'reallocation' | 'revoke', allocation?: any) => void;
-}
-
 const mockKPIData = [
   {
-    title: 'Total Sales Recorded',
+    title: 'Total Units Allocated',
     value: '156',
-    subtitle: 'This year',
-    icon: DollarSign,
-    color: 'text-green-700',
-    bgColor: 'bg-green-100',
+    subtitle: 'Active allocations',
+    icon: Building,
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-100',
     change: '+12%',
     changeType: 'positive'
   },
   {
-    title: 'Active Allocations',
-    value: '89',
-    subtitle: 'Currently allocated',
-    icon: Building,
-    color: 'text-blue-700',
-    bgColor: 'bg-blue-100',
+    title: 'Total Sales Volume',
+    value: '₦4.2B',
+    subtitle: 'This year',
+    icon: DollarSign,
+    color: 'text-green-700',
+    bgColor: 'bg-green-100',
     change: '+8%',
     changeType: 'positive'
   },
   {
-    title: 'Pending Allocations',
+    title: 'Total Reallocations',
     value: '23',
-    subtitle: 'Awaiting allocation',
-    icon: Clock,
-    color: 'text-yellow-700',
-    bgColor: 'bg-yellow-100',
+    subtitle: 'This month',
+    icon: ArrowRight,
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-100',
     change: '+5%',
     changeType: 'positive'
   },
   {
-    title: 'Total Revenue',
-    value: '₦4.2B',
-    subtitle: 'From all sales',
-    icon: TrendingUp,
-    color: 'text-purple-700',
-    bgColor: 'bg-purple-100',
-    change: '+15%',
-    changeType: 'positive'
+    title: 'Revoked Units',
+    value: '8',
+    subtitle: 'This quarter',
+    icon: Ban,
+    color: 'text-red-700',
+    bgColor: 'bg-red-100',
+    change: '-2%',
+    changeType: 'negative'
   }
 ];
 
-const salesTrends = [
-  { month: 'Jan', sales: 12, allocations: 8, pending: 4 },
-  { month: 'Feb', sales: 15, allocations: 12, pending: 3 },
-  { month: 'Mar', sales: 18, allocations: 15, pending: 3 },
-  { month: 'Apr', sales: 22, allocations: 18, pending: 4 },
-  { month: 'May', sales: 25, allocations: 20, pending: 5 },
-  { month: 'Jun', sales: 28, allocations: 24, pending: 4 }
+const allocationTrends = [
+  { month: 'Jan', allocations: 12, sales: 8, reallocations: 2 },
+  { month: 'Feb', allocations: 15, sales: 12, reallocations: 3 },
+  { month: 'Mar', allocations: 18, sales: 15, reallocations: 4 },
+  { month: 'Apr', allocations: 22, sales: 18, reallocations: 2 },
+  { month: 'May', allocations: 25, sales: 20, reallocations: 5 },
+  { month: 'Jun', allocations: 28, sales: 24, reallocations: 3 }
 ];
 
-const projectSales = [
-  { project: 'Victoria Gardens', sales: 45, allocated: 42, pending: 3 },
-  { project: 'Emerald Heights', sales: 32, allocated: 28, pending: 4 },
-  { project: 'Golden View', sales: 28, allocated: 25, pending: 3 },
-  { project: 'Ocean Breeze', sales: 25, allocated: 20, pending: 5 }
+const salesByProject = [
+  { project: 'Victoria Gardens', sales: 45, revenue: 1200000000 },
+  { project: 'Emerald Heights', sales: 32, revenue: 960000000 },
+  { project: 'Golden View', sales: 28, revenue: 840000000 },
+  { project: 'Ocean Breeze', sales: 25, revenue: 750000000 },
+  { project: 'Royal Estate', sales: 20, revenue: 600000000 }
 ];
 
-export function OverviewTab({ onAllocationFlow }: OverviewTabProps) {
-  const recentActivity = [
-    { id: 1, type: 'sale', description: 'New sale recorded - John Doe', project: 'Victoria Gardens', time: '2 hours ago' },
-    { id: 2, type: 'allocation', description: 'Unit allocated - Block A-15', client: 'Sarah Johnson', time: '4 hours ago' },
-    { id: 3, type: 'pending', description: 'Allocation pending approval', client: 'Mike Brown', time: '1 day ago' }
-  ];
+export function OverviewTab() {
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
 
   return (
     <div className="space-y-6">
@@ -110,7 +109,7 @@ export function OverviewTab({ onAllocationFlow }: OverviewTabProps) {
                   <div className="text-xs text-gray-500 mb-2">{kpi.subtitle}</div>
                   <Badge 
                     variant="outline" 
-                    className="text-green-600 border-green-200"
+                    className={kpi.changeType === 'positive' ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'}
                   >
                     {kpi.change} from last period
                   </Badge>
@@ -125,104 +124,79 @@ export function OverviewTab({ onAllocationFlow }: OverviewTabProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales vs Allocation Trends */}
+        {/* Allocation Trends Chart */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="h-5 w-5 text-blue-600" />
-              <span>Sales vs Allocation Trends</span>
+              <span>Allocation Trends Over Time</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={salesTrends}>
+              <AreaChart data={allocationTrends}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Area type="monotone" dataKey="sales" stackId="1" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.6} />
-                <Area type="monotone" dataKey="allocations" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.6} />
-                <Area type="monotone" dataKey="pending" stackId="1" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.6} />
+                <Area type="monotone" dataKey="allocations" stackId="1" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.6} />
+                <Area type="monotone" dataKey="sales" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.6} />
+                <Area type="monotone" dataKey="reallocations" stackId="1" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.6} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Project Performance */}
+        {/* Sales by Project */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Building className="h-5 w-5 text-green-600" />
-              <span>Project Performance</span>
+              <Calculator className="h-5 w-5 text-green-600" />
+              <span>Sales by Project</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={projectSales} layout="horizontal">
+              <BarChart data={salesByProject} layout="horizontal">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
                 <YAxis dataKey="project" type="category" width={100} />
-                <Tooltip />
-                <Bar dataKey="sales" fill="#3B82F6" radius={[0, 4, 4, 0]} />
+                <Tooltip formatter={(value) => [value, 'Sales']} />
+                <Bar dataKey="sales" fill="#10B981" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick Actions and Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+      {/* Revenue Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <DollarSign className="h-5 w-5 text-green-600" />
+            <span>Revenue Generated by Project</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {salesByProject.map((project, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <Building className="h-5 w-5 text-gray-600" />
                   <div>
-                    <div className="font-medium">{activity.description}</div>
-                    <div className="text-sm text-gray-600">
-                      {activity.project && `Project: ${activity.project}`}
-                      {activity.client && `Client: ${activity.client}`}
-                    </div>
+                    <div className="font-medium">{project.project}</div>
+                    <div className="text-sm text-gray-600">{project.sales} units sold</div>
                   </div>
-                  <div className="text-sm text-gray-500">{activity.time}</div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Allocation Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button 
-              className="w-full bg-blue-600 hover:bg-blue-700"
-              onClick={() => onAllocationFlow('new')}
-            >
-              <Users className="h-4 w-4 mr-2" />
-              New Allocation
-            </Button>
-            <Button 
-              className="w-full bg-purple-600 hover:bg-purple-700"
-              onClick={() => onAllocationFlow('reallocation')}
-            >
-              <ArrowRight className="h-4 w-4 mr-2" />
-              Reallocation
-            </Button>
-            <Button 
-              className="w-full bg-red-600 hover:bg-red-700"
-              onClick={() => onAllocationFlow('revoke')}
-            >
-              <Ban className="h-4 w-4 mr-2" />
-              Revoke Allocation
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+                <div className="text-right">
+                  <div className="font-bold text-green-600">{formatCurrency(project.revenue)}</div>
+                  <div className="text-sm text-gray-500">Revenue</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
