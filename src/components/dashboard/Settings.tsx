@@ -2,11 +2,12 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings as SettingsIcon, Building, FileText, Shield, Globe } from 'lucide-react';
+import { Settings as SettingsIcon, Building, FileText, Shield, Globe, Edit } from 'lucide-react';
 import { CompanySettings } from './settings/CompanySettings';
 import { SystemSettings } from './settings/SystemSettings';
 import { BillingSettings } from './settings/BillingSettings';
 import { LetterTemplatesSettings } from './settings/LetterTemplatesSettings';
+import { FormEditor } from './settings/FormEditor';
 
 export function Settings() {
   const [activeTab, setActiveTab] = useState('company');
@@ -24,7 +25,7 @@ export function Settings() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="company" className="flex items-center space-x-2">
             <Building className="h-4 w-4" />
             <span>Company</span>
@@ -32,6 +33,10 @@ export function Settings() {
           <TabsTrigger value="templates" className="flex items-center space-x-2">
             <FileText className="h-4 w-4" />
             <span>Letter Templates</span>
+          </TabsTrigger>
+          <TabsTrigger value="forms" className="flex items-center space-x-2">
+            <Edit className="h-4 w-4" />
+            <span>Form Editor</span>
           </TabsTrigger>
           <TabsTrigger value="system" className="flex items-center space-x-2">
             <Globe className="h-4 w-4" />
@@ -49,6 +54,10 @@ export function Settings() {
 
         <TabsContent value="templates" className="space-y-6">
           <LetterTemplatesSettings />
+        </TabsContent>
+
+        <TabsContent value="forms" className="space-y-6">
+          <FormEditor />
         </TabsContent>
 
         <TabsContent value="system" className="space-y-6">
