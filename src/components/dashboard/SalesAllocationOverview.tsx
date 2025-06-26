@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,7 +22,6 @@ import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
 import { PendingOffersTab } from './allocation/PendingOffersTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
-import { useSalesAllocation } from '@/contexts/SalesAllocationContext';
 import { toast } from 'sonner';
 
 export function SalesAllocationOverview() {
@@ -32,72 +30,46 @@ export function SalesAllocationOverview() {
   const [showAllocationModal, setShowAllocationModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Use global context for synchronized data
-  const {
-    pendingOffersCount,
-    pendingAllocationsCount,
-    pendingApprovalsCount,
-    addSalesRecord,
-    updateOfferStatus,
-    moveToApproval,
-    processApproval,
-    syncCounts
-  } = useSalesAllocation();
+  // Global state for synchronization
+  const [pendingOffersCount, setPendingOffersCount] = useState(3);
+  const [pendingAllocationsCount, setPendingAllocationsCount] = useState(2);
+  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(2);
 
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
     
-    // Create sales record
-    const salesRecord = {
-      id: `sale-${Date.now()}`,
-      clientId: `client-${Date.now()}`,
-      clientName: data.clientName,
-      projectId: `project-${Date.now()}`,
-      projectName: data.projectName,
-      salesType: data.salesType,
-      unitNumber: data.unitNumber,
-      saleAmount: data.saleAmount,
-      initialPayment: data.initialPayment,
-      marketerId: data.marketerId,
-      marketerName: data.marketerName,
-      saleDate: data.saleDate,
-      paymentMethod: data.paymentMethod,
-      notes: data.notes,
-      status: 'pending_offer' as const,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    addSalesRecord(salesRecord);
-    
     if (data.salesType === 'offer_only') {
+      setPendingOffersCount(prev => prev + 1);
       toast.success('Offer recorded! Client will receive offer letter for review.');
     } else if (data.salesType === 'offer_allocation') {
+      setPendingOffersCount(prev => prev + 1);
+      setPendingAllocationsCount(prev => prev + 1);
       toast.success('Sale recorded! Added to pending offers and allocations for processing.');
     }
   };
 
   const handleAllocationAction = (data: any) => {
     console.log('Processing allocation action:', data);
-    moveToApproval(data.allocationId || `allocation-${Date.now()}`);
+    setPendingApprovalsCount(prev => prev + 1);
     toast.success('Allocation submitted for approval with letter preview!');
   };
 
   const handlePendingAllocation = (data: any) => {
     console.log('Processing pending allocation:', data);
-    moveToApproval(data.allocationId || `allocation-${Date.now()}`);
+    setPendingAllocationsCount(prev => Math.max(0, prev - 1));
+    setPendingApprovalsCount(prev => prev + 1);
     toast.success('Allocation initiated and sent for approval with letter template!');
   };
 
   const handleOfferAction = (data: any) => {
     console.log('Processing offer action:', data);
-    updateOfferStatus(data.id, 'offer_sent');
+    setPendingOffersCount(prev => Math.max(0, prev - 1));
     toast.success('Offer letter sent to client successfully!');
   };
 
   const handleApprovalAction = (allocationId: string, action: 'approve' | 'decline') => {
     console.log(`${action} allocation:`, allocationId);
-    processApproval(allocationId, action);
+    setPendingApprovalsCount(prev => Math.max(0, prev - 1));
     
     if (action === 'approve') {
       toast.success('Allocation approved! Letter sent to client automatically.');
@@ -106,7 +78,7 @@ export function SalesAllocationOverview() {
     }
   };
 
-  // KPI data with synchronized counts
+  // KPI data
   const kpiData = [
     {
       title: 'Total Sales',
@@ -181,13 +153,6 @@ export function SalesAllocationOverview() {
                 {pendingApprovalsCount}
               </Badge>
             )}
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={syncCounts}
-            className="text-blue-600 hover:text-blue-700"
-          >
-            Sync Data
           </Button>
         </div>
       </div>

@@ -1,279 +1,481 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Edit, Plus, Save, Trash2, Eye } from 'lucide-react';
-import { toast } from 'sonner';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { 
+  Plus, 
+  Trash2, 
+  GripVertical, 
+  Eye, 
+  EyeOff, 
+  Save,
+  FileText,
+  User,
+  CreditCard,
+  Building,
+  MapPin,
+  DollarSign,
+  Send,
+  AlertCircle,
+  Settings,
+  Camera,
+  Calendar
+} from 'lucide-react';
 
 interface FormField {
   id: string;
   name: string;
-  type: 'text' | 'email' | 'number' | 'textarea' | 'select' | 'checkbox' | 'date';
   label: string;
+  type: 'text' | 'email' | 'phone' | 'textarea' | 'select' | 'file' | 'date' | 'number';
   required: boolean;
+  visible: boolean;
   options?: string[];
+  placeholder?: string;
+  isCustom?: boolean;
 }
 
-interface CustomForm {
+interface FormTemplate {
   id: string;
   name: string;
   description: string;
+  icon: React.ReactNode;
   fields: FormField[];
-  status: 'active' | 'draft';
-  createdAt: string;
-  updatedAt: string;
+  category: string;
 }
 
-const mockForms: CustomForm[] = [
-  {
-    id: 'form-1',
-    name: 'Client Registration Form',
-    description: 'Standard form for new client registration',
-    status: 'active',
-    fields: [
-      { id: 'f1', name: 'fullName', type: 'text', label: 'Full Name', required: true },
-      { id: 'f2', name: 'email', type: 'email', label: 'Email Address', required: true },
-      { id: 'f3', name: 'phone', type: 'text', label: 'Phone Number', required: true }
-    ],
-    createdAt: '2024-01-10',
-    updatedAt: '2024-01-15'
-  },
-  {
-    id: 'form-2',
-    name: 'Property Inquiry Form',
-    description: 'Form for property inquiries and interest',
-    status: 'draft',
-    fields: [
-      { id: 'f4', name: 'project', type: 'select', label: 'Project Interest', required: true, options: ['Victoria Gardens', 'Emerald Heights'] },
-      { id: 'f5', name: 'budget', type: 'number', label: 'Budget Range', required: false },
-      { id: 'f6', name: 'comments', type: 'textarea', label: 'Additional Comments', required: false }
-    ],
-    createdAt: '2024-01-12',
-    updatedAt: '2024-01-20'
-  }
-];
-
 export function FormEditor() {
-  const [forms, setForms] = useState<CustomForm[]>(mockForms);
-  const [selectedForm, setSelectedForm] = useState<CustomForm | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [selectedForm, setSelectedForm] = useState<string>('');
+  const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
+  const [newField, setNewField] = useState<Partial<FormField>>({
+    name: '',
+    label: '',
+    type: 'text',
+    required: false,
+    visible: true,
+    placeholder: ''
+  });
 
-  const handleCreateForm = () => {
-    const newForm: CustomForm = {
-      id: `form-${Date.now()}`,
-      name: 'New Form',
-      description: 'New custom form',
-      status: 'draft',
-      fields: [],
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0]
+  const [formTemplates, setFormTemplates] = useState<FormTemplate[]>([
+    {
+      id: 'client-form',
+      name: 'Client Form',
+      description: 'Client onboarding and information collection',
+      category: 'Core Forms',
+      icon: <User className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'firstName', label: 'First Name', type: 'text', required: true, visible: true },
+        { id: '2', name: 'lastName', label: 'Last Name', type: 'text', required: true, visible: true },
+        { id: '3', name: 'email', label: 'Email Address', type: 'email', required: true, visible: true },
+        { id: '4', name: 'phone', label: 'Phone Number', type: 'phone', required: true, visible: true },
+        { id: '5', name: 'address', label: 'Address', type: 'textarea', required: false, visible: true },
+        { id: '6', name: 'clientType', label: 'Client Type', type: 'select', required: false, visible: true, options: ['Individual', 'Corporate', 'Investor'] },
+        { id: '7', name: 'source', label: 'Lead Source', type: 'select', required: false, visible: true, options: ['Referral', 'Website', 'Social Media', 'Advertisement', 'Walk-in'] },
+        { id: '8', name: 'notes', label: 'Notes', type: 'textarea', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'project-form',
+      name: 'Project Form',
+      description: 'New real estate project creation',
+      category: 'Core Forms',
+      icon: <Building className="h-5 w-5" />,
+      fields: [
+        // Basic Information
+        { id: '1', name: 'name', label: 'Project Name', type: 'text', required: true, visible: true, placeholder: 'e.g., Victoria Gardens Estate' },
+        { id: '2', name: 'location', label: 'Location', type: 'text', required: true, visible: true, placeholder: 'e.g., Lekki, Lagos' },
+        { id: '3', name: 'category', label: 'Project Category', type: 'select', required: true, visible: true, options: ['Housing', 'Land', 'Both'] },
+        { id: '4', name: 'description', label: 'Project Description', type: 'textarea', required: false, visible: true, placeholder: 'Brief description of the project...' },
+        { id: '5', name: 'documentTitle', label: 'Document Title', type: 'text', required: false, visible: true, placeholder: 'e.g., Certificate of Occupancy, Family Receipt' },
+        
+        // Project Details
+        { id: '6', name: 'status', label: 'Project Status', type: 'select', required: true, visible: true, options: ['Acquisition', 'Documentation', 'Planning', 'Construction', 'Presale', 'Selling', 'Pause Sales', 'Sold Out'] },
+        { id: '7', name: 'projectSize', label: 'Project Size', type: 'text', required: false, visible: true, placeholder: 'e.g., 50 hectares or 150 units' },
+        { id: '8', name: 'projectManager', label: 'Project Manager', type: 'select', required: false, visible: true, options: ['Alice Johnson', 'John Smith', 'Sarah Wilson', 'Mike Brown', 'Emily Davis'] },
+        { id: '9', name: 'tags', label: 'Tags', type: 'text', required: false, visible: true, placeholder: 'e.g., Premium, Luxury, Family (comma separated)' },
+        
+        // Timeline & Management
+        { id: '10', name: 'startDate', label: 'Start Date', type: 'date', required: false, visible: true },
+        { id: '11', name: 'expectedCompletion', label: 'Expected Completion', type: 'date', required: false, visible: true },
+        { id: '12', name: 'totalBudget', label: 'Total Budget', type: 'text', required: false, visible: true, placeholder: 'e.g., ₦5,000,000,000' },
+        
+        // Contact Information
+        { id: '13', name: 'contactPerson', label: 'Contact Person', type: 'text', required: false, visible: true, placeholder: 'Project Manager/Lead' },
+        { id: '14', name: 'contactPhone', label: 'Contact Phone', type: 'phone', required: false, visible: true, placeholder: '+234 xxx xxx xxxx' },
+        { id: '15', name: 'contactEmail', label: 'Contact Email', type: 'email', required: false, visible: true, placeholder: 'project@company.com' },
+      ]
+    },
+    {
+      id: 'allocation-form',
+      name: 'Allocation Form',
+      description: 'Property allocation and assignment',
+      category: 'Core Forms',
+      icon: <MapPin className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'clientName', label: 'Client Name', type: 'select', required: true, visible: true },
+        { id: '2', name: 'projectName', label: 'Project Name', type: 'select', required: true, visible: true },
+        { id: '3', name: 'unitNumber', label: 'Unit Number', type: 'text', required: true, visible: true },
+        { id: '4', name: 'allocationDate', label: 'Allocation Date', type: 'date', required: true, visible: true },
+        { id: '5', name: 'paymentPlan', label: 'Payment Plan', type: 'select', required: true, visible: true, options: ['Full Payment', 'Installment', 'Custom'] },
+        { id: '6', name: 'initialPayment', label: 'Initial Payment', type: 'number', required: false, visible: true },
+        { id: '7', name: 'notes', label: 'Notes', type: 'textarea', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'payment-form',
+      name: 'Payment Form',
+      description: 'Payment collection and tracking',
+      category: 'Financial Forms',
+      icon: <CreditCard className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'clientName', label: 'Client Name', type: 'select', required: true, visible: true },
+        { id: '2', name: 'amount', label: 'Amount', type: 'number', required: true, visible: true },
+        { id: '3', name: 'paymentMethod', label: 'Payment Method', type: 'select', required: true, visible: true, options: ['Cash', 'Bank Transfer', 'Check', 'Card'] },
+        { id: '4', name: 'paymentDate', label: 'Payment Date', type: 'date', required: true, visible: true },
+        { id: '5', name: 'reference', label: 'Reference Number', type: 'text', required: false, visible: true },
+        { id: '6', name: 'paymentType', label: 'Payment Type', type: 'select', required: true, visible: true, options: ['Initial Payment', 'Installment', 'Final Payment', 'Additional Fee'] },
+        { id: '7', name: 'description', label: 'Description', type: 'textarea', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'expense-form',
+      name: 'Expense Form',
+      description: 'Business expense recording',
+      category: 'Financial Forms',
+      icon: <DollarSign className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'expenseType', label: 'Expense Type', type: 'select', required: true, visible: true, options: ['Office Supplies', 'Marketing', 'Travel', 'Utilities', 'Professional Services', 'Other'] },
+        { id: '2', name: 'amount', label: 'Amount', type: 'number', required: true, visible: true },
+        { id: '3', name: 'vendor', label: 'Vendor/Supplier', type: 'text', required: true, visible: true },
+        { id: '4', name: 'expenseDate', label: 'Expense Date', type: 'date', required: true, visible: true },
+        { id: '5', name: 'project', label: 'Related Project', type: 'select', required: false, visible: true },
+        { id: '6', name: 'receipt', label: 'Receipt/Invoice', type: 'file', required: false, visible: true },
+        { id: '7', name: 'description', label: 'Description', type: 'textarea', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'notice-form',
+      name: 'Notice Form',
+      description: 'Send notices to clients or staff',
+      category: 'Communication Forms',
+      icon: <Send className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'noticeType', label: 'Notice Type', type: 'select', required: true, visible: true, options: ['Payment Reminder', 'Project Update', 'General Announcement', 'Legal Notice'] },
+        { id: '2', name: 'recipients', label: 'Recipients', type: 'select', required: true, visible: true, options: ['All Clients', 'Specific Client', 'All Staff', 'Specific Staff Member'] },
+        { id: '3', name: 'subject', label: 'Subject', type: 'text', required: true, visible: true },
+        { id: '4', name: 'message', label: 'Message', type: 'textarea', required: true, visible: true },
+        { id: '5', name: 'priority', label: 'Priority', type: 'select', required: true, visible: true, options: ['Low', 'Medium', 'High', 'Urgent'] },
+        { id: '6', name: 'scheduleDate', label: 'Schedule Date', type: 'date', required: false, visible: true },
+        { id: '7', name: 'attachments', label: 'Attachments', type: 'file', required: false, visible: true },
+      ]
+    },
+    {
+      id: 'project-site-form',
+      name: 'Project Site Form',
+      description: 'Project site management and tracking',
+      category: 'Project Management',
+      icon: <Building className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'siteName', label: 'Site Name', type: 'text', required: true, visible: true },
+        { id: '2', name: 'parentProject', label: 'Parent Project', type: 'select', required: true, visible: true },
+        { id: '3', name: 'location', label: 'Location', type: 'text', required: true, visible: true },
+        { id: '4', name: 'siteManager', label: 'Site Manager', type: 'select', required: false, visible: true },
+        { id: '5', name: 'startDate', label: 'Start Date', type: 'date', required: false, visible: true },
+        { id: '6', name: 'expectedCompletion', label: 'Expected Completion', type: 'date', required: false, visible: true },
+        { id: '7', name: 'budget', label: 'Budget', type: 'number', required: false, visible: true },
+        { id: '8', name: 'description', label: 'Description', type: 'textarea', required: false, visible: true },
+      ]
+    }
+  ]);
+
+  const selectedFormTemplate = formTemplates.find(form => form.id === selectedForm);
+
+  const handleAddField = () => {
+    if (!selectedFormTemplate || !newField.name || !newField.label) return;
+
+    const field: FormField = {
+      id: Date.now().toString(),
+      name: newField.name!,
+      label: newField.label!,
+      type: newField.type!,
+      required: newField.required!,
+      visible: newField.visible!,
+      placeholder: newField.placeholder,
+      options: newField.type === 'select' ? ['Option 1', 'Option 2'] : undefined,
+      isCustom: true
     };
-    setForms([...forms, newForm]);
-    setSelectedForm(newForm);
-    setIsEditing(true);
-    toast.success('New form created');
+
+    setFormTemplates(prev => prev.map(template => 
+      template.id === selectedForm 
+        ? { ...template, fields: [...template.fields, field] }
+        : template
+    ));
+
+    setNewField({
+      name: '',
+      label: '',
+      type: 'text',
+      required: false,
+      visible: true,
+      placeholder: ''
+    });
+    setIsAddFieldModalOpen(false);
   };
 
-  const handleSaveForm = () => {
-    if (selectedForm) {
-      setForms(forms.map(f => f.id === selectedForm.id ? selectedForm : f));
-      setIsEditing(false);
-      toast.success('Form saved successfully');
-    }
+  const handleRemoveField = (fieldId: string) => {
+    if (!selectedFormTemplate) return;
+
+    setFormTemplates(prev => prev.map(template => 
+      template.id === selectedForm 
+        ? { ...template, fields: template.fields.filter(field => field.id !== fieldId) }
+        : template
+    ));
   };
 
-  const handleDeleteForm = (formId: string) => {
-    setForms(forms.filter(f => f.id !== formId));
-    if (selectedForm?.id === formId) {
-      setSelectedForm(null);
-    }
-    toast.success('Form deleted');
+  const handleToggleFieldVisibility = (fieldId: string) => {
+    if (!selectedFormTemplate) return;
+
+    setFormTemplates(prev => prev.map(template => 
+      template.id === selectedForm 
+        ? { 
+            ...template, 
+            fields: template.fields.map(field => 
+              field.id === fieldId 
+                ? { ...field, visible: !field.visible }
+                : field
+            )
+          }
+        : template
+    ));
   };
+
+  const handleSaveChanges = () => {
+    console.log('Saving form changes for:', selectedForm);
+    console.log('Updated fields:', selectedFormTemplate?.fields);
+    // Here you would typically save to a backend or local storage
+  };
+
+  // Group forms by category
+  const formsByCategory = formTemplates.reduce((acc, form) => {
+    if (!acc[form.category]) {
+      acc[form.category] = [];
+    }
+    acc[form.category].push(form);
+    return acc;
+  }, {} as Record<string, FormTemplate[]>);
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">Form Editor</h2>
+          <p className="text-gray-600">Customize forms by adding, removing, or reordering fields</p>
+        </div>
+        {selectedForm && (
+          <Button onClick={handleSaveChanges} className="bg-green-600 hover:bg-green-700">
+            <Save className="h-4 w-4 mr-2" />
+            Save Changes
+          </Button>
+        )}
+      </div>
+
+      {/* Form Selection */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center space-x-2">
-                <Edit className="h-5 w-5 text-blue-600" />
-                <span>Form Editor</span>
-              </CardTitle>
-              <p className="text-sm text-gray-600 mt-1">
-                Create and manage custom forms for your business needs
-              </p>
-            </div>
-            <Button onClick={handleCreateForm} className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Form
-            </Button>
-          </div>
+          <CardTitle>Select Form to Edit</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Forms List */}
-            <div className="space-y-4">
-              <h3 className="font-semibold">Available Forms</h3>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Form Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {forms.map((form) => (
-                    <TableRow key={form.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{form.name}</div>
-                          <div className="text-sm text-gray-500">{form.description}</div>
+          {Object.entries(formsByCategory).map(([category, forms]) => (
+            <div key={category} className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
+                <Settings className="h-5 w-5 text-purple-600" />
+                {category}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {forms.map((template) => (
+                  <Card 
+                    key={template.id}
+                    className={`cursor-pointer transition-all hover:shadow-md ${
+                      selectedForm === template.id ? 'ring-2 ring-purple-500 bg-purple-50' : ''
+                    }`}
+                    onClick={() => setSelectedForm(template.id)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-purple-100 rounded-lg">
+                          {template.icon}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={form.status === 'active' ? 'default' : 'secondary'}>
-                          {form.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedForm(form);
-                              setIsEditing(false);
-                            }}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedForm(form);
-                              setIsEditing(true);
-                            }}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDeleteForm(form.id)}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{template.name}</h3>
+                          <p className="text-sm text-gray-500">{template.description}</p>
+                          <Badge variant="outline" className="mt-1">
+                            {template.fields.length} fields
+                          </Badge>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
+          ))}
+        </CardContent>
+      </Card>
 
-            {/* Form Editor */}
-            <div className="space-y-4">
-              {selectedForm ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">
-                      {isEditing ? 'Edit Form' : 'View Form'}
-                    </h3>
-                    {isEditing && (
-                      <Button onClick={handleSaveForm} size="sm">
-                        <Save className="h-4 w-4 mr-2" />
-                        Save
-                      </Button>
-                    )}
-                  </div>
-
+      {/* Form Editor */}
+      {selectedFormTemplate && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                {selectedFormTemplate.icon}
+                {selectedFormTemplate.name} - Field Editor
+              </CardTitle>
+              <Dialog open={isAddFieldModalOpen} onOpenChange={setIsAddFieldModalOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Field
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Custom Field</DialogTitle>
+                    <DialogDescription>
+                      Create a new custom field for this form
+                    </DialogDescription>
+                  </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label>Form Name</Label>
+                      <Label htmlFor="fieldName">Field Name</Label>
                       <Input
-                        value={selectedForm.name}
-                        onChange={(e) => setSelectedForm({
-                          ...selectedForm,
-                          name: e.target.value
-                        })}
-                        disabled={!isEditing}
+                        id="fieldName"
+                        placeholder="e.g., customField"
+                        value={newField.name}
+                        onChange={(e) => setNewField(prev => ({ ...prev, name: e.target.value }))}
                       />
                     </div>
-
                     <div>
-                      <Label>Description</Label>
-                      <Textarea
-                        value={selectedForm.description}
-                        onChange={(e) => setSelectedForm({
-                          ...selectedForm,
-                          description: e.target.value
-                        })}
-                        disabled={!isEditing}
+                      <Label htmlFor="fieldLabel">Field Label</Label>
+                      <Input
+                        id="fieldLabel"
+                        placeholder="e.g., Custom Field"
+                        value={newField.label}
+                        onChange={(e) => setNewField(prev => ({ ...prev, label: e.target.value }))}
                       />
                     </div>
-
                     <div>
-                      <Label>Status</Label>
-                      <Select
-                        value={selectedForm.status}
-                        onValueChange={(value: 'active' | 'draft') => 
-                          setSelectedForm({
-                            ...selectedForm,
-                            status: value
-                          })
-                        }
-                        disabled={!isEditing}
+                      <Label htmlFor="fieldType">Field Type</Label>
+                      <Select 
+                        value={newField.type} 
+                        onValueChange={(value: any) => setNewField(prev => ({ ...prev, type: value }))}
                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="draft">Draft</SelectItem>
-                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="text">Text</SelectItem>
+                          <SelectItem value="email">Email</SelectItem>
+                          <SelectItem value="phone">Phone</SelectItem>
+                          <SelectItem value="textarea">Textarea</SelectItem>
+                          <SelectItem value="select">Dropdown</SelectItem>
+                          <SelectItem value="file">File Upload</SelectItem>
+                          <SelectItem value="date">Date</SelectItem>
+                          <SelectItem value="number">Number</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-
                     <div>
-                      <Label>Form Fields ({selectedForm.fields.length})</Label>
-                      <div className="mt-2 space-y-2">
-                        {selectedForm.fields.map((field) => (
-                          <div key={field.id} className="p-3 border rounded-lg">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <div className="font-medium">{field.label}</div>
-                                <div className="text-sm text-gray-500">
-                                  {field.type} • {field.required ? 'Required' : 'Optional'}
-                                </div>
-                              </div>
-                              <Badge variant="outline">{field.type}</Badge>
-                            </div>
-                          </div>
-                        ))}
+                      <Label htmlFor="placeholder">Placeholder Text</Label>
+                      <Input
+                        id="placeholder"
+                        placeholder="Enter placeholder text"
+                        value={newField.placeholder}
+                        onChange={(e) => setNewField(prev => ({ ...prev, placeholder: e.target.value }))}
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="required"
+                        checked={newField.required}
+                        onCheckedChange={(checked) => setNewField(prev => ({ ...prev, required: checked }))}
+                      />
+                      <Label htmlFor="required">Required field</Label>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={handleAddField} className="flex-1">
+                        Add Field
+                      </Button>
+                      <Button variant="outline" onClick={() => setIsAddFieldModalOpen(false)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {selectedFormTemplate.fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className={`p-4 border rounded-lg bg-white shadow-sm ${!field.visible ? 'opacity-50' : ''}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="cursor-grab hover:cursor-grabbing">
+                        <GripVertical className="h-4 w-4 text-gray-400" />
                       </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium">{field.label}</h4>
+                          {field.required && (
+                            <Badge variant="destructive" className="text-xs">Required</Badge>
+                          )}
+                          {field.isCustom && (
+                            <Badge variant="secondary" className="text-xs">Custom</Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          {field.name} • {field.type}
+                          {field.options && ` • ${field.options.length} options`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleToggleFieldVisibility(field.id)}
+                      >
+                        {field.visible ? (
+                          <Eye className="h-4 w-4" />
+                        ) : (
+                          <EyeOff className="h-4 w-4" />
+                        )}
+                      </Button>
+                      {field.isCustom && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveField(field.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Edit className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p>Select a form to view or edit</p>
-                </div>
-              )}
+              ))}
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
