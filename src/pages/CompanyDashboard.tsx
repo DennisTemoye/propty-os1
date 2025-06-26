@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
@@ -24,6 +23,7 @@ import { useLocation } from 'react-router-dom';
 import { useResponsive } from '@/hooks/use-responsive';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const CompanyDashboard = () => {
   const location = useLocation();
@@ -77,26 +77,21 @@ const CompanyDashboard = () => {
     <div className="w-full">
       <MobileWarningBanner />
       <SidebarProvider>
-        <div className={`flex min-h-screen w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
+        <div className={`min-h-screen flex w-full bg-gray-50 dark:bg-gray-900 ${isSmallScreen ? 'pt-16 sm:pt-20' : ''}`}>
           
-          {/* Sidebar Container - Fixed on desktop */}
-          <div className={`${isSmallScreen ? 'hidden' : 'fixed left-0 top-0 h-screen w-64 z-50'}`}>
-            <CompanySidebar />
-          </div>
+          <CompanySidebar 
+            isOpen={sidebarOpen} 
+            onClose={() => setSidebarOpen(false)} 
+          />
           
-          {/* Mobile Sidebar Overlay */}
-          {isSmallScreen && (
-            <CompanySidebar 
-              isOpen={sidebarOpen} 
-              onClose={() => setSidebarOpen(false)} 
-            />
-          )}
-          
-          {/* Main Content Area */}
-          <div className={`flex-1 flex flex-col ${!isSmallScreen ? 'ml-64' : 'w-full'}`}>
+          {/* Main content with left margin for fixed sidebar on desktop */}
+          <div className={cn(
+            "flex-1 flex flex-col min-w-0 overflow-hidden w-full",
+            !isSmallScreen && "ml-64" // Add left margin for fixed sidebar on desktop
+          )}>
             {/* Mobile/Tablet Header */}
             {isSmallScreen && (
-              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm">
+              <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 sticky top-16 sm:top-20 z-30 shadow-sm w-full">
                 <div className="flex items-center justify-between">
                   <Button
                     variant="ghost"
@@ -118,8 +113,7 @@ const CompanyDashboard = () => {
               </header>
             )}
             
-            {/* Main Content */}
-            <main className="flex-1 overflow-auto">
+            <main className="flex-1 overflow-auto w-full">
               {isDetailPage ? (
                 // Detail pages render without container for full width
                 renderActiveModule()
@@ -127,7 +121,7 @@ const CompanyDashboard = () => {
                 // Regular pages use ResponsiveContainer
                 <ResponsiveContainer 
                   fullWidth={true}
-                  className="h-full min-h-0"
+                  className="h-full min-h-0 w-full"
                   padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
                 >
                   {renderActiveModule()}
