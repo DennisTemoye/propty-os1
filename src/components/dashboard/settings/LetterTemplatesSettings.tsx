@@ -1,11 +1,6 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -14,47 +9,21 @@ import {
   Edit, 
   Trash2, 
   Save, 
-  Eye, 
-  Move,
-  GripVertical 
+  Eye,
+  GripVertical,
+  Settings
 } from 'lucide-react';
 import { TemplateEditor } from './TemplateEditor';
 import { TemplatePreviewModal } from './TemplatePreviewModal';
+import { useLetterTemplates } from '@/hooks/useLetterTemplates';
 import { toast } from 'sonner';
 
-const mockTemplates = [
-  {
-    id: 'offer-1',
-    name: 'Standard Offer Letter',
-    type: 'offer_letter',
-    status: 'active',
-    lastModified: '2024-01-15',
-    fields: ['clientName', 'projectName', 'saleAmount', 'offerDate']
-  },
-  {
-    id: 'allocation-1',
-    name: 'Standard Allocation Letter',
-    type: 'allocation_letter',
-    status: 'active',
-    lastModified: '2024-01-10',
-    fields: ['clientName', 'projectName', 'unitNumber', 'allocationDate']
-  },
-  {
-    id: 'payment-1',
-    name: 'Payment Reminder Notice',
-    type: 'payment_notice',
-    status: 'draft',
-    lastModified: '2024-01-12',
-    fields: ['clientName', 'dueAmount', 'dueDate']
-  }
-];
-
 const templateTypes = [
-  { value: 'offer_letter', label: 'Offer Letter' },
-  { value: 'allocation_letter', label: 'Allocation Letter' },
-  { value: 'payment_notice', label: 'Payment Notice' },
-  { value: 'completion_letter', label: 'Completion Letter' },
-  { value: 'termination_letter', label: 'Termination Letter' }
+  { value: 'offer_letter', label: 'Offer Letter', description: 'Client property offers' },
+  { value: 'allocation_letter', label: 'Allocation Letter', description: 'Unit allocation confirmations' },
+  { value: 'payment_notice', label: 'Payment Notice', description: 'Payment reminders and notices' },
+  { value: 'completion_letter', label: 'Completion Letter', description: 'Project completion notifications' },
+  { value: 'termination_letter', label: 'Termination Letter', description: 'Contract terminations' }
 ];
 
 const availableFields = [
@@ -62,6 +31,7 @@ const availableFields = [
   { key: 'projectName', label: 'Project Name', type: 'text' },
   { key: 'unitNumber', label: 'Unit Number', type: 'text' },
   { key: 'saleAmount', label: 'Sale Amount', type: 'currency' },
+  { key: 'allocationAmount', label: 'Allocation Amount', type: 'currency' },
   { key: 'initialPayment', label: 'Initial Payment', type: 'currency' },
   { key: 'dueAmount', label: 'Due Amount', type: 'currency' },
   { key: 'offerDate', label: 'Offer Date', type: 'date' },
@@ -79,6 +49,8 @@ export function LetterTemplatesSettings() {
   const [showEditor, setShowEditor] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<any>(null);
+
+  const { templates, saveTemplate, deleteTemplate } = useLetterTemplates();
 
   const handleCreateTemplate = () => {
     setEditingTemplate({
@@ -98,8 +70,8 @@ export function LetterTemplatesSettings() {
   };
 
   const handleSaveTemplate = (templateData: any) => {
-    console.log('Saving template:', templateData);
-    toast.success('Template saved successfully!');
+    saveTemplate(templateData);
+    toast.success('Template saved successfully! Changes will be reflected globally.');
     setShowEditor(false);
     setEditingTemplate(null);
   };
@@ -110,8 +82,8 @@ export function LetterTemplatesSettings() {
   };
 
   const handleDeleteTemplate = (templateId: string) => {
-    console.log('Deleting template:', templateId);
-    toast.success('Template deleted successfully!');
+    deleteTemplate(templateId);
+    toast.success('Template deleted successfully! This will affect all related processes.');
   };
 
   const getStatusColor = (status: string) => {
@@ -131,8 +103,11 @@ export function LetterTemplatesSettings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Letter Templates</h2>
-          <p className="text-gray-600">Manage templates for offers, allocations, and other client communications</p>
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+            <Settings className="h-6 w-6 mr-2 text-blue-600" />
+            Letter Templates Management
+          </h2>
+          <p className="text-gray-600">Manage templates for offers, allocations, and client communications globally</p>
         </div>
         <Button onClick={handleCreateTemplate} className="bg-blue-600 hover:bg-blue-700">
           <Plus className="h-4 w-4 mr-2" />
@@ -140,84 +115,136 @@ export function LetterTemplatesSettings() {
         </Button>
       </div>
 
+      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <p className="text-sm text-blue-800">
+          <strong>Global Template System:</strong> Changes made here will automatically update all letters generated 
+          across the Sales & Allocation module, ensuring consistency in client communications.
+        </p>
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="templates">Templates</TabsTrigger>
+          <TabsTrigger value="templates">Active Templates</TabsTrigger>
           <TabsTrigger value="fields">Field Management</TabsTrigger>
-          <TabsTrigger value="settings">Template Settings</TabsTrigger>
+          <TabsTrigger value="settings">Global Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="templates" className="space-y-6">
-          <div className="grid grid-cols-1 gap-4">
-            {mockTemplates.map((template) => (
-              <Card key={template.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
-                        <GripVertical className="h-4 w-4 text-gray-400 cursor-move" />
-                        <FileText className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">{template.name}</h3>
-                        <p className="text-sm text-gray-600">
-                          {templateTypes.find(t => t.value === template.type)?.label}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Last modified: {template.lastModified}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge className={getStatusColor(template.status)}>
-                        {template.status}
+          {/* Template Types Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {templateTypes.map((type) => {
+              const activeTemplate = templates.find(t => t.type === type.value && t.status === 'active');
+              return (
+                <Card key={type.value} className={activeTemplate ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold">{type.label}</h3>
+                      <Badge className={activeTemplate ? 'bg-green-600' : 'bg-orange-600'}>
+                        {activeTemplate ? 'Active' : 'No Template'}
                       </Badge>
-                      <div className="flex space-x-1">
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handlePreviewTemplate(template)}
-                        >
-                          <Eye className="h-3 w-3" />
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">{type.description}</p>
+                    {activeTemplate ? (
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => handlePreviewTemplate(activeTemplate)}>
+                          <Eye className="h-3 w-3 mr-1" />
+                          Preview
                         </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleEditTemplate(template)}
-                        >
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleDeleteTemplate(template.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-3 w-3" />
+                        <Button size="sm" variant="outline" onClick={() => handleEditTemplate(activeTemplate)}>
+                          <Edit className="h-3 w-3 mr-1" />
+                          Edit
                         </Button>
                       </div>
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <div className="text-sm text-gray-600">Fields used:</div>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {template.fields.map((field) => (
-                        <Badge key={field} variant="outline" className="text-xs">
-                          {availableFields.find(f => f.key === field)?.label || field}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    ) : (
+                      <Button size="sm" onClick={handleCreateTemplate} className="w-full">
+                        Create Template
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
+
+          {/* All Templates List */}
+          <Card>
+            <CardHeader>
+              <CardTitle>All Templates</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {templates.map((template) => (
+                  <Card key={template.id} className="border">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <GripVertical className="h-4 w-4 text-gray-400 cursor-move" />
+                          <FileText className="h-5 w-5 text-blue-600" />
+                          <div>
+                            <h3 className="font-semibold">{template.name}</h3>
+                            <p className="text-sm text-gray-600">
+                              {templateTypes.find(t => t.value === template.type)?.label}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Modified: {new Date(template.lastModified).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Badge className={getStatusColor(template.status)}>
+                            {template.status}
+                          </Badge>
+                          <div className="flex space-x-1">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handlePreviewTemplate(template)}
+                            >
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleEditTemplate(template)}
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleDeleteTemplate(template.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3">
+                        <div className="text-sm text-gray-600">Fields used:</div>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {template.fields.map((field) => (
+                            <Badge key={field} variant="outline" className="text-xs">
+                              {availableFields.find(f => f.key === field)?.label || field}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="fields" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Available Fields</CardTitle>
+              <CardTitle>Available Template Fields</CardTitle>
+              <p className="text-sm text-gray-600">
+                These fields can be used in any template and will be automatically populated with data from the system.
+              </p>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -229,7 +256,7 @@ export function LetterTemplatesSettings() {
                         <Badge variant="outline">{field.type}</Badge>
                       </div>
                       <div className="text-sm text-gray-600">
-                        Field key: <code className="bg-gray-100 px-1 rounded">{field.key}</code>
+                        Template usage: <code className="bg-gray-100 px-1 rounded">{`{{${field.key}}}`}</code>
                       </div>
                     </div>
                   </Card>
@@ -242,52 +269,28 @@ export function LetterTemplatesSettings() {
         <TabsContent value="settings" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Template Settings</CardTitle>
+              <CardTitle>Global Template Settings</CardTitle>
+              <p className="text-sm text-gray-600">
+                Configure default settings that apply to all letter templates across the system.
+              </p>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label>Default Company Information</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                  <Input placeholder="Company Name" />
-                  <Input placeholder="Company Address" />
-                  <Input placeholder="Phone Number" />
-                  <Input placeholder="Email Address" />
-                </div>
-              </div>
-              <div>
-                <Label>Default Letter Settings</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Default Font" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="arial">Arial</SelectItem>
-                      <SelectItem value="times">Times New Roman</SelectItem>
-                      <SelectItem value="calibri">Calibri</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Default Font Size" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="12">12pt</SelectItem>
-                      <SelectItem value="14">14pt</SelectItem>
-                      <SelectItem value="16">16pt</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <p className="text-sm text-yellow-800">
+                  <strong>Note:</strong> These settings will affect all generated letters across the Sales & Allocation module. 
+                  Changes here will be applied to new letters generated after saving.
+                </p>
               </div>
               <Button className="bg-green-600 hover:bg-green-700">
                 <Save className="h-4 w-4 mr-2" />
-                Save Settings
+                Save Global Settings
               </Button>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
 
+      {/* Modals */}
       {showEditor && (
         <TemplateEditor
           isOpen={showEditor}

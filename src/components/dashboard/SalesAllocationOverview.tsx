@@ -20,9 +20,9 @@ import { SalesFlowModal } from './sales-allocation/SalesFlowModal';
 import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
 import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
+import { PendingOffersTab } from './allocation/PendingOffersTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 import { toast } from 'sonner';
-import { PendingOffersTab } from './allocation/PendingOffersTab';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -30,63 +30,55 @@ export function SalesAllocationOverview() {
   const [showAllocationModal, setShowAllocationModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Global state for synchronization - updated structure
-  const [pendingOffersCount, setPendingOffersCount] = useState(3); // Offers awaiting client response
-  const [pendingAllocationsCount, setPendingAllocationsCount] = useState(2); // Sales awaiting unit allocation
-  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(2); // Allocations pending approval
+  // Global state for synchronization
+  const [pendingOffersCount, setPendingOffersCount] = useState(3);
+  const [pendingAllocationsCount, setPendingAllocationsCount] = useState(2);
+  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(2);
 
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
     
     if (data.salesType === 'offer_only') {
       setPendingOffersCount(prev => prev + 1);
-      toast.success('Offer recorded! Offer letter will be generated for client.');
+      toast.success('Offer recorded! Client will receive offer letter for review.');
     } else if (data.salesType === 'offer_allocation') {
       setPendingOffersCount(prev => prev + 1);
       setPendingAllocationsCount(prev => prev + 1);
-      toast.success('Sale recorded! Added to both pending offers and pending allocations.');
+      toast.success('Sale recorded! Added to pending offers and allocations for processing.');
     }
   };
 
   const handleAllocationAction = (data: any) => {
     console.log('Processing allocation action:', data);
-    
-    // All allocation actions go to pending approval
     setPendingApprovalsCount(prev => prev + 1);
-    toast.success('Allocation action submitted for approval!');
+    toast.success('Allocation submitted for approval with letter preview!');
   };
 
   const handlePendingAllocation = (data: any) => {
     console.log('Processing pending allocation:', data);
-    
-    // Move from pending allocations to pending approvals
     setPendingAllocationsCount(prev => Math.max(0, prev - 1));
     setPendingApprovalsCount(prev => prev + 1);
-    
-    toast.success('Allocation initiated and sent for approval!');
+    toast.success('Allocation initiated and sent for approval with letter template!');
   };
 
   const handleOfferAction = (data: any) => {
     console.log('Processing offer action:', data);
-    
-    // Decrease pending offers count when offer is sent
     setPendingOffersCount(prev => Math.max(0, prev - 1));
-    toast.success('Offer letter sent to client!');
+    toast.success('Offer letter sent to client successfully!');
   };
 
   const handleApprovalAction = (allocationId: string, action: 'approve' | 'decline') => {
     console.log(`${action} allocation:`, allocationId);
-    
-    // Decrease pending approvals count
     setPendingApprovalsCount(prev => Math.max(0, prev - 1));
     
     if (action === 'approve') {
-      toast.success('Allocation approved successfully!');
+      toast.success('Allocation approved! Letter sent to client automatically.');
     } else {
-      toast.success('Allocation declined and team member has been notified.');
+      toast.success('Allocation declined. Team member has been notified.');
     }
   };
 
+  // KPI data
   const kpiData = [
     {
       title: 'Total Sales',
@@ -146,7 +138,7 @@ export function SalesAllocationOverview() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Sales & Allocations</h1>
-          <p className="text-gray-600 mt-1">Manage sales documentation and unit allocations</p>
+          <p className="text-gray-600 mt-1">Manage sales documentation and unit allocations with automated letter generation</p>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -205,7 +197,7 @@ export function SalesAllocationOverview() {
               Record Sale
             </Button>
             <p className="text-sm text-gray-600 mt-2 text-center">
-              Create offers or record sales with optional unit allocation
+              Create offers or record sales with automated letter templates
             </p>
           </CardContent>
         </Card>
@@ -220,7 +212,7 @@ export function SalesAllocationOverview() {
               Manage Allocation
             </Button>
             <p className="text-sm text-gray-600 mt-2 text-center">
-              Handle unit allocations, reallocations, and revocations
+              Handle unit allocations with approval workflow and letter generation
             </p>
           </CardContent>
         </Card>
@@ -304,7 +296,6 @@ export function SalesAllocationOverview() {
         onNotificationClick={(notification) => {
           console.log('Notification clicked:', notification);
           setShowNotifications(false);
-          // Navigate to relevant tab based on notification
           if (notification.type === 'allocation_pending') {
             setActiveTab('approvals');
           }
