@@ -22,7 +22,14 @@ const mockClients = [
     emergencyContact: 'Jane Doe',
     emergencyPhone: '+234 801 234 5679',
     referralSource: 'Website',
-    notes: 'Interested in premium units'
+    notes: 'Interested in premium units',
+    projects: [
+      {
+        name: 'Victoria Gardens Estate',
+        unit: 'Block A, Unit 5',
+        assignedDate: '2024-01-15'
+      }
+    ]
   }
 ];
 

@@ -10,6 +10,7 @@ interface PageHeaderProps {
   backUrl?: string;
   actions?: React.ReactNode;
   showBackButton?: boolean;
+  onBack?: () => void;
 }
 
 export function PageHeader({ 
@@ -17,12 +18,15 @@ export function PageHeader({
   description, 
   backUrl, 
   actions, 
-  showBackButton = true 
+  showBackButton = true,
+  onBack
 }: PageHeaderProps) {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    if (backUrl) {
+    if (onBack) {
+      onBack();
+    } else if (backUrl) {
       navigate(backUrl);
     } else {
       navigate(-1);

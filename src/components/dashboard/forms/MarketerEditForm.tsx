@@ -7,34 +7,38 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Camera, Upload, IdCard } from 'lucide-react';
 
-interface MarketerFormData {
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  status: string;
-  commissionRate: string;
-}
-
 interface MarketerEditFormProps {
-  formData: MarketerFormData;
-  onInputChange: (field: string, value: string) => void;
   marketer: any;
-  profilePhoto: File | null;
-  setProfilePhoto: (file: File | null) => void;
+  onFormChange?: () => void;
+  onSubmit?: () => void;
 }
 
 export function MarketerEditForm({
-  formData,
-  onInputChange,
   marketer,
-  profilePhoto,
-  setProfilePhoto
+  onFormChange,
+  onSubmit
 }: MarketerEditFormProps) {
+  const [formData, setFormData] = useState({
+    name: `${marketer.firstName} ${marketer.lastName}`,
+    email: marketer.email,
+    phone: marketer.phone,
+    role: 'Senior Marketer',
+    status: marketer.status,
+    commissionRate: marketer.commissionRate.toString()
+  });
+
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    onFormChange?.();
+  };
+
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setProfilePhoto(file);
+      onFormChange?.();
     }
   };
 
@@ -56,7 +60,7 @@ export function MarketerEditForm({
                 <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <Input
                   value={formData.name}
-                  onChange={(e) => onInputChange('name', e.target.value)}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="Enter full name"
                 />
               </div>
@@ -65,7 +69,7 @@ export function MarketerEditForm({
                 <Input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => onInputChange('email', e.target.value)}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="Enter email address"
                 />
               </div>
@@ -73,13 +77,13 @@ export function MarketerEditForm({
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                 <Input
                   value={formData.phone}
-                  onChange={(e) => onInputChange('phone', e.target.value)}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="Enter phone number"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                <Select value={formData.role} onValueChange={(value) => onInputChange('role', value)}>
+                <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -108,13 +112,13 @@ export function MarketerEditForm({
                   type="number"
                   step="0.1"
                   value={formData.commissionRate}
-                  onChange={(e) => onInputChange('commissionRate', e.target.value)}
+                  onChange={(e) => handleInputChange('commissionRate', e.target.value)}
                   placeholder="Enter commission rate"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <Select value={formData.status} onValueChange={(value) => onInputChange('status', value)}>
+                <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

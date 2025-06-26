@@ -7,39 +7,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Camera, Upload, IdCard } from 'lucide-react';
 
-interface ClientFormData {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  nationalId: string;
-  status: string;
-  kycStatus: string;
-}
-
 interface ClientEditFormProps {
-  formData: ClientFormData;
-  onInputChange: (field: string, value: string) => void;
   client: any;
-  passportPhoto: File | null;
-  setPassportPhoto: (file: File | null) => void;
-  idDocument: File | null;
-  setIdDocument: (file: File | null) => void;
+  onFormChange?: () => void;
+  onSubmit?: () => void;
 }
 
 export function ClientEditForm({
-  formData,
-  onInputChange,
   client,
-  passportPhoto,
-  setPassportPhoto,
-  idDocument,
-  setIdDocument
+  onFormChange,
+  onSubmit
 }: ClientEditFormProps) {
+  const [formData, setFormData] = useState({
+    name: `${client.firstName} ${client.lastName}`,
+    email: client.email,
+    phone: client.phone,
+    address: client.address,
+    nationalId: client.nationalId || '',
+    status: 'active',
+    kycStatus: 'approved'
+  });
+
+  const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
+  const [idDocument, setIdDocument] = useState<File | null>(null);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    onFormChange?.();
+  };
+
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setPassportPhoto(file);
+      onFormChange?.();
     }
   };
 
@@ -47,6 +48,7 @@ export function ClientEditForm({
     const file = event.target.files?.[0];
     if (file) {
       setIdDocument(file);
+      onFormChange?.();
     }
   };
 
@@ -68,7 +70,7 @@ export function ClientEditForm({
                 <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <Input
                   value={formData.name}
-                  onChange={(e) => onInputChange('name', e.target.value)}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="Enter full name"
                 />
               </div>
@@ -77,7 +79,7 @@ export function ClientEditForm({
                 <Input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => onInputChange('email', e.target.value)}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="Enter email address"
                 />
               </div>
@@ -85,7 +87,7 @@ export function ClientEditForm({
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                 <Input
                   value={formData.phone}
-                  onChange={(e) => onInputChange('phone', e.target.value)}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="Enter phone number"
                 />
               </div>
@@ -93,7 +95,7 @@ export function ClientEditForm({
                 <label className="block text-sm font-medium text-gray-700 mb-2">National ID</label>
                 <Input
                   value={formData.nationalId}
-                  onChange={(e) => onInputChange('nationalId', e.target.value)}
+                  onChange={(e) => handleInputChange('nationalId', e.target.value)}
                   placeholder="Enter national ID"
                 />
               </div>
@@ -102,7 +104,7 @@ export function ClientEditForm({
               <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
               <Textarea
                 value={formData.address}
-                onChange={(e) => onInputChange('address', e.target.value)}
+                onChange={(e) => handleInputChange('address', e.target.value)}
                 placeholder="Enter full address"
                 rows={3}
               />
@@ -119,7 +121,7 @@ export function ClientEditForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Client Status</label>
-                <Select value={formData.status} onValueChange={(value) => onInputChange('status', value)}>
+                <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -133,7 +135,7 @@ export function ClientEditForm({
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">KYC Status</label>
-                <Select value={formData.kycStatus} onValueChange={(value) => onInputChange('kycStatus', value)}>
+                <Select value={formData.kycStatus} onValueChange={(value) => handleInputChange('kycStatus', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -251,7 +253,7 @@ export function ClientEditForm({
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {client.projects.length > 0 ? (
+              {client.projects && client.projects.length > 0 ? (
                 client.projects.slice(0, 3).map((project: any, index: number) => (
                   <div key={index} className="p-3 bg-gray-50 rounded-md">
                     <p className="font-medium text-sm">{project.name}</p>
@@ -262,7 +264,7 @@ export function ClientEditForm({
               ) : (
                 <p className="text-sm text-gray-500">No projects assigned</p>
               )}
-              {client.projects.length > 3 && (
+              {client.projects && client.projects.length > 3 && (
                 <p className="text-xs text-gray-500">
                   +{client.projects.length - 3} more projects
                 </p>

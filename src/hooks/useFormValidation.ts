@@ -9,6 +9,6 @@ export function useFormValidation<T extends z.ZodSchema>(
 ): UseFormReturn<z.infer<T>> {
   return useForm<z.infer<T>>({
     resolver: zodResolver(schema),
-    defaultValues
+    defaultValues: defaultValues as any
   });
 }
