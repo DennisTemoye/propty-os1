@@ -11,11 +11,10 @@ import ContactSection from '../components/ContactSection';
 import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
 import Footer from '../components/Footer';
-import { FullWidthLayout } from '../components/layouts/FullWidthLayout';
 
 const Index = () => {
   return (
-    <FullWidthLayout withPadding={false} className="min-h-screen">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       <Header />
       <HeroSection />
       <TrustedBySection />
@@ -27,7 +26,7 @@ const Index = () => {
       <FAQSection />
       <FinalCTASection />
       <Footer />
-    </FullWidthLayout>
+    </div>
   );
 };
 

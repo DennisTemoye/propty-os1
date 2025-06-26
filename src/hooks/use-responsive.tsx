@@ -1,61 +1,42 @@
 
 import * as React from "react"
+import { useBreakpoints } from "./use-breakpoints"
 
 const BREAKPOINTS = {
-  mobile: 768,
-  tablet: 1024,
-  desktop: 1440,
-  largeDesktop: 1920
+  mobile: 767,
+  tablet: 1023,
+  desktop: 1439,
+  largeDesktop: 1440
 }
 
 export function useResponsive() {
-  const [screenSize, setScreenSize] = React.useState<{
-    width: number;
-    height: number;
-    isMobile: boolean;
-    isTablet: boolean;
-    isDesktop: boolean;
-    isLargeDesktop: boolean;
-    isSmallScreen: boolean;
-    isTouchDevice: boolean;
-  }>({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1024,
-    height: typeof window !== 'undefined' ? window.innerHeight : 768,
-    isMobile: false,
-    isTablet: false,
-    isDesktop: false,
-    isLargeDesktop: false,
-    isSmallScreen: false,
+  const { width, height, breakpoint, isMobile, isTablet, isDesktop } = useBreakpoints();
+  
+  const [screenData, setScreenData] = React.useState({
+    width,
+    height,
+    isMobile,
+    isTablet,
+    isDesktop,
+    isLargeDesktop: breakpoint === '2xl',
+    isSmallScreen: isMobile || isTablet,
     isTouchDevice: false
-  })
+  });
 
   React.useEffect(() => {
-    const updateScreenSize = () => {
-      const width = window.innerWidth
-      const height = window.innerHeight
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-      
-      setScreenSize({
-        width,
-        height,
-        isMobile: width <= BREAKPOINTS.mobile,
-        isTablet: width > BREAKPOINTS.mobile && width <= BREAKPOINTS.tablet,
-        isDesktop: width > BREAKPOINTS.tablet && width <= BREAKPOINTS.desktop,
-        isLargeDesktop: width > BREAKPOINTS.desktop,
-        isSmallScreen: width <= BREAKPOINTS.tablet,
-        isTouchDevice
-      })
-    }
-
-    updateScreenSize()
-    window.addEventListener('resize', updateScreenSize)
-    window.addEventListener('orientationchange', updateScreenSize)
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     
-    return () => {
-      window.removeEventListener('resize', updateScreenSize)
-      window.removeEventListener('orientationchange', updateScreenSize)
-    }
-  }, [])
+    setScreenData({
+      width,
+      height,
+      isMobile,
+      isTablet,
+      isDesktop,
+      isLargeDesktop: breakpoint === '2xl',
+      isSmallScreen: isMobile || isTablet,
+      isTouchDevice
+    });
+  }, [width, height, breakpoint, isMobile, isTablet, isDesktop]);
 
-  return screenSize
+  return screenData;
 }
