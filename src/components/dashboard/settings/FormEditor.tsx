@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,9 +21,11 @@ import {
   MapPin,
   DollarSign,
   Send,
-  Settings
+  AlertCircle,
+  Settings,
+  Camera,
+  Calendar
 } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface FormField {
   id: string;
@@ -84,16 +85,28 @@ export function FormEditor() {
       category: 'Core Forms',
       icon: <Building className="h-5 w-5" />,
       fields: [
+        // Basic Information
         { id: '1', name: 'name', label: 'Project Name', type: 'text', required: true, visible: true, placeholder: 'e.g., Victoria Gardens Estate' },
         { id: '2', name: 'location', label: 'Location', type: 'text', required: true, visible: true, placeholder: 'e.g., Lekki, Lagos' },
         { id: '3', name: 'category', label: 'Project Category', type: 'select', required: true, visible: true, options: ['Housing', 'Land', 'Both'] },
         { id: '4', name: 'description', label: 'Project Description', type: 'textarea', required: false, visible: true, placeholder: 'Brief description of the project...' },
         { id: '5', name: 'documentTitle', label: 'Document Title', type: 'text', required: false, visible: true, placeholder: 'e.g., Certificate of Occupancy, Family Receipt' },
-        { id: '6', name: 'status', label: 'Project Status', type: 'select', required: true, visible: true, options: ['Planning', 'Construction', 'Presale', 'Selling', 'Sold Out'] },
+        
+        // Project Details
+        { id: '6', name: 'status', label: 'Project Status', type: 'select', required: true, visible: true, options: ['Acquisition', 'Documentation', 'Planning', 'Construction', 'Presale', 'Selling', 'Pause Sales', 'Sold Out'] },
         { id: '7', name: 'projectSize', label: 'Project Size', type: 'text', required: false, visible: true, placeholder: 'e.g., 50 hectares or 150 units' },
-        { id: '8', name: 'projectManager', label: 'Project Manager', type: 'select', required: false, visible: true, options: ['Alice Johnson', 'John Smith', 'Sarah Wilson'] },
-        { id: '9', name: 'startDate', label: 'Start Date', type: 'date', required: false, visible: true },
-        { id: '10', name: 'expectedCompletion', label: 'Expected Completion', type: 'date', required: false, visible: true },
+        { id: '8', name: 'projectManager', label: 'Project Manager', type: 'select', required: false, visible: true, options: ['Alice Johnson', 'John Smith', 'Sarah Wilson', 'Mike Brown', 'Emily Davis'] },
+        { id: '9', name: 'tags', label: 'Tags', type: 'text', required: false, visible: true, placeholder: 'e.g., Premium, Luxury, Family (comma separated)' },
+        
+        // Timeline & Management
+        { id: '10', name: 'startDate', label: 'Start Date', type: 'date', required: false, visible: true },
+        { id: '11', name: 'expectedCompletion', label: 'Expected Completion', type: 'date', required: false, visible: true },
+        { id: '12', name: 'totalBudget', label: 'Total Budget', type: 'text', required: false, visible: true, placeholder: 'e.g., ₦5,000,000,000' },
+        
+        // Contact Information
+        { id: '13', name: 'contactPerson', label: 'Contact Person', type: 'text', required: false, visible: true, placeholder: 'Project Manager/Lead' },
+        { id: '14', name: 'contactPhone', label: 'Contact Phone', type: 'phone', required: false, visible: true, placeholder: '+234 xxx xxx xxxx' },
+        { id: '15', name: 'contactEmail', label: 'Contact Email', type: 'email', required: false, visible: true, placeholder: 'project@company.com' },
       ]
     },
     {
@@ -159,6 +172,23 @@ export function FormEditor() {
         { id: '6', name: 'scheduleDate', label: 'Schedule Date', type: 'date', required: false, visible: true },
         { id: '7', name: 'attachments', label: 'Attachments', type: 'file', required: false, visible: true },
       ]
+    },
+    {
+      id: 'project-site-form',
+      name: 'Project Site Form',
+      description: 'Project site management and tracking',
+      category: 'Project Management',
+      icon: <Building className="h-5 w-5" />,
+      fields: [
+        { id: '1', name: 'siteName', label: 'Site Name', type: 'text', required: true, visible: true },
+        { id: '2', name: 'parentProject', label: 'Parent Project', type: 'select', required: true, visible: true },
+        { id: '3', name: 'location', label: 'Location', type: 'text', required: true, visible: true },
+        { id: '4', name: 'siteManager', label: 'Site Manager', type: 'select', required: false, visible: true },
+        { id: '5', name: 'startDate', label: 'Start Date', type: 'date', required: false, visible: true },
+        { id: '6', name: 'expectedCompletion', label: 'Expected Completion', type: 'date', required: false, visible: true },
+        { id: '7', name: 'budget', label: 'Budget', type: 'number', required: false, visible: true },
+        { id: '8', name: 'description', label: 'Description', type: 'textarea', required: false, visible: true },
+      ]
     }
   ]);
 
@@ -194,7 +224,6 @@ export function FormEditor() {
       placeholder: ''
     });
     setIsAddFieldModalOpen(false);
-    toast.success('Field added successfully!');
   };
 
   const handleRemoveField = (fieldId: string) => {
@@ -205,7 +234,6 @@ export function FormEditor() {
         ? { ...template, fields: template.fields.filter(field => field.id !== fieldId) }
         : template
     ));
-    toast.success('Field removed successfully!');
   };
 
   const handleToggleFieldVisibility = (fieldId: string) => {
@@ -228,7 +256,7 @@ export function FormEditor() {
   const handleSaveChanges = () => {
     console.log('Saving form changes for:', selectedForm);
     console.log('Updated fields:', selectedFormTemplate?.fields);
-    toast.success('Form changes saved successfully!');
+    // Here you would typically save to a backend or local storage
   };
 
   // Group forms by category

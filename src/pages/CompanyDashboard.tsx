@@ -1,82 +1,142 @@
 
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { SalesAllocationProvider } from '@/contexts/SalesAllocationContext';
-import { ErrorBoundary } from '@/components/common/ErrorBoundary';
-import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
-
-// Import existing components that are available
+import React, { useState } from 'react';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
+import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
+import { ProjectSites } from '@/components/dashboard/ProjectSites';
+import { Clients } from '@/components/dashboard/Clients';
+import { MarketersCommission } from '@/components/dashboard/MarketersCommission';
 import { SalesAllocationOverview } from '@/components/dashboard/SalesAllocationOverview';
-import { SalesAllocation } from '@/components/dashboard/SalesAllocation';
-import { ClientDetailView } from '@/components/dashboard/ClientDetailView';
+import { FeesCollection } from '@/components/dashboard/FeesCollection';
+import { Accounting } from '@/components/dashboard/Accounting';
+import { TeamRoles } from '@/components/dashboard/TeamRoles';
+import { Reports } from '@/components/dashboard/Reports';
+import { CRMPipelinesPage } from '@/components/dashboard/tools/CRMPipelines';
+import { DocumentManagerPage } from '@/components/dashboard/tools/DocumentManager';
+import { CalendarSchedulingPage } from '@/components/dashboard/tools/CalendarScheduling';
+import { SendNotice } from '@/components/dashboard/SendNotice';
 import { Settings } from '@/components/dashboard/Settings';
+import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
+import { HelpSupport } from '@/components/dashboard/HelpSupport';
+import { MobileWarningBanner } from '@/components/common/MobileWarningBanner';
+import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
+import { ProjectDetailView } from '@/components/dashboard/ProjectDetailView';
+import { ClientDetailView } from '@/components/dashboard/ClientDetailView';
+import { MarketerDetailView } from '@/components/dashboard/MarketerDetailView';
+import { useLocation } from 'react-router-dom';
+import { useResponsive } from '@/hooks/use-responsive';
+import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
 
-// Simple placeholder components for missing ones
-const Dashboard = () => <div className="p-6"><h1 className="text-2xl font-bold">Dashboard Overview</h1></div>;
-const Projects = () => <div className="p-6"><h1 className="text-2xl font-bold">Projects</h1></div>;
-const Clients = () => <div className="p-6"><h1 className="text-2xl font-bold">Clients</h1></div>;
-const CRMDashboard = () => <div className="p-6"><h1 className="text-2xl font-bold">CRM Dashboard</h1></div>;
-const Marketers = () => <div className="p-6"><h1 className="text-2xl font-bold">Marketers</h1></div>;
-const Fees = () => <div className="p-6"><h1 className="text-2xl font-bold">Fees</h1></div>;
-const Accounting = () => <div className="p-6"><h1 className="text-2xl font-bold">Accounting</h1></div>;
-const AdvancedTools = () => <div className="p-6"><h1 className="text-2xl font-bold">Advanced Tools</h1></div>;
+const CompanyDashboard = () => {
+  const location = useLocation();
+  const { isMobile, isTablet, isSmallScreen } = useResponsive();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-// Simple sidebar component
-const Sidebar = () => (
-  <div className="w-64 bg-gray-900 text-white p-4">
-    <h2 className="text-xl font-bold mb-4">ProptyOS</h2>
-    <nav className="space-y-2">
-      <a href="/company" className="block p-2 hover:bg-gray-700 rounded">Dashboard</a>
-      <a href="/company/projects" className="block p-2 hover:bg-gray-700 rounded">Projects</a>
-      <a href="/company/clients" className="block p-2 hover:bg-gray-700 rounded">Clients</a>
-      <a href="/company/sales" className="block p-2 hover:bg-gray-700 rounded">Sales</a>
-      <a href="/company/settings" className="block p-2 hover:bg-gray-700 rounded">Settings</a>
-    </nav>
-  </div>
-);
+  const renderActiveModule = () => {
+    const path = location.pathname;
+    
+    // Handle detail pages - these render with the dashboard layout
+    if (path.match(/^\/company\/projects\/\d+$/)) {
+      return <ProjectDetailView />;
+    } else if (path.match(/^\/company\/clients\/\d+$/)) {
+      return <ClientDetailView />;
+    } else if (path.match(/^\/company\/marketers\/\d+$/)) {
+      return <MarketerDetailView />;
+    }
+    
+    // Handle main module pages
+    if (path === '/company/dashboard') {
+      return <DashboardOverview />;
+    } else if (path.startsWith('/company/projects')) {
+      return <ProjectSites />;
+    } else if (path.startsWith('/company/clients')) {
+      return <Clients />;
+    } else if (path.startsWith('/company/marketers') && !path.includes('/company/marketers/')) {
+      return <MarketersCommission />;
+    } else if (path.startsWith('/company/sales')) {
+      return <SalesAllocationOverview />;
+    } else if (path.startsWith('/company/fees')) {
+      return <FeesCollection />;
+    } else if (path.startsWith('/company/accounting')) {
+      return <Accounting />;
+    } else if (path.startsWith('/company/team')) {
+      return <TeamRoles />;
+    } else if (path.startsWith('/company/reports')) {
+      return <Reports />;
+    } else if (path.startsWith('/company/tools/crm-pipelines')) {
+      return <CRMPipelinesPage />;
+    } else if (path.startsWith('/company/tools/document-manager')) {
+      return <DocumentManagerPage />;
+    } else if (path.startsWith('/company/tools/calendar')) {
+      return <CalendarSchedulingPage />;
+    } else if (path.startsWith('/company/tools/send-notice')) {
+      return <SendNotice />;
+    } else if (path.startsWith('/company/settings')) {
+      return <Settings />;
+    } else if (path.startsWith('/company/referrals')) {
+      return <ReferralProgram />;
+    } else if (path.startsWith('/company/help')) {
+      return <HelpSupport />;
+    } else {
+      return <DashboardOverview />;
+    }
+  };
 
-// Simple nav component
-const DashboardNav = () => (
-  <div className="h-16 bg-white border-b border-gray-200 flex items-center px-6">
-    <h1 className="text-lg font-semibold">Company Dashboard</h1>
-  </div>
-);
-
-export default function CompanyDashboard() {
   return (
-    <ErrorBoundary>
-      <SalesAllocationProvider>
-        <TooltipProvider>
-          <SidebarProvider>
-            <div className="flex h-screen bg-gray-50">
-              <Sidebar />
-              <SidebarInset className="flex-1 flex flex-col overflow-hidden">
-                <DashboardNav />
-                <main className="flex-1 overflow-y-auto">
-                  <ResponsiveContainer>
-                    <Routes>
-                      <Route path="/" element={<Dashboard />} />
-                      <Route path="/projects/*" element={<Projects />} />
-                      <Route path="/clients" element={<Clients />} />
-                      <Route path="/clients/:clientId" element={<ClientDetailView />} />
-                      <Route path="/sales" element={<SalesAllocationOverview />} />
-                      <Route path="/sales-allocations/*" element={<SalesAllocation />} />
-                      <Route path="/crm" element={<CRMDashboard />} />
-                      <Route path="/marketers" element={<Marketers />} />
-                      <Route path="/fees" element={<Fees />} />
-                      <Route path="/accounting" element={<Accounting />} />
-                      <Route path="/advanced-tools" element={<AdvancedTools />} />
-                      <Route path="/settings" element={<Settings />} />
-                    </Routes>
-                  </ResponsiveContainer>
-                </main>
-              </SidebarInset>
+    <SidebarProvider>
+      <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900">
+        <MobileWarningBanner />
+        
+        {/* Global Fixed Sidebar - Always present */}
+        <CompanySidebar 
+          isOpen={sidebarOpen} 
+          onClose={() => setSidebarOpen(false)} 
+        />
+        
+        {/* Main Content Area */}
+        <div className={`min-h-screen transition-all duration-300 ${
+          isSmallScreen ? 'ml-0' : 'ml-64'
+        }`}>
+          {/* Mobile Header - Only show on small screens */}
+          {isSmallScreen && (
+            <div className="fixed top-16 sm:top-20 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 shadow-sm">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  {sidebarOpen ? (
+                    <X className="h-5 w-5" />
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
+                </Button>
+                <h1 className="text-base font-semibold text-gray-900 dark:text-white truncate">
+                  ProptyOS
+                </h1>
+                <div className="w-9" />
+              </div>
             </div>
-          </SidebarProvider>
-        </TooltipProvider>
-      </SalesAllocationProvider>
-    </ErrorBoundary>
+          )}
+          
+          {/* Scrollable Content Area - All pages use ResponsiveContainer */}
+          <main className={`min-h-screen ${
+            isSmallScreen ? 'pt-32 sm:pt-36' : 'pt-0'
+          }`}>
+            <ResponsiveContainer 
+              className="min-h-full"
+              padding={isMobile ? 'sm' : isTablet ? 'md' : 'lg'}
+            >
+              {renderActiveModule()}
+            </ResponsiveContainer>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
-}
+};
+
+export default CompanyDashboard;
