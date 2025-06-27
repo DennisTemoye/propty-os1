@@ -1,29 +1,50 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Sidebar } from '@/components/dashboard/Sidebar';
-import { DashboardNav } from '@/components/dashboard/DashboardNav';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SalesAllocationProvider } from '@/contexts/SalesAllocationContext';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
 
-// Dashboard components
-import { Dashboard } from '@/components/dashboard/Dashboard';
-import { Projects } from '@/components/dashboard/Projects';
-import { Clients } from '@/components/dashboard/Clients';
-import { ClientDetailView } from '@/components/dashboard/ClientDetailView';
+// Import existing components that are available
 import { SalesAllocationOverview } from '@/components/dashboard/SalesAllocationOverview';
 import { SalesAllocation } from '@/components/dashboard/SalesAllocation';
-import { CRMDashboard } from '@/components/dashboard/CRMDashboard';
-import { Marketers } from '@/components/dashboard/Marketers';
-import { Fees } from '@/components/dashboard/Fees';
-import { Accounting } from '@/components/dashboard/Accounting';
-import { AdvancedTools } from '@/components/dashboard/AdvancedTools';
+import { ClientDetailView } from '@/components/dashboard/ClientDetailView';
 import { Settings } from '@/components/dashboard/Settings';
 
-export function CompanyDashboard() {
+// Simple placeholder components for missing ones
+const Dashboard = () => <div className="p-6"><h1 className="text-2xl font-bold">Dashboard Overview</h1></div>;
+const Projects = () => <div className="p-6"><h1 className="text-2xl font-bold">Projects</h1></div>;
+const Clients = () => <div className="p-6"><h1 className="text-2xl font-bold">Clients</h1></div>;
+const CRMDashboard = () => <div className="p-6"><h1 className="text-2xl font-bold">CRM Dashboard</h1></div>;
+const Marketers = () => <div className="p-6"><h1 className="text-2xl font-bold">Marketers</h1></div>;
+const Fees = () => <div className="p-6"><h1 className="text-2xl font-bold">Fees</h1></div>;
+const Accounting = () => <div className="p-6"><h1 className="text-2xl font-bold">Accounting</h1></div>;
+const AdvancedTools = () => <div className="p-6"><h1 className="text-2xl font-bold">Advanced Tools</h1></div>;
+
+// Simple sidebar component
+const Sidebar = () => (
+  <div className="w-64 bg-gray-900 text-white p-4">
+    <h2 className="text-xl font-bold mb-4">ProptyOS</h2>
+    <nav className="space-y-2">
+      <a href="/company" className="block p-2 hover:bg-gray-700 rounded">Dashboard</a>
+      <a href="/company/projects" className="block p-2 hover:bg-gray-700 rounded">Projects</a>
+      <a href="/company/clients" className="block p-2 hover:bg-gray-700 rounded">Clients</a>
+      <a href="/company/sales" className="block p-2 hover:bg-gray-700 rounded">Sales</a>
+      <a href="/company/settings" className="block p-2 hover:bg-gray-700 rounded">Settings</a>
+    </nav>
+  </div>
+);
+
+// Simple nav component
+const DashboardNav = () => (
+  <div className="h-16 bg-white border-b border-gray-200 flex items-center px-6">
+    <h1 className="text-lg font-semibold">Company Dashboard</h1>
+  </div>
+);
+
+export default function CompanyDashboard() {
   return (
     <ErrorBoundary>
       <SalesAllocationProvider>

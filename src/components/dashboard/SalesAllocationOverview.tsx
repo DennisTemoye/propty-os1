@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,6 +24,7 @@ import { PendingOffersTab } from './allocation/PendingOffersTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 import { useSalesAllocation } from '@/contexts/SalesAllocationContext';
 import { toast } from 'sonner';
+import { SalesRecord } from '@/types/allocation';
 
 export function SalesAllocationOverview() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -49,8 +49,8 @@ export function SalesAllocationOverview() {
   const handleRecordSale = (data: any) => {
     console.log('Recording sale:', data);
     
-    // Create sales record
-    const salesRecord = {
+    // Create sales record with proper typing
+    const salesRecord: SalesRecord = {
       id: Date.now().toString(),
       clientId: data.clientId || '1',
       clientName: data.clientName,
@@ -65,7 +65,7 @@ export function SalesAllocationOverview() {
       saleDate: data.saleDate,
       paymentMethod: data.paymentMethod,
       notes: data.notes,
-      status: 'pending_offer',
+      status: 'pending_offer', // Properly typed status
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
