@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { FileText, Search, Eye, Send } from 'lucide-react';
-import { OfferLetterPreviewModal } from './OfferLetterPreviewModal';
+import { EnhancedOfferLetterModal } from './EnhancedOfferLetterModal';
 import { toast } from 'sonner';
 
 interface PendingOffersTabProps {
@@ -196,16 +196,8 @@ export function PendingOffersTab({ onSendOffer }: PendingOffersTabProps) {
                     <div className="flex gap-2">
                       <Button 
                         size="sm"
-                        variant="outline"
                         onClick={() => handlePreviewOffer(offer)}
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        Preview
-                      </Button>
-                      <Button 
-                        size="sm"
-                        onClick={() => handleSendOffer(offer)}
-                        className="bg-blue-600 hover:bg-blue-700"
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all"
                       >
                         <Send className="h-4 w-4 mr-1" />
                         Send Offer
@@ -226,14 +218,14 @@ export function PendingOffersTab({ onSendOffer }: PendingOffersTabProps) {
         </CardContent>
       </Card>
 
-      <OfferLetterPreviewModal 
+      <EnhancedOfferLetterModal 
         isOpen={showOfferPreview}
         onClose={() => {
           setShowOfferPreview(false);
           setSelectedOffer(null);
         }}
         offer={selectedOffer}
-        onSend={(offer) => {
+        onSend={(offer, options) => {
           handleSendOffer(offer);
           setShowOfferPreview(false);
           setSelectedOffer(null);

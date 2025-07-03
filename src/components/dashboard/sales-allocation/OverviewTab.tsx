@@ -163,33 +163,6 @@ export function OverviewTab() {
 
   return (
     <div className="space-y-6">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {mockKPIData.map((kpi, index) => (
-          <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-600 mb-2">
-                    {kpi.title}
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
-                  <div className="text-xs text-gray-500 mb-2">{kpi.subtitle}</div>
-                  <Badge 
-                    variant="outline" 
-                    className={kpi.changeType === 'positive' ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'}
-                  >
-                    {kpi.change} from last period
-                  </Badge>
-                </div>
-                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
-                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales & Allocation Trends */}

@@ -71,8 +71,12 @@ export function ReallocationHistory({ unitId, clientId, projectId }: Reallocatio
   });
   
   const handleViewDetails = (reallocation: any) => {
-    // Navigate to detailed view
-    navigate('/company/sales');
+    // Navigate to client detail view or allocation details
+    if (reallocation.toClient) {
+      navigate(`/company/clients`);
+    } else {
+      navigate('/company/sales');
+    }
   };
 
   const getReasonColor = (reason: string) => {

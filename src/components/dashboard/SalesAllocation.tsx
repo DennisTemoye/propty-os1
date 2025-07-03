@@ -175,17 +175,20 @@ export function SalesAllocation() {
         </div>
       </div>
 
-      {/* Consolidated KPI Cards */}
+      {/* Main KPI Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-indigo-50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-3xl font-bold text-blue-600">
                   {mockAllocations.filter(a => a.status === 'allocated').length}
                 </div>
                 <div className="text-sm text-muted-foreground">Units Allocated</div>
-                <div className="text-xs text-emerald-600 mt-1">12% increase</div>
+                <div className="text-xs text-emerald-600 mt-1 flex items-center">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Growing steadily
+                </div>
               </div>
               <div className="p-3 rounded-xl bg-blue-100 shadow-sm">
                 <Building className="h-6 w-6 text-blue-700" />
@@ -198,9 +201,12 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-emerald-600">₦2.4B</div>
+                <div className="text-3xl font-bold text-emerald-600">₦2.4B</div>
                 <div className="text-sm text-muted-foreground">Total Sales Value</div>
-                <div className="text-xs text-emerald-600 mt-1">18% increase</div>
+                <div className="text-xs text-emerald-600 mt-1 flex items-center">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Strong performance
+                </div>
               </div>
               <div className="p-3 rounded-xl bg-emerald-100 shadow-sm">
                 <DollarSign className="h-6 w-6 text-emerald-700" />
@@ -213,9 +219,9 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-amber-600">23</div>
+                <div className="text-3xl font-bold text-amber-600">23</div>
                 <div className="text-sm text-muted-foreground">Pending Offers</div>
-                <div className="text-xs text-amber-600 mt-1">5 need attention</div>
+                <div className="text-xs text-red-600 mt-1">5 need attention</div>
               </div>
               <div className="p-3 rounded-xl bg-amber-100 shadow-sm">
                 <Clock className="h-6 w-6 text-amber-700" />
@@ -228,9 +234,12 @@ export function SalesAllocation() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-purple-600">45</div>
-                <div className="text-sm text-muted-foreground">Completed This Month</div>
-                <div className="text-xs text-emerald-600 mt-1">15% increase</div>
+                <div className="text-3xl font-bold text-purple-600">45</div>
+                <div className="text-sm text-muted-foreground">Monthly Completions</div>
+                <div className="text-xs text-emerald-600 mt-1 flex items-center">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Above target
+                </div>
               </div>
               <div className="p-3 rounded-xl bg-purple-100 shadow-sm">
                 <CheckCircle className="h-6 w-6 text-purple-700" />
