@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { AlertTriangle, CheckCircle, XCircle, Shield, Mail, Eye, Edit2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle, XCircle, Shield, Mail, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { PendingAllocation } from '@/types/allocation';
 
@@ -32,27 +32,7 @@ export function ApprovalWorkflowModal({
   const [otpSent, setOtpSent] = useState(false);
   const [declineReason, setDeclineReason] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showEmailPreview, setShowEmailPreview] = useState(false);
-  const [editingEmail, setEditingEmail] = useState(false);
-  const [emailTemplate, setEmailTemplate] = useState({
-    subject: 'Unit Allocation Confirmation - {{unitNumber}}',
-    content: `Dear {{clientName}},
-
-Congratulations! Your unit allocation has been confirmed.
-
-Allocation Details:
-- Project: {{projectName}}
-- Unit: {{unitNumber}}
-- Allocation Date: {{allocationDate}}
-- Amount: {{saleAmount}}
-
-Your allocation confirmation has been processed successfully.
-
-Welcome to our community!
-
-Best regards,
-Sales Team`
-  });
+  const [showLetterPreview, setShowLetterPreview] = useState(false);
 
   const handleSendOTP = async () => {
     setIsLoading(true);
@@ -87,27 +67,8 @@ Sales Team`
     setOtpSent(false);
     setDeclineReason('');
     setIsLoading(false);
-    setShowEmailPreview(false);
-    setEditingEmail(false);
+    setShowLetterPreview(false);
     onClose();
-  };
-
-  const renderEmailContent = (content: string) => {
-    if (!allocation) return content;
-    
-    const data = {
-      clientName: allocation.clientName,
-      projectName: allocation.projectName,
-      unitNumber: allocation.unit,
-      saleAmount: allocation.amount,
-      allocationDate: new Date().toLocaleDateString()
-    };
-
-    let rendered = content;
-    Object.entries(data).forEach(([key, value]) => {
-      rendered = rendered.replace(new RegExp(`{{${key}}}`, 'g'), value);
-    });
-    return rendered;
   };
 
   if (!allocation) return null;
@@ -134,7 +95,7 @@ Sales Team`
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => setShowEmailPreview(true)}
+                  onClick={() => setShowLetterPreview(true)}
                   className="bg-blue-50 hover:bg-blue-100 border-blue-200"
                 >
                   <Eye className="h-4 w-4 mr-2" />
@@ -206,7 +167,7 @@ Sales Team`
                   </div>
                   <p className="text-sm text-green-700">
                     An OTP will be sent to your email for security verification.
-                    Upon approval, the allocation email will be automatically sent to the client.
+                    Upon approval, the allocation letter will be automatically sent to the client.
                   </p>
                 </div>
 
@@ -305,79 +266,44 @@ Sales Team`
       </Dialog>
 
       {/* Email Preview Modal */}
-      <Dialog open={showEmailPreview} onOpenChange={() => setShowEmailPreview(false)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <Dialog open={showLetterPreview} onOpenChange={() => setShowLetterPreview(false)}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              Allocation Email Preview
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setEditingEmail(!editingEmail)}
-                className="bg-blue-50 hover:bg-blue-100 border-blue-200"
-              >
-                <Edit2 className="h-4 w-4 mr-2" />
-                {editingEmail ? 'Preview' : 'Edit'}
-              </Button>
-            </DialogTitle>
+            <DialogTitle>Allocation Email Preview</DialogTitle>
             <DialogDescription>
-              {editingEmail ? 'Edit the email template' : 'Preview of the allocation confirmation email that will be sent to the client'}
+              Preview of the allocation confirmation email that will be sent to the client
             </DialogDescription>
           </DialogHeader>
-          
-          {editingEmail ? (
-            <div className="space-y-4">
-              <div>
-                <Label>Email Subject</Label>
-                <Input
-                  value={emailTemplate.subject}
-                  onChange={(e) => setEmailTemplate(prev => ({ ...prev, subject: e.target.value }))}
-                  placeholder="Enter email subject with variables like {{clientName}}"
-                />
-              </div>
-              <div>
-                <Label>Email Content</Label>
-                <Textarea
-                  value={emailTemplate.content}
-                  onChange={(e) => setEmailTemplate(prev => ({ ...prev, content: e.target.value }))}
-                  rows={12}
-                  placeholder="Enter email content with variables like {{projectName}}"
-                  className="font-mono text-sm"
-                />
-              </div>
-              <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded">
-                <strong>Available Variables:</strong> {`{{clientName}}, {{projectName}}, {{unitNumber}}, {{saleAmount}}, {{allocationDate}}`}
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="text-sm text-gray-600">Subject:</div>
+              <div className="font-semibold">Unit Allocation Confirmation - {allocation.unit}</div>
+            </div>
+            <div className="bg-white border p-4 rounded-lg">
+              <div className="whitespace-pre-wrap text-sm leading-relaxed">
+{`Dear ${allocation.clientName},
+
+Congratulations! Your unit allocation has been confirmed.
+
+Allocation Details:
+- Project: ${allocation.projectName}
+- Unit: ${allocation.unit}
+- Allocation Date: ${new Date().toLocaleDateString()}
+- Amount: ${allocation.amount}
+
+Your allocation letter will be prepared and delivered to you shortly.
+
+Welcome to our community!
+
+Best regards,
+Sales Team`}
               </div>
             </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-600">Subject:</div>
-                <div className="font-semibold">{renderEmailContent(emailTemplate.subject)}</div>
-              </div>
-              <div className="bg-white border p-4 rounded-lg">
-                <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                  {renderEmailContent(emailTemplate.content)}
-                </div>
-              </div>
-            </div>
-          )}
-          
+          </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setShowEmailPreview(false)}>
+            <Button variant="outline" onClick={() => setShowLetterPreview(false)}>
               Close
             </Button>
-            {editingEmail && (
-              <Button 
-                onClick={() => {
-                  setEditingEmail(false);
-                  toast.success('Email template updated!');
-                }}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Save Changes
-              </Button>
-            )}
           </div>
         </DialogContent>
       </Dialog>

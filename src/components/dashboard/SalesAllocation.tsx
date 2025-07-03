@@ -15,8 +15,6 @@ import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { PendingOffersTab } from './allocation/PendingOffersTab';
 import { OverviewTab } from './sales-allocation/OverviewTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
-import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
-import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
 
 const mockAllocations = [
   {
@@ -64,8 +62,6 @@ export function SalesAllocation() {
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showRecordSaleModal, setShowRecordSaleModal] = useState(false);
-  const [showAllocationModal, setShowAllocationModal] = useState(false);
 
   // Check if we're on the /new route
   useEffect(() => {
@@ -74,18 +70,9 @@ export function SalesAllocation() {
     }
   }, [location.pathname]);
 
-  const handleRecordSale = (data: any) => {
-    console.log('Recording sale:', data);
-    setShowRecordSaleModal(false);
-  };
-
-  const handleManageAllocations = () => {
-    setShowAllocationModal(true);
-  };
-
-  const handleAllocationAction = (data: any) => {
-    console.log('Processing allocation action:', data);
-    setShowAllocationModal(false);
+  const handleNewAllocation = () => {
+    navigate('/company/sales-allocations/new');
+    setShowNewAllocationForm(true);
   };
 
   const handleReallocation = (data: any) => {
@@ -162,14 +149,14 @@ export function SalesAllocation() {
         </div>
         <div className="flex items-center space-x-2">
           <Button 
-            onClick={() => setShowRecordSaleModal(true)}
+            onClick={() => console.log('Record Sale clicked')}
             className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <Plus className="h-4 w-4 mr-2" />
             Record Sale
           </Button>
           <Button 
-            onClick={handleManageAllocations}
+            onClick={handleNewAllocation}
             className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <Handshake className="h-4 w-4 mr-2" />
@@ -351,20 +338,6 @@ export function SalesAllocation() {
           <PendingOffersTab />
         </TabsContent>
       </Tabs>
-
-      {/* Record Sale Modal */}
-      <RecordSaleModal 
-        isOpen={showRecordSaleModal}
-        onClose={() => setShowRecordSaleModal(false)}
-        onSubmit={handleRecordSale}
-      />
-
-      {/* Allocation Flow Modal */}
-      <AllocationFlowModal 
-        isOpen={showAllocationModal}
-        onClose={() => setShowAllocationModal(false)}
-        onSubmit={handleAllocationAction}
-      />
 
       {/* Reallocation Modal */}
       <ReallocationModal 
