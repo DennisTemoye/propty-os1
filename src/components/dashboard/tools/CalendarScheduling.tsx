@@ -132,7 +132,7 @@ export function CalendarSchedulingPage() {
               <SelectItem value="day">Day</SelectItem>
             </SelectContent>
           </Select>
-          <Button onClick={() => setIsAddEventOpen(true)} className="bg-purple-600 hover:bg-purple-700">
+          <Button onClick={() => setIsAddEventOpen(true)} className="bg-gradient-primary hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0">
             <Plus className="h-4 w-4 mr-2" />
             Add Event
           </Button>
@@ -154,7 +154,7 @@ export function CalendarSchedulingPage() {
                 mode="single"
                 selected={selectedDate}
                 onSelect={(date) => date && setSelectedDate(date)}
-                className="rounded-md border"
+                className="rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
               />
             </CardContent>
           </Card>
@@ -178,7 +178,7 @@ export function CalendarSchedulingPage() {
                     return (
                       <div
                         key={event.id}
-                        className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
+                        className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 border border-gray-100 hover:border-gray-200 transition-all duration-200 hover:shadow-md transform hover:scale-[1.02]"
                         onClick={() => setSelectedEvent(event)}
                       >
                         <div className="flex items-center justify-between mb-2">

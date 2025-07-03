@@ -160,7 +160,7 @@ export function DocumentManagerPage() {
           <h1 className="text-3xl font-bold text-gray-900">Document Manager</h1>
           <p className="text-gray-600 mt-1">Store and manage signed documents, survey plans, allocation letters, etc.</p>
         </div>
-        <Button onClick={() => setIsUploadOpen(true)} className="bg-purple-600 hover:bg-purple-700">
+        <Button onClick={() => setIsUploadOpen(true)} className="bg-gradient-accent hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0">
           <Plus className="h-4 w-4 mr-2" />
           Upload Document
         </Button>

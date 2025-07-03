@@ -160,7 +160,7 @@ export function SalesAllocationOverview() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {kpiData.map((kpi, index) => (
-          <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -187,10 +187,10 @@ export function SalesAllocationOverview() {
 
       {/* Action Buttons */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-green-300 bg-green-50">
+        <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-green-300 bg-gradient-to-br from-green-50 to-green-100 transform hover:scale-105">
           <CardContent className="p-6">
             <Button 
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              className="w-full bg-gradient-success hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0"
               onClick={() => setShowSalesModal(true)}
             >
               <DollarSign className="h-4 w-4 mr-2" />
@@ -202,10 +202,10 @@ export function SalesAllocationOverview() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-blue-300 bg-blue-50">
+        <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100 transform hover:scale-105">
           <CardContent className="p-6">
             <Button 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0"
               onClick={() => setShowAllocationModal(true)}
             >
               <Handshake className="h-4 w-4 mr-2" />

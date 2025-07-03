@@ -63,7 +63,7 @@ export function DashboardOverview() {
       gradientTo: 'to-cyan-400',
       iconBgColor: 'bg-white/20',
       iconColor: 'text-white',
-      onClick: () => navigate('/company/developments'),
+      onClick: () => navigate('/company/projects'),
     },
     {
       title: 'Active Clients',
@@ -107,7 +107,7 @@ export function DashboardOverview() {
       gradientTo: 'to-purple-400',
       iconBgColor: 'bg-white/20',
       iconColor: 'text-white',
-      onClick: () => navigate('/company/developments'),
+      onClick: () => navigate('/company/projects'),
     },
     {
       title: 'Installment Collections',
@@ -140,7 +140,7 @@ export function DashboardOverview() {
       gradientTo: 'to-pink-400',
       iconBgColor: 'bg-white/20',
       iconColor: 'text-white',
-      onClick: () => navigate('/company/calendar'),
+      onClick: () => navigate('/company/tools/calendar'),
     },
   ];
 
@@ -316,7 +316,8 @@ export function DashboardOverview() {
             <div
               key={index}
               onClick={kpi.onClick}
-              className="cursor-pointer transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-xl"
+              className="cursor-pointer transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:ring-offset-2 rounded-xl animate-fade-in hover:shadow-xl"
+              style={{ animationDelay: `${index * 0.1}s` }}
               tabIndex={0}
               role="button"
               aria-label={`Navigate to ${kpi.title}`}
@@ -341,7 +342,7 @@ export function DashboardOverview() {
             ? 'grid-cols-1' 
             : 'grid-cols-1 lg:grid-cols-2'
         }`}>
-          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl overflow-hidden">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden animate-fade-in">
             <CardHeader className="pb-2 sm:pb-4">
               <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
                 Sales & Allocations Performance

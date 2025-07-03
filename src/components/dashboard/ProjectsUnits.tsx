@@ -349,7 +349,7 @@ export function ProjectsUnits() {
           <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units with allocation tracking</p>
         </div>
         <Button 
-          className="bg-purple-600 hover:bg-purple-700"
+          className="bg-gradient-accent hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0"
           onClick={handleNewProject}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -360,7 +360,7 @@ export function ProjectsUnits() {
       {/* Project Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
-          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
+          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 rounded-2xl animate-fade-in`} style={{ animationDelay: `${index * 0.1}s` }}>
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -431,7 +431,7 @@ export function ProjectsUnits() {
           {filteredProjects.map((project) => (
             <Card 
               key={project.id} 
-              className="hover:shadow-lg transition-all duration-300 cursor-pointer bg-white overflow-hidden group"
+              className="hover:shadow-lg transition-all duration-300 cursor-pointer bg-white overflow-hidden group border border-gray-200 hover:border-gray-300 rounded-xl animate-fade-in transform hover:scale-[1.02]"
               onClick={() => handleProjectClick(project.id)}
             >
               {/* Project Image */}

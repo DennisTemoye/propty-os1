@@ -103,28 +103,28 @@ export function FileActions({ actions, size = 'sm', variant = 'outline', label =
           {actions.map((action, index) => {
             const isDownloading = downloadingAction === action.type;
             return (
-              <React.Fragment key={action.type}>
-                <DropdownMenuItem 
-                  onClick={() => handlePreview(action)}
-                  disabled={isDownloading}
-                  className="cursor-pointer"
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Preview {action.label}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleDirectDownload(action)}
-                  disabled={isDownloading}
-                  className="cursor-pointer"
-                >
-                  {isDownloading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    action.icon
-                  )}
-                  {isDownloading ? 'Downloading...' : action.label}
-                </DropdownMenuItem>
-              </React.Fragment>
+               <div key={action.type}>
+                 <DropdownMenuItem 
+                   onClick={() => handlePreview(action)}
+                   disabled={isDownloading}
+                   className="cursor-pointer"
+                 >
+                   <Eye className="h-4 w-4 mr-2" />
+                   Preview {action.label}
+                 </DropdownMenuItem>
+                 <DropdownMenuItem 
+                   onClick={() => handleDirectDownload(action)}
+                   disabled={isDownloading}
+                   className="cursor-pointer"
+                 >
+                   {isDownloading ? (
+                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                   ) : (
+                     action.icon
+                   )}
+                   {isDownloading ? 'Downloading...' : action.label}
+                 </DropdownMenuItem>
+               </div>
             );
           })}
         </DropdownMenuContent>
