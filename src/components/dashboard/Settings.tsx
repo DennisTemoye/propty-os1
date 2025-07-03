@@ -8,6 +8,7 @@ import { SystemSettings } from './settings/SystemSettings';
 import { BillingSettings } from './settings/BillingSettings';
 
 import { FormEditor } from './settings/FormEditor';
+import { EmailTemplatesSettings } from './settings/EmailTemplatesSettings';
 
 export function Settings() {
   const [activeTab, setActiveTab] = useState('company');
@@ -25,7 +26,7 @@ export function Settings() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="company" className="flex items-center space-x-2">
             <Building className="h-4 w-4" />
             <span>Company</span>
@@ -33,6 +34,10 @@ export function Settings() {
           <TabsTrigger value="forms" className="flex items-center space-x-2">
             <Edit className="h-4 w-4" />
             <span>Form Editor</span>
+          </TabsTrigger>
+          <TabsTrigger value="emails" className="flex items-center space-x-2">
+            <FileText className="h-4 w-4" />
+            <span>Email Templates</span>
           </TabsTrigger>
           <TabsTrigger value="system" className="flex items-center space-x-2">
             <Globe className="h-4 w-4" />
@@ -51,6 +56,10 @@ export function Settings() {
 
         <TabsContent value="forms" className="space-y-6">
           <FormEditor />
+        </TabsContent>
+
+        <TabsContent value="emails" className="space-y-6">
+          <EmailTemplatesSettings />
         </TabsContent>
 
         <TabsContent value="system" className="space-y-6">

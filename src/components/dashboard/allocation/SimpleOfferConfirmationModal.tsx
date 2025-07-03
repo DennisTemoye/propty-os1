@@ -57,11 +57,11 @@ Sales Team`);
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
-            <FileText className="h-5 w-5 text-blue-600" />
-            <span>Issue Offer Confirmation</span>
+            <Send className="h-5 w-5 text-blue-600" />
+            <span>Send Offer Email</span>
           </DialogTitle>
           <DialogDescription>
-            Review offer details and send notification email to client
+            Review offer details and send email notification to client
           </DialogDescription>
         </DialogHeader>
 
@@ -149,7 +149,7 @@ Sales Team`);
               className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
             >
               <Send className="h-4 w-4 mr-2" />
-              Issue Offer & Send Email
+              Send Offer Email
             </Button>
           </div>
         </div>

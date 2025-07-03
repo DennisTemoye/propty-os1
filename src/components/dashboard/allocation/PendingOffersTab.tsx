@@ -200,7 +200,7 @@ export function PendingOffersTab({ onSendOffer }: PendingOffersTabProps) {
                         className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all"
                       >
                         <Send className="h-4 w-4 mr-1" />
-                        Issue Offer
+                        Send Offer
                       </Button>
                     </div>
                   </TableCell>

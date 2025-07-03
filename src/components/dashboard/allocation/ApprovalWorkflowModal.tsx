@@ -10,7 +10,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { AlertTriangle, CheckCircle, XCircle, Shield, Mail, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { PendingAllocation } from '@/types/allocation';
-import { AllocationLetterPreviewModal } from './AllocationLetterPreviewModal';
+
 
 interface ApprovalWorkflowModalProps {
   isOpen: boolean;
@@ -99,7 +99,7 @@ export function ApprovalWorkflowModal({
                   className="bg-blue-50 hover:bg-blue-100 border-blue-200"
                 >
                   <Eye className="h-4 w-4 mr-2" />
-                  Preview Allocation Letter
+                  Preview Email
                 </Button>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -265,11 +265,48 @@ export function ApprovalWorkflowModal({
         </DialogContent>
       </Dialog>
 
-      <AllocationLetterPreviewModal 
-        isOpen={showLetterPreview}
-        onClose={() => setShowLetterPreview(false)}
-        allocation={allocation}
-      />
+      {/* Email Preview Modal */}
+      <Dialog open={showLetterPreview} onOpenChange={() => setShowLetterPreview(false)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Allocation Email Preview</DialogTitle>
+            <DialogDescription>
+              Preview of the allocation confirmation email that will be sent to the client
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="text-sm text-gray-600">Subject:</div>
+              <div className="font-semibold">Unit Allocation Confirmation - {allocation.unit}</div>
+            </div>
+            <div className="bg-white border p-4 rounded-lg">
+              <div className="whitespace-pre-wrap text-sm leading-relaxed">
+{`Dear ${allocation.clientName},
+
+Congratulations! Your unit allocation has been confirmed.
+
+Allocation Details:
+- Project: ${allocation.projectName}
+- Unit: ${allocation.unit}
+- Allocation Date: ${new Date().toLocaleDateString()}
+- Amount: ${allocation.amount}
+
+Your allocation letter will be prepared and delivered to you shortly.
+
+Welcome to our community!
+
+Best regards,
+Sales Team`}
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowLetterPreview(false)}>
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
