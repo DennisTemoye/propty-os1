@@ -187,8 +187,8 @@ export function TeamRoles() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {roles.map((role) => (
-                  <div key={role.id} className="p-4 border rounded-lg">
+                  {roles.map((role) => (
+                  <div key={role.id} className="p-6 border border-border rounded-xl hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-gray-50 to-white">
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h4 className="font-medium flex items-center">
@@ -205,6 +205,7 @@ export function TeamRoles() {
                           <Button 
                             size="sm" 
                             variant="outline"
+                            className="hover:bg-primary/5 hover:border-primary/20 transition-all duration-200"
                             onClick={() => handleEditRole(role)}
                           >
                             <Edit className="h-4 w-4" />
@@ -212,6 +213,7 @@ export function TeamRoles() {
                           <Button 
                             size="sm" 
                             variant="outline"
+                            className="hover:bg-destructive/10 hover:border-destructive/20 hover:text-destructive transition-all duration-200"
                             onClick={() => handleDeleteRole(role.id)}
                             disabled={role.userCount > 0}
                           >
@@ -241,7 +243,7 @@ export function TeamRoles() {
             <CardContent>
               <div className="space-y-4">
                 {teamMembers.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div key={member.id} className="flex items-center justify-between p-6 border border-border rounded-xl hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-gray-50 to-white">
                     <div>
                       <h4 className="font-medium">{member.name}</h4>
                       <p className="text-sm text-gray-600">{member.email}</p>

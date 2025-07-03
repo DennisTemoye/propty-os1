@@ -199,7 +199,7 @@ export function Accounting() {
           <AccountingDownloadActions />
           <Dialog open={isIncomeModalOpen} onOpenChange={setIsIncomeModalOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-green-600 hover:bg-green-700">
+              <Button className="bg-gradient-success hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Income
               </Button>
@@ -218,7 +218,7 @@ export function Accounting() {
           </Dialog>
           <Dialog open={isExpenseModalOpen} onOpenChange={setIsExpenseModalOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="hover:bg-primary/5 hover:border-primary/20 transition-all duration-200">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Expense
               </Button>

@@ -453,7 +453,7 @@ export function MarketersCommission() {
               {filteredMarketers.map((marketer) => (
                 <Card 
                   key={marketer.id} 
-                  className="hover:shadow-lg transition-shadow bg-white cursor-pointer"
+                  className="hover:shadow-xl transition-all duration-300 bg-white cursor-pointer border border-border hover:border-primary/20 rounded-xl transform hover:scale-[1.02] hover:shadow-glow animate-fade-in"
                   onClick={() => handleMarketerCardClick(marketer.id)}
                 >
                   <CardHeader>

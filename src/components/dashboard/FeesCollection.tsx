@@ -96,17 +96,17 @@ export function FeesCollection() {
           <p className="text-gray-600 mt-1">Manage and track fee collections efficiently</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={handleExportFeeStatement} size="sm">
+          <Button variant="outline" onClick={handleExportFeeStatement} size="sm" className="hover:bg-primary/5 hover:border-primary/20 transition-all duration-200">
             <Download className="h-4 w-4 mr-2" />
-            Export
+            Export Statement
           </Button>
-          <Button variant="outline" onClick={handleSendBulkReminders} className="text-orange-600 border-orange-200 hover:bg-orange-50" size="sm">
+          <Button variant="outline" onClick={handleSendBulkReminders} className="hover:bg-orange-50 hover:border-orange-200 text-orange-600 border-orange-200 transition-all duration-200" size="sm">
             <Mail className="h-4 w-4 mr-2" />
             Send Reminders
           </Button>
           <Dialog open={isRecordFeeModalOpen} onOpenChange={setIsRecordFeeModalOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="bg-green-600 hover:bg-green-700 text-white" size="sm">
+              <Button className="bg-gradient-success hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0" size="sm">
                 <Receipt className="h-4 w-4 mr-2" />
                 Record Fee
               </Button>
@@ -114,7 +114,7 @@ export function FeesCollection() {
           </Dialog>
           <Dialog open={isSetupModalOpen} onOpenChange={setIsSetupModalOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-blue-600 hover:bg-blue-700" size="sm">
+              <Button className="bg-gradient-primary hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0" size="sm">
                 <Plus className="h-4 w-4 mr-2" />
                 Setup Fee
               </Button>

@@ -431,7 +431,7 @@ export function ProjectsUnits() {
           {filteredProjects.map((project) => (
             <Card 
               key={project.id} 
-              className="hover:shadow-lg transition-all duration-300 cursor-pointer bg-white overflow-hidden group border border-gray-200 hover:border-gray-300 rounded-xl animate-fade-in transform hover:scale-[1.02]"
+              className="hover:shadow-xl transition-all duration-300 cursor-pointer bg-white overflow-hidden group border border-border hover:border-primary/20 rounded-xl animate-fade-in transform hover:scale-[1.02] hover:shadow-glow"
               onClick={() => handleProjectClick(project.id)}
             >
               {/* Project Image */}
@@ -511,6 +511,30 @@ export function ProjectsUnits() {
                       <span className="text-gray-600">Revenue:</span>
                       <span className="font-medium text-green-600">{project.revenue}</span>
                     </div>
+                  </div>
+                  {/* Action Buttons */}
+                  <div className="flex space-x-2 mt-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1 hover:bg-primary/5 hover:border-primary/20 transition-all duration-200"
+                      onClick={(e) => handleViewDetails(e, project.id)}
+                    >
+                      <Eye className="h-3 w-3 mr-1" />
+                      Details
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1 hover:bg-accent hover:border-primary/20 transition-all duration-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/company/projects/${project.id}/edit`);
+                      }}
+                    >
+                      <Building className="h-3 w-3 mr-1" />
+                      Manage
+                    </Button>
                   </div>
                 </div>
               </CardContent>

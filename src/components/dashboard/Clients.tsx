@@ -311,7 +311,7 @@ export function Clients() {
           {filteredClients.map((client) => (
             <Card 
               key={client.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer"
+              className="hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-border hover:border-primary/20 rounded-xl transform hover:scale-[1.02] hover:shadow-glow animate-fade-in"
               onClick={() => handleClientClick(client.id)}
             >
               <CardHeader>
@@ -389,24 +389,24 @@ export function Clients() {
                 )}
                 
                 {/* Updated action buttons */}
-                <div className="flex space-x-2 mt-4 pt-3 border-t">
+                <div className="flex space-x-2 mt-4 pt-3 border-t border-border">
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="flex-1"
+                    className="flex-1 hover:bg-primary/5 hover:border-primary/20 transition-all duration-200"
                     onClick={(e) => handleViewDocuments(e, client)}
                   >
                     <FileText className="h-3 w-3 mr-1" />
-                    Docs
+                    Documents
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="flex-1"
+                    className="flex-1 hover:bg-accent hover:border-primary/20 transition-all duration-200"
                     onClick={(e) => handleAddPayment(e, client)}
                   >
                     <DollarSign className="h-3 w-3 mr-1" />
-                    Pay
+                    Payment
                   </Button>
                 </div>
               </CardContent>

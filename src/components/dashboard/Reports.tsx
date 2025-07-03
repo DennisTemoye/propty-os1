@@ -192,7 +192,7 @@ export function Reports() {
         </div>
         <div className="flex space-x-2">
           <ReportExportActions reportType="sales" />
-          <Button className="bg-purple-600 hover:bg-purple-700">
+          <Button className="bg-gradient-accent hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0">
             <FileText className="h-4 w-4 mr-2" />
             Generate Report
           </Button>
