@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { FileText, Search, Eye, Send } from 'lucide-react';
-import { EnhancedOfferLetterModal } from './EnhancedOfferLetterModal';
+import { SimpleOfferConfirmationModal } from './SimpleOfferConfirmationModal';
 import { toast } from 'sonner';
 
 interface PendingOffersTabProps {
@@ -200,7 +200,7 @@ export function PendingOffersTab({ onSendOffer }: PendingOffersTabProps) {
                         className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all"
                       >
                         <Send className="h-4 w-4 mr-1" />
-                        Send Offer
+                        Issue Offer
                       </Button>
                     </div>
                   </TableCell>
@@ -218,14 +218,14 @@ export function PendingOffersTab({ onSendOffer }: PendingOffersTabProps) {
         </CardContent>
       </Card>
 
-      <EnhancedOfferLetterModal 
+      <SimpleOfferConfirmationModal 
         isOpen={showOfferPreview}
         onClose={() => {
           setShowOfferPreview(false);
           setSelectedOffer(null);
         }}
         offer={selectedOffer}
-        onSend={(offer, options) => {
+        onConfirm={(offer, emailContent) => {
           handleSendOffer(offer);
           setShowOfferPreview(false);
           setSelectedOffer(null);

@@ -6,7 +6,7 @@ import { Settings as SettingsIcon, Building, FileText, Shield, Globe, Edit } fro
 import { CompanySettings } from './settings/CompanySettings';
 import { SystemSettings } from './settings/SystemSettings';
 import { BillingSettings } from './settings/BillingSettings';
-import { LetterTemplatesSettings } from './settings/LetterTemplatesSettings';
+
 import { FormEditor } from './settings/FormEditor';
 
 export function Settings() {
@@ -25,14 +25,10 @@ export function Settings() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="company" className="flex items-center space-x-2">
             <Building className="h-4 w-4" />
             <span>Company</span>
-          </TabsTrigger>
-          <TabsTrigger value="templates" className="flex items-center space-x-2">
-            <FileText className="h-4 w-4" />
-            <span>Letter Templates</span>
           </TabsTrigger>
           <TabsTrigger value="forms" className="flex items-center space-x-2">
             <Edit className="h-4 w-4" />
@@ -52,9 +48,6 @@ export function Settings() {
           <CompanySettings />
         </TabsContent>
 
-        <TabsContent value="templates" className="space-y-6">
-          <LetterTemplatesSettings />
-        </TabsContent>
 
         <TabsContent value="forms" className="space-y-6">
           <FormEditor />
