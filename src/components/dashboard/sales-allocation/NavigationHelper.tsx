@@ -10,6 +10,7 @@ import {
   CreditCard,
   ArrowRight 
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface NavigationHelperProps {
   onNavigate?: (module: string, section?: string) => void;
@@ -59,14 +60,14 @@ const navigationItems = [
 ];
 
 export function NavigationHelper({ onNavigate }: NavigationHelperProps) {
+  const navigate = useNavigate();
+  
   const handleNavigation = (module: string) => {
     if (onNavigate) {
       onNavigate(module);
     } else {
-      // Default navigation logic
-      console.log(`Navigating to ${module} module`);
-      // In a real app, this would use react-router or similar
-      window.location.href = `/${module}`;
+      // Use React Router for navigation
+      navigate(`/company/${module}`);
     }
   };
 

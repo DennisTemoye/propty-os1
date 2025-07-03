@@ -15,6 +15,7 @@ import {
   CheckCircle,
   Eye
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { 
   AreaChart, 
   Area, 
@@ -126,6 +127,8 @@ const recentActivities = [
 ];
 
 export function OverviewTab() {
+  const navigate = useNavigate();
+  
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
@@ -136,28 +139,26 @@ export function OverviewTab() {
   };
 
   const handleActivityClick = (activity: any) => {
-    console.log('Activity clicked:', activity);
     // Navigate based on activity type
     switch (activity.type) {
       case 'presale':
-        console.log('Navigate to client details:', activity.clientId);
+        navigate(`/company/clients/${activity.clientId}`);
         break;
       case 'allocation':
-        console.log('Navigate to allocation details:', activity.allocationId);
+        navigate(`/company/sales`);
         break;
       case 'pending':
-        console.log('Navigate to pending allocations');
+        navigate('/company/sales');
         break;
     }
   };
 
   const handleProjectClick = (project: any) => {
-    console.log('Navigate to project details:', project.project);
+    navigate('/company/projects');
   };
 
   const handleNavigateToModule = (module: string) => {
-    console.log('Navigate to module:', module);
-    // In a real app, this would use proper routing
+    navigate(`/company/${module}`);
   };
 
   return (
@@ -298,7 +299,15 @@ export function OverviewTab() {
                     <div className="text-lg font-bold text-orange-600">{project.pending}</div>
                     <div className="text-xs text-gray-500">Pending</div>
                   </div>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/company/projects');
+                    }}
+                    className="hover:bg-gray-200 transition-colors"
+                  >
                     <Eye className="h-4 w-4" />
                   </Button>
                 </div>
@@ -340,7 +349,15 @@ export function OverviewTab() {
                      activity.type === 'allocation' ? 'Allocated' :
                      'Pending'}
                   </Badge>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleActivityClick(activity);
+                    }}
+                    className="hover:bg-gray-200 transition-colors"
+                  >
                     <ArrowRight className="h-3 w-3" />
                   </Button>
                 </div>

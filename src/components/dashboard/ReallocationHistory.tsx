@@ -2,9 +2,11 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowRight, User, Calendar, FileText } from 'lucide-react';
+import { ArrowRight, User, Calendar, FileText, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ReallocationHistoryProps {
   unitId?: string;
@@ -58,6 +60,8 @@ const mockReallocations = [
 ];
 
 export function ReallocationHistory({ unitId, clientId, projectId }: ReallocationHistoryProps) {
+  const navigate = useNavigate();
+  
   // Filter reallocations based on provided filters
   const filteredReallocations = mockReallocations.filter(reallocation => {
     if (unitId && reallocation.unitId !== unitId) return false;
@@ -65,6 +69,11 @@ export function ReallocationHistory({ unitId, clientId, projectId }: Reallocatio
     if (projectId && reallocation.project !== projectId) return false;
     return true;
   });
+  
+  const handleViewDetails = (reallocation: any) => {
+    // Navigate to detailed view
+    navigate('/company/sales');
+  };
 
   const getReasonColor = (reason: string) => {
     switch (reason) {
@@ -121,8 +130,16 @@ export function ReallocationHistory({ unitId, clientId, projectId }: Reallocatio
                     <span>Processed by {reallocation.processedBy}</span>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="flex items-center space-x-2">
                   <div className="text-lg font-semibold text-purple-600">{reallocation.price}</div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleViewDetails(reallocation)}
+                    className="hover:bg-gray-200 transition-colors"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
 

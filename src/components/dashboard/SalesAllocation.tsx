@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Handshake, DollarSign, FileText, Users, TrendingUp, ArrowRight, History, Edit, Ban, Clock, Bell } from 'lucide-react';
+import { Handshake, DollarSign, FileText, Users, TrendingUp, ArrowRight, History, Edit, Ban, Clock, Bell, Plus, Building, CheckCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { NewAllocationForm } from './forms/NewAllocationForm';
 import { ReallocationModal } from './forms/ReallocationModal';
@@ -12,6 +12,8 @@ import { ReallocationHistory } from './ReallocationHistory';
 import { UpdateAllocationStatusModal } from './forms/UpdateAllocationStatusModal';
 import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
 import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
+import { PendingOffersTab } from './allocation/PendingOffersTab';
+import { OverviewTab } from './sales-allocation/OverviewTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 
 const mockAllocations = [
@@ -142,111 +144,97 @@ export function SalesAllocation() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sales & Allocation</h1>
-          <p className="text-gray-600 mt-1">Manage your sales pipeline, allocations, and reallocations</p>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Sales & Allocation</h1>
+          <p className="text-muted-foreground mt-1">Manage your sales pipeline, allocations, and reallocations</p>
         </div>
         <div className="flex space-x-2">
           <Button 
             variant="outline"
             onClick={() => setShowNotifications(true)}
-            className="relative"
+            className="relative bg-gradient-to-r from-background to-muted hover:shadow-lg transition-all duration-300"
           >
             <Bell className="h-4 w-4" />
-            <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center">
+            <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-destructive to-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center shadow-sm">
               3
             </Badge>
           </Button>
           <Button 
-            variant="outline"
-            onClick={() => setShowReallocationModal(true)}
-            className="border-purple-200 text-purple-700 hover:bg-purple-50"
+            onClick={() => console.log('Record Sale clicked')}
+            className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            <ArrowRight className="h-4 w-4 mr-2" />
-            Re-allocate Unit
+            <Plus className="h-4 w-4 mr-2" />
+            Record Sale
           </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={handleNewAllocation}>
+          <Button 
+            onClick={handleNewAllocation}
+            className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          >
             <Handshake className="h-4 w-4 mr-2" />
-            New Allocation
+            Manage Allocations
           </Button>
         </div>
       </div>
 
-      {/* Updated Stats Cards with new statuses */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-        <Card>
+      {/* Consolidated KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-indigo-50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-2xl font-bold text-blue-600">
-                  {mockAllocations.filter(a => a.status === 'interested').length}
-                </div>
-                <div className="text-sm text-gray-500">Interested</div>
-              </div>
-              <TrendingUp className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-yellow-600">
-                  {mockAllocations.filter(a => a.status === 'offered').length}
-                </div>
-                <div className="text-sm text-gray-500">Offered</div>
-              </div>
-              <Handshake className="h-8 w-8 text-yellow-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-green-600">
                   {mockAllocations.filter(a => a.status === 'allocated').length}
                 </div>
-                <div className="text-sm text-gray-500">Allocated</div>
+                <div className="text-sm text-muted-foreground">Units Allocated</div>
+                <div className="text-xs text-emerald-600 mt-1">12% increase</div>
               </div>
-              <DollarSign className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-xl bg-blue-100 shadow-sm">
+                <Building className="h-6 w-6 text-blue-700" />
+              </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-50 to-green-50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-orange-600">₦2.4B</div>
-                <div className="text-sm text-gray-500">Total Sales</div>
+                <div className="text-2xl font-bold text-emerald-600">₦2.4B</div>
+                <div className="text-sm text-muted-foreground">Total Sales Value</div>
+                <div className="text-xs text-emerald-600 mt-1">18% increase</div>
               </div>
-              <DollarSign className="h-8 w-8 text-orange-600" />
+              <div className="p-3 rounded-xl bg-emerald-100 shadow-sm">
+                <DollarSign className="h-6 w-6 text-emerald-700" />
+              </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-amber-50 to-orange-50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-red-600">0</div>
-                <div className="text-sm text-gray-500">Revoked</div>
+                <div className="text-2xl font-bold text-amber-600">23</div>
+                <div className="text-sm text-muted-foreground">Pending Offers</div>
+                <div className="text-xs text-amber-600 mt-1">5 need attention</div>
               </div>
-              <Ban className="h-8 w-8 text-red-600" />
+              <div className="p-3 rounded-xl bg-amber-100 shadow-sm">
+                <Clock className="h-6 w-6 text-amber-700" />
+              </div>
             </div>
           </CardContent>
         </Card>
-
-        <Card>
+        
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-indigo-50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-yellow-600">3</div>
-                <div className="text-sm text-gray-500">Pending Approval</div>
+                <div className="text-2xl font-bold text-purple-600">45</div>
+                <div className="text-sm text-muted-foreground">Completed This Month</div>
+                <div className="text-xs text-emerald-600 mt-1">15% increase</div>
               </div>
-              <Clock className="h-8 w-8 text-yellow-600" />
+              <div className="p-3 rounded-xl bg-purple-100 shadow-sm">
+                <CheckCircle className="h-6 w-6 text-purple-700" />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -257,75 +245,15 @@ export function SalesAllocation() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="allocations">Active Allocations</TabsTrigger>
-          <TabsTrigger value="history">Reallocation History</TabsTrigger>
-          <TabsTrigger value="pending" className="relative">
-            Pending Approvals
-            <Badge className="ml-2 bg-yellow-600 text-white text-xs">3</Badge>
+          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="pending-offers" className="relative">
+            Pending Offers
+            <Badge className="ml-2 bg-amber-600 text-white text-xs">3</Badge>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* Sales Pipeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Sales Pipeline</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                {['Contacted', 'Inspection', 'Offer', 'Payment', 'Closed'].map((stage, index) => (
-                  <div key={stage} className="text-center">
-                    <div className="bg-gray-100 rounded-lg p-4 mb-2">
-                      <div className="text-2xl font-bold text-gray-800">{12 - index * 2}</div>
-                      <div className="text-sm text-gray-600">{stage}</div>
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      {Math.round((12 - index * 2) / 45 * 100)}% of total
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity with clickable items */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Sales Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div 
-                  className="flex items-center justify-between p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100"
-                  onClick={() => navigate('/company/clients/1')}
-                >
-                  <div>
-                    <div className="font-medium">Unit A-15 Allocated</div>
-                    <div className="text-sm text-gray-600">Client: John Doe - Victoria Gardens</div>
-                  </div>
-                  <Badge className="bg-green-100 text-green-800">Completed</Badge>
-                </div>
-                <div 
-                  className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100"
-                  onClick={() => navigate('/company/clients/2')}
-                >
-                  <div>
-                    <div className="font-medium">Payment Pending</div>
-                    <div className="text-sm text-gray-600">Client: Jane Smith - ₦3.2M due</div>
-                  </div>
-                  <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
-                </div>
-                <div 
-                  className="flex items-center justify-between p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100"
-                >
-                  <div>
-                    <div className="font-medium">Unit Re-allocated</div>
-                    <div className="text-sm text-gray-600">Block A - Plot 02 transferred to John Doe</div>
-                  </div>
-                  <Badge className="bg-purple-100 text-purple-800">Re-allocated</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <OverviewTab />
         </TabsContent>
 
         <TabsContent value="allocations" className="space-y-6">
@@ -397,8 +325,8 @@ export function SalesAllocation() {
           <ReallocationHistory />
         </TabsContent>
 
-        <TabsContent value="pending" className="space-y-6">
-          <PendingAllocationsTab />
+        <TabsContent value="pending-offers" className="space-y-6">
+          <PendingOffersTab />
         </TabsContent>
       </Tabs>
 

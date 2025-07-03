@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Send, Edit, Download } from 'lucide-react';
+import { ConfirmationDialog } from './ConfirmationDialog';
+import { toast } from 'sonner';
 
 interface OfferLetterPreviewModalProps {
   isOpen: boolean;
@@ -14,10 +16,24 @@ interface OfferLetterPreviewModalProps {
 }
 
 export function OfferLetterPreviewModal({ isOpen, onClose, offer, onSend }: OfferLetterPreviewModalProps) {
+  const [showSendConfirmation, setShowSendConfirmation] = useState(false);
+  const [showEditConfirmation, setShowEditConfirmation] = useState(false);
+  
   if (!offer) return null;
 
   const handleSend = () => {
     onSend(offer);
+    toast.success('Offer letter sent to client successfully!');
+  };
+
+  const handleEditTemplate = () => {
+    toast.info('Template editor will be opened');
+    // Navigate to template editor
+  };
+
+  const handleDownload = () => {
+    toast.success('PDF download started');
+    // Trigger PDF download
   };
 
   return (
@@ -122,17 +138,25 @@ export function OfferLetterPreviewModal({ isOpen, onClose, offer, onSend }: Offe
           {/* Action Buttons */}
           <div className="flex gap-2 pt-4">
             <Button 
-              onClick={handleSend}
-              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => setShowSendConfirmation(true)}
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <Send className="h-4 w-4 mr-2" />
               Send to Client
             </Button>
-            <Button variant="outline">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowEditConfirmation(true)}
+              className="border-blue-200 text-blue-700 hover:bg-blue-50"
+            >
               <Edit className="h-4 w-4 mr-2" />
               Edit Template
             </Button>
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={handleDownload}
+              className="border-purple-200 text-purple-700 hover:bg-purple-50"
+            >
               <Download className="h-4 w-4 mr-2" />
               Download PDF
             </Button>
@@ -142,6 +166,25 @@ export function OfferLetterPreviewModal({ isOpen, onClose, offer, onSend }: Offe
           </div>
         </div>
       </DialogContent>
+      
+      {/* Confirmation Dialogs - Outside the main dialog */}
+      <ConfirmationDialog
+        isOpen={showSendConfirmation}
+        onClose={() => setShowSendConfirmation(false)}
+        onConfirm={handleSend}
+        title="Send Offer Letter"
+        description={`Are you sure you want to send the offer letter to ${offer?.clientName}? This action will notify the client and cannot be undone.`}
+        confirmText="Send Offer"
+      />
+
+      <ConfirmationDialog
+        isOpen={showEditConfirmation}
+        onClose={() => setShowEditConfirmation(false)}
+        onConfirm={handleEditTemplate}
+        title="Edit Template"
+        description="Editing the template will affect all future offer letters. Are you sure you want to proceed?"
+        confirmText="Edit Template"
+      />
     </Dialog>
   );
 }
