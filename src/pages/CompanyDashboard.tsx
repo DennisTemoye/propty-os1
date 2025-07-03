@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/dashboard/CompanySidebar';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
-import { ProjectSites } from '@/components/dashboard/ProjectSites';
+import { ProjectsUnits } from '@/components/dashboard/ProjectsUnits';
 import { Clients } from '@/components/dashboard/Clients';
 import { MarketersCommission } from '@/components/dashboard/MarketersCommission';
 import { SalesAllocationOverview } from '@/components/dashboard/SalesAllocationOverview';
@@ -49,7 +49,7 @@ const CompanyDashboard = () => {
     if (path === '/company/dashboard') {
       return <DashboardOverview />;
     } else if (path.startsWith('/company/projects')) {
-      return <ProjectSites />;
+      return <ProjectsUnits />;
     } else if (path.startsWith('/company/clients')) {
       return <Clients />;
     } else if (path.startsWith('/company/marketers') && !path.includes('/company/marketers/')) {
