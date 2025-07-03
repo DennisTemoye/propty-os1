@@ -342,200 +342,241 @@ export function ProjectsUnits() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-600 mt-1">Manage your real estate projects, blocks, and units with allocation tracking</p>
-        </div>
-        <Button 
-          className="bg-gradient-accent hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0"
-          onClick={handleNewProject}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          New Project
-        </Button>
-      </div>
-
-      {/* Project Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpiData.map((kpi, index) => (
-          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 rounded-2xl animate-fade-in`} style={{ animationDelay: `${index * 0.1}s` }}>
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-600 mb-2">
-                    {kpi.title}
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
+      {/* Hero Header Section */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-primary/5 via-primary/10 to-accent/5 border-b border-border/40">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="relative px-6 py-12">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
+                    <Building className="h-8 w-8 text-primary-foreground" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
-                  <div className="text-xs text-gray-500">{kpi.subtitle}</div>
+                  <div>
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      Project Portfolio
+                    </h1>
+                    <p className="text-muted-foreground text-lg mt-2">
+                      Orchestrate your real estate empire with precision and insight
+                    </p>
+                  </div>
                 </div>
-                <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
-                  <kpi.icon className={`h-6 w-6 ${kpi.color}`} />
-                </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Search and Filters */}
-      <Card className="bg-white">
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <div className="flex gap-4 w-full md:w-auto">
-              <div className="relative w-full md:w-80">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search projects, locations, types..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <div className="w-full md:w-48">
-                <Select value={stageFilter} onValueChange={setStageFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Development stage" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Stages</SelectItem>
-                    {developmentStages.map((stage) => (
-                      <SelectItem key={stage} value={stage}>{stage}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                onClick={() => setViewMode('grid')}
+              <Button 
+                size="lg"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 rounded-xl px-8"
+                onClick={handleNewProject}
               >
-                Grid View
-              </Button>
-              <Button
-                variant={viewMode === 'table' ? 'default' : 'outline'}
-                onClick={() => setViewMode('table')}
-              >
-                Table View
+                <Plus className="h-5 w-5 mr-2" />
+                Create New Project
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Projects Display */}
-      {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredProjects.map((project) => (
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        {/* Enhanced KPI Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {kpiData.map((kpi, index) => (
+            <Card 
+              key={index} 
+              className="group relative overflow-hidden border-0 bg-gradient-to-br from-card via-card to-muted/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 rounded-2xl"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <CardContent className="relative p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 space-y-2">
+                    <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                      {kpi.title}
+                    </div>
+                    <div className="text-3xl font-bold text-foreground">{kpi.value}</div>
+                    <div className="text-xs text-muted-foreground flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                      {kpi.subtitle}
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-2xl ${kpi.bgColor} shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-110`}>
+                    <kpi.icon className={`h-7 w-7 ${kpi.color}`} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Enhanced Search and Filters */}
+        <Card className="border-border/40 shadow-xl bg-gradient-to-r from-card via-card to-muted/10">
+          <CardContent className="p-6">
+            <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
+              <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto flex-1">
+                <div className="relative flex-1 lg:w-96">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    placeholder="Search projects, locations, stages..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 h-12 rounded-xl border-border/60 bg-background/60 backdrop-blur-sm focus:bg-background transition-colors"
+                  />
+                </div>
+                <div className="w-full sm:w-56">
+                  <Select value={stageFilter} onValueChange={setStageFilter}>
+                    <SelectTrigger className="h-12 rounded-xl border-border/60 bg-background/60 backdrop-blur-sm">
+                      <SelectValue placeholder="Development stage" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Stages</SelectItem>
+                      {developmentStages.map((stage) => (
+                        <SelectItem key={stage} value={stage}>{stage}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 bg-muted/30 p-1.5 rounded-xl">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className={viewMode === 'grid' ? 'shadow-sm' : 'hover:bg-background/60'}
+                >
+                  Grid View
+                </Button>
+                <Button
+                  variant={viewMode === 'table' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('table')}
+                  className={viewMode === 'table' ? 'shadow-sm' : 'hover:bg-background/60'}
+                >
+                  Table View
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Projects Display */}
+        {viewMode === 'grid' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+          {filteredProjects.map((project, index) => (
             <Card 
               key={project.id} 
-              className="hover:shadow-xl transition-all duration-300 cursor-pointer bg-white overflow-hidden group border border-border hover:border-primary/20 rounded-xl animate-fade-in transform hover:scale-[1.02] hover:shadow-glow"
+              className="group relative overflow-hidden bg-gradient-to-br from-card via-card to-muted/5 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer rounded-3xl transform hover:-translate-y-3 hover:scale-[1.02]"
+              style={{ animationDelay: `${index * 0.1}s` }}
               onClick={() => handleProjectClick(project.id)}
             >
-              {/* Project Image */}
-              <div className="relative w-full h-48 bg-gray-200 overflow-hidden">
+              {/* Hover Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
+              
+              {/* Project Image with Modern Overlay */}
+              <div className="relative w-full h-56 overflow-hidden rounded-t-3xl">
                 <img 
                   src={getProjectImage(project)} 
                   alt={project.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  style={{ aspectRatio: '16/9' }}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
-                  }}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                {/* Development Stage Badge */}
-                <div className="absolute top-3 left-3">
-                  <Badge className={getDevelopmentStageColor(project.developmentStage)}>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                
+                {/* Modern Stage Badge */}
+                <div className="absolute top-4 left-4">
+                  <Badge className="bg-white/90 backdrop-blur-sm text-foreground border-0 shadow-lg px-3 py-1 rounded-full font-medium">
                     {project.developmentStage}
                   </Badge>
                 </div>
-                {/* Pending Indicator */}
+                
+                {/* Enhanced Pending Indicator */}
                 {project.pendingAllocations > 0 && (
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-yellow-600 text-white text-xs flex items-center space-x-1">
+                  <div className="absolute top-4 right-4">
+                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 shadow-lg flex items-center gap-1.5 px-3 py-1 rounded-full animate-pulse">
                       <Clock className="h-3 w-3" />
-                      <span>{project.pendingAllocations} Pending</span>
+                      <span className="font-medium">{project.pendingAllocations} Pending</span>
                     </Badge>
                   </div>
                 )}
+
+                {/* Project Title Overlay */}
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-white/90 transition-colors">
+                    {project.name}
+                  </h3>
+                  <div className="flex items-center text-white/80 text-sm">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    <span>{project.city}, {project.state}</span>
+                  </div>
+                </div>
               </div>
 
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {/* Project Info */}
-                  <div className="text-left">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{project.name}</h3>
-                    <div className="flex items-center text-gray-600 mb-2">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      <span>{project.city}, {project.state}</span>
-                    </div>
-                    <div className="text-xs text-gray-500 mb-2">
-                      Last activity: {project.lastActivity}
-                    </div>
+              <CardContent className="relative p-6 space-y-6">
+                {/* Project Stats with Progress Indicators */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-3 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10">
+                    <div className="text-2xl font-bold text-foreground">{project.totalBlocks}</div>
+                    <div className="text-xs text-muted-foreground font-medium">Blocks</div>
                   </div>
+                  <div className="text-center p-3 rounded-xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10">
+                    <div className="text-2xl font-bold text-foreground">{project.totalUnits}</div>
+                    <div className="text-xs text-muted-foreground font-medium">Total Units</div>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-500/5 to-blue-500/10">
+                    <div className="text-2xl font-bold text-emerald-600">{project.allocatedUnits}</div>
+                    <div className="text-xs text-muted-foreground font-medium">Allocated</div>
+                  </div>
+                </div>
 
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-3 gap-3 py-3 border-t border-b border-gray-100">
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-gray-900">{project.totalBlocks}</div>
-                      <div className="text-xs text-gray-500">Blocks</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-gray-900">{project.totalUnits}</div>
-                      <div className="text-xs text-gray-500">Total Units</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-green-600">{project.allocatedUnits}</div>
-                      <div className="text-xs text-gray-500">Allocated</div>
-                    </div>
+                {/* Allocation Progress Bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Allocation Progress</span>
+                    <span className="font-medium text-foreground">
+                      {Math.round((project.allocatedUnits / project.totalUnits) * 100)}%
+                    </span>
                   </div>
+                  <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full transition-all duration-1000 group-hover:from-emerald-400 group-hover:to-emerald-500"
+                      style={{ width: `${(project.allocatedUnits / project.totalUnits) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
 
-                  {/* Unit Status Summary */}
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Pending:</span>
-                      <span className="font-medium text-yellow-600">{project.pendingAllocations}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Available:</span>
-                      <span className="font-medium text-blue-600">{project.availableUnits}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Reserved:</span>
-                      <span className="font-medium text-purple-600">{project.reservedUnits}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Revenue:</span>
-                      <span className="font-medium text-green-600">{project.revenue}</span>
-                    </div>
+                {/* Revenue and Activity */}
+                <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-muted/50 to-muted/30">
+                  <div>
+                    <div className="text-sm text-muted-foreground">Total Revenue</div>
+                    <div className="text-xl font-bold text-emerald-600">{project.revenue}</div>
                   </div>
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2 mt-4">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex-1 hover:bg-primary/5 hover:border-primary/20 transition-all duration-200"
-                      onClick={(e) => handleViewDetails(e, project.id)}
-                    >
-                      <Eye className="h-3 w-3 mr-1" />
-                      Details
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex-1 hover:bg-accent hover:border-primary/20 transition-all duration-200"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/company/projects/${project.id}/edit`);
-                      }}
-                    >
-                      <Building className="h-3 w-3 mr-1" />
-                      Manage
-                    </Button>
+                  <div className="text-right">
+                    <div className="text-sm text-muted-foreground">Last Activity</div>
+                    <div className="text-sm font-medium text-foreground">{project.lastActivity}</div>
                   </div>
+                </div>
+
+                {/* Enhanced Action Buttons */}
+                <div className="flex gap-3 pt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1 bg-gradient-to-r from-background to-muted/30 hover:from-primary/5 hover:to-primary/10 border-border/60 hover:border-primary/20 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md"
+                    onClick={(e) => handleViewDetails(e, project.id)}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Details
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1 bg-gradient-to-r from-accent/5 to-accent/10 hover:from-accent/10 hover:to-accent/20 border-border/60 hover:border-accent/30 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/company/projects/${project.id}/edit`);
+                    }}
+                  >
+                    <Building className="h-4 w-4 mr-2" />
+                    Manage
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -607,7 +648,8 @@ export function ProjectsUnits() {
             </Table>
           </CardContent>
         </Card>
-      )}
+        )}
+      </div>
     </div>
   );
 }
