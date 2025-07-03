@@ -6,7 +6,7 @@ import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { ProjectsUnits } from '@/components/dashboard/ProjectsUnits';
 import { Clients } from '@/components/dashboard/Clients';
 import { MarketersCommission } from '@/components/dashboard/MarketersCommission';
-import { SalesAllocationOverview } from '@/components/dashboard/SalesAllocationOverview';
+import { SalesAllocation } from '@/components/dashboard/SalesAllocation';
 import { FeesCollection } from '@/components/dashboard/FeesCollection';
 import { Accounting } from '@/components/dashboard/Accounting';
 import { TeamRoles } from '@/components/dashboard/TeamRoles';
@@ -55,7 +55,7 @@ const CompanyDashboard = () => {
     } else if (path.startsWith('/company/marketers') && !path.includes('/company/marketers/')) {
       return <MarketersCommission />;
     } else if (path.startsWith('/company/sales')) {
-      return <SalesAllocationOverview />;
+      return <SalesAllocation />;
     } else if (path.startsWith('/company/fees')) {
       return <FeesCollection />;
     } else if (path.startsWith('/company/accounting')) {
