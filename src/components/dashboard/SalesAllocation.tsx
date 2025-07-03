@@ -141,44 +141,39 @@ export function SalesAllocation() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Fixed Top Header */}
-      <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-4 sticky top-0 z-30 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Sales & Allocation</h1>
-            <p className="text-muted-foreground text-sm">Manage your sales pipeline, allocations, and reallocations</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button 
-              onClick={() => console.log('Record Sale clicked')}
-              className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Record Sale
-            </Button>
-            <Button 
-              onClick={handleNewAllocation}
-              className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <Handshake className="h-4 w-4 mr-2" />
-              Manage Allocations
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setShowNotifications(true)}
-              className="relative bg-gradient-to-r from-background to-muted hover:shadow-lg transition-all duration-300"
-            >
-              <Bell className="h-4 w-4" />
-              <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-destructive to-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center shadow-sm">
-                3
-              </Badge>
-            </Button>
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Sales & Allocation</h1>
+          <p className="text-muted-foreground mt-1">Manage your sales pipeline, allocations, and reallocations</p>
         </div>
-      </header>
-      
-      <div className="p-6 space-y-6">
+        <div className="flex items-center space-x-2">
+          <Button 
+            onClick={() => console.log('Record Sale clicked')}
+            className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Record Sale
+          </Button>
+          <Button 
+            onClick={handleNewAllocation}
+            className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <Handshake className="h-4 w-4 mr-2" />
+            Manage Allocations
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={() => setShowNotifications(true)}
+            className="relative bg-gradient-to-r from-background to-muted hover:shadow-lg transition-all duration-300"
+          >
+            <Bell className="h-4 w-4" />
+            <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-destructive to-red-600 text-white text-xs w-5 h-5 rounded-full p-0 flex items-center justify-center shadow-sm">
+              3
+            </Badge>
+          </Button>
+        </div>
+      </div>
 
       {/* Main KPI Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -376,7 +371,6 @@ export function SalesAllocation() {
           setShowNotifications(false);
         }}
       />
-      </div>
     </div>
   );
 }
