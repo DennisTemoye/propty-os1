@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './components/ThemeProvider';
 import { Toaster } from './components/ui/toaster';
 import { Toaster as SonnerToaster } from 'sonner';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Pages
 import Index from './pages/Index';
@@ -40,9 +41,10 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="proptyos-ui-theme">
-        <Router>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="light" storageKey="proptyos-ui-theme">
+          <Router>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
@@ -72,11 +74,12 @@ function App() {
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </Router>
-        <Toaster />
-        <SonnerToaster />
-      </ThemeProvider>
-    </QueryClientProvider>
+          </Router>
+          <Toaster />
+          <SonnerToaster />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
