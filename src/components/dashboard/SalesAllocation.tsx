@@ -15,7 +15,6 @@ import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { PendingOffersTab } from './allocation/PendingOffersTab';
 import { OverviewTab } from './sales-allocation/OverviewTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
-import { CompanyHeader } from './CompanyHeader';
 
 const mockAllocations = [
   {
@@ -143,10 +142,13 @@ export function SalesAllocation() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <CompanyHeader 
-        title="Sales & Allocation"
-        subtitle="Manage your sales pipeline, allocations, and reallocations"
-        actions={
+      {/* Fixed Top Header */}
+      <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-4 sticky top-0 z-30 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Sales & Allocation</h1>
+            <p className="text-muted-foreground text-sm">Manage your sales pipeline, allocations, and reallocations</p>
+          </div>
           <div className="flex items-center space-x-2">
             <Button 
               onClick={() => console.log('Record Sale clicked')}
@@ -173,10 +175,10 @@ export function SalesAllocation() {
               </Badge>
             </Button>
           </div>
-        }
-      />
+        </div>
+      </header>
       
-    <div className="space-y-6 p-6">
+      <div className="p-6 space-y-6">
 
       {/* Main KPI Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

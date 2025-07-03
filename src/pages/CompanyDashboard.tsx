@@ -6,7 +6,7 @@ import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { ProjectsUnits } from '@/components/dashboard/ProjectsUnits';
 import { Clients } from '@/components/dashboard/Clients';
 import { MarketersCommission } from '@/components/dashboard/MarketersCommission';
-import { SalesAllocationOverview } from '@/components/dashboard/SalesAllocationOverview';
+import { SalesAllocation } from '@/components/dashboard/SalesAllocation';
 import { FeesCollection } from '@/components/dashboard/FeesCollection';
 import { Accounting } from '@/components/dashboard/Accounting';
 import { TeamRoles } from '@/components/dashboard/TeamRoles';
@@ -55,7 +55,7 @@ const CompanyDashboard = () => {
     } else if (path.startsWith('/company/marketers') && !path.includes('/company/marketers/')) {
       return <MarketersCommission />;
     } else if (path.startsWith('/company/sales')) {
-      return <SalesAllocationOverview />;
+      return <SalesAllocation />;
     } else if (path.startsWith('/company/fees')) {
       return <FeesCollection />;
     } else if (path.startsWith('/company/accounting')) {
@@ -98,6 +98,20 @@ const CompanyDashboard = () => {
         <div className={`min-h-screen transition-all duration-300 ${
           isSmallScreen ? 'ml-0' : 'ml-64'
         }`}>
+          {/* Mobile Header with Menu Toggle */}
+          {isSmallScreen && (
+            <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
+              <h1 className="text-lg font-semibold text-gray-900">ProptyOS</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2"
+              >
+                {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+            </div>
+          )}
           {/* Mobile Header - Only show on small screens */}
           {isSmallScreen && (
             <div className="fixed top-16 sm:top-20 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2 shadow-sm">
