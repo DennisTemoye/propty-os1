@@ -14,6 +14,7 @@ import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
 import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
 import { PendingOffersTab } from './allocation/PendingOffersTab';
 import { OverviewTab } from './sales-allocation/OverviewTab';
+import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
 import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
@@ -264,13 +265,20 @@ export function SalesAllocation() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="allocations">Active Allocations</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending-offers" className="relative">
             Pending Offers
             <Badge className="ml-2 bg-amber-600 text-white text-xs">3</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="pending-allocations" className="relative">
+            Pending Allocations
+            <Badge className="ml-2 bg-orange-600 text-white text-xs">2</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="pending-approvals" className="relative">
+            Pending Approvals
+            <Badge className="ml-2 bg-yellow-600 text-white text-xs">2</Badge>
           </TabsTrigger>
         </TabsList>
 
@@ -278,69 +286,15 @@ export function SalesAllocation() {
           <OverviewTab />
         </TabsContent>
 
-        <TabsContent value="allocations" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Unit Allocations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Project/Unit</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockAllocations.map((allocation) => (
-                    <TableRow key={allocation.id}>
-                      <TableCell>{allocation.clientName}</TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{allocation.projectName}</div>
-                          <div className="text-sm text-gray-500">{allocation.unit}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(allocation.status)}>
-                          {allocation.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{allocation.allocationType}</TableCell>
-                      <TableCell>{allocation.price}</TableCell>
-                      <TableCell>{allocation.date}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleUpdateStatus(allocation)}
-                          >
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          {allocation.status === 'allocated' && (
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleRevokeAllocation(allocation)}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Ban className="h-3 w-3" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+        <TabsContent value="pending-allocations" className="space-y-6">
+          <PendingAllocationsTab />
+        </TabsContent>
+
+        <TabsContent value="pending-approvals" className="space-y-6">
+          <PendingApprovalsTab 
+            onApprove={(allocationId, otpCode) => console.log('Approved:', allocationId)}
+            onDecline={(allocationId, reason) => console.log('Declined:', allocationId)}
+          />
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
