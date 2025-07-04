@@ -28,9 +28,11 @@ import {
   Share2
 } from 'lucide-react';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
-import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksTab';
+import { NewProjectBlocksTab } from '@/components/dashboard/projects/NewProjectBlocksTab';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
+import { SaleViewModal } from '@/components/dashboard/projects/SaleViewModal';
+import { DocumentPreviewModal } from '@/components/dashboard/projects/DocumentPreviewModal';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
@@ -391,6 +393,8 @@ export function ProjectDetailView() {
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [reallocateData, setReallocateData] = useState<any>(null);
+  const [viewingSale, setViewingSale] = useState<any>(null);
+  const [previewingDocument, setPreviewingDocument] = useState<any>(null);
   
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
@@ -446,6 +450,14 @@ export function ProjectDetailView() {
   
   const handleViewSalesAllocation = () => {
     navigate('/company/sales', { state: { projectId: project.id, projectName: project.name } });
+  };
+
+  const handleViewSale = (sale: any) => {
+    setViewingSale(sale);
+  };
+
+  const handlePreviewDocument = (document: any) => {
+    setPreviewingDocument(document);
   };
   
   const handleReallocate = (unitId: string, clientName: string) => {
@@ -696,12 +708,11 @@ export function ProjectDetailView() {
       <Card>
         <Tabs defaultValue="overview" className="w-full">
           <CardHeader className="pb-3">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="overview" className="text-xs lg:text-sm">Overview</TabsTrigger>
               <TabsTrigger value="blocks" className="text-xs lg:text-sm">Blocks</TabsTrigger>
               <TabsTrigger value="sales" className="text-xs lg:text-sm">Sales</TabsTrigger>
               <TabsTrigger value="documents" className="text-xs lg:text-sm">Documents</TabsTrigger>
-              <TabsTrigger value="analytics" className="text-xs lg:text-sm">Analytics</TabsTrigger>
               <TabsTrigger value="settings" className="text-xs lg:text-sm">Settings</TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -711,33 +722,22 @@ export function ProjectDetailView() {
           </TabsContent>
           
           <TabsContent value="blocks" className="p-6 pt-0">
-            <ProjectBlocksTab project={project} />
+            <NewProjectBlocksTab project={project} />
           </TabsContent>
           
           <TabsContent value="sales" className="p-6 pt-0">
             <ProjectSalesHistoryTab 
               project={project} 
               onReallocate={handleReallocate} 
-              onRevoke={handleRevoke} 
+              onRevoke={handleRevoke}
+              onViewSale={handleViewSale}
             />
           </TabsContent>
           
           <TabsContent value="documents" className="p-6 pt-0">
-            <ProjectDocumentsTab project={project} />
+            <ProjectDocumentsTab project={project} onPreviewDocument={handlePreviewDocument} />
           </TabsContent>
           
-          <TabsContent value="analytics" className="p-6 pt-0">
-            <div className="text-center py-12">
-              <BarChart3 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Project Analytics</h3>
-              <p className="text-muted-foreground mb-4">
-                Detailed analytics and reporting for this project
-              </p>
-              <Button onClick={handleViewReports}>
-                View Full Reports
-              </Button>
-            </div>
-          </TabsContent>
           
           <TabsContent value="settings" className="p-6 pt-0">
             <div className="text-center py-12">
@@ -793,6 +793,24 @@ export function ProjectDetailView() {
             setIsRevokeOpen(false);
             setSelectedAllocation(null);
           }}
+        />
+      )}
+
+      {/* Sale View Modal */}
+      {viewingSale && (
+        <SaleViewModal
+          isOpen={!!viewingSale}
+          onClose={() => setViewingSale(null)}
+          sale={viewingSale}
+        />
+      )}
+
+      {/* Document Preview Modal */}
+      {previewingDocument && (
+        <DocumentPreviewModal
+          isOpen={!!previewingDocument}
+          onClose={() => setPreviewingDocument(null)}
+          document={previewingDocument}
         />
       )}
     </div>

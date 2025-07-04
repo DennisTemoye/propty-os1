@@ -16,6 +16,7 @@ interface DocumentsViewProps {
     id: number;
     name: string;
   };
+  onPreviewDocument?: (document: any) => void;
 }
 
 const mockDocuments = [
@@ -25,7 +26,7 @@ const mockDocuments = [
   { id: 4, name: 'Site Survey.pdf', type: 'Survey', size: '3.2 MB', uploadDate: '2024-01-05', status: 'approved' },
 ];
 
-export function DocumentsView({ project }: DocumentsViewProps) {
+export function DocumentsView({ project, onPreviewDocument }: DocumentsViewProps) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [documents, setDocuments] = useState(mockDocuments);
 
@@ -57,13 +58,25 @@ export function DocumentsView({ project }: DocumentsViewProps) {
   };
 
   const handleViewDocument = (docId: number) => {
-    console.log('Viewing document:', docId);
-    toast.info('Document viewer would open in a new window');
+    const document = documents.find(doc => doc.id === docId);
+    if (document && onPreviewDocument) {
+      onPreviewDocument(document);
+    } else {
+      console.log('Viewing document:', docId);
+      toast.info('Document viewer would open in a new window');
+    }
   };
 
   const handleDownloadDocument = (docId: number) => {
-    console.log('Downloading document:', docId);
-    toast.success('Document download started');
+    const doc = documents.find(doc => doc.id === docId);
+    if (doc) {
+      // Simulate actual download
+      const link = document.createElement('a');
+      link.href = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png'; // Use actual file URL
+      link.download = doc.name;
+      link.click();
+      toast.success(`Downloading ${doc.name}...`);
+    }
   };
 
   const handleDeleteDocument = (docId: number) => {

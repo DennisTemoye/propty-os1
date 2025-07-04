@@ -7,8 +7,9 @@ interface ProjectDocumentsTabProps {
     id: number;
     name: string;
   };
+  onPreviewDocument?: (document: any) => void;
 }
 
-export function ProjectDocumentsTab({ project }: ProjectDocumentsTabProps) {
-  return <DocumentsView project={project} />;
+export function ProjectDocumentsTab({ project, onPreviewDocument }: ProjectDocumentsTabProps) {
+  return <DocumentsView project={project} onPreviewDocument={onPreviewDocument} />;
 }
