@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Building, Users, MapPin, Eye, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getProjectImage, handleImageError } from '@/lib/utils';
 
 interface ProjectKpiCardProps {
   project: {
@@ -38,9 +39,6 @@ export function ProjectKpiCard({ project }: ProjectKpiCardProps) {
     }
   };
 
-  const getProjectImage = (project: any) => {
-    return project.image || '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
-  };
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200 relative">
@@ -59,10 +57,7 @@ export function ProjectKpiCard({ project }: ProjectKpiCardProps) {
             src={getProjectImage(project)} 
             alt={project.name}
             className="w-full h-full object-cover rounded-t-lg"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
-            }}
+            onError={handleImageError}
           />
           <div className="absolute inset-0 bg-black bg-opacity-20 rounded-t-lg"></div>
           <div className="absolute top-4 right-4">

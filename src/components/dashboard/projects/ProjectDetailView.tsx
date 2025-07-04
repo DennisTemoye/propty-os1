@@ -31,6 +31,7 @@ import {
 import { toast } from 'sonner';
 import { BlocksUnitsManager } from './BlocksUnitsManager';
 import { DocumentsView } from '../documents/DocumentsView';
+import { getProjectImage, handleImageError } from '@/lib/utils';
 
 interface DevelopmentDetailViewProps {
   project: {
@@ -98,9 +99,6 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
     }
   };
 
-  const getProjectImage = (project: any) => {
-    return project.image || '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
-  };
 
   const salesProgress = (project.soldUnits / project.totalUnits) * 100;
   const budgetProgress = 65;
@@ -192,10 +190,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
               alt={project.name}
               className="w-full h-full object-cover"
               style={{ aspectRatio: '1/1' }}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
-              }}
+              onError={handleImageError}
             />
           </div>
           

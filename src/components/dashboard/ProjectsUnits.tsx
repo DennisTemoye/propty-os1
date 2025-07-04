@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, MapPin, Building, Home, DollarSign, Search, Eye, Handshake, Clock, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getProjectImage, handleImageError } from '@/lib/utils';
 
 const mockProjects = [
   {
@@ -359,9 +360,6 @@ export function ProjectsUnits() {
     },
   ];
 
-  const getProjectImage = (project: any) => {
-    return project.image && project.image.trim() !== '' ? project.image : '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
@@ -499,6 +497,7 @@ export function ProjectsUnits() {
                   src={getProjectImage(project)} 
                   alt={project.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  onError={handleImageError}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
                 
