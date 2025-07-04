@@ -239,6 +239,28 @@ const mockProjects = [
     revenue: '₦1.2B',
     lastActivity: '1 day ago',
     image: 'https://images.unsplash.com/photo-1560185893-a55cbc9701bc?w=800&h=450&fit=crop'
+  },
+  {
+    id: 11,
+    name: 'Test Project No Image',
+    category: 'Housing',
+    type: 'Residential',
+    location: 'Kano, Kano',
+    city: 'Kano',
+    state: 'Kano State',
+    totalBlocks: 3,
+    totalUnits: 50,
+    allocatedUnits: 15,
+    pendingAllocations: 2,
+    reservedUnits: 10,
+    availableUnits: 25,
+    interestedUnits: 3,
+    offeredUnits: 2,
+    revokedUnits: 0,
+    status: 'upcoming',
+    developmentStage: 'Planning',
+    revenue: '₦800M',
+    lastActivity: '3 days ago'
   }
 ];
 
@@ -338,7 +360,7 @@ export function ProjectsUnits() {
   ];
 
   const getProjectImage = (project: any) => {
-    return project.image || '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
+    return project.image && project.image.trim() !== '' ? project.image : '/lovable-uploads/64c4e701-f813-4adb-894b-5a95ea66268c.png';
   };
 
   return (
@@ -530,21 +552,6 @@ export function ProjectsUnits() {
                   </div>
                 </div>
 
-                {/* Allocation Progress Bar */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Allocation Progress</span>
-                    <span className="font-medium text-foreground">
-                      {Math.round((project.allocatedUnits / project.totalUnits) * 100)}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full transition-all duration-1000 group-hover:from-emerald-400 group-hover:to-emerald-500"
-                      style={{ width: `${(project.allocatedUnits / project.totalUnits) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
 
                 {/* Revenue and Activity */}
                 <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-muted/50 to-muted/30">
