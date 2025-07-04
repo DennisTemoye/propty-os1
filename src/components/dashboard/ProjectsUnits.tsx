@@ -451,7 +451,7 @@ export function ProjectsUnits() {
                   onClick={() => setViewMode('table')}
                   className={viewMode === 'table' ? 'shadow-sm' : 'hover:bg-background/60'}
                 >
-                  Table View
+                  List View
                 </Button>
               </div>
             </div>
@@ -511,18 +511,22 @@ export function ProjectsUnits() {
 
               <CardContent className="relative p-6 space-y-6">
                 {/* Project Stats with Progress Indicators */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-3 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10">
-                    <div className="text-2xl font-bold text-foreground">{project.totalBlocks}</div>
-                    <div className="text-xs text-muted-foreground font-medium">Blocks</div>
-                  </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-3 rounded-xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10">
                     <div className="text-2xl font-bold text-foreground">{project.totalUnits}</div>
                     <div className="text-xs text-muted-foreground font-medium">Total Units</div>
                   </div>
                   <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-500/5 to-blue-500/10">
-                    <div className="text-2xl font-bold text-emerald-600">{project.allocatedUnits}</div>
+                    <div className="text-2xl font-bold text-foreground">{project.allocatedUnits}</div>
                     <div className="text-xs text-muted-foreground font-medium">Allocated</div>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-gradient-to-br from-amber-500/5 to-amber-500/10">
+                    <div className="text-2xl font-bold text-foreground">{project.pendingAllocations}</div>
+                    <div className="text-xs text-muted-foreground font-medium">Pending</div>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-gradient-to-br from-green-500/5 to-green-500/10">
+                    <div className="text-2xl font-bold text-foreground">{project.availableUnits}</div>
+                    <div className="text-xs text-muted-foreground font-medium">Available</div>
                   </div>
                 </div>
 
@@ -554,30 +558,6 @@ export function ProjectsUnits() {
                   </div>
                 </div>
 
-                {/* Enhanced Action Buttons */}
-                <div className="flex gap-3 pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1 bg-gradient-to-r from-background to-muted/30 hover:from-primary/5 hover:to-primary/10 border-border/60 hover:border-primary/20 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md"
-                    onClick={(e) => handleViewDetails(e, project.id)}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    View Details
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1 bg-gradient-to-r from-accent/5 to-accent/10 hover:from-accent/10 hover:to-accent/20 border-border/60 hover:border-accent/30 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/company/projects/${project.id}/edit`);
-                    }}
-                  >
-                    <Building className="h-4 w-4 mr-2" />
-                    Manage
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           ))}
