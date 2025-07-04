@@ -293,21 +293,12 @@ export function ProjectsUnits() {
   const developmentStages = ['Planning', 'Pre-Launch', 'Marketing', 'Construction', 'Handover', 'Completed'];
 
   // Calculate totals for KPI cards
-  const totalProjects = mockProjects.length;
   const totalUnits = mockProjects.reduce((sum, project) => sum + project.totalUnits, 0);
   const totalAllocations = mockProjects.reduce((sum, project) => sum + project.allocatedUnits, 0);
   const totalPendingAllocations = mockProjects.reduce((sum, project) => sum + (project.pendingAllocations || 0), 0);
+  const totalAvailable = mockProjects.reduce((sum, project) => sum + project.availableUnits, 0);
 
   const kpiData = [
-    {
-      title: 'Total Projects',
-      value: totalProjects.toString(),
-      subtitle: 'All registered',
-      icon: Building,
-      color: 'text-purple-700',
-      bgColor: 'bg-purple-100',
-      cardBg: 'from-purple-50 to-purple-100',
-    },
     {
       title: 'Total Units',
       value: totalUnits.toLocaleString(),
@@ -318,7 +309,7 @@ export function ProjectsUnits() {
       cardBg: 'from-emerald-50 to-emerald-100',
     },
     {
-      title: 'Total Allocations',
+      title: 'Allocated',
       value: totalAllocations.toLocaleString(),
       subtitle: 'Successfully allocated',
       icon: Handshake,
@@ -327,13 +318,22 @@ export function ProjectsUnits() {
       cardBg: 'from-blue-50 to-blue-100',
     },
     {
-      title: 'Pending Approvals',
+      title: 'Pending',
       value: totalPendingAllocations.toString(),
       subtitle: 'Awaiting approval',
       icon: AlertTriangle,
       color: 'text-amber-700',
       bgColor: 'bg-amber-100',
       cardBg: 'from-amber-50 to-amber-100',
+    },
+    {
+      title: 'Available',
+      value: totalAvailable.toLocaleString(),
+      subtitle: 'Ready for allocation',
+      icon: Building,
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-100',
+      cardBg: 'from-purple-50 to-purple-100',
     },
   ];
 
@@ -554,30 +554,6 @@ export function ProjectsUnits() {
                   </div>
                 </div>
 
-                {/* Enhanced Action Buttons */}
-                <div className="flex gap-3 pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1 bg-gradient-to-r from-background to-muted/30 hover:from-primary/5 hover:to-primary/10 border-border/60 hover:border-primary/20 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md"
-                    onClick={(e) => handleViewDetails(e, project.id)}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    View Details
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1 bg-gradient-to-r from-accent/5 to-accent/10 hover:from-accent/10 hover:to-accent/20 border-border/60 hover:border-accent/30 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/company/projects/${project.id}/edit`);
-                    }}
-                  >
-                    <Building className="h-4 w-4 mr-2" />
-                    Manage
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           ))}
