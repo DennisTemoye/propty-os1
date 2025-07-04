@@ -21,7 +21,6 @@ interface ProjectSalesHistoryTabProps {
   };
   onReallocate?: (unitId: string, clientName: string) => void;
   onRevoke?: (allocation: any) => void;
-  onViewSale?: (sale: any) => void;
 }
 
 const mockAllocatedUnits = [
@@ -95,20 +94,12 @@ const mockOfferedUnits = [
   }
 ];
 
-export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke, onViewSale }: ProjectSalesHistoryTabProps) {
+export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: ProjectSalesHistoryTabProps) {
   const [activeTab, setActiveTab] = useState('allocated');
   const navigate = useNavigate();
 
   const handleViewClient = (clientId: number) => {
     navigate(`/company/clients/${clientId}`);
-  };
-
-  const handleViewSale = (sale: any) => {
-    if (onViewSale) {
-      onViewSale(sale);
-    } else {
-      toast.info(`Viewing sale details for ${sale.unitId}`);
-    }
   };
 
   const handleReallocate = (unitId: string, clientName: string) => {
@@ -276,8 +267,7 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke, onView
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleViewSale(unit)}
-                            title="View Sale Details"
+                            onClick={() => handleViewClient(unit.clientId)}
                           >
                             <Eye className="h-3 w-3" />
                           </Button>
@@ -419,8 +409,7 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke, onView
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleViewSale(unit)}
-                            title="View Sale Details"
+                            onClick={() => handleViewClient(unit.clientId)}
                           >
                             <Eye className="h-3 w-3" />
                           </Button>
