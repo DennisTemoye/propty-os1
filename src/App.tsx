@@ -60,9 +60,12 @@ function App() {
             <Route path="/company/projects/new" element={<NewProjectPage />} />
             <Route path="/company/projects/:id/edit" element={<EditProjectPage />} />
             <Route path="/company/projects/:id/blocks" element={<ProjectBlocksPage />} />
+            <Route path="/company/projects/:id" element={<CompanyDashboard />} />
             <Route path="/company/clients/:id/edit" element={<EditClientPage />} />
+            <Route path="/company/clients/:id" element={<CompanyDashboard />} />
             <Route path="/company/clients/new" element={<NewClientPage />} />
             <Route path="/company/marketers/:id/edit" element={<EditMarketerPage />} />
+            <Route path="/company/marketers/:id" element={<CompanyDashboard />} />
             <Route path="/company/marketers-commission" element={<MarketersCommissionPage />} />
 
             {/* Dashboard Routes - All handled by CompanyDashboard */}
