@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { DocumentsView } from '../documents/DocumentsView';
+import { DocumentPreviewModal } from './DocumentPreviewModal';
 
 interface ProjectDocumentsTabProps {
   project: {
@@ -10,5 +11,28 @@ interface ProjectDocumentsTabProps {
 }
 
 export function ProjectDocumentsTab({ project }: ProjectDocumentsTabProps) {
-  return <DocumentsView project={project} />;
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<any>(null);
+
+  const handleViewDocument = (document: any) => {
+    setSelectedDocument(document);
+    setIsPreviewOpen(true);
+  };
+
+  return (
+    <>
+      <DocumentsView project={project} onViewDocument={handleViewDocument} />
+      
+      {selectedDocument && (
+        <DocumentPreviewModal
+          isOpen={isPreviewOpen}
+          onClose={() => {
+            setIsPreviewOpen(false);
+            setSelectedDocument(null);
+          }}
+          document={selectedDocument}
+        />
+      )}
+    </>
+  );
 }

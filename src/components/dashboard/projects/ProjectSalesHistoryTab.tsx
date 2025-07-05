@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { RotateCcw, X, Eye, Users, DollarSign, TrendingUp, Calendar } from 'lucide-react';
+import { SaleViewModal } from '@/components/dashboard/projects/SaleViewModal';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -96,7 +97,14 @@ const mockOfferedUnits = [
 
 export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: ProjectSalesHistoryTabProps) {
   const [activeTab, setActiveTab] = useState('allocated');
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedSale, setSelectedSale] = useState<any>(null);
   const navigate = useNavigate();
+
+  const handleViewSale = (sale: any) => {
+    setSelectedSale(sale);
+    setIsViewModalOpen(true);
+  };
 
   const handleViewClient = (clientId: number) => {
     navigate(`/company/clients/${clientId}`);
@@ -267,7 +275,7 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleViewClient(unit.clientId)}
+                            onClick={() => handleViewSale(unit)}
                           >
                             <Eye className="h-3 w-3" />
                           </Button>
@@ -409,7 +417,7 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleViewClient(unit.clientId)}
+                            onClick={() => handleViewSale(unit)}
                           >
                             <Eye className="h-3 w-3" />
                           </Button>
@@ -456,6 +464,18 @@ export function ProjectSalesHistoryTab({ project, onReallocate, onRevoke }: Proj
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Sale View Modal */}
+      {selectedSale && (
+        <SaleViewModal
+          isOpen={isViewModalOpen}
+          onClose={() => {
+            setIsViewModalOpen(false);
+            setSelectedSale(null);
+          }}
+          sale={selectedSale}
+        />
+      )}
     </div>
   );
 }

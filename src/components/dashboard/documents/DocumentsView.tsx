@@ -16,6 +16,7 @@ interface DocumentsViewProps {
     id: number;
     name: string;
   };
+  onViewDocument?: (document: any) => void;
 }
 
 const mockDocuments = [
@@ -25,7 +26,7 @@ const mockDocuments = [
   { id: 4, name: 'Site Survey.pdf', type: 'Survey', size: '3.2 MB', uploadDate: '2024-01-05', status: 'approved' },
 ];
 
-export function DocumentsView({ project }: DocumentsViewProps) {
+export function DocumentsView({ project, onViewDocument }: DocumentsViewProps) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [documents, setDocuments] = useState(mockDocuments);
 
@@ -57,8 +58,13 @@ export function DocumentsView({ project }: DocumentsViewProps) {
   };
 
   const handleViewDocument = (docId: number) => {
-    console.log('Viewing document:', docId);
-    toast.info('Document viewer would open in a new window');
+    const document = documents.find(doc => doc.id === docId);
+    if (document && onViewDocument) {
+      onViewDocument(document);
+    } else {
+      console.log('Viewing document:', docId);
+      toast.info('Document viewer would open in a new window');
+    }
   };
 
   const handleDownloadDocument = (docId: number) => {

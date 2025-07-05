@@ -122,7 +122,11 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
               </div>
             ))}
           </div>
-          <Button variant="outline" className="w-full mt-4">
+          <Button 
+            variant="outline" 
+            className="w-full mt-4"
+            onClick={() => window.location.href = '/company/activity-logs'}
+          >
             View All Activity
           </Button>
         </CardContent>
