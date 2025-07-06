@@ -28,7 +28,7 @@ import {
   Share2
 } from 'lucide-react';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
-import { EnhancedBlocksTab } from '@/components/dashboard/projects/EnhancedBlocksTab';
+import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksTab';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
@@ -696,11 +696,12 @@ export function ProjectDetailView() {
       <Card>
         <Tabs defaultValue="overview" className="w-full">
           <CardHeader className="pb-3">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6">
               <TabsTrigger value="overview" className="text-xs lg:text-sm">Overview</TabsTrigger>
               <TabsTrigger value="blocks" className="text-xs lg:text-sm">Blocks</TabsTrigger>
               <TabsTrigger value="sales" className="text-xs lg:text-sm">Sales</TabsTrigger>
               <TabsTrigger value="documents" className="text-xs lg:text-sm">Documents</TabsTrigger>
+              <TabsTrigger value="analytics" className="text-xs lg:text-sm">Analytics</TabsTrigger>
               <TabsTrigger value="settings" className="text-xs lg:text-sm">Settings</TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -710,7 +711,7 @@ export function ProjectDetailView() {
           </TabsContent>
           
           <TabsContent value="blocks" className="p-6 pt-0">
-            <EnhancedBlocksTab project={project} />
+            <ProjectBlocksTab project={project} />
           </TabsContent>
           
           <TabsContent value="sales" className="p-6 pt-0">
@@ -725,6 +726,18 @@ export function ProjectDetailView() {
             <ProjectDocumentsTab project={project} />
           </TabsContent>
           
+          <TabsContent value="analytics" className="p-6 pt-0">
+            <div className="text-center py-12">
+              <BarChart3 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Project Analytics</h3>
+              <p className="text-muted-foreground mb-4">
+                Detailed analytics and reporting for this project
+              </p>
+              <Button onClick={handleViewReports}>
+                View Full Reports
+              </Button>
+            </div>
+          </TabsContent>
           
           <TabsContent value="settings" className="p-6 pt-0">
             <div className="text-center py-12">
