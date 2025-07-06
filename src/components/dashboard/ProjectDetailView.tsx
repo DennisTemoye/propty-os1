@@ -28,7 +28,7 @@ import {
   Share2
 } from 'lucide-react';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
-import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksTab';
+import { EnhancedBlocksTab } from '@/components/dashboard/projects/EnhancedBlocksTab';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
@@ -696,13 +696,11 @@ export function ProjectDetailView() {
       <Card>
         <Tabs defaultValue="overview" className="w-full">
           <CardHeader className="pb-3">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview" className="text-xs lg:text-sm">Overview</TabsTrigger>
               <TabsTrigger value="blocks" className="text-xs lg:text-sm">Blocks</TabsTrigger>
               <TabsTrigger value="sales" className="text-xs lg:text-sm">Sales</TabsTrigger>
               <TabsTrigger value="documents" className="text-xs lg:text-sm">Documents</TabsTrigger>
-              <TabsTrigger value="analytics" className="text-xs lg:text-sm">Analytics</TabsTrigger>
-              <TabsTrigger value="settings" className="text-xs lg:text-sm">Settings</TabsTrigger>
             </TabsList>
           </CardHeader>
           
@@ -711,7 +709,7 @@ export function ProjectDetailView() {
           </TabsContent>
           
           <TabsContent value="blocks" className="p-6 pt-0">
-            <ProjectBlocksTab project={project} />
+            <EnhancedBlocksTab project={project} />
           </TabsContent>
           
           <TabsContent value="sales" className="p-6 pt-0">
