@@ -61,7 +61,7 @@ export function DocumentPreviewModal({ isOpen, onClose, document }: DocumentPrev
     toast.success(`Downloading ${document.name}...`);
     
     // In a real app, you would trigger the actual download here
-    const downloadLink = document.createElement('a');
+    const downloadLink = window.document.createElement('a');
     downloadLink.href = '#'; // This would be the actual file URL
     downloadLink.download = document.name;
     downloadLink.click();
