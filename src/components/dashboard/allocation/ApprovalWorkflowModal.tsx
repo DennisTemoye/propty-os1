@@ -98,7 +98,7 @@ Sales Team`
     const data = {
       clientName: allocation.clientName,
       projectName: allocation.projectName,
-      plotNumber: allocation.plotNumber,
+      unitNumber: allocation.unit,
       saleAmount: allocation.amount,
       allocationDate: new Date().toLocaleDateString()
     };
@@ -151,8 +151,8 @@ Sales Team`
                   <p className="font-medium">{allocation.projectName}</p>
                 </div>
                 <div>
-                  <Label className="text-sm text-gray-600">Plot</Label>
-                  <p className="font-medium">{allocation.plotNumber}</p>
+                  <Label className="text-sm text-gray-600">Unit</Label>
+                  <p className="font-medium">{allocation.unit}</p>
                 </div>
                 <div>
                   <Label className="text-sm text-gray-600">Amount</Label>
