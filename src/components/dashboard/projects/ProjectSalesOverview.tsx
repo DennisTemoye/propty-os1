@@ -134,9 +134,14 @@ export function ProjectSalesOverview({ project, onReallocate, onRevoke }: Projec
     let filtered = mockSalesData;
     
     if (filterTab === 'allocated') {
+      // Sales with units already allocated
       filtered = mockSalesData.filter(sale => sale.saleStatus === 'completed' || sale.saleStatus === 'active');
     } else if (filterTab === 'unallocated') {
+      // Sales made but units not yet allocated
       filtered = mockSalesData.filter(sale => sale.saleStatus === 'pending' || sale.saleStatus === 'negotiation');
+    } else if (filterTab === 'pending') {
+      // Allocations waiting for approval
+      filtered = mockSalesData.filter(sale => sale.saleStatus === 'pending_approval');
     }
     
     // Apply search filter
@@ -232,10 +237,11 @@ export function ProjectSalesOverview({ project, onReallocate, onRevoke }: Projec
 
       {/* Filter Tabs */}
       <Tabs value={filterTab} onValueChange={setFilterTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 max-w-md">
+        <TabsList className="grid w-full grid-cols-4 max-w-lg">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="allocated">Allocated</TabsTrigger>
           <TabsTrigger value="unallocated">Unallocated</TabsTrigger>
+          <TabsTrigger value="pending">Pending Approval</TabsTrigger>
         </TabsList>
 
         {/* Search Bar */}
@@ -258,7 +264,8 @@ export function ProjectSalesOverview({ project, onReallocate, onRevoke }: Projec
               <CardTitle>
                 {filterTab === 'all' && 'All Sales'}
                 {filterTab === 'allocated' && 'Allocated Units'}
-                {filterTab === 'unallocated' && 'Unallocated Units'}
+                {filterTab === 'unallocated' && 'Unallocated Sales'}
+                {filterTab === 'pending' && 'Pending Approvals'}
                 {filteredSales.length > 0 && ` (${filteredSales.length})`}
               </CardTitle>
             </CardHeader>
