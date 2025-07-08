@@ -20,7 +20,7 @@ import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
 import { HelpSupport } from '@/components/dashboard/HelpSupport';
 import { MobileWarningBanner } from '@/components/common/MobileWarningBanner';
 import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
-import { ProjectDetailView } from '@/components/dashboard/ProjectDetailView';
+import { EnhancedProjectDetailView } from '@/components/dashboard/projects/EnhancedProjectDetailView';
 import { ClientDetailView } from '@/components/dashboard/ClientDetailView';
 import { MarketerDetailView } from '@/components/dashboard/MarketerDetailView';
 import { useLocation } from 'react-router-dom';
@@ -38,7 +38,7 @@ const CompanyDashboard = () => {
     
     // Handle detail pages - these render with the dashboard layout
     if (path.match(/^\/company\/projects\/\d+$/)) {
-      return <ProjectDetailView />;
+      return <EnhancedProjectDetailView />;
     } else if (path.match(/^\/company\/clients\/\d+$/)) {
       return <ClientDetailView />;
     } else if (path.match(/^\/company\/marketers\/\d+$/)) {
