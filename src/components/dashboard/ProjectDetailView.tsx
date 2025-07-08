@@ -28,9 +28,10 @@ import {
   Share2
 } from 'lucide-react';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
-import { EnhancedBlocksTab } from '@/components/dashboard/projects/EnhancedBlocksTab';
+import { ProjectSalesHistory } from '@/components/dashboard/projects/ProjectSalesHistory';
+import { ProjectOffersAllocations } from '@/components/dashboard/projects/ProjectOffersAllocations';
+import { ProjectPlotsManagement } from '@/components/dashboard/projects/ProjectPlotsManagement';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
-import { ProjectSalesOverview } from '@/components/dashboard/projects/ProjectSalesOverview';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
@@ -696,10 +697,11 @@ export function ProjectDetailView() {
       <Card>
         <Tabs defaultValue="overview" className="w-full">
           <CardHeader className="pb-3">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="overview" className="text-xs lg:text-sm">Overview</TabsTrigger>
-              <TabsTrigger value="blocks" className="text-xs lg:text-sm">Blocks</TabsTrigger>
-              <TabsTrigger value="sales" className="text-xs lg:text-sm">Sales</TabsTrigger>
+              <TabsTrigger value="sales-history" className="text-xs lg:text-sm">Sales History</TabsTrigger>
+              <TabsTrigger value="offers-allocations" className="text-xs lg:text-sm">Offers & Allocations</TabsTrigger>
+              <TabsTrigger value="plots-management" className="text-xs lg:text-sm">Plots Management</TabsTrigger>
               <TabsTrigger value="documents" className="text-xs lg:text-sm">Documents</TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -708,16 +710,24 @@ export function ProjectDetailView() {
             <ProjectOverviewContent project={project} />
           </TabsContent>
           
-          <TabsContent value="blocks" className="p-6 pt-0">
-            <EnhancedBlocksTab project={project} />
-          </TabsContent>
-          
-          <TabsContent value="sales" className="p-6 pt-0">
-            <ProjectSalesOverview 
-              project={project} 
+          <TabsContent value="sales-history" className="p-6 pt-0">
+            <ProjectSalesHistory 
+              projectId={project.id} 
               onReallocate={handleReallocate} 
               onRevoke={handleRevoke} 
             />
+          </TabsContent>
+          
+          <TabsContent value="offers-allocations" className="p-6 pt-0">
+            <ProjectOffersAllocations 
+              projectId={project.id}
+              onApprove={(id) => toast.success('Request approved successfully')}
+              onDecline={(id, reason) => toast.success('Request declined')}
+            />
+          </TabsContent>
+          
+          <TabsContent value="plots-management" className="p-6 pt-0">
+            <ProjectPlotsManagement projectId={project.id} />
           </TabsContent>
           
           <TabsContent value="documents" className="p-6 pt-0">
