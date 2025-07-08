@@ -90,8 +90,8 @@ const mockSalesData = [
   },
   {
     id: 4,
-    unitId: 'A-205',
-    block: 'Block A',
+    unitId: null, // No unit assigned yet
+    block: null,
     clientName: 'Sarah Wilson',
     clientPhone: '+234 804 567 8901',
     dateOffered: '2024-01-20',
@@ -106,8 +106,8 @@ const mockSalesData = [
   },
   {
     id: 5,
-    unitId: 'B-301',
-    block: 'Block B',
+    unitId: null, // No unit assigned yet
+    block: null,
     clientName: 'David Brown',
     clientPhone: '+234 805 678 9012',
     dateOffered: '2024-01-18',
@@ -286,12 +286,12 @@ export function ProjectSalesOverview({ project, onReallocate, onRevoke }: Projec
             <TableBody>
               {filteredSales.map((sale) => (
                 <TableRow key={sale.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{sale.unitId}</div>
-                      <div className="text-sm text-gray-500">{sale.block}</div>
-                    </div>
-                  </TableCell>
+                   <TableCell>
+                     <div>
+                       <div className="font-medium">{sale.unitId || 'Unallocated'}</div>
+                       <div className="text-sm text-gray-500">{sale.block || 'Nil'}</div>
+                     </div>
+                   </TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium">{sale.clientName}</div>
