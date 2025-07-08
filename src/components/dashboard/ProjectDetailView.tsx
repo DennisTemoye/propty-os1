@@ -25,9 +25,7 @@ import {
   BarChart3,
   Eye,
   Settings,
-  Share2,
-  Handshake,
-  Grid3X3
+  Share2
 } from 'lucide-react';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
 import { ProjectSalesHistory } from '@/components/dashboard/projects/ProjectSalesHistory';
@@ -37,8 +35,6 @@ import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocu
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
-import { RecordSaleModal } from '@/components/dashboard/sales-allocation/RecordSaleModal';
-import { AllocationFlowModal } from '@/components/dashboard/sales-allocation/AllocationFlowModal';
 import { getProjectImage, handleImageError } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -396,8 +392,6 @@ export function ProjectDetailView() {
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [reallocateData, setReallocateData] = useState<any>(null);
-  const [isRecordSaleOpen, setIsRecordSaleOpen] = useState(false);
-  const [isManagedAllocationsOpen, setIsManagedAllocationsOpen] = useState(false);
   
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
@@ -502,85 +496,89 @@ export function ProjectDetailView() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={() => setIsRecordSaleOpen(true)} size="sm" className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700">
+          <Button onClick={handleViewSalesAllocation} size="sm" className="bg-blue-600 hover:bg-blue-700">
             <DollarSign className="h-4 w-4 mr-2" />
-            Record Sale
+            Sale
           </Button>
-          
-          <Button onClick={() => setIsManagedAllocationsOpen(true)} size="sm" className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700">
-            <Handshake className="h-4 w-4 mr-2" />
+          <Button onClick={handleAllocateUnit} size="sm" className="bg-green-600 hover:bg-green-700">
+            <UserPlus className="h-4 w-4 mr-2" />
             Allocations
           </Button>
-          
-          <Button onClick={handleEditProject} size="sm" variant="outline">
+          <Button 
+            onClick={handleEditProject} 
+            variant="outline" 
+            size="sm"
+          >
             <Edit className="h-4 w-4 mr-2" />
             Edit
           </Button>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem onClick={handleViewBlocks}>
-                <Building className="h-4 w-4 mr-2" />
-                Manage Blocks
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleViewReports}>
-                <BarChart3 className="h-4 w-4 mr-2" />
-                View Reports
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleViewSalesAllocation}>
-                <Users className="h-4 w-4 mr-2" />
-                Sales & Allocation
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Share2 className="h-4 w-4 mr-2" />
-                Share Project
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Project
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete "{project.name}"? This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction 
-                      onClick={handleDeleteProject}
-                      className="bg-destructive hover:bg-destructive/90"
-                    >
-                      Delete Project
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button 
+            onClick={() => navigate(`/company/projects/${project.id}/settings`)}
+            variant="outline" 
+            size="sm"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
         </div>
       </div>
 
+      {/* Project Hero Banner */}
+      <Card className="overflow-hidden">
+        <div className="relative h-64 lg:h-80">
+          <img 
+            src={getProjectImage(project)} 
+            alt={project.name}
+            className="w-full h-full object-cover"
+            onError={handleImageError}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+          
+          {/* Overlays */}
+          <div className="absolute top-4 left-4">
+            <Badge variant={getStatusVariant(project.status)} className="bg-background/90 backdrop-blur-sm">
+              {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+            </Badge>
+          </div>
+          
+          <div className="absolute top-4 right-4">
+            <Badge className={`${getStageColor(project.developmentStage)} backdrop-blur-sm border`}>
+              {project.developmentStage}
+            </Badge>
+          </div>
+
+          {/* Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+              <div className="text-center">
+                <div className="text-2xl lg:text-3xl font-bold">{project.totalBlocks}</div>
+                <div className="text-sm text-white/80">Blocks</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl lg:text-3xl font-bold">{project.totalUnits}</div>
+                <div className="text-sm text-white/80">Total Units</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl lg:text-3xl font-bold">{project.totalClients}</div>
+                <div className="text-sm text-white/80">Clients</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl lg:text-3xl font-bold">{project.allocationRate}%</div>
+                <div className="text-sm text-white/80">Allocation Rate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
       {/* KPI Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-7 gap-4">
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Grid3X3 className="h-5 w-5 text-slate-600" />
+              <Building className="h-5 w-5 text-purple-600" />
             </div>
-            <div className="text-2xl font-bold text-slate-600">{project.totalBlocks}</div>
+            <div className="text-2xl font-bold text-purple-600">{project.totalUnits}</div>
             <div className="text-sm text-muted-foreground">Total Plots</div>
           </CardContent>
         </Card>
@@ -588,9 +586,9 @@ export function ProjectDetailView() {
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Users className="h-5 w-5 text-purple-600" />
+              <Users className="h-5 w-5 text-blue-600" />
             </div>
-            <div className="text-2xl font-bold text-purple-600">{project.totalClients}</div>
+            <div className="text-2xl font-bold text-blue-600">{project.totalClients}</div>
             <div className="text-sm text-muted-foreground">Total Clients</div>
           </CardContent>
         </Card>
@@ -640,11 +638,12 @@ export function ProjectDetailView() {
             <div className="flex items-center justify-center mb-2">
               <TrendingUp className="h-5 w-5 text-red-600" />
             </div>
-            <div className="text-2xl font-bold text-red-600">₦{((parseFloat(project.totalRevenue.replace(/[^\d]/g, '')) - parseFloat(project.totalRevenue.replace(/[^\d]/g, '')) * 0.7) / 1000000000).toFixed(1)}B</div>
+            <div className="text-lg lg:text-xl font-bold text-red-600">₦{(parseInt(project.totalRevenue.replace(/[₦,]/g, '')) * 0.35).toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">Outstanding</div>
           </CardContent>
         </Card>
       </div>
+
 
       {/* Tabs Section */}
       <Card>
@@ -756,26 +755,6 @@ export function ProjectDetailView() {
           }}
         />
       )}
-
-      {/* Record Sale Modal */}
-      <RecordSaleModal
-        isOpen={isRecordSaleOpen}
-        onClose={() => setIsRecordSaleOpen(false)}
-        onSubmit={(data) => {
-          toast.success('Sale recorded successfully!');
-          setIsRecordSaleOpen(false);
-        }}
-      />
-
-      {/* Managed Allocations Modal */}
-      <AllocationFlowModal
-        isOpen={isManagedAllocationsOpen}
-        onClose={() => setIsManagedAllocationsOpen(false)}
-        onSubmit={(data) => {
-          toast.success('Allocation request submitted successfully!');
-          setIsManagedAllocationsOpen(false);
-        }}
-      />
     </div>
   );
 }
