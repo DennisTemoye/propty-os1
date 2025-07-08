@@ -27,11 +27,11 @@ const mockBlocks = [
     id: 'A',
     name: 'Block A',
     type: 'duplex',
-    description: 'Luxury duplex units with modern amenities',
-    totalUnits: 30,
-    availableUnits: 8,
-    reservedUnits: 7,
-    soldUnits: 15,
+    description: 'Luxury duplex plots with modern amenities',
+    totalPlots: 30,
+    availablePlots: 8,
+    reservedPlots: 7,
+    soldPlots: 15,
     status: 'completed',
     defaultPrice: '₦25,000,000',
     defaultSize: '500sqm',
@@ -41,7 +41,7 @@ const mockBlocks = [
       features: ['Swimming Pool', 'Garden', 'Parking'],
       image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'
     },
-    units: [
+    plots: [
       { id: '1', plotId: 'A-001', size: '500sqm', price: '₦25,000,000', status: 'sold', client: 'John Doe', bedrooms: 4, bathrooms: 3 },
       { id: '2', plotId: 'A-002', size: '500sqm', price: '₦25,000,000', status: 'available', client: null, bedrooms: 4, bathrooms: 3 },
       { id: '3', plotId: 'A-003', size: '500sqm', price: '₦25,000,000', status: 'reserved', client: 'Jane Smith', bedrooms: 4, bathrooms: 3 },
@@ -51,11 +51,11 @@ const mockBlocks = [
     id: 'B',
     name: 'Block B',
     type: 'bungalow',
-    description: 'Single-story bungalow units',
-    totalUnits: 25,
-    availableUnits: 12,
-    reservedUnits: 5,
-    soldUnits: 8,
+    description: 'Single-story bungalow plots',
+    totalPlots: 25,
+    availablePlots: 12,
+    reservedPlots: 5,
+    soldPlots: 8,
     status: 'construction',
     defaultPrice: '₦18,000,000',
     defaultSize: '400sqm',
@@ -65,7 +65,7 @@ const mockBlocks = [
       features: ['Garden', 'Parking'],
       image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=450&fit=crop'
     },
-    units: [
+    plots: [
       { id: '4', plotId: 'B-001', size: '400sqm', price: '₦18,000,000', status: 'sold', client: 'Mike Johnson', bedrooms: 3, bathrooms: 2 },
       { id: '5', plotId: 'B-002', size: '400sqm', price: '₦18,000,000', status: 'available', client: null, bedrooms: 3, bathrooms: 2 },
     ]
@@ -118,10 +118,10 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
       name: formData.get('blockName') as string,
       type: formData.get('blockType') as string,
       description: formData.get('description') as string,
-      totalUnits: parseInt(formData.get('totalUnits') as string),
-      availableUnits: parseInt(formData.get('totalUnits') as string),
-      reservedUnits: 0,
-      soldUnits: 0,
+      totalPlots: parseInt(formData.get('totalPlots') as string),
+      availablePlots: parseInt(formData.get('totalPlots') as string),
+      reservedPlots: 0,
+      soldPlots: 0,
       status: 'planning',
       defaultPrice: formData.get('defaultPrice') as string,
       defaultSize: formData.get('defaultSize') as string,
@@ -131,7 +131,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
         features: (formData.get('features') as string)?.split(',').map(f => f.trim()) || [],
         image: formData.get('prototypeImage') as string || ''
       },
-      units: []
+      plots: []
     };
     
     setBlocks([...blocks, newBlock]);
@@ -259,10 +259,10 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
     }
   };
 
-  const totalUnits = blocks.reduce((sum, block) => sum + block.totalUnits, 0);
-  const totalSold = blocks.reduce((sum, block) => sum + block.soldUnits, 0);
-  const totalReserved = blocks.reduce((sum, block) => sum + block.reservedUnits, 0);
-  const totalAvailable = blocks.reduce((sum, block) => sum + block.availableUnits, 0);
+  const totalPlots = blocks.reduce((sum, block) => sum + block.totalPlots, 0);
+  const totalSold = blocks.reduce((sum, block) => sum + block.soldPlots, 0);
+  const totalReserved = blocks.reduce((sum, block) => sum + block.reservedPlots, 0);
+  const totalAvailable = blocks.reduce((sum, block) => sum + block.availablePlots, 0);
 
   return (
     <div className="space-y-6">
@@ -284,8 +284,8 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{totalUnits}</div>
-                  <div className="text-sm text-gray-500">Total Units</div>
+                  <div className="text-2xl font-bold text-blue-600">{totalPlots}</div>
+                  <div className="text-sm text-gray-500">Total Plots</div>
                 </div>
               </CardContent>
             </Card>
@@ -293,7 +293,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">{totalSold}</div>
-                  <div className="text-sm text-gray-500">Sold Units</div>
+                  <div className="text-sm text-gray-500">Sold Plots</div>
                 </div>
               </CardContent>
             </Card>
@@ -301,7 +301,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-orange-600">{totalReserved}</div>
-                  <div className="text-sm text-gray-500">Reserved Units</div>
+                  <div className="text-sm text-gray-500">Reserved Plots</div>
                 </div>
               </CardContent>
             </Card>
@@ -309,7 +309,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-purple-600">{totalAvailable}</div>
-                  <div className="text-sm text-gray-500">Available Units</div>
+                  <div className="text-sm text-gray-500">Available Plots</div>
                 </div>
               </CardContent>
             </Card>
@@ -337,19 +337,19 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                   
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-center p-2 bg-gray-50 rounded">
-                      <div className="font-semibold text-gray-900">{block.totalUnits}</div>
+                      <div className="font-semibold text-gray-900">{block.totalPlots}</div>
                       <div className="text-gray-500">Total</div>
                     </div>
                     <div className="text-center p-2 bg-green-50 rounded">
-                      <div className="font-semibold text-green-600">{block.soldUnits}</div>
+                      <div className="font-semibold text-green-600">{block.soldPlots}</div>
                       <div className="text-gray-500">Sold</div>
                     </div>
                     <div className="text-center p-2 bg-orange-50 rounded">
-                      <div className="font-semibold text-orange-600">{block.reservedUnits}</div>
+                      <div className="font-semibold text-orange-600">{block.reservedPlots}</div>
                       <div className="text-gray-500">Reserved</div>
                     </div>
                     <div className="text-center p-2 bg-blue-50 rounded">
-                      <div className="font-semibold text-blue-600">{block.availableUnits}</div>
+                      <div className="font-semibold text-blue-600">{block.availablePlots}</div>
                       <div className="text-gray-500">Available</div>
                     </div>
                   </div>
@@ -357,11 +357,11 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
                       className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(block.soldUnits / block.totalUnits) * 100}%` }}
+                      style={{ width: `${(block.soldPlots / block.totalPlots) * 100}%` }}
                     ></div>
                   </div>
                   <div className="text-xs text-gray-500 text-center">
-                    {Math.round((block.soldUnits / block.totalUnits) * 100)}% sold
+                    {Math.round((block.soldPlots / block.totalPlots) * 100)}% sold
                   </div>
 
                   <div className="flex space-x-2 pt-2">
@@ -387,7 +387,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                       }}
                     >
                       <Users className="h-3 w-3 mr-1" />
-                      Units
+                      Plots
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
