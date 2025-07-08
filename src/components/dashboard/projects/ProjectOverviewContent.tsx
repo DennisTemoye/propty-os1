@@ -13,6 +13,8 @@ interface ProjectOverviewContentProps {
     internalNotes: string;
     tags: string[];
     allocationRate: number;
+    image?: string;
+    name: string;
   };
 }
 
@@ -43,10 +45,24 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
             <CardHeader>
               <CardTitle className="flex items-center text-left">
                 <FileText className="h-5 w-5 mr-2" />
-                Project Information
+                Project Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Project Image */}
+              {project.image && (
+                <div className="text-left">
+                  <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Project Image</h4>
+                  <div className="relative w-full h-48 rounded-lg overflow-hidden">
+                    <img 
+                      src={project.image} 
+                      alt={project.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="text-left">
                 <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Project Description</h4>
                 <p className="text-gray-900 text-left">{project.description}</p>

@@ -34,6 +34,7 @@ import { ProjectPlotsManagement } from '@/components/dashboard/projects/ProjectP
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
+import { RecordSaleModal } from '@/components/dashboard/sales-allocation/RecordSaleModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
 import { getProjectImage, handleImageError } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -388,6 +389,7 @@ export function ProjectDetailView() {
   const projectId = params.projectId || params.id;
   
   const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
+  const [isRecordSaleOpen, setIsRecordSaleOpen] = useState(false);
   const [isReallocateOpen, setIsReallocateOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
@@ -432,6 +434,12 @@ export function ProjectDetailView() {
   };
 
   const handleAllocateUnit = () => setIsAllocateUnitOpen(true);
+
+  const handleRecordSale = (data: any) => {
+    console.log('Recording sale:', data);
+    setIsRecordSaleOpen(false);
+    toast.success('Sale recorded successfully!');
+  };
   
   const handleEditProject = () => {
     navigate(`/company/projects/${project.id}/edit`);
@@ -496,13 +504,13 @@ export function ProjectDetailView() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={handleViewSalesAllocation} size="sm" className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => setIsRecordSaleOpen(true)} size="sm" className="bg-blue-600 hover:bg-blue-700">
             <DollarSign className="h-4 w-4 mr-2" />
-            Sale
+            Record Sale
           </Button>
           <Button onClick={handleAllocateUnit} size="sm" className="bg-green-600 hover:bg-green-700">
             <UserPlus className="h-4 w-4 mr-2" />
-            Allocations
+            Allocate
           </Button>
           <Button 
             onClick={handleEditProject} 
@@ -715,6 +723,12 @@ export function ProjectDetailView() {
       </Card>
 
       {/* Modals */}
+      <RecordSaleModal
+        isOpen={isRecordSaleOpen}
+        onClose={() => setIsRecordSaleOpen(false)}
+        onSubmit={handleRecordSale}
+      />
+
       <AllocateUnitModal
         isOpen={isAllocateUnitOpen}
         onClose={() => setIsAllocateUnitOpen(false)}
