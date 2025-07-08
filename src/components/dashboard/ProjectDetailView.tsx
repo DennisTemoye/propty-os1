@@ -28,13 +28,11 @@ import {
   Share2
 } from 'lucide-react';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
-import { ProjectSalesHistory } from '@/components/dashboard/projects/ProjectSalesHistory';
-import { ProjectOffersAllocations } from '@/components/dashboard/projects/ProjectOffersAllocations';
-import { ProjectPlotsManagement } from '@/components/dashboard/projects/ProjectPlotsManagement';
+import { EnhancedBlocksTab } from '@/components/dashboard/projects/EnhancedBlocksTab';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
+import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
-import { RecordSaleModal } from '@/components/dashboard/sales-allocation/RecordSaleModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
 import { getProjectImage, handleImageError } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -389,7 +387,6 @@ export function ProjectDetailView() {
   const projectId = params.projectId || params.id;
   
   const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
-  const [isRecordSaleOpen, setIsRecordSaleOpen] = useState(false);
   const [isReallocateOpen, setIsReallocateOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
@@ -434,12 +431,6 @@ export function ProjectDetailView() {
   };
 
   const handleAllocateUnit = () => setIsAllocateUnitOpen(true);
-
-  const handleRecordSale = (data: any) => {
-    console.log('Recording sale:', data);
-    setIsRecordSaleOpen(false);
-    toast.success('Sale recorded successfully!');
-  };
   
   const handleEditProject = () => {
     navigate(`/company/projects/${project.id}/edit`);
@@ -504,30 +495,71 @@ export function ProjectDetailView() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={() => setIsRecordSaleOpen(true)} size="sm" className="bg-blue-600 hover:bg-blue-700">
-            <DollarSign className="h-4 w-4 mr-2" />
-            Record Sale
-          </Button>
-          <Button onClick={handleAllocateUnit} size="sm" className="bg-green-600 hover:bg-green-700">
+          <Button onClick={handleAllocateUnit} size="sm" className="bg-gradient-primary hover:opacity-90">
             <UserPlus className="h-4 w-4 mr-2" />
-            Allocate
+            Allocate Unit
           </Button>
-          <Button 
-            onClick={handleEditProject} 
-            variant="outline" 
-            size="sm"
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
-          </Button>
-          <Button 
-            onClick={() => navigate(`/company/projects/${project.id}/settings`)}
-            variant="outline" 
-            size="sm"
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onClick={handleEditProject}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Project
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleViewBlocks}>
+                <Building className="h-4 w-4 mr-2" />
+                Manage Blocks
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleViewReports}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                View Reports
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleViewSalesAllocation}>
+                <Users className="h-4 w-4 mr-2" />
+                Sales & Allocation
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Share2 className="h-4 w-4 mr-2" />
+                Share Project
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="h-4 w-4 mr-2" />
+                Project Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Project
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete "{project.name}"? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleDeleteProject}
+                      className="bg-destructive hover:bg-destructive/90"
+                    >
+                      Delete Project
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -580,27 +612,7 @@ export function ProjectDetailView() {
       </Card>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-7 gap-4">
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Building className="h-5 w-5 text-purple-600" />
-            </div>
-            <div className="text-2xl font-bold text-purple-600">{project.totalUnits}</div>
-            <div className="text-sm text-muted-foreground">Total Plots</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Users className="h-5 w-5 text-blue-600" />
-            </div>
-            <div className="text-2xl font-bold text-blue-600">{project.totalClients}</div>
-            <div className="text-sm text-muted-foreground">Total Clients</div>
-          </CardContent>
-        </Card>
-        
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
@@ -634,34 +646,60 @@ export function ProjectDetailView() {
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <DollarSign className="h-5 w-5 text-emerald-600" />
+              <Users className="h-5 w-5 text-purple-600" />
             </div>
-            <div className="text-lg lg:text-xl font-bold text-emerald-600">{project.revenue}</div>
-            <div className="text-sm text-muted-foreground">Revenue</div>
+            <div className="text-2xl font-bold text-purple-600">{project.totalClients}</div>
+            <div className="text-sm text-muted-foreground">Total Clients</div>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="h-5 w-5 text-red-600" />
+              <DollarSign className="h-5 w-5 text-emerald-600" />
             </div>
-            <div className="text-lg lg:text-xl font-bold text-red-600">₦{(parseInt(project.totalRevenue.replace(/[₦,]/g, '')) * 0.35).toLocaleString()}</div>
-            <div className="text-sm text-muted-foreground">Outstanding</div>
+            <div className="text-lg lg:text-xl font-bold text-emerald-600">{project.revenue}</div>
+            <div className="text-sm text-muted-foreground">Revenue</div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Pending Allocations Alert */}
+      {project.pendingAllocations > 0 && (
+        <Card className="border-orange-200 bg-orange-50/50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Clock className="h-5 w-5 text-orange-600" />
+                <div>
+                  <h3 className="font-semibold text-orange-900">
+                    {project.pendingAllocations} Pending Allocations
+                  </h3>
+                  <p className="text-sm text-orange-700">
+                    Requires your attention for approval
+                  </p>
+                </div>
+              </div>
+              <Button 
+                size="sm"
+                onClick={handlePendingAllocations}
+                className="bg-orange-600 hover:bg-orange-700 text-white"
+              >
+                Review Now
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tabs Section */}
       <Card>
         <Tabs defaultValue="overview" className="w-full">
           <CardHeader className="pb-3">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview" className="text-xs lg:text-sm">Overview</TabsTrigger>
-              <TabsTrigger value="sales-history" className="text-xs lg:text-sm">Sales History</TabsTrigger>
-              <TabsTrigger value="offers-allocations" className="text-xs lg:text-sm">Offers & Allocations</TabsTrigger>
-              <TabsTrigger value="plots-management" className="text-xs lg:text-sm">Plots Management</TabsTrigger>
+              <TabsTrigger value="blocks" className="text-xs lg:text-sm">Blocks</TabsTrigger>
+              <TabsTrigger value="sales" className="text-xs lg:text-sm">Sales</TabsTrigger>
               <TabsTrigger value="documents" className="text-xs lg:text-sm">Documents</TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -670,24 +708,16 @@ export function ProjectDetailView() {
             <ProjectOverviewContent project={project} />
           </TabsContent>
           
-          <TabsContent value="sales-history" className="p-6 pt-0">
-            <ProjectSalesHistory 
-              projectId={project.id} 
+          <TabsContent value="blocks" className="p-6 pt-0">
+            <EnhancedBlocksTab project={project} />
+          </TabsContent>
+          
+          <TabsContent value="sales" className="p-6 pt-0">
+            <ProjectSalesHistoryTab 
+              project={project} 
               onReallocate={handleReallocate} 
               onRevoke={handleRevoke} 
             />
-          </TabsContent>
-          
-          <TabsContent value="offers-allocations" className="p-6 pt-0">
-            <ProjectOffersAllocations 
-              projectId={project.id}
-              onApprove={(id) => toast.success('Request approved successfully')}
-              onDecline={(id, reason) => toast.success('Request declined')}
-            />
-          </TabsContent>
-          
-          <TabsContent value="plots-management" className="p-6 pt-0">
-            <ProjectPlotsManagement projectId={project.id} />
           </TabsContent>
           
           <TabsContent value="documents" className="p-6 pt-0">
@@ -723,12 +753,6 @@ export function ProjectDetailView() {
       </Card>
 
       {/* Modals */}
-      <RecordSaleModal
-        isOpen={isRecordSaleOpen}
-        onClose={() => setIsRecordSaleOpen(false)}
-        onSubmit={handleRecordSale}
-      />
-
       <AllocateUnitModal
         isOpen={isAllocateUnitOpen}
         onClose={() => setIsAllocateUnitOpen(false)}
