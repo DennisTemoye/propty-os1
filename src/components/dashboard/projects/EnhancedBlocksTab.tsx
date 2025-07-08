@@ -76,11 +76,11 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
   const [blocks, setBlocks] = useState(mockBlocks);
   const [isAddBlockOpen, setIsAddBlockOpen] = useState(false);
   const [isEditBlockOpen, setIsEditBlockOpen] = useState(false);
-  const [isAddUnitOpen, setIsAddUnitOpen] = useState(false);
-  const [isEditUnitOpen, setIsEditUnitOpen] = useState(false);
-  const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
+  const [isAddPlotOpen, setIsAddPlotOpen] = useState(false);
+  const [isEditPlotOpen, setIsEditPlotOpen] = useState(false);
+  const [isAllocatePlotOpen, setIsAllocatePlotOpen] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState<any>(null);
-  const [selectedUnit, setSelectedUnit] = useState<any>(null);
+  const [selectedPlot, setSelectedPlot] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [usePrototype, setUsePrototype] = useState(true);
 
@@ -99,7 +99,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
     }
   };
 
-  const getUnitStatusColor = (status: string) => {
+  const getPlotStatusColor = (status: string) => {
     switch (status) {
       case 'sold':
         return 'bg-green-100 text-green-800';
@@ -170,12 +170,12 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
     toast.success('Block deleted successfully!');
   };
 
-  const handleAddUnit = (formData: FormData) => {
+  const handleAddPlot = (formData: FormData) => {
     if (!selectedBlock) return;
 
     const blockPrototype = selectedBlock.prototypeDetails;
-    const newUnit = {
-      id: `${selectedBlock.units.length + 1}`,
+    const newPlot = {
+      id: `${selectedBlock.plots.length + 1}`,
       plotId: formData.get('plotId') as string,
       size: usePrototype ? selectedBlock.defaultSize : (formData.get('size') as string),
       price: usePrototype ? selectedBlock.defaultPrice : (formData.get('price') as string),
@@ -187,9 +187,9 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
 
     const updatedBlock = {
       ...selectedBlock,
-      units: [...selectedBlock.units, newUnit],
-      totalUnits: selectedBlock.totalUnits + 1,
-      availableUnits: selectedBlock.availableUnits + 1
+      plots: [...selectedBlock.plots, newPlot],
+      totalPlots: selectedBlock.totalPlots + 1,
+      availablePlots: selectedBlock.availablePlots + 1
     };
 
     setBlocks(blocks.map(block => 
@@ -197,15 +197,15 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
     ));
     
     setSelectedBlock(updatedBlock);
-    toast.success('Unit added successfully!');
-    setIsAddUnitOpen(false);
+    toast.success('Plot added successfully!');
+    setIsAddPlotOpen(false);
   };
 
-  const handleEditUnit = (formData: FormData) => {
-    if (!selectedBlock || !selectedUnit) return;
+  const handleEditPlot = (formData: FormData) => {
+    if (!selectedBlock || !selectedPlot) return;
 
-    const updatedUnit = {
-      ...selectedUnit,
+    const updatedPlot = {
+      ...selectedPlot,
       plotId: formData.get('plotId') as string,
       size: formData.get('size') as string,
       price: formData.get('price') as string,
@@ -215,8 +215,8 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
 
     const updatedBlock = {
       ...selectedBlock,
-      units: selectedBlock.units.map((unit: any) => 
-        unit.id === selectedUnit.id ? updatedUnit : unit
+      plots: selectedBlock.plots.map((plot: any) => 
+        plot.id === selectedPlot.id ? updatedPlot : plot
       )
     };
 
@@ -225,22 +225,22 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
     ));
     
     setSelectedBlock(updatedBlock);
-    toast.success('Unit updated successfully!');
-    setIsEditUnitOpen(false);
-    setSelectedUnit(null);
+    toast.success('Plot updated successfully!');
+    setIsEditPlotOpen(false);
+    setSelectedPlot(null);
   };
 
-  const handleDeleteUnit = (unitId: string) => {
+  const handleDeletePlot = (plotId: string) => {
     if (!selectedBlock) return;
 
-    const unitToDelete = selectedBlock.units.find((unit: any) => unit.id === unitId);
+    const plotToDelete = selectedBlock.plots.find((plot: any) => plot.id === plotId);
     const updatedBlock = {
       ...selectedBlock,
-      units: selectedBlock.units.filter((unit: any) => unit.id !== unitId),
-      totalUnits: selectedBlock.totalUnits - 1,
-      availableUnits: unitToDelete?.status === 'available' ? selectedBlock.availableUnits - 1 : selectedBlock.availableUnits,
-      soldUnits: unitToDelete?.status === 'sold' ? selectedBlock.soldUnits - 1 : selectedBlock.soldUnits,
-      reservedUnits: unitToDelete?.status === 'reserved' ? selectedBlock.reservedUnits - 1 : selectedBlock.reservedUnits
+      plots: selectedBlock.plots.filter((plot: any) => plot.id !== plotId),
+      totalPlots: selectedBlock.totalPlots - 1,
+      availablePlots: plotToDelete?.status === 'available' ? selectedBlock.availablePlots - 1 : selectedBlock.availablePlots,
+      soldPlots: plotToDelete?.status === 'sold' ? selectedBlock.soldPlots - 1 : selectedBlock.soldPlots,
+      reservedPlots: plotToDelete?.status === 'reserved' ? selectedBlock.reservedPlots - 1 : selectedBlock.reservedPlots
     };
 
     setBlocks(blocks.map(block => 
@@ -248,14 +248,14 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
     ));
     
     setSelectedBlock(updatedBlock);
-    toast.success('Unit deleted successfully!');
+    toast.success('Plot deleted successfully!');
   };
 
-  const handleAllocateUnit = (unitId: string) => {
-    const unit = selectedBlock?.units.find((u: any) => u.id === unitId);
-    if (unit) {
-      setSelectedUnit(unit);
-      setIsAllocateUnitOpen(true);
+  const handleAllocatePlot = (plotId: string) => {
+    const plot = selectedBlock?.plots.find((p: any) => p.id === plotId);
+    if (plot) {
+      setSelectedPlot(plot);
+      setIsAllocatePlotOpen(true);
     }
   };
 
@@ -399,7 +399,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete Block</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete {block.name}? This will also delete all units in this block.
+                            Are you sure you want to delete {block.name}? This will also delete all plots in this block.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -432,13 +432,13 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                     ← Back to Overview
                   </Button>
                   <div>
-                    <h3 className="text-lg font-semibold">{selectedBlock.name} Units</h3>
+                    <h3 className="text-lg font-semibold">{selectedBlock.name} Plots</h3>
                     <p className="text-sm text-gray-500">{selectedBlock.description}</p>
                   </div>
                 </div>
-                <Button onClick={() => setIsAddUnitOpen(true)}>
+                <Button onClick={() => setIsAddPlotOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Unit
+                  Add Plot
                 </Button>
               </div>
 
@@ -478,10 +478,10 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                 </Card>
               )}
 
-              {/* Units Table */}
+              {/* Plots Table */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Units ({selectedBlock.units.length})</CardTitle>
+                  <CardTitle>Plots ({selectedBlock.plots.length})</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Table>
@@ -498,36 +498,36 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {selectedBlock.units.map((unit: any) => (
-                        <TableRow key={unit.id}>
-                          <TableCell className="font-medium">{unit.plotId}</TableCell>
-                          <TableCell>{unit.size}</TableCell>
-                          <TableCell>{unit.price}</TableCell>
-                          <TableCell>{unit.bedrooms}</TableCell>
-                          <TableCell>{unit.bathrooms}</TableCell>
+                      {selectedBlock.plots.map((plot: any) => (
+                        <TableRow key={plot.id}>
+                          <TableCell className="font-medium">{plot.plotId}</TableCell>
+                          <TableCell>{plot.size}</TableCell>
+                          <TableCell>{plot.price}</TableCell>
+                          <TableCell>{plot.bedrooms}</TableCell>
+                          <TableCell>{plot.bathrooms}</TableCell>
                           <TableCell>
-                            <Badge className={getUnitStatusColor(unit.status)}>
-                              {unit.status}
+                            <Badge className={getPlotStatusColor(plot.status)}>
+                              {plot.status}
                             </Badge>
                           </TableCell>
-                          <TableCell>{unit.client || '-'}</TableCell>
+                          <TableCell>{plot.client || '-'}</TableCell>
                           <TableCell>
                             <div className="flex space-x-1">
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={() => {
-                                  setSelectedUnit(unit);
-                                  setIsEditUnitOpen(true);
+                                  setSelectedPlot(plot);
+                                  setIsEditPlotOpen(true);
                                 }}
                               >
                                 <Edit className="h-3 w-3" />
                               </Button>
-                              {unit.status === 'available' && (
+                              {plot.status === 'available' && (
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleAllocateUnit(unit.id)}
+                                  onClick={() => handleAllocatePlot(plot.id)}
                                 >
                                   <UserPlus className="h-3 w-3" />
                                 </Button>
@@ -540,18 +540,18 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Unit</AlertDialogTitle>
+                                    <AlertDialogTitle>Delete Plot</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Are you sure you want to delete unit {unit.plotId}?
+                                      Are you sure you want to delete plot {plot.plotId}?
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                                     <AlertDialogAction 
                                       className="bg-red-600 hover:bg-red-700"
-                                      onClick={() => handleDeleteUnit(unit.id)}
+                                      onClick={() => handleDeletePlot(plot.id)}
                                     >
-                                      Delete Unit
+                                      Delete Plot
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -570,7 +570,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
               <Home className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Block Selected</h3>
               <p className="text-muted-foreground mb-4">
-                Select a block from the overview to view its units
+                Select a block from the overview to view its plots
               </p>
               <Button onClick={() => setActiveTab('overview')}>
                 Go to Overview
@@ -617,15 +617,15 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="totalUnits">Total Units</Label>
-                <Input id="totalUnits" name="totalUnits" type="number" placeholder="e.g., 20" required />
+                <Label htmlFor="totalPlots">Total Plots</Label>
+                <Input id="totalPlots" name="totalPlots" type="number" placeholder="e.g., 20" required />
               </div>
               <div>
-                <Label htmlFor="defaultPrice">Default Unit Price</Label>
+                <Label htmlFor="defaultPrice">Default Plot Price</Label>
                 <Input id="defaultPrice" name="defaultPrice" placeholder="e.g., ₦25,000,000" />
               </div>
               <div>
-                <Label htmlFor="defaultSize">Default Unit Size</Label>
+                <Label htmlFor="defaultSize">Default Plot Size</Label>
                 <Input id="defaultSize" name="defaultSize" placeholder="e.g., 500sqm" />
               </div>
             </div>
@@ -695,11 +695,11 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="defaultPrice">Default Unit Price</Label>
+                  <Label htmlFor="defaultPrice">Default Plot Price</Label>
                   <Input id="defaultPrice" name="defaultPrice" defaultValue={selectedBlock.defaultPrice} />
                 </div>
                 <div>
-                  <Label htmlFor="defaultSize">Default Unit Size</Label>
+                  <Label htmlFor="defaultSize">Default Plot Size</Label>
                   <Input id="defaultSize" name="defaultSize" defaultValue={selectedBlock.defaultSize} />
                 </div>
               </div>
@@ -732,16 +732,16 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Add Unit Modal */}
-      <Dialog open={isAddUnitOpen} onOpenChange={setIsAddUnitOpen}>
+      {/* Add Plot Modal */}
+      <Dialog open={isAddPlotOpen} onOpenChange={setIsAddPlotOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Unit to {selectedBlock?.name}</DialogTitle>
+            <DialogTitle>Add Plot to {selectedBlock?.name}</DialogTitle>
           </DialogHeader>
           <form onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
-            handleAddUnit(formData);
+            handleAddPlot(formData);
           }} className="space-y-4">
             <div>
               <Label htmlFor="plotId">Plot ID</Label>
@@ -753,7 +753,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                 checked={usePrototype} 
                 onCheckedChange={(checked) => setUsePrototype(checked === true)}
               />
-              <Label htmlFor="usePrototype">Use prototype details for this unit</Label>
+              <Label htmlFor="usePrototype">Use prototype details for this plot</Label>
             </div>
             {!usePrototype && (
               <>
@@ -780,8 +780,8 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
               </>
             )}
             <div className="flex gap-2">
-              <Button type="submit">Add Unit</Button>
-              <Button type="button" variant="outline" onClick={() => setIsAddUnitOpen(false)}>
+              <Button type="submit">Add Plot</Button>
+              <Button type="button" variant="outline" onClick={() => setIsAddPlotOpen(false)}>
                 Cancel
               </Button>
             </div>
@@ -789,45 +789,45 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Unit Modal */}
-      <Dialog open={isEditUnitOpen} onOpenChange={setIsEditUnitOpen}>
+      {/* Edit Plot Modal */}
+      <Dialog open={isEditPlotOpen} onOpenChange={setIsEditPlotOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Unit</DialogTitle>
+            <DialogTitle>Edit Plot</DialogTitle>
           </DialogHeader>
-          {selectedUnit && (
+          {selectedPlot && (
             <form onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
-              handleEditUnit(formData);
+              handleEditPlot(formData);
             }} className="space-y-4">
               <div>
                 <Label htmlFor="plotId">Plot ID</Label>
-                <Input id="plotId" name="plotId" defaultValue={selectedUnit.plotId} required />
+                <Input id="plotId" name="plotId" defaultValue={selectedPlot.plotId} required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="size">Size</Label>
-                  <Input id="size" name="size" defaultValue={selectedUnit.size} />
+                  <Input id="size" name="size" defaultValue={selectedPlot.size} />
                 </div>
                 <div>
                   <Label htmlFor="price">Price</Label>
-                  <Input id="price" name="price" defaultValue={selectedUnit.price} />
+                  <Input id="price" name="price" defaultValue={selectedPlot.price} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="bedrooms">Bedrooms</Label>
-                  <Input id="bedrooms" name="bedrooms" type="number" defaultValue={selectedUnit.bedrooms} />
+                  <Input id="bedrooms" name="bathrooms" type="number" defaultValue={selectedPlot.bedrooms} />
                 </div>
                 <div>
                   <Label htmlFor="bathrooms">Bathrooms</Label>
-                  <Input id="bathrooms" name="bathrooms" type="number" defaultValue={selectedUnit.bathrooms} />
+                  <Input id="bathrooms" name="bathrooms" type="number" defaultValue={selectedPlot.bathrooms} />
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button type="submit">Update Unit</Button>
-                <Button type="button" variant="outline" onClick={() => setIsEditUnitOpen(false)}>
+                <Button type="submit">Update Plot</Button>
+                <Button type="button" variant="outline" onClick={() => setIsEditPlotOpen(false)}>
                   Cancel
                 </Button>
               </div>
@@ -836,17 +836,17 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Allocate Unit Modal */}
+      {/* Allocate Plot Modal */}
       <AllocateUnitModal
-        isOpen={isAllocateUnitOpen}
+        isOpen={isAllocatePlotOpen}
         onClose={() => {
-          setIsAllocateUnitOpen(false);
-          setSelectedUnit(null);
+          setIsAllocatePlotOpen(false);
+          setSelectedPlot(null);
         }}
         onSubmit={() => {
-          toast.success('Unit allocated successfully!');
-          setIsAllocateUnitOpen(false);
-          setSelectedUnit(null);
+          toast.success('Plot allocated successfully!');
+          setIsAllocatePlotOpen(false);
+          setSelectedPlot(null);
         }}
       />
     </div>
