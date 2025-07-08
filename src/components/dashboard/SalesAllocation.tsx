@@ -17,7 +17,7 @@ import { OverviewTab } from './sales-allocation/OverviewTab';
 import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
-import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
+import { SalesPipelineBoard } from './sales-allocation/SalesPipelineBoard';
 
 const mockAllocations = [
   {
@@ -265,9 +265,9 @@ export function SalesAllocation() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pending-offers" className="relative">
             Pending Offers
             <Badge className="ml-2 bg-amber-600 text-white text-xs">3</Badge>
@@ -280,7 +280,19 @@ export function SalesAllocation() {
             Pending Approvals
             <Badge className="ml-2 bg-yellow-600 text-white text-xs">2</Badge>
           </TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="pipeline" className="space-y-6">
+          <SalesPipelineBoard 
+            onViewDetails={(entry) => console.log('View details:', entry)}
+            onAllocatePlot={(entry) => {
+              console.log('Allocate plot:', entry);
+              setShowAllocationModal(true);
+            }}
+            onMoveToStage={(entryId, newStage) => console.log('Move to stage:', entryId, newStage)}
+          />
+        </TabsContent>
 
         <TabsContent value="overview" className="space-y-6">
           <OverviewTab />
@@ -313,12 +325,14 @@ export function SalesAllocation() {
         onSubmit={handleRecordSale}
       />
 
-      {/* Allocation Flow Modal */}
+      {/* TODO: Implement AllocationFlowModal */}
+      {/* 
       <AllocationFlowModal 
         isOpen={showAllocationModal}
         onClose={() => setShowAllocationModal(false)}
         onSubmit={handleAllocationAction}
       />
+      */}
 
       {/* Reallocation Modal */}
       <ReallocationModal 
