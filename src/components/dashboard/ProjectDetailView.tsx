@@ -63,7 +63,7 @@ const mockProjects = [
     lastUpdated: '2024-01-15',
     description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
     projectManager: 'Alice Johnson',
-    internalNotes: 'Focus on completing Block A before marketing Block C units.',
+    internalNotes: 'Focus on completing Block A before marketing Block C plots.',
     tags: ['Premium', 'Residential', 'Lekki'],
     image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
     revenue: '₦2.5B',
@@ -94,7 +94,7 @@ const mockProjects = [
     lastUpdated: '2024-01-14',
     description: 'A modern mixed-use development in the heart of Abuja.',
     projectManager: 'Bob Wilson',
-    internalNotes: 'Commercial units showing strong interest.',
+    internalNotes: 'Commercial plots showing strong interest.',
     tags: ['Mixed-Use', 'Commercial', 'Abuja'],
     image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=450&fit=crop',
     revenue: '₦4.2B',
@@ -156,7 +156,7 @@ const mockProjects = [
     lastUpdated: '2024-01-12',
     description: 'Premium residential development in the prestigious Ikoyi area.',
     projectManager: 'David Brown',
-    internalNotes: 'Nearly sold out, focus on final unit sales.',
+    internalNotes: 'Nearly sold out, focus on final plot sales.',
     tags: ['Premium', 'Ikoyi', 'Nearly Complete'],
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=450&fit=crop',
     revenue: '₦3.9B',
@@ -497,7 +497,7 @@ export function ProjectDetailView() {
         <div className="flex items-center gap-2">
           <Button onClick={handleAllocateUnit} size="sm" className="bg-gradient-primary hover:opacity-90">
             <UserPlus className="h-4 w-4 mr-2" />
-            Allocate Unit
+            Allocate Plot
           </Button>
           
           <DropdownMenu>
@@ -596,7 +596,7 @@ export function ProjectDetailView() {
               </div>
               <div className="text-center">
                 <div className="text-2xl lg:text-3xl font-bold">{project.totalUnits}</div>
-                <div className="text-sm text-white/80">Total Units</div>
+                <div className="text-sm text-white/80">Total Plots</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl lg:text-3xl font-bold">{project.totalClients}</div>
@@ -757,7 +757,7 @@ export function ProjectDetailView() {
         isOpen={isAllocateUnitOpen}
         onClose={() => setIsAllocateUnitOpen(false)}
         onSubmit={() => {
-          toast.success('Unit allocated successfully!');
+          toast.success('Plot allocated successfully!');
           setIsAllocateUnitOpen(false);
         }}
       />
@@ -771,7 +771,7 @@ export function ProjectDetailView() {
           }}
           allocation={reallocateData}
           onReallocate={() => {
-            toast.success('Unit reallocated successfully!');
+            toast.success('Plot reallocated successfully!');
             setIsReallocateOpen(false);
             setReallocateData(null);
           }}

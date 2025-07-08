@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
@@ -17,7 +18,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
       clientId: '',
       projectId: '',
       blockId: '',
-      unitId: '',
+      plotId: '',
       allocationType: 'sale',
       allocationDate: new Date().toISOString().split('T')[0],
       price: '',
@@ -82,15 +83,15 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-left block mb-2">Unit</label>
-          <Select onValueChange={(value) => form.setValue('unitId', value)}>
+          <Label htmlFor="unitId" className="text-sm font-medium text-left block mb-2">Plot</Label>
+          <Select onValueChange={(value) => form.setValue('plotId', value)}>
             <SelectTrigger>
-              <SelectValue placeholder="Select unit" />
+              <SelectValue placeholder="Select plot" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="unit1">Unit 01</SelectItem>
-              <SelectItem value="unit2">Unit 02</SelectItem>
-              <SelectItem value="unit3">Unit 03</SelectItem>
+              <SelectItem value="plot1">Plot 01</SelectItem>
+              <SelectItem value="plot2">Plot 02</SelectItem>
+              <SelectItem value="plot3">Plot 03</SelectItem>
             </SelectContent>
           </Select>
         </div>

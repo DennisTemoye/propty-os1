@@ -134,7 +134,7 @@ export function SalesAllocation() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">New Allocation</h1>
-            <p className="text-gray-600 mt-1">Allocate a unit to a client</p>
+            <p className="text-gray-600 mt-1">Allocate a plot to a client</p>
           </div>
           <Button 
             variant="outline" 
@@ -198,7 +198,7 @@ export function SalesAllocation() {
                 <div className="text-3xl font-bold text-blue-600">
                   {mockAllocations.filter(a => a.status === 'allocated').length}
                 </div>
-                <div className="text-sm text-muted-foreground">Units Allocated</div>
+                <div className="text-sm text-muted-foreground">Plots Allocated</div>
                 <div className="text-xs text-emerald-600 mt-1 flex items-center">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   Growing steadily

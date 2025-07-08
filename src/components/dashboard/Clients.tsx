@@ -420,7 +420,7 @@ export function Clients() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Client</TableHead>
-                  <TableHead>Projects/Units</TableHead>
+                  <TableHead>Projects/Plots</TableHead>
                   <TableHead>KYC Status</TableHead>
                   <TableHead>Payment Progress</TableHead>
                   <TableHead>Next Due</TableHead>

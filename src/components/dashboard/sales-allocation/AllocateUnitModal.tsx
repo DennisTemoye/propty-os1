@@ -23,7 +23,7 @@ const mockProjects = [
   { id: 'project4', name: 'Ocean Breeze' }
 ];
 
-const mockAvailableUnits = [
+const mockAvailablePlots = [
   { id: 'unit1', name: 'Block A - Plot 25', project: 'Victoria Gardens', price: 25000000 },
   { id: 'unit2', name: 'Block B - Plot 18', project: 'Emerald Heights', price: 30000000 },
   { id: 'unit3', name: 'Block C - Plot 22', project: 'Golden View', price: 22000000 },
@@ -47,9 +47,9 @@ const mockMarketers = [
 export function AllocateUnitModal({ isOpen, onClose, onSubmit }: AllocateUnitModalProps) {
   const form = useForm({
     defaultValues: {
-      clientId: '',
-      unitId: '',
-      marketerId: '',
+        clientId: '',
+        plotId: '',
+        marketerId: '',
       allocationType: 'sale',
       allocationDate: new Date().toISOString().split('T')[0],
       notes: ''
@@ -57,9 +57,9 @@ export function AllocateUnitModal({ isOpen, onClose, onSubmit }: AllocateUnitMod
   });
 
   const handleSubmit = (data: any) => {
-    console.log('Allocating unit:', data);
+    console.log('Allocating plot:', data);
     onSubmit(data);
-    toast.success('Unit allocated successfully!');
+    toast.success('Plot allocated successfully!');
     onClose();
     form.reset();
   };
@@ -78,10 +78,10 @@ export function AllocateUnitModal({ isOpen, onClose, onSubmit }: AllocateUnitMod
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Handshake className="h-5 w-5 text-blue-600" />
-            <span>Allocate Unit to Client</span>
+            <span>Allocate Plot to Client</span>
           </DialogTitle>
           <DialogDescription>
-            Assign an available unit to a client
+            Assign an available plot to a client
           </DialogDescription>
         </DialogHeader>
 
@@ -108,18 +108,18 @@ export function AllocateUnitModal({ isOpen, onClose, onSubmit }: AllocateUnitMod
             </div>
 
             <div>
-              <Label>Available Unit *</Label>
-              <Select onValueChange={(value) => form.setValue('unitId', value)}>
+              <Label>Available Plot *</Label>
+              <Select onValueChange={(value) => form.setValue('plotId', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select unit" />
+                  <SelectValue placeholder="Select plot" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockAvailableUnits.map((unit) => (
-                    <SelectItem key={unit.id} value={unit.id}>
+                  {mockAvailablePlots.map((plot) => (
+                    <SelectItem key={plot.id} value={plot.id}>
                       <div>
-                        <div className="font-medium">{unit.name}</div>
-                        <div className="text-xs text-gray-500">{unit.project}</div>
-                        <div className="text-xs text-green-600">{formatCurrency(unit.price)}</div>
+                        <div className="font-medium">{plot.name}</div>
+                        <div className="text-xs text-gray-500">{plot.project}</div>
+                        <div className="text-xs text-green-600">{formatCurrency(plot.price)}</div>
                       </div>
                     </SelectItem>
                   ))}
@@ -180,14 +180,14 @@ export function AllocateUnitModal({ isOpen, onClose, onSubmit }: AllocateUnitMod
 
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-800">
-              <strong>Note:</strong> This allocation will update the unit status and create records in the 
+              <strong>Note:</strong> This allocation will update the plot status and create records in the 
               client profile. Commission calculations will be processed if a marketer is assigned.
             </p>
           </div>
 
           <div className="flex gap-2 pt-4">
             <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700">
-              Allocate Unit
+              Allocate Plot
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel

@@ -79,7 +79,7 @@ export function DashboardOverview() {
     {
       title: 'Total Sales Revenue',
       value: '₦2.4B',
-      subtitle: '156 Units Sold',
+      subtitle: '156 Plots Sold',
       icon: DollarSign,
       gradientFrom: 'from-purple-500',
       gradientTo: 'to-pink-400',
@@ -99,7 +99,7 @@ export function DashboardOverview() {
       onClick: () => navigate('/company/sales'),
     },
     {
-      title: 'Available Units',
+      title: 'Available Plots',
       value: '187',
       subtitle: 'Ready for Allocation',
       icon: MapPin,
@@ -183,7 +183,7 @@ export function DashboardOverview() {
     switch (action) {
       case 'project_site': return 'Add a new project site to track development progress';
       case 'client': return 'Add a new client to your database';
-      case 'allocation': return 'Allocate a unit to a client';
+      case 'allocation': return 'Allocate a plot to a client';
       case 'expense': return 'Record a new business expense';
       case 'notice': return 'Send a notice to clients or staff members';
       default: return '';
@@ -357,7 +357,7 @@ export function DashboardOverview() {
                   <Tooltip 
                     formatter={(value, name) => [
                       value, 
-                      name === 'sales' ? 'Units Sold' : 
+                      name === 'sales' ? 'Plots Sold' : 
                       name === 'allocations' ? 'Allocations' : 'Revenue (₦M)'
                     ]}
                     contentStyle={{ 
@@ -462,7 +462,7 @@ export function DashboardOverview() {
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-800 dark:text-white">New client allocation completed</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-300">John Doe - Victoria Gardens Block A, Unit 12</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">John Doe - Victoria Gardens Block A, Plot 12</p>
                   </div>
                   <span className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-2 py-1 rounded-lg">5 min ago</span>
                 </div>
@@ -516,7 +516,7 @@ export function DashboardOverview() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-gray-800 dark:text-white">Victoria Gardens</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-300">85% units sold • 127 allocations</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">85% plots sold • 127 allocations</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -531,7 +531,7 @@ export function DashboardOverview() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-gray-800 dark:text-white">Lagos Estate</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-300">72% units sold • 98 allocations</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">72% plots sold • 98 allocations</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -546,7 +546,7 @@ export function DashboardOverview() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-gray-800 dark:text-white">Sunrise Estate</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-300">68% units sold • 76 allocations</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">68% plots sold • 76 allocations</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -565,7 +565,7 @@ export function DashboardOverview() {
             <CardContent>
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Allocated Units</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Allocated Plots</span>
                   <span className="text-2xl font-bold text-gray-900 dark:text-white">456</span>
                 </div>
                 <div className="space-y-3">

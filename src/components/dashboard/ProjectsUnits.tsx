@@ -332,7 +332,7 @@ export function ProjectsUnits() {
       cardBg: 'from-purple-50 to-purple-100',
     },
     {
-      title: 'Total Units',
+      title: 'Total Plots',
       value: totalUnits.toLocaleString(),
       subtitle: 'Across all projects',
       icon: Home,
@@ -535,7 +535,7 @@ export function ProjectsUnits() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-3 rounded-xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10">
                     <div className="text-2xl font-bold text-foreground">{project.totalUnits}</div>
-                    <div className="text-xs text-muted-foreground font-medium">Total Units</div>
+                    <div className="text-xs text-muted-foreground font-medium">Total Plots</div>
                   </div>
                   <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-500/5 to-blue-500/10">
                     <div className="text-2xl font-bold text-foreground">{project.allocatedUnits}</div>

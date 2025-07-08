@@ -148,7 +148,7 @@ export function Reports() {
     {
       title: 'Total Sales',
       value: filteredSalesData.filter(s => s.status === 'allocated').length.toString(),
-      subtitle: 'Allocated units',
+      subtitle: 'Allocated plots',
       icon: TrendingUp,
       color: 'text-emerald-700',
       bgColor: 'bg-emerald-100',
@@ -335,7 +335,7 @@ export function Reports() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Client</TableHead>
-                    <TableHead>Project/Unit</TableHead>
+                    <TableHead>Project/Plot</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Marketer</TableHead>
                     <TableHead>Commission</TableHead>
@@ -495,7 +495,7 @@ export function Reports() {
                   <h4 className="font-medium">Revocation Summary</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Units Revoked:</span>
+                      <span className="text-sm text-gray-600">Plots Revoked:</span>
                       <span className="font-medium">1</span>
                     </div>
                     <div className="flex justify-between">

@@ -31,7 +31,7 @@ export function NewAllocationForm({ onSubmit, onCancel }: NewAllocationFormProps
     defaultValues: {
       clientId: '',
       projectId: '',
-      unitNumber: '',
+      unitId: 'Block A - Plot 02',
       allocationDate: new Date().toISOString().split('T')[0],
       notes: ''
     }
@@ -90,9 +90,9 @@ export function NewAllocationForm({ onSubmit, onCancel }: NewAllocationFormProps
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label>Unit Number *</Label>
+          <Label>Plot Number *</Label>
           <Input 
-            {...form.register('unitNumber', { required: true })}
+            {...form.register('unitId', { required: true })}
             placeholder="e.g., Block A - Plot 15"
           />
         </div>

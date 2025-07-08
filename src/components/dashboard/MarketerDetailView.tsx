@@ -201,7 +201,7 @@ export function MarketerDetailView() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Client Name</TableHead>
-                    <TableHead>Unit</TableHead>
+                    <TableHead>Plot</TableHead>
                     <TableHead>Project</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Date</TableHead>
