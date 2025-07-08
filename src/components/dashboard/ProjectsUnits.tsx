@@ -367,7 +367,7 @@ export function ProjectsUnits() {
       <div className="relative overflow-hidden bg-gradient-to-r from-primary/5 via-primary/10 to-accent/5 border-b border-border/40">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="relative px-6 py-12">
-          <div className="max-w-7xl mx-auto">
+          <div className="w-full">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -397,7 +397,7 @@ export function ProjectsUnits() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <div className="w-full px-6 py-8 space-y-8">
         {/* Enhanced KPI Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {kpiData.map((kpi, index) => (
