@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { User, FileText, Tag, Clock, Activity } from 'lucide-react';
-import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
+
 
 interface ProjectOverviewContentProps {
   project: {
@@ -35,7 +35,7 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
   };
 
   return (
-    <ResponsiveContainer fullWidth maxWidth="full" padding="lg">
+    <div className="w-full">
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Core Information Panel */}
         <div className="xl:col-span-2 space-y-6">
@@ -139,6 +139,6 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
           </Card>
         </div>
       </div>
-    </ResponsiveContainer>
+    </div>
   );
 }
