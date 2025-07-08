@@ -29,6 +29,12 @@ interface ProjectAllocationsTabProps {
     id: number;
     name: string;
   };
+  userPermissions?: {
+    canApprove?: boolean;
+    canEdit?: boolean;
+    canViewFinancials?: boolean;
+    canManage?: boolean;
+  };
 }
 
 const mockAllocations = [
@@ -110,7 +116,7 @@ const mockAllocations = [
   }
 ];
 
-export function ProjectAllocationsTab({ project }: ProjectAllocationsTabProps) {
+export function ProjectAllocationsTab({ project, userPermissions = {} }: ProjectAllocationsTabProps) {
   const [allocations, setAllocations] = useState(mockAllocations);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -399,7 +405,7 @@ export function ProjectAllocationsTab({ project }: ProjectAllocationsTabProps) {
                         <Users className="h-3 w-3" />
                       </Button>
                       
-                      {allocation.allocationStatus === 'pending' && (
+                      {allocation.allocationStatus === 'pending' && userPermissions.canApprove && (
                         <>
                           <Button
                             variant="outline"
@@ -418,7 +424,7 @@ export function ProjectAllocationsTab({ project }: ProjectAllocationsTabProps) {
                         </>
                       )}
                       
-                      {allocation.paymentProgress !== 'complete' && (
+                      {allocation.paymentProgress !== 'complete' && userPermissions.canEdit && (
                         <Button
                           variant="outline"
                           size="sm"

@@ -30,6 +30,12 @@ interface ProjectLinkedClientsTabProps {
     id: number;
     name: string;
   };
+  userPermissions?: {
+    canManage?: boolean;
+    canViewFinancials?: boolean;
+    canEdit?: boolean;
+    canViewKYC?: boolean;
+  };
 }
 
 const mockLinkedClients = [
@@ -130,7 +136,7 @@ const mockLinkedClients = [
   }
 ];
 
-export function ProjectLinkedClientsTab({ project }: ProjectLinkedClientsTabProps) {
+export function ProjectLinkedClientsTab({ project, userPermissions = {} }: ProjectLinkedClientsTabProps) {
   const [clients, setClients] = useState(mockLinkedClients);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterKYC, setFilterKYC] = useState('all');
@@ -230,10 +236,12 @@ export function ProjectLinkedClientsTab({ project }: ProjectLinkedClientsTabProp
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Linked Clients</h2>
-        <Button onClick={handleAddClient}>
-          <UserPlus className="h-4 w-4 mr-2" />
-          Add Client
-        </Button>
+        {userPermissions.canManage && (
+          <Button onClick={handleAddClient}>
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add Client
+          </Button>
+        )}
       </div>
 
       {/* Statistics Cards */}
@@ -277,7 +285,11 @@ export function ProjectLinkedClientsTab({ project }: ProjectLinkedClientsTabProp
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">₦{totalRevenue.toLocaleString()}</div>
+              {userPermissions.canViewFinancials ? (
+                <div className="text-2xl font-bold text-green-600">₦{totalRevenue.toLocaleString()}</div>
+              ) : (
+                <div className="text-2xl font-bold text-muted-foreground">***</div>
+              )}
               <div className="text-sm text-muted-foreground">Total Revenue</div>
             </div>
           </CardContent>
@@ -286,7 +298,11 @@ export function ProjectLinkedClientsTab({ project }: ProjectLinkedClientsTabProp
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">₦{totalOutstanding.toLocaleString()}</div>
+              {userPermissions.canViewFinancials ? (
+                <div className="text-2xl font-bold text-orange-600">₦{totalOutstanding.toLocaleString()}</div>
+              ) : (
+                <div className="text-2xl font-bold text-muted-foreground">***</div>
+              )}
               <div className="text-sm text-muted-foreground">Outstanding</div>
             </div>
           </CardContent>
@@ -401,10 +417,14 @@ export function ProjectLinkedClientsTab({ project }: ProjectLinkedClientsTabProp
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <div className="font-medium">{client.outstandingBalance}</div>
-                      <div className="text-sm text-muted-foreground">of {client.totalPayments}</div>
-                    </div>
+                    {userPermissions.canViewFinancials ? (
+                      <div>
+                        <div className="font-medium">{client.outstandingBalance}</div>
+                        <div className="text-sm text-muted-foreground">of {client.totalPayments}</div>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">Restricted</span>
+                    )}
                   </TableCell>
                   <TableCell>{client.onboardingDate}</TableCell>
                   <TableCell>
@@ -417,7 +437,7 @@ export function ProjectLinkedClientsTab({ project }: ProjectLinkedClientsTabProp
                         <Eye className="h-3 w-3" />
                       </Button>
                       
-                      {client.kycStatus !== 'verified' && (
+                      {client.kycStatus !== 'verified' && userPermissions.canViewKYC && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -427,21 +447,25 @@ export function ProjectLinkedClientsTab({ project }: ProjectLinkedClientsTabProp
                         </Button>
                       )}
                       
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewPaymentHistory(client.id)}
-                      >
-                        <CreditCard className="h-3 w-3" />
-                      </Button>
+                      {userPermissions.canViewFinancials && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewPaymentHistory(client.id)}
+                        >
+                          <CreditCard className="h-3 w-3" />
+                        </Button>
+                      )}
                       
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleReassignClient(client.id)}
-                      >
-                        <Building className="h-3 w-3" />
-                      </Button>
+                      {userPermissions.canManage && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleReassignClient(client.id)}
+                        >
+                          <Building className="h-3 w-3" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

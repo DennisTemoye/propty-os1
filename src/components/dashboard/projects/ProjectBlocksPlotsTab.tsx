@@ -16,6 +16,11 @@ interface ProjectBlocksPlotsTabProps {
     id: number;
     name: string;
   };
+  userPermissions?: {
+    canEdit?: boolean;
+    canManage?: boolean;
+    canViewLayout?: boolean;
+  };
 }
 
 const mockBlocks = [
@@ -76,7 +81,7 @@ const mockBlocks = [
   }
 ];
 
-export function ProjectBlocksPlotsTab({ project }: ProjectBlocksPlotsTabProps) {
+export function ProjectBlocksPlotsTab({ project, userPermissions = {} }: ProjectBlocksPlotsTabProps) {
   const [blocks, setBlocks] = useState(mockBlocks);
   const [activeTab, setActiveTab] = useState('blocks');
   const [isAddBlockOpen, setIsAddBlockOpen] = useState(false);
@@ -192,13 +197,14 @@ export function ProjectBlocksPlotsTab({ project }: ProjectBlocksPlotsTabProps) {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Blocks & Plots Management</h2>
         <div className="flex space-x-2">
-          <Dialog open={isAddBlockOpen} onOpenChange={setIsAddBlockOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Block
-              </Button>
-            </DialogTrigger>
+          {userPermissions.canManage && (
+            <Dialog open={isAddBlockOpen} onOpenChange={setIsAddBlockOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Block
+                </Button>
+              </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Block</DialogTitle>
@@ -251,14 +257,16 @@ export function ProjectBlocksPlotsTab({ project }: ProjectBlocksPlotsTabProps) {
               </form>
             </DialogContent>
           </Dialog>
+          )}
           
-          <Dialog open={isAddPlotOpen} onOpenChange={setIsAddPlotOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Plot
-              </Button>
-            </DialogTrigger>
+          {userPermissions.canManage && (
+            <Dialog open={isAddPlotOpen} onOpenChange={setIsAddPlotOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Plot
+                </Button>
+              </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Plot</DialogTitle>
@@ -316,6 +324,7 @@ export function ProjectBlocksPlotsTab({ project }: ProjectBlocksPlotsTabProps) {
               </form>
             </DialogContent>
           </Dialog>
+          )}
         </div>
       </div>
 

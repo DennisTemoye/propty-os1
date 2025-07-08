@@ -333,7 +333,14 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <ProjectOverviewTab project={project} />
+          <ProjectOverviewTab 
+            project={project} 
+            userPermissions={{
+              canEdit: true,
+              canViewFinancials: true,
+              canManage: true
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="layout" className="space-y-4">
@@ -410,15 +417,38 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         </TabsContent>
 
         <TabsContent value="blocks" className="space-y-4">
-          <ProjectBlocksPlotsTab project={project} />
+          <ProjectBlocksPlotsTab 
+            project={project} 
+            userPermissions={{
+              canEdit: true,
+              canManage: true,
+              canViewLayout: true
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="allocations" className="space-y-4">
-          <ProjectAllocationsTab project={project} />
+          <ProjectAllocationsTab 
+            project={project} 
+            userPermissions={{
+              canApprove: true,
+              canEdit: true,
+              canViewFinancials: true,
+              canManage: true
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="clients" className="space-y-4">
-          <ProjectLinkedClientsTab project={project} />
+          <ProjectLinkedClientsTab 
+            project={project} 
+            userPermissions={{
+              canManage: true,
+              canViewFinancials: true,
+              canEdit: true,
+              canViewKYC: true
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="sales" className="space-y-4">
@@ -446,7 +476,15 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         </TabsContent>
 
         <TabsContent value="documents" className="space-y-4">
-          <DocumentsView project={project} />
+          <DocumentsView 
+            project={project} 
+            userPermissions={{
+              canUpload: true,
+              canDelete: true,
+              canDownload: true,
+              canView: true
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-4">

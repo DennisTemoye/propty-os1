@@ -13,7 +13,8 @@ import {
   Clock, 
   FileText, 
   Tag,
-  Map
+  Map,
+  Edit
 } from 'lucide-react';
 
 interface ProjectOverviewTabProps {
@@ -31,6 +32,15 @@ interface ProjectOverviewTabProps {
     projectManager?: string;
     projectSize?: string;
     developmentStage?: string;
+    startDate?: string;
+    expectedCompletion?: string;
+    totalRevenue?: string;
+    coordinates?: { lat: number; lng: number };
+  };
+  userPermissions?: {
+    canEdit?: boolean;
+    canViewFinancials?: boolean;
+    canManage?: boolean;
   };
 }
 
@@ -85,7 +95,7 @@ const mockProjectData = {
   ]
 };
 
-export function ProjectOverviewTab({ project }: ProjectOverviewTabProps) {
+export function ProjectOverviewTab({ project, userPermissions = {} }: ProjectOverviewTabProps) {
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'active':
@@ -139,14 +149,22 @@ export function ProjectOverviewTab({ project }: ProjectOverviewTabProps) {
               </div>
               
               <p className="text-muted-foreground max-w-2xl">
-                {mockProjectData.description}
+                {project.description || mockProjectData.description}
               </p>
             </div>
             
-            <Button variant="outline" size="sm">
-              <Map className="h-4 w-4 mr-2" />
-              View on Map
-            </Button>
+            <div className="flex space-x-2">
+              <Button variant="outline" size="sm" onClick={() => window.open(`https://maps.google.com/maps?q=${encodeURIComponent(project.location)}`, '_blank')}>
+                <Map className="h-4 w-4 mr-2" />
+                View on Map
+              </Button>
+              {userPermissions.canEdit && (
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Project
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
       </Card>
@@ -242,14 +260,22 @@ export function ProjectOverviewTab({ project }: ProjectOverviewTabProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Revenue</span>
-                <span className="text-2xl font-bold text-green-600">{mockProjectData.totalRevenue}</span>
-              </div>
-              <div className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm text-muted-foreground">From {project.soldUnits} allocated plots</span>
-              </div>
+              {userPermissions.canViewFinancials ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Total Revenue</span>
+                    <span className="text-2xl font-bold text-green-600">{project.totalRevenue || mockProjectData.totalRevenue}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <DollarSign className="h-4 w-4 mr-2 text-green-600" />
+                    <span className="text-sm text-muted-foreground">From {project.soldUnits} allocated plots</span>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-4">
+                  <span className="text-sm text-muted-foreground">Financial data restricted</span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -330,7 +356,7 @@ export function ProjectOverviewTab({ project }: ProjectOverviewTabProps) {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Project Manager:</span>
-                <span className="font-medium">{mockProjectData.projectManager}</span>
+                <span className="font-medium">{project.projectManager || mockProjectData.projectManager}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Project Size:</span>
@@ -340,6 +366,18 @@ export function ProjectOverviewTab({ project }: ProjectOverviewTabProps) {
                 <span className="text-muted-foreground">Development Stage:</span>
                 <span className="font-medium">{project.developmentStage || 'N/A'}</span>
               </div>
+              {project.startDate && (
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Start Date:</span>
+                  <span className="font-medium">{project.startDate}</span>
+                </div>
+              )}
+              {project.expectedCompletion && (
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Expected Completion:</span>
+                  <span className="font-medium">{project.expectedCompletion}</span>
+                </div>
+              )}
             </div>
             
             <div className="space-y-3">
