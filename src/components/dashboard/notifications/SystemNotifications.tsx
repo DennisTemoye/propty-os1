@@ -11,28 +11,31 @@ const mockNotifications: SystemNotification[] = [
     id: '1',
     type: 'allocation_pending',
     title: 'New Allocation Pending',
-    message: 'John Doe - Block A Unit 15 requires approval',
+    message: 'John Doe - Block A Plot 15 requires approval',
     timestamp: '2024-01-15T10:30:00Z',
     read: false,
-    relatedAllocationId: 'alloc-1'
+    relatedAllocationId: 'alloc-1',
+    priority: 'high'
   },
   {
     id: '2',
     type: 'allocation_approved',
     title: 'Allocation Approved',
-    message: 'Jane Smith - Block B Unit 8 has been approved',
+    message: 'Jane Smith - Block B Plot 8 has been approved',
     timestamp: '2024-01-15T09:15:00Z',
     read: false,
-    relatedAllocationId: 'alloc-2'
+    relatedAllocationId: 'alloc-2',
+    priority: 'medium'
   },
   {
     id: '3',
     type: 'allocation_declined',
     title: 'Allocation Declined',
-    message: 'Mike Johnson - Block C Unit 12 was declined: Insufficient documentation',
+    message: 'Mike Johnson - Block C Plot 12 was declined: Insufficient documentation',
     timestamp: '2024-01-14T16:45:00Z',
     read: true,
-    relatedAllocationId: 'alloc-3'
+    relatedAllocationId: 'alloc-3',
+    priority: 'low'
   }
 ];
 

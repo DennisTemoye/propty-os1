@@ -17,7 +17,7 @@ import { OverviewTab } from './sales-allocation/OverviewTab';
 import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
-import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
+import { SalesPipelineBoard } from './sales-allocation/SalesPipelineBoard';
 
 const mockAllocations = [
   {
@@ -265,13 +265,9 @@ export function SalesAllocation() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="pipeline">Sales Pipeline</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
-          <TabsTrigger value="pending-offers" className="relative">
-            Pending Offers
-            <Badge className="ml-2 bg-amber-600 text-white text-xs">3</Badge>
-          </TabsTrigger>
           <TabsTrigger value="pending-allocations" className="relative">
             Pending Allocations
             <Badge className="ml-2 bg-orange-600 text-white text-xs">2</Badge>
@@ -282,8 +278,12 @@ export function SalesAllocation() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <OverviewTab />
+        <TabsContent value="pipeline" className="space-y-6">
+          <SalesPipelineBoard 
+            onItemSelect={(item) => console.log('Selected:', item)}
+            onStageMove={(itemId, stage) => console.log('Moved:', itemId, stage)}
+            onItemAction={(action, item) => console.log('Action:', action, item)}
+          />
         </TabsContent>
 
         <TabsContent value="pending-allocations" className="space-y-6">
