@@ -1,6 +1,6 @@
 
-// Sales Pipeline Stages: Lead → Inspection → Offer → Allocation → Paid
-export type SalesPipelineStage = 'lead' | 'inspection' | 'offer' | 'allocation' | 'paid';
+// Sales Pipeline Stages: Lead → Inspection → Offer → Paid → Allocation
+export type SalesPipelineStage = 'lead' | 'inspection' | 'offer' | 'paid' | 'allocation';
 
 export interface SalesPipelineEntry {
   id: string;

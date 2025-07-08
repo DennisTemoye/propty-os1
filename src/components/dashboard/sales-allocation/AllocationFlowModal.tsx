@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ export function AllocationFlowModal({ isOpen, onClose, onSubmit }: AllocationFlo
     {
       id: 'new',
       title: 'New Allocation',
-      description: 'Assign a unit to a client',
+      description: 'Assign a plot to a client',
       icon: Handshake,
       color: 'bg-blue-600 hover:bg-blue-700',
       textColor: 'text-blue-700',
@@ -33,7 +32,7 @@ export function AllocationFlowModal({ isOpen, onClose, onSubmit }: AllocationFlo
     {
       id: 'reallocation',
       title: 'Reallocation',
-      description: 'Transfer unit to another client',
+      description: 'Transfer plot to another client',
       icon: ArrowRight,
       color: 'bg-purple-600 hover:bg-purple-700',
       textColor: 'text-purple-700',

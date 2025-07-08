@@ -1,50 +1,51 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Building } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 interface ReallocationFormProps {
   onSubmit: (data: any) => void;
   onCancel: () => void;
 }
 
-const mockAllocatedUnits = [
+const mockAllocatedPlots = [
   {
     id: 1,
-    unitId: 'Block A - Plot 02',
+    plotId: 'Block A - Plot 02',
     project: 'Victoria Gardens',
     currentClient: 'John Doe',
-    allocationDate: '2024-01-15'
+    currentClientId: 'client-1',
+    saleAmount: '₦25M'
   },
   {
     id: 2,
-    unitId: 'Block B - Plot 08',
+    plotId: 'Block B - Plot 08',
     project: 'Golden View',
     currentClient: 'Jane Williams',
-    allocationDate: '2024-01-10'
+    currentClientId: 'client-2',
+    saleAmount: '₦30M'
   }
 ];
 
 const mockClients = [
-  { id: 'client4', name: 'Alice Cooper', email: 'alice@example.com' },
-  { id: 'client5', name: 'David Wilson', email: 'david@example.com' },
-  { id: 'client6', name: 'Emma Thompson', email: 'emma@example.com' }
+  { id: 'client3', name: 'Robert Brown', email: 'robert@example.com' },
+  { id: 'client4', name: 'Sarah Wilson', email: 'sarah@example.com' },
+  { id: 'client5', name: 'Michael Davis', email: 'michael@example.com' }
 ];
 
 export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) {
   const form = useForm({
     defaultValues: {
-      allocationId: '',
+      currentAllocationId: '',
       newClientId: '',
-      reallocationDate: new Date().toISOString().split('T')[0],
       reason: '',
+      saleAmount: '',
+      initialPayment: '',
       notes: ''
     }
   });
@@ -57,18 +58,18 @@ export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) 
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
       <div>
-        <Label>Select Unit to Reallocate *</Label>
-        <Select onValueChange={(value) => form.setValue('allocationId', value)}>
+        <Label>Current Allocation *</Label>
+        <Select onValueChange={(value) => form.setValue('currentAllocationId', value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Select allocated unit" />
+            <SelectValue placeholder="Select current allocation" />
           </SelectTrigger>
           <SelectContent>
-            {mockAllocatedUnits.map((unit) => (
-              <SelectItem key={unit.id} value={unit.id.toString()}>
+            {mockAllocatedPlots.map((allocation) => (
+              <SelectItem key={allocation.id} value={allocation.id.toString()}>
                 <div>
-                  <div className="font-medium">{unit.unitId}</div>
+                  <div className="font-medium">{allocation.plotId}</div>
                   <div className="text-xs text-gray-500">
-                    {unit.project} - Currently: {unit.currentClient}
+                    {allocation.project} - {allocation.currentClient} - {allocation.saleAmount}
                   </div>
                 </div>
               </SelectItem>
@@ -77,69 +78,78 @@ export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) 
         </Select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label>New Client *</Label>
-          <Select onValueChange={(value) => form.setValue('newClientId', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select new client" />
-            </SelectTrigger>
-            <SelectContent>
-              {mockClients.map((client) => (
-                <SelectItem key={client.id} value={client.id}>
-                  <div>
-                    <div className="font-medium">{client.name}</div>
-                    <div className="text-xs text-gray-500">{client.email}</div>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label>Reallocation Date *</Label>
-          <Input 
-            type="date"
-            {...form.register('reallocationDate', { required: true })}
-          />
-        </div>
+      <div>
+        <Label>New Client *</Label>
+        <Select onValueChange={(value) => form.setValue('newClientId', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select new client" />
+          </SelectTrigger>
+          <SelectContent>
+            {mockClients.map((client) => (
+              <SelectItem key={client.id} value={client.id}>
+                <div>
+                  <div className="font-medium">{client.name}</div>
+                  <div className="text-xs text-gray-500">{client.email}</div>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
-        <Label>Reason for Reallocation</Label>
-        <Select onValueChange={(value) => form.setValue('reason', value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select reason" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="client_request">Client Request</SelectItem>
-            <SelectItem value="payment_default">Payment Default</SelectItem>
-            <SelectItem value="unit_swap">Unit Swap</SelectItem>
-            <SelectItem value="administrative">Administrative Change</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
+        <Label>Reason for Reallocation *</Label>
+        <Textarea 
+          {...form.register('reason', { required: true })}
+          placeholder="Provide a detailed reason for the reallocation..."
+          rows={3}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label>New Sale Amount (₦)</Label>
+          <Input 
+            type="number"
+            {...form.register('saleAmount')}
+            placeholder="e.g., 25000000"
+          />
+        </div>
+
+        <div>
+          <Label>Initial Payment (₦)</Label>
+          <Input 
+            type="number"
+            {...form.register('initialPayment')}
+            placeholder="e.g., 5000000"
+          />
+        </div>
       </div>
 
       <div>
         <Label>Additional Notes</Label>
         <Textarea 
           {...form.register('notes')}
-          placeholder="Provide detailed explanation for this reallocation..."
-          rows={3}
+          placeholder="Any additional information about this reallocation..."
+          rows={2}
         />
       </div>
 
-      <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-        <p className="text-sm text-purple-800">
-          <strong>Note:</strong> This reallocation will be submitted for approval. 
-          The unit will remain with the current client until approved.
-        </p>
+      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+        <div className="flex items-start space-x-2">
+          <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+          <div>
+            <p className="text-sm text-yellow-800 font-medium">Important: Plot Reallocation</p>
+            <p className="text-sm text-yellow-700 mt-1">
+              This action will transfer the plot from the current client to the new client. 
+              This requires approval and may involve refund processing.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="flex gap-2 pt-4">
-        <Button type="submit" className="flex-1 bg-purple-600 hover:bg-purple-700">
+        <Button type="submit" className="flex-1">
           Submit for Approval
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>

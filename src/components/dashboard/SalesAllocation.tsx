@@ -18,13 +18,14 @@ import { PendingApprovalsTab } from './sales-allocation/PendingApprovalsTab';
 import { SystemNotifications } from './notifications/SystemNotifications';
 import { RecordSaleModal } from './sales-allocation/RecordSaleModal';
 import { SalesPipelineBoard } from './sales-allocation/SalesPipelineBoard';
+import { AllocationFlowModal } from './sales-allocation/AllocationFlowModal';
 
 const mockAllocations = [
   {
     id: 1,
     clientName: 'John Doe',
     projectName: 'Victoria Gardens',
-    unit: 'Block A - Plot 02',
+    plotNumber: 'Block A - Plot 02',
     status: 'allocated',
     allocationType: 'sale',
     price: '₦25M',
@@ -35,7 +36,7 @@ const mockAllocations = [
     id: 2,
     clientName: 'Jane Smith',
     projectName: 'Emerald Heights',
-    unit: 'Block B - Plot 12',
+    plotNumber: 'Block B - Plot 12',
     status: 'offered',
     allocationType: 'sale',
     price: '₦30M',
@@ -46,7 +47,7 @@ const mockAllocations = [
     id: 3,
     clientName: 'Mike Johnson',
     projectName: 'Golden View',
-    unit: 'Block C - Plot 05',
+    plotNumber: 'Block C - Plot 05',
     status: 'interested',
     allocationType: 'reservation',
     price: '₦20M',
@@ -325,14 +326,12 @@ export function SalesAllocation() {
         onSubmit={handleRecordSale}
       />
 
-      {/* TODO: Implement AllocationFlowModal */}
-      {/* 
+      {/* Allocation Flow Modal */}
       <AllocationFlowModal 
         isOpen={showAllocationModal}
         onClose={() => setShowAllocationModal(false)}
         onSubmit={handleAllocationAction}
       />
-      */}
 
       {/* Reallocation Modal */}
       <ReallocationModal 

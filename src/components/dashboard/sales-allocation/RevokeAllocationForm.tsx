@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,17 +13,17 @@ interface RevokeAllocationFormProps {
   onCancel: () => void;
 }
 
-const mockAllocatedUnits = [
+const mockAllocatedPlots = [
   {
     id: 1,
-    unitId: 'Block A - Plot 02',
+    plotId: 'Block A - Plot 02',
     project: 'Victoria Gardens',
     currentClient: 'John Doe',
     totalPaid: '₦15M'
   },
   {
     id: 2,
-    unitId: 'Block B - Plot 08',
+    plotId: 'Block B - Plot 08',
     project: 'Golden View',
     currentClient: 'Jane Williams',
     totalPaid: '₦8M'
@@ -58,12 +57,12 @@ export function RevokeAllocationForm({ onSubmit, onCancel }: RevokeAllocationFor
             <SelectValue placeholder="Select allocation" />
           </SelectTrigger>
           <SelectContent>
-            {mockAllocatedUnits.map((unit) => (
-              <SelectItem key={unit.id} value={unit.id.toString()}>
+            {mockAllocatedPlots.map((plot) => (
+              <SelectItem key={plot.id} value={plot.id.toString()}>
                 <div>
-                  <div className="font-medium">{unit.unitId}</div>
+                  <div className="font-medium">{plot.plotId}</div>
                   <div className="text-xs text-gray-500">
-                    {unit.project} - {unit.currentClient} - Paid: {unit.totalPaid}
+                    {plot.project} - {plot.currentClient} - Paid: {plot.totalPaid}
                   </div>
                 </div>
               </SelectItem>
@@ -121,7 +120,7 @@ export function RevokeAllocationForm({ onSubmit, onCancel }: RevokeAllocationFor
           <div>
             <p className="text-sm text-red-800 font-medium">Warning: Allocation Revocation</p>
             <p className="text-sm text-red-700 mt-1">
-              This action will permanently revoke the allocation and mark the unit as available. 
+              This action will permanently revoke the allocation and mark the plot as available. 
               This requires approval and cannot be undone once approved.
             </p>
           </div>

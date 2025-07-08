@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,10 +13,9 @@ interface NewAllocationFormProps {
 }
 
 const mockClients = [
-  { id: 'client1', name: 'John Doe', email: 'john@example.com', hasSale: true },
-  { id: 'client2', name: 'Sarah Johnson', email: 'sarah@example.com', hasSale: false },
-  { id: 'client3', name: 'Robert Brown', email: 'robert@example.com', hasSale: true },
-  { id: 'client4', name: 'Alice Cooper', email: 'alice@example.com', hasSale: false }
+  { id: 'client1', name: 'John Doe', email: 'john@example.com' },
+  { id: 'client2', name: 'Jane Smith', email: 'jane@example.com' },
+  { id: 'client3', name: 'Robert Brown', email: 'robert@example.com' }
 ];
 
 const mockProjects = [
@@ -26,13 +24,28 @@ const mockProjects = [
   { id: 'project3', name: 'Golden View' }
 ];
 
+const mockAvailablePlots = [
+  { id: 'plot1', number: 'Block A - Plot 15', project: 'Victoria Gardens', price: '₦25,000,000' },
+  { id: 'plot2', number: 'Block B - Plot 22', project: 'Emerald Heights', price: '₦30,000,000' },
+  { id: 'plot3', number: 'Block C - Plot 08', project: 'Golden View', price: '₦22,000,000' }
+];
+
+const mockMarketers = [
+  { id: 'marketer1', name: 'Jane Smith' },
+  { id: 'marketer2', name: 'Mike Davis' },
+  { id: 'marketer3', name: 'Sarah Johnson' }
+];
+
 export function NewAllocationForm({ onSubmit, onCancel }: NewAllocationFormProps) {
   const form = useForm({
     defaultValues: {
       clientId: '',
       projectId: '',
-      unitId: 'Block A - Plot 02',
-      allocationDate: new Date().toISOString().split('T')[0],
+      plotId: '',
+      saleAmount: '',
+      initialPayment: '',
+      marketerId: '',
+      allocationMode: 'instant_allocation',
       notes: ''
     }
   });
@@ -42,8 +55,13 @@ export function NewAllocationForm({ onSubmit, onCancel }: NewAllocationFormProps
     toast.success('Allocation submitted for approval!');
   };
 
+  const selectedProject = form.watch('projectId');
+  const availablePlots = mockAvailablePlots.filter(plot => 
+    !selectedProject || plot.project === mockProjects.find(p => p.id === selectedProject)?.name
+  );
+
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label>Client *</Label>
@@ -54,16 +72,9 @@ export function NewAllocationForm({ onSubmit, onCancel }: NewAllocationFormProps
             <SelectContent>
               {mockClients.map((client) => (
                 <SelectItem key={client.id} value={client.id}>
-                  <div className="flex items-center justify-between w-full">
-                    <div>
-                      <div className="font-medium">{client.name}</div>
-                      <div className="text-xs text-gray-500">{client.email}</div>
-                    </div>
-                    {client.hasSale && (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded ml-2">
-                        Has Sale
-                      </span>
-                    )}
+                  <div>
+                    <div className="font-medium">{client.name}</div>
+                    <div className="text-xs text-gray-500">{client.email}</div>
                   </div>
                 </SelectItem>
               ))}
@@ -86,44 +97,86 @@ export function NewAllocationForm({ onSubmit, onCancel }: NewAllocationFormProps
             </SelectContent>
           </Select>
         </div>
+
+        <div>
+          <Label>Available Plot *</Label>
+          <Select onValueChange={(value) => form.setValue('plotId', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select plot" />
+            </SelectTrigger>
+            <SelectContent>
+              {availablePlots.map((plot) => (
+                <SelectItem key={plot.id} value={plot.id}>
+                  <div>
+                    <div className="font-medium">{plot.number}</div>
+                    <div className="text-xs text-gray-500">{plot.price}</div>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Marketer</Label>
+          <Select onValueChange={(value) => form.setValue('marketerId', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select marketer" />
+            </SelectTrigger>
+            <SelectContent>
+              {mockMarketers.map((marketer) => (
+                <SelectItem key={marketer.id} value={marketer.id}>
+                  {marketer.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Sale Amount (₦) *</Label>
+          <Input 
+            type="number"
+            {...form.register('saleAmount', { required: true })}
+            placeholder="e.g., 25000000"
+          />
+        </div>
+
+        <div>
+          <Label>Initial Payment (₦)</Label>
+          <Input 
+            type="number"
+            {...form.register('initialPayment')}
+            placeholder="e.g., 5000000"
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label>Plot Number *</Label>
-          <Input 
-            {...form.register('unitId', { required: true })}
-            placeholder="e.g., Block A - Plot 15"
-          />
-        </div>
-
-        <div>
-          <Label>Allocation Date *</Label>
-          <Input 
-            type="date"
-            {...form.register('allocationDate', { required: true })}
-          />
-        </div>
+      <div>
+        <Label>Allocation Mode *</Label>
+        <Select onValueChange={(value) => form.setValue('allocationMode', value)} defaultValue="instant_allocation">
+          <SelectTrigger>
+            <SelectValue placeholder="Select allocation mode" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="instant_allocation">Instant Allocation</SelectItem>
+            <SelectItem value="sales_offer">Sales Offer First</SelectItem>
+            <SelectItem value="reservation">Reservation</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
         <Label>Notes</Label>
         <Textarea 
           {...form.register('notes')}
-          placeholder="Any additional notes about this allocation..."
+          placeholder="Additional notes or special instructions..."
           rows={3}
         />
       </div>
 
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <p className="text-sm text-blue-800">
-          <strong>Note:</strong> This allocation will be submitted for approval. 
-          The designated admin will receive an OTP for verification.
-        </p>
-      </div>
-
       <div className="flex gap-2 pt-4">
-        <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700">
+        <Button type="submit" className="flex-1">
           Submit for Approval
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
