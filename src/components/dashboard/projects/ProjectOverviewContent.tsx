@@ -18,8 +18,8 @@ interface ProjectOverviewContentProps {
 
 export function ProjectOverviewContent({ project }: ProjectOverviewContentProps) {
   const recentActivities = [
-    { id: 1, action: 'Unit A-15 allocated to John Doe', time: '2 hours ago', type: 'allocation' },
-    { id: 2, action: 'Payment received for Unit B-08', time: '5 hours ago', type: 'payment' },
+    { id: 1, action: 'Plot A-15 allocated to John Doe', time: '2 hours ago', type: 'allocation' },
+    { id: 2, action: 'Payment received for Plot B-08', time: '5 hours ago', type: 'payment' },
     { id: 3, action: 'Document uploaded: Survey Plan', time: '1 day ago', type: 'document' },
     { id: 4, action: 'Project status updated to Active', time: '2 days ago', type: 'status' },
   ];
