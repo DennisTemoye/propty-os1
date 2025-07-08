@@ -14,10 +14,9 @@ interface ProjectOverviewContentProps {
     tags: string[];
     allocationRate: number;
   };
-  onViewAllActivity?: () => void;
 }
 
-export function ProjectOverviewContent({ project, onViewAllActivity }: ProjectOverviewContentProps) {
+export function ProjectOverviewContent({ project }: ProjectOverviewContentProps) {
   const recentActivities = [
     { id: 1, action: 'Unit A-15 allocated to John Doe', time: '2 hours ago', type: 'allocation' },
     { id: 2, action: 'Payment received for Unit B-08', time: '5 hours ago', type: 'payment' },
@@ -129,9 +128,10 @@ export function ProjectOverviewContent({ project, onViewAllActivity }: ProjectOv
               <Button 
                 variant="outline" 
                 className="w-full mt-4"
-                onClick={onViewAllActivity || (() => {
+                onClick={() => {
+                  // Navigate to full activity log
                   window.location.href = '/company/activity-log';
-                })}
+                }}
               >
                 View All Activity
               </Button>
