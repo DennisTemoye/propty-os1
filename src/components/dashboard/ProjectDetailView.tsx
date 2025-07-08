@@ -496,30 +496,71 @@ export function ProjectDetailView() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={handleViewSalesAllocation} size="sm" className="bg-blue-600 hover:bg-blue-700">
-            <DollarSign className="h-4 w-4 mr-2" />
-            Sale
-          </Button>
-          <Button onClick={handleAllocateUnit} size="sm" className="bg-green-600 hover:bg-green-700">
+          <Button onClick={handleAllocateUnit} size="sm" className="bg-gradient-primary hover:opacity-90">
             <UserPlus className="h-4 w-4 mr-2" />
-            Allocations
+            Allocate Unit
           </Button>
-          <Button 
-            onClick={handleEditProject} 
-            variant="outline" 
-            size="sm"
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
-          </Button>
-          <Button 
-            onClick={() => navigate(`/company/projects/${project.id}/settings`)}
-            variant="outline" 
-            size="sm"
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onClick={handleEditProject}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Project
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleViewBlocks}>
+                <Building className="h-4 w-4 mr-2" />
+                Manage Blocks
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleViewReports}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                View Reports
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleViewSalesAllocation}>
+                <Users className="h-4 w-4 mr-2" />
+                Sales & Allocation
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Share2 className="h-4 w-4 mr-2" />
+                Share Project
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="h-4 w-4 mr-2" />
+                Project Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Project
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete "{project.name}"? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleDeleteProject}
+                      className="bg-destructive hover:bg-destructive/90"
+                    >
+                      Delete Project
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -572,27 +613,7 @@ export function ProjectDetailView() {
       </Card>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-7 gap-4">
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Building className="h-5 w-5 text-purple-600" />
-            </div>
-            <div className="text-2xl font-bold text-purple-600">{project.totalUnits}</div>
-            <div className="text-sm text-muted-foreground">Total Plots</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Users className="h-5 w-5 text-blue-600" />
-            </div>
-            <div className="text-2xl font-bold text-blue-600">{project.totalClients}</div>
-            <div className="text-sm text-muted-foreground">Total Clients</div>
-          </CardContent>
-        </Card>
-        
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
@@ -626,24 +647,51 @@ export function ProjectDetailView() {
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <DollarSign className="h-5 w-5 text-emerald-600" />
+              <Users className="h-5 w-5 text-purple-600" />
             </div>
-            <div className="text-lg lg:text-xl font-bold text-emerald-600">{project.revenue}</div>
-            <div className="text-sm text-muted-foreground">Revenue</div>
+            <div className="text-2xl font-bold text-purple-600">{project.totalClients}</div>
+            <div className="text-sm text-muted-foreground">Total Clients</div>
           </CardContent>
         </Card>
         
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="h-5 w-5 text-red-600" />
+              <DollarSign className="h-5 w-5 text-emerald-600" />
             </div>
-            <div className="text-lg lg:text-xl font-bold text-red-600">₦{(parseInt(project.totalRevenue.replace(/[₦,]/g, '')) * 0.35).toLocaleString()}</div>
-            <div className="text-sm text-muted-foreground">Outstanding</div>
+            <div className="text-lg lg:text-xl font-bold text-emerald-600">{project.revenue}</div>
+            <div className="text-sm text-muted-foreground">Revenue</div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Pending Allocations Alert */}
+      {project.pendingAllocations > 0 && (
+        <Card className="border-orange-200 bg-orange-50/50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Clock className="h-5 w-5 text-orange-600" />
+                <div>
+                  <h3 className="font-semibold text-orange-900">
+                    {project.pendingAllocations} Pending Allocations
+                  </h3>
+                  <p className="text-sm text-orange-700">
+                    Requires your attention for approval
+                  </p>
+                </div>
+              </div>
+              <Button 
+                size="sm"
+                onClick={handlePendingAllocations}
+                className="bg-orange-600 hover:bg-orange-700 text-white"
+              >
+                Review Now
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tabs Section */}
       <Card>
