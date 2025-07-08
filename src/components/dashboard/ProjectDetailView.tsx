@@ -25,7 +25,9 @@ import {
   BarChart3,
   Eye,
   Settings,
-  Share2
+  Share2,
+  Handshake,
+  Grid3X3
 } from 'lucide-react';
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
 import { ProjectSalesHistory } from '@/components/dashboard/projects/ProjectSalesHistory';
@@ -35,6 +37,8 @@ import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocu
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
+import { RecordSaleModal } from '@/components/dashboard/sales-allocation/RecordSaleModal';
+import { AllocationFlowModal } from '@/components/dashboard/sales-allocation/AllocationFlowModal';
 import { getProjectImage, handleImageError } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -392,6 +396,8 @@ export function ProjectDetailView() {
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [reallocateData, setReallocateData] = useState<any>(null);
+  const [isRecordSaleOpen, setIsRecordSaleOpen] = useState(false);
+  const [isManagedAllocationsOpen, setIsManagedAllocationsOpen] = useState(false);
   
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
 
@@ -496,22 +502,29 @@ export function ProjectDetailView() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={handleAllocateUnit} size="sm" className="bg-gradient-primary hover:opacity-90">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Allocate Unit
+          <Button onClick={() => setIsRecordSaleOpen(true)} size="sm" className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700">
+            <DollarSign className="h-4 w-4 mr-2" />
+            Record Sale
+          </Button>
+          
+          <Button onClick={() => setIsManagedAllocationsOpen(true)} size="sm" className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700">
+            <Handshake className="h-4 w-4 mr-2" />
+            Allocations
+          </Button>
+          
+          <Button onClick={handleEditProject} size="sm" variant="outline">
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
           </Button>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <MoreHorizontal className="h-4 w-4" />
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem onClick={handleEditProject}>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Project
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleViewBlocks}>
                 <Building className="h-4 w-4 mr-2" />
                 Manage Blocks
@@ -528,10 +541,6 @@ export function ProjectDetailView() {
               <DropdownMenuItem>
                 <Share2 className="h-4 w-4 mr-2" />
                 Share Project
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="h-4 w-4 mr-2" />
-                Project Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <AlertDialog>
@@ -564,56 +573,28 @@ export function ProjectDetailView() {
         </div>
       </div>
 
-      {/* Project Hero Banner */}
-      <Card className="overflow-hidden">
-        <div className="relative h-64 lg:h-80">
-          <img 
-            src={getProjectImage(project)} 
-            alt={project.name}
-            className="w-full h-full object-cover"
-            onError={handleImageError}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-          
-          {/* Overlays */}
-          <div className="absolute top-4 left-4">
-            <Badge variant={getStatusVariant(project.status)} className="bg-background/90 backdrop-blur-sm">
-              {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-            </Badge>
-          </div>
-          
-          <div className="absolute top-4 right-4">
-            <Badge className={`${getStageColor(project.developmentStage)} backdrop-blur-sm border`}>
-              {project.developmentStage}
-            </Badge>
-          </div>
-
-          {/* Content */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-              <div className="text-center">
-                <div className="text-2xl lg:text-3xl font-bold">{project.totalBlocks}</div>
-                <div className="text-sm text-white/80">Blocks</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl lg:text-3xl font-bold">{project.totalUnits}</div>
-                <div className="text-sm text-white/80">Total Units</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl lg:text-3xl font-bold">{project.totalClients}</div>
-                <div className="text-sm text-white/80">Clients</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl lg:text-3xl font-bold">{project.allocationRate}%</div>
-                <div className="text-sm text-white/80">Allocation Rate</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
-
       {/* KPI Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Grid3X3 className="h-5 w-5 text-slate-600" />
+            </div>
+            <div className="text-2xl font-bold text-slate-600">{project.totalBlocks}</div>
+            <div className="text-sm text-muted-foreground">Total Plots</div>
+          </CardContent>
+        </Card>
+        
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Users className="h-5 w-5 text-purple-600" />
+            </div>
+            <div className="text-2xl font-bold text-purple-600">{project.totalClients}</div>
+            <div className="text-sm text-muted-foreground">Total Clients</div>
+          </CardContent>
+        </Card>
+        
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
@@ -647,51 +628,23 @@ export function ProjectDetailView() {
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Users className="h-5 w-5 text-purple-600" />
-            </div>
-            <div className="text-2xl font-bold text-purple-600">{project.totalClients}</div>
-            <div className="text-sm text-muted-foreground">Total Clients</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center mb-2">
               <DollarSign className="h-5 w-5 text-emerald-600" />
             </div>
             <div className="text-lg lg:text-xl font-bold text-emerald-600">{project.revenue}</div>
             <div className="text-sm text-muted-foreground">Revenue</div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Pending Allocations Alert */}
-      {project.pendingAllocations > 0 && (
-        <Card className="border-orange-200 bg-orange-50/50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-orange-600" />
-                <div>
-                  <h3 className="font-semibold text-orange-900">
-                    {project.pendingAllocations} Pending Allocations
-                  </h3>
-                  <p className="text-sm text-orange-700">
-                    Requires your attention for approval
-                  </p>
-                </div>
-              </div>
-              <Button 
-                size="sm"
-                onClick={handlePendingAllocations}
-                className="bg-orange-600 hover:bg-orange-700 text-white"
-              >
-                Review Now
-              </Button>
+        
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="flex items-center justify-center mb-2">
+              <TrendingUp className="h-5 w-5 text-red-600" />
             </div>
+            <div className="text-2xl font-bold text-red-600">₦{((parseFloat(project.totalRevenue.replace(/[^\d]/g, '')) - parseFloat(project.totalRevenue.replace(/[^\d]/g, '')) * 0.7) / 1000000000).toFixed(1)}B</div>
+            <div className="text-sm text-muted-foreground">Outstanding</div>
           </CardContent>
         </Card>
-      )}
+      </div>
 
       {/* Tabs Section */}
       <Card>
@@ -803,6 +756,26 @@ export function ProjectDetailView() {
           }}
         />
       )}
+
+      {/* Record Sale Modal */}
+      <RecordSaleModal
+        isOpen={isRecordSaleOpen}
+        onClose={() => setIsRecordSaleOpen(false)}
+        onSubmit={(data) => {
+          toast.success('Sale recorded successfully!');
+          setIsRecordSaleOpen(false);
+        }}
+      />
+
+      {/* Managed Allocations Modal */}
+      <AllocationFlowModal
+        isOpen={isManagedAllocationsOpen}
+        onClose={() => setIsManagedAllocationsOpen(false)}
+        onSubmit={(data) => {
+          toast.success('Allocation request submitted successfully!');
+          setIsManagedAllocationsOpen(false);
+        }}
+      />
     </div>
   );
 }

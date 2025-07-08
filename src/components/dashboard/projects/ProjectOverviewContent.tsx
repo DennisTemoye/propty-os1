@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, FileText, Tag, Clock, Activity } from 'lucide-react';
+import { User, FileText, Tag, Clock, Activity, Image } from 'lucide-react';
+import { getProjectImage, handleImageError } from '@/lib/utils';
 
 
 interface ProjectOverviewContentProps {
@@ -13,6 +14,8 @@ interface ProjectOverviewContentProps {
     internalNotes: string;
     tags: string[];
     allocationRate: number;
+    image?: string;
+    name: string;
   };
 }
 
@@ -39,6 +42,26 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Core Information Panel */}
         <div className="xl:col-span-2 space-y-6">
+          {/* Project Image */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center text-left">
+                <Image className="h-5 w-5 mr-2" />
+                Project Image
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative h-48 rounded-lg overflow-hidden">
+                <img 
+                  src={getProjectImage(project)} 
+                  alt={project.name}
+                  className="w-full h-full object-cover"
+                  onError={handleImageError}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center text-left">
@@ -56,6 +79,11 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
                 <User className="h-4 w-4 text-gray-400" />
                 <span className="text-sm text-gray-500">Project Manager:</span>
                 <span className="font-medium">{project.projectManager}</span>
+              </div>
+
+              <div className="text-left">
+                <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Document Title</h4>
+                <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-md text-left">CofO, Family Receipt, Survey Plan</p>
               </div>
 
               <div className="text-left">
