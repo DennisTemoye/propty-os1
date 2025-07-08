@@ -78,7 +78,7 @@ export function OTPVerificationModal({
                 <span className="font-medium">Client:</span> {allocation.clientName}
               </div>
               <div>
-                <span className="font-medium">Plot:</span> {allocation.plotNumber}
+                <span className="font-medium">Unit:</span> {allocation.unit}
               </div>
               <div>
                 <span className="font-medium">Project:</span> {allocation.projectName}

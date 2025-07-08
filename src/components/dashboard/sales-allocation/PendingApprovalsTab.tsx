@@ -21,7 +21,7 @@ const mockPendingApprovals: PendingAllocation[] = [
     id: 'approval-1',
     clientName: 'Alice Cooper',
     projectName: 'Ocean Breeze',
-    plotNumber: 'Block B - Plot 8',
+    unit: 'Block B - Plot 8',
     salesType: 'instant_allocation',
     submittedBy: 'Mike Davis',
     submittedAt: '2024-01-15T09:15:00Z',
@@ -33,7 +33,7 @@ const mockPendingApprovals: PendingAllocation[] = [
     id: 'approval-2',
     clientName: 'David Wilson',
     projectName: 'Royal Estate',
-    plotNumber: 'Block C - Plot 22',
+    unit: 'Block C - Plot 22',
     salesType: 'sales_offer',
     submittedBy: 'Sarah Wilson',
     submittedAt: '2024-01-14T16:45:00Z',
@@ -44,7 +44,7 @@ const mockPendingApprovals: PendingAllocation[] = [
     id: 'approval-3',
     clientName: 'Emma Thompson',
     projectName: 'Victoria Gardens',
-    plotNumber: 'Block A - Plot 5',
+    unit: 'Block A - Plot 5',
     salesType: 'reservation',
     submittedBy: 'Tom Johnson',
     submittedAt: '2024-01-13T11:30:00Z',
@@ -63,7 +63,7 @@ export function PendingApprovalsTab({ onApprove, onDecline }: PendingApprovalsTa
 
   const filteredApprovals = pendingApprovals.filter(allocation => {
     const matchesSearch = allocation.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (allocation.plotNumber && allocation.plotNumber.toLowerCase().includes(searchTerm.toLowerCase()));
+                         (allocation.unit && allocation.unit.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesProject = projectFilter === 'all' || allocation.projectName === projectFilter;
     
     return matchesSearch && matchesProject && allocation.status === 'pending';
@@ -161,7 +161,7 @@ export function PendingApprovalsTab({ onApprove, onDecline }: PendingApprovalsTa
                   <TableCell>
                     <div>
                       <div className="font-medium">{allocation.clientName}</div>
-                      <div className="text-sm text-gray-500">{allocation.plotNumber}</div>
+                      <div className="text-sm text-gray-500">{allocation.unit}</div>
                     </div>
                   </TableCell>
                   <TableCell>{allocation.projectName}</TableCell>
