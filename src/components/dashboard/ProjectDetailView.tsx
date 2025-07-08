@@ -30,7 +30,7 @@ import {
 import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
 import { EnhancedBlocksTab } from '@/components/dashboard/projects/EnhancedBlocksTab';
 import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
-import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
+import { ProjectSalesOverview } from '@/components/dashboard/projects/ProjectSalesOverview';
 import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
@@ -713,7 +713,7 @@ export function ProjectDetailView() {
           </TabsContent>
           
           <TabsContent value="sales" className="p-6 pt-0">
-            <ProjectSalesHistoryTab 
+            <ProjectSalesOverview 
               project={project} 
               onReallocate={handleReallocate} 
               onRevoke={handleRevoke} 
