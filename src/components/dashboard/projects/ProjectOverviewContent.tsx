@@ -59,6 +59,11 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
               </div>
 
               <div className="text-left">
+                <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Document Title</h4>
+                <p className="text-gray-900 text-left">Certificate of Occupancy (CofO), Family Receipt</p>
+              </div>
+
+              <div className="text-left">
                 <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Internal Notes</h4>
                 <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-md text-left">{project.internalNotes}</p>
               </div>
