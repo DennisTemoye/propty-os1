@@ -16,12 +16,6 @@ interface DocumentsViewProps {
     id: number;
     name: string;
   };
-  userPermissions?: {
-    canUpload?: boolean;
-    canDelete?: boolean;
-    canDownload?: boolean;
-    canView?: boolean;
-  };
 }
 
 const mockDocuments = [
@@ -31,7 +25,7 @@ const mockDocuments = [
   { id: 4, name: 'Site Survey.pdf', type: 'Survey', size: '3.2 MB', uploadDate: '2024-01-05', status: 'approved' },
 ];
 
-export function DocumentsView({ project, userPermissions = {} }: DocumentsViewProps) {
+export function DocumentsView({ project }: DocumentsViewProps) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [documents, setDocuments] = useState(mockDocuments);
 
@@ -81,14 +75,13 @@ export function DocumentsView({ project, userPermissions = {} }: DocumentsViewPr
     <div className="space-y-4 mt-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Project Documents</h3>
-        {userPermissions.canUpload !== false && (
-          <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Document
-              </Button>
-            </DialogTrigger>
+        <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Document
+            </Button>
+          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Upload Document</DialogTitle>
@@ -139,7 +132,6 @@ export function DocumentsView({ project, userPermissions = {} }: DocumentsViewPr
             </form>
           </DialogContent>
         </Dialog>
-        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -200,31 +192,26 @@ export function DocumentsView({ project, userPermissions = {} }: DocumentsViewPr
                   <Badge className={getStatusColor(doc.status)}>
                     {doc.status}
                   </Badge>
-                  {userPermissions.canView !== false && (
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleViewDocument(doc.id)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {userPermissions.canDownload !== false && (
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleDownloadDocument(doc.id)}
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {userPermissions.canDelete && (
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => handleViewDocument(doc.id)}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => handleDownloadDocument(doc.id)}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete Document</AlertDialogTitle>
@@ -243,7 +230,6 @@ export function DocumentsView({ project, userPermissions = {} }: DocumentsViewPr
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  )}
                 </div>
               </div>
             </CardContent>

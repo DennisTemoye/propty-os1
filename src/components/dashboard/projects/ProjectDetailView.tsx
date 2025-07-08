@@ -29,10 +29,7 @@ import {
   Map
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { ProjectOverviewTab } from './ProjectOverviewTab';
-import { ProjectBlocksPlotsTab } from './ProjectBlocksPlotsTab';
-import { ProjectAllocationsTab } from './ProjectAllocationsTab';
-import { ProjectLinkedClientsTab } from './ProjectLinkedClientsTab';
+import { BlocksUnitsManager } from './BlocksUnitsManager';
 import { DocumentsView } from '../documents/DocumentsView';
 import { getProjectImage, handleImageError } from '@/lib/utils';
 
@@ -325,22 +322,121 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="blocks">Blocks & Plots</TabsTrigger>
-          <TabsTrigger value="allocations">Allocations</TabsTrigger>
-          <TabsTrigger value="clients">Linked Clients</TabsTrigger>
+          <TabsTrigger value="layout">Layout</TabsTrigger>
+          <TabsTrigger value="blocks">Blocks</TabsTrigger>
+          <TabsTrigger value="sales">Sales</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <ProjectOverviewTab 
-            project={project} 
-            userPermissions={{
-              canEdit: true,
-              canViewFinancials: true,
-              canManage: true
-            }}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Development Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Type:</span>
+                    <span>{project.type}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Size:</span>
+                    <span>{project.projectSize}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Development Stage:</span>
+                    <span>{project.developmentStage}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Start Date:</span>
+                    <span>{mockDevelopmentDetails.startDate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Expected Completion:</span>
+                    <span>{mockDevelopmentDetails.expectedCompletion}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Document:</span>
+                    <span className="text-blue-600">{project.documentTitle}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleViewAllClients}
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    View All Clients
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleGenerateReport}
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Generate Sales Report
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleViewOnMap}
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    View on Map
+                  </Button>
+                  <Dialog open={isUploadDocumentOpen} onOpenChange={setIsUploadDocumentOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Documents
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Upload Document</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="docCategory">Document Category</Label>
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="allocation-letter">Allocation Letter</SelectItem>
+                              <SelectItem value="survey-plan">Survey Plan</SelectItem>
+                              <SelectItem value="deed-of-assignment">Deed of Assignment</SelectItem>
+                              <SelectItem value="building-plan">Building Plan</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="docFile">Choose File</Label>
+                          <Input type="file" id="docFile" accept=".pdf,.doc,.docx,.jpg,.png" />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button onClick={() => handleUploadDocument({})}>Upload</Button>
+                          <Button variant="outline" onClick={() => setIsUploadDocumentOpen(false)}>Cancel</Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="layout" className="space-y-4">
@@ -417,37 +513,9 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         </TabsContent>
 
         <TabsContent value="blocks" className="space-y-4">
-          <ProjectBlocksPlotsTab 
+          <BlocksUnitsManager 
             project={project} 
-            userPermissions={{
-              canEdit: true,
-              canManage: true,
-              canViewLayout: true
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="allocations" className="space-y-4">
-          <ProjectAllocationsTab 
-            project={project} 
-            userPermissions={{
-              canApprove: true,
-              canEdit: true,
-              canViewFinancials: true,
-              canManage: true
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="clients" className="space-y-4">
-          <ProjectLinkedClientsTab 
-            project={project} 
-            userPermissions={{
-              canManage: true,
-              canViewFinancials: true,
-              canEdit: true,
-              canViewKYC: true
-            }}
+            onAssignUnit={() => {}} 
           />
         </TabsContent>
 
@@ -476,15 +544,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         </TabsContent>
 
         <TabsContent value="documents" className="space-y-4">
-          <DocumentsView 
-            project={project} 
-            userPermissions={{
-              canUpload: true,
-              canDelete: true,
-              canDownload: true,
-              canView: true
-            }}
-          />
+          <DocumentsView project={project} />
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-4">
