@@ -123,34 +123,35 @@ const mockSalesData = [
 ];
 
 export function ProjectSalesOverview({ project, onReallocate, onRevoke }: ProjectSalesOverviewProps) {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [filterTab, setFilterTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [reallocationModalOpen, setReallocationModalOpen] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const navigate = useNavigate();
 
-  // Filter sales data based on search and filters
-  const filteredSales = mockSalesData.filter(sale => {
-    const matchesSearch = 
-      sale.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sale.unitId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sale.marketer.toLowerCase().includes(searchTerm.toLowerCase());
+  // Filter sales data based on allocation status
+  const getFilteredSales = () => {
+    let filtered = mockSalesData;
     
-    const matchesStatus = statusFilter === 'all' || sale.saleStatus === statusFilter;
+    if (filterTab === 'allocated') {
+      filtered = mockSalesData.filter(sale => sale.saleStatus === 'completed' || sale.saleStatus === 'active');
+    } else if (filterTab === 'unallocated') {
+      filtered = mockSalesData.filter(sale => sale.saleStatus === 'pending' || sale.saleStatus === 'negotiation');
+    }
     
-    return matchesSearch && matchesStatus;
-  });
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(sale => 
+        sale.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sale.unitId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sale.marketer.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    return filtered;
+  };
 
-  // Group sales by status
-  const completedSales = filteredSales.filter(s => s.saleStatus === 'completed');
-  const activeSales = filteredSales.filter(s => s.saleStatus === 'active');
-  const pendingSales = filteredSales.filter(s => s.saleStatus === 'pending' || s.saleStatus === 'negotiation');
-
-  // Calculate metrics
-  const totalRevenue = completedSales.reduce((sum, sale) => sum + sale.paidAmount, 0);
-  const pendingRevenue = activeSales.reduce((sum, sale) => sum + sale.outstandingAmount, 0);
-  const conversionRate = ((completedSales.length / mockSalesData.length) * 100).toFixed(1);
+  const filteredSales = getFilteredSales();
 
   const handleViewClient = (clientId: number) => {
     navigate(`/company/clients/${clientId}`);
@@ -210,17 +211,17 @@ export function ProjectSalesOverview({ project, onReallocate, onRevoke }: Projec
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header with Actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Sales Overview</h2>
-          <p className="text-gray-600">Track unit sales, payments, and customer progress</p>
+          <h2 className="text-2xl font-bold">Sales Overview</h2>
+          <p className="text-muted-foreground">Track unit sales and allocations</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Export Report
+            Export
           </Button>
           <Button size="sm">
             <Plus className="h-4 w-4 mr-2" />
@@ -229,89 +230,39 @@ export function ProjectSalesOverview({ project, onReallocate, onRevoke }: Projec
         </div>
       </div>
 
-      {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Sales</p>
-                <p className="text-2xl font-bold text-gray-900">{mockSalesData.length}</p>
-              </div>
-              <Users className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Filter Tabs */}
+      <Tabs value={filterTab} onValueChange={setFilterTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 max-w-md">
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="allocated">Allocated</TabsTrigger>
+          <TabsTrigger value="unallocated">Unallocated</TabsTrigger>
+        </TabsList>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Revenue Collected</p>
-                <p className="text-2xl font-bold text-green-600">{formatCurrency(totalRevenue)}</p>
-              </div>
-              <DollarSign className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending Revenue</p>
-                <p className="text-2xl font-bold text-orange-600">{formatCurrency(pendingRevenue)}</p>
-              </div>
-              <Clock className="h-8 w-8 text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
-                <p className="text-2xl font-bold text-purple-600">{conversionRate}%</p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-purple-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Sales Table with Filters */}
-      <Card>
-        <CardHeader className="pb-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <CardTitle>Sales Transactions</CardTitle>
-            <div className="flex gap-2 w-full sm:w-auto">
-              <div className="relative flex-1 sm:flex-none">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search clients or units..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-full sm:w-[250px]"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[140px]">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="negotiation">Negotiating</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        {/* Search Bar */}
+        <div className="flex gap-2 mt-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search clients, units, or marketers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
-        </CardHeader>
-        <CardContent>
+        </div>
+
+        {/* Sales Table */}
+        <TabsContent value={filterTab} className="mt-4">
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle>
+                {filterTab === 'all' && 'All Sales'}
+                {filterTab === 'allocated' && 'Allocated Units'}
+                {filterTab === 'unallocated' && 'Unallocated Units'}
+                {filteredSales.length > 0 && ` (${filteredSales.length})`}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
@@ -369,14 +320,16 @@ export function ProjectSalesOverview({ project, onReallocate, onRevoke }: Projec
                         <Eye className="h-4 w-4" />
                       </Button>
                       
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleReallocateClick(sale)}
-                        title="Reallocate Unit"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                      </Button>
+                      {(sale.saleStatus === 'completed' || sale.saleStatus === 'active') && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleReallocateClick(sale)}
+                          title="Reallocate Unit"
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                        </Button>
+                      )}
                       
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -410,13 +363,15 @@ export function ProjectSalesOverview({ project, onReallocate, onRevoke }: Projec
             </TableBody>
           </Table>
           
-          {filteredSales.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              No sales found matching your criteria.
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              {filteredSales.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No {filterTab === 'all' ? 'sales' : filterTab} units found{searchTerm && ' matching your search'}.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Reallocation Modal */}
       <ReallocationModal
