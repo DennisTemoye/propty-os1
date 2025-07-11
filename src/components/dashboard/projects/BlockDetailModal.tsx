@@ -6,26 +6,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Save, Trash2, Plus, Edit, Users } from 'lucide-react';
+import { Save, Trash2, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import { useProjectTerminology } from '@/hooks/useProjectTerminology';
+import { DynamicUnitsTable } from './DynamicUnitsTable';
+import { AddUnitModal } from './AddUnitModal';
+import { Block, Unit } from '@/types/project';
 
 interface BlockDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  block: any;
-  onUpdate: (blockData: any) => void;
+  block: Block;
+  onUpdate: (blockData: Block) => void;
   onDelete: (blockId: string) => void;
 }
 
 export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }: BlockDetailModalProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [blockData, setBlockData] = useState(block || {});
+  const [blockData, setBlockData] = useState<Block>(block);
+  const [isAddUnitOpen, setIsAddUnitOpen] = useState(false);
   
-  const { labels } = useProjectTerminology({ terminologyType: 'plots' });
+  const { labels } = useProjectTerminology({ terminologyType: block?.structureType || 'plots' });
 
   if (!block) return null;
 
@@ -40,17 +42,17 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
     onClose();
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'available':
-        return 'bg-green-100 text-green-800';
-      case 'reserved':
-        return 'bg-orange-100 text-orange-800';
-      case 'sold':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  const handleAddUnit = (newUnit: Unit) => {
+    const updatedBlock = {
+      ...blockData,
+      units: [...(blockData.units || []), newUnit],
+      totalUnits: (blockData.totalUnits || 0) + 1,
+      availableUnits: newUnit.status === 'available' ? (blockData.availableUnits || 0) + 1 : blockData.availableUnits || 0,
+      reservedUnits: newUnit.status === 'reserved' ? (blockData.reservedUnits || 0) + 1 : blockData.reservedUnits || 0,
+      soldUnits: newUnit.status === 'sold' ? (blockData.soldUnits || 0) + 1 : blockData.soldUnits || 0,
+    };
+    setBlockData(updatedBlock);
+    onUpdate(updatedBlock);
   };
 
   return (
@@ -129,6 +131,26 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
                 </div>
                 
                 <div>
+                  <Label>Block Structure</Label>
+                  {isEditing ? (
+                    <Select 
+                      value={blockData.structureType || block.structureType} 
+                      onValueChange={(value: 'plots' | 'units') => setBlockData({...blockData, structureType: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="plots">Plots (Land Development)</SelectItem>
+                        <SelectItem value="units">Units (Housing/Buildings)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p className="text-sm font-medium">{block.structureType === 'plots' ? 'Plots (Land Development)' : 'Units (Housing/Buildings)'}</p>
+                  )}
+                </div>
+
+                <div>
                   <Label>Block Type</Label>
                   {isEditing ? (
                     <Select 
@@ -142,6 +164,7 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
                         <SelectItem value="duplex">Duplex</SelectItem>
                         <SelectItem value="bungalow">Bungalow</SelectItem>
                         <SelectItem value="commercial">Commercial</SelectItem>
+                        <SelectItem value="land">Land Plot</SelectItem>
                         <SelectItem value="utility">Utility</SelectItem>
                       </SelectContent>
                     </Select>
@@ -197,65 +220,10 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
           </TabsContent>
 
           <TabsContent value="units" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">{labels.unitsManagement}</h3>
-              <Button size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                Add {labels.unit}
-              </Button>
-            </div>
-
-            <div className="border rounded-lg">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{labels.unitColumn}</TableHead>
-                    <TableHead>Size</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {block.units?.map((unit: any) => (
-                    <TableRow key={unit.id}>
-                      <TableCell className="font-medium">{unit.plotId}</TableCell>
-                      <TableCell>{unit.size}</TableCell>
-                      <TableCell className="font-medium">{unit.price}</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(unit.status)}>
-                          {unit.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{unit.client || '-'}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          {unit.status === 'available' && (
-                            <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                              <Users className="h-3 w-3 mr-1" />
-                              Assign
-                            </Button>
-                          )}
-                          <Button variant="outline" size="sm">
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button variant="outline" size="sm" className="text-red-600">
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )) || (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                        No units found in this block
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <DynamicUnitsTable 
+              block={blockData} 
+              onAddUnit={() => setIsAddUnitOpen(true)}
+            />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4">
@@ -264,7 +232,7 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
                 <Label htmlFor="blockStatus">Block Status</Label>
                 <Select 
                   value={blockData.status || block.status}
-                  onValueChange={(value) => setBlockData({...blockData, status: value})}
+                  onValueChange={(value: 'planning' | 'construction' | 'completed' | 'on-hold') => setBlockData({...blockData, status: value})}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -307,6 +275,13 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
             </div>
           </TabsContent>
         </Tabs>
+
+        <AddUnitModal
+          isOpen={isAddUnitOpen}
+          onClose={() => setIsAddUnitOpen(false)}
+          block={blockData}
+          onAddUnit={handleAddUnit}
+        />
       </DialogContent>
     </Dialog>
   );

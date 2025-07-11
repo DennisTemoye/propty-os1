@@ -30,10 +30,11 @@ const mockBlocks = [
     status: 'completed',
     defaultPrice: '₦25,000,000',
     defaultSize: '500sqm',
+    structureType: 'units',
     units: [
-      { id: '1', plotId: 'A-001', size: '500sqm', price: '₦25,000,000', status: 'sold', client: 'John Doe' },
-      { id: '2', plotId: 'A-002', size: '500sqm', price: '₦25,000,000', status: 'available', client: null },
-      { id: '3', plotId: 'A-003', size: '500sqm', price: '₦25,000,000', status: 'reserved', client: 'Jane Smith' },
+      { id: '1', plotId: 'A-001', size: '500sqm', price: '₦25,000,000', status: 'sold', client: 'John Doe', unitName: '5 Bedroom Duplex', bedrooms: 5, bathrooms: 4 },
+      { id: '2', plotId: 'A-002', size: '500sqm', price: '₦25,000,000', status: 'available', client: null, unitName: '5 Bedroom Duplex', bedrooms: 5, bathrooms: 4 },
+      { id: '3', plotId: 'A-003', size: '500sqm', price: '₦25,000,000', status: 'reserved', client: 'Jane Smith', unitName: '5 Bedroom Duplex', bedrooms: 5, bathrooms: 4 },
     ]
   },
   {
@@ -48,16 +49,17 @@ const mockBlocks = [
     status: 'construction',
     defaultPrice: '₦18,000,000',
     defaultSize: '400sqm',
+    structureType: 'units',
     units: [
-      { id: '4', plotId: 'B-001', size: '400sqm', price: '₦18,000,000', status: 'sold', client: 'Mike Johnson' },
-      { id: '5', plotId: 'B-002', size: '400sqm', price: '₦18,000,000', status: 'available', client: null },
+      { id: '4', plotId: 'B-001', size: '400sqm', price: '₦18,000,000', status: 'sold', client: 'Mike Johnson', unitName: '3 Bedroom Bungalow', bedrooms: 3, bathrooms: 2 },
+      { id: '5', plotId: 'B-002', size: '400sqm', price: '₦18,000,000', status: 'available', client: null, unitName: '3 Bedroom Bungalow', bedrooms: 3, bathrooms: 2 },
     ]
   },
   {
     id: 'C',
     name: 'Block C',
-    type: 'commercial',
-    description: 'Commercial units for business purposes',
+    type: 'land',
+    description: 'Residential land plots for development',
     totalUnits: 20,
     availableUnits: 15,
     reservedUnits: 3,
@@ -65,8 +67,9 @@ const mockBlocks = [
     status: 'planning',
     defaultPrice: '₦35,000,000',
     defaultSize: '300sqm',
+    structureType: 'plots',
     units: [
-      { id: '6', plotId: 'C-001', size: '300sqm', price: '₦35,000,000', status: 'sold', client: 'ABC Corp' },
+      { id: '6', plotId: 'C-001', size: '300sqm', price: '₦35,000,000', status: 'sold', client: 'ABC Corp', prototype: 'Residential Plot' },
     ]
   }
 ];
@@ -104,9 +107,10 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
       availableUnits: parseInt(formData.get('totalUnits') as string),
       reservedUnits: 0,
       soldUnits: 0,
-      status: 'planning',
+      status: 'planning' as const,
       defaultPrice: formData.get('defaultPrice') as string,
       defaultSize: formData.get('defaultSize') as string,
+      structureType: formData.get('structureType') as 'plots' | 'units',
       units: []
     };
     
@@ -163,6 +167,18 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
                   <Input id="blockName" name="blockName" placeholder="e.g., Block D" required />
                 </div>
                 <div>
+                  <Label htmlFor="structureType">Block Structure</Label>
+                  <Select name="structureType" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select structure type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="plots">Plots (Land Development)</SelectItem>
+                      <SelectItem value="units">Units (Housing/Buildings)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
                   <Label htmlFor="blockType">Block Type</Label>
                   <Select name="blockType" required>
                     <SelectTrigger>
@@ -172,6 +188,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
                       <SelectItem value="duplex">Duplex</SelectItem>
                       <SelectItem value="bungalow">Bungalow</SelectItem>
                       <SelectItem value="commercial">Commercial</SelectItem>
+                      <SelectItem value="land">Land Plot</SelectItem>
                       <SelectItem value="utility">Utility</SelectItem>
                     </SelectContent>
                   </Select>
@@ -181,15 +198,15 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
                   <Input id="description" name="description" placeholder="Brief description" />
                 </div>
                 <div>
-                  <Label htmlFor="totalUnits">Total Units</Label>
+                  <Label htmlFor="totalUnits">Total {labels.units}</Label>
                   <Input id="totalUnits" name="totalUnits" type="number" placeholder="e.g., 20" required />
                 </div>
                 <div>
-                  <Label htmlFor="defaultPrice">Default Unit Price</Label>
+                  <Label htmlFor="defaultPrice">Default {labels.unit} Price</Label>
                   <Input id="defaultPrice" name="defaultPrice" placeholder="e.g., ₦25,000,000" />
                 </div>
                 <div>
-                  <Label htmlFor="defaultSize">Default Unit Size</Label>
+                  <Label htmlFor="defaultSize">Default {labels.unit} Size</Label>
                   <Input id="defaultSize" name="defaultSize" placeholder="e.g., 500sqm" />
                 </div>
                 <div className="flex gap-2">
@@ -250,9 +267,14 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
                   <Building className="h-5 w-5 mr-2 text-blue-600" />
                   {block.name}
                 </CardTitle>
-                <Badge className={getStatusColor(block.status)}>
-                  {block.status}
-                </Badge>
+                <div className="flex space-x-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {block.structureType === 'plots' ? 'Plots' : 'Units'}
+                  </Badge>
+                  <Badge className={getStatusColor(block.status)}>
+                    {block.status}
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
