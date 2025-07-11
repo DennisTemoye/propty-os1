@@ -9,7 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 import { NewAllocationForm } from './forms/NewAllocationForm';
 import { ReallocationModal } from './forms/ReallocationModal';
-import { ReallocationHistory } from './ReallocationHistory';
+import { HistoryTab } from './sales-allocation/HistoryTab';
 import { UpdateAllocationStatusModal } from './forms/UpdateAllocationStatusModal';
 import { RevokeAllocationModal } from './forms/RevokeAllocationModal';
 import { PendingAllocationsTab } from './allocation/PendingAllocationsTab';
@@ -65,7 +65,7 @@ export function SalesAllocation() {
   const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('history');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showRecordSaleModal, setShowRecordSaleModal] = useState(false);
   const [showAllocationModal, setShowAllocationModal] = useState(false);
@@ -270,6 +270,7 @@ export function SalesAllocation() {
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="pending-offers" className="relative">
@@ -284,7 +285,6 @@ export function SalesAllocation() {
             Pending Approvals
             <Badge className="ml-2 bg-yellow-600 text-white text-xs">2</Badge>
           </TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pipeline" className="space-y-6">
@@ -314,7 +314,7 @@ export function SalesAllocation() {
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
-          <ReallocationHistory />
+          <HistoryTab onRevoke={handleRevokeAllocation} />
         </TabsContent>
 
         <TabsContent value="pending-offers" className="space-y-6">
