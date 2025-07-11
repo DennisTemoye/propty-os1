@@ -1,4 +1,3 @@
-
 export interface Lead {
   id: string;
   clientName: string;
@@ -15,6 +14,13 @@ export interface Lead {
   createdAt: string;
   lastActivity: string;
   nextFollowUp: string | null;
+  status: 'active' | 'closed_won' | 'closed_lost';
+  location?: string;
+  budget?: {
+    min: number;
+    max: number;
+  };
+  preferences?: string[];
 }
 
 export interface LeadNote {
@@ -22,7 +28,7 @@ export interface LeadNote {
   text: string;
   timestamp: string;
   author: string;
-  type: 'note' | 'call' | 'email' | 'meeting' | 'task';
+  type: 'note' | 'call' | 'email' | 'meeting' | 'task' | 'sms' | 'whatsapp';
 }
 
 export interface PipelineStage {
@@ -32,6 +38,7 @@ export interface PipelineStage {
   order: number;
   icon: string;
   isClosedStage?: boolean;
+  description?: string;
 }
 
 export interface PipelineSettings {
@@ -39,4 +46,14 @@ export interface PipelineSettings {
   defaultAssignee?: string;
   autoFollowUpDays?: number;
   requiredFields?: string[];
+}
+
+export interface PipelineMetrics {
+  totalLeads: number;
+  conversionRate: number;
+  averageDealSize: number;
+  totalValue: number;
+  wonDeals: number;
+  lostDeals: number;
+  activeLeads: number;
 }
