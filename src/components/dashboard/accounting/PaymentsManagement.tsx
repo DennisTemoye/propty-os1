@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Filter, Download, Plus, DollarSign, Building, Users, Calendar } from 'lucide-react';
 import { FeesPaymentsService } from '@/services/feesPaymentsService';
+import { toast } from 'sonner';
 
 export function PaymentsManagement() {
   const [activeTab, setActiveTab] = useState('all-payments');
@@ -60,7 +61,20 @@ export function PaymentsManagement() {
           <p className="text-gray-600">View all payment transactions and allocation history</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => {
+            // Export all payment records
+            const csvData = `Reference,Type,Client,Project,Amount,Status,Date\n${mockPayments.map(p => 
+              `${p.reference},${p.type},${p.client},${p.project},${formatCurrency(p.amount)},${p.status},${p.date}`
+            ).join('\n')}`;
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all-payment-records.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            toast.success('All payment records exported successfully');
+          }}>
             <Download className="h-4 w-4 mr-2" />
             Export All
           </Button>
@@ -159,10 +173,23 @@ export function PaymentsManagement() {
                     <SelectItem value="Emerald Heights">Emerald Heights</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
+                 <Button variant="outline" onClick={() => {
+                   // Export filtered payments data
+                   const csvData = `Reference,Type,Client,Project,Amount,Status,Date\n${filteredPayments.map(p => 
+                     `${p.reference},${p.type},${p.client},${p.project},${formatCurrency(p.amount)},${p.status},${p.date}`
+                   ).join('\n')}`;
+                   const blob = new Blob([csvData], { type: 'text/csv' });
+                   const url = window.URL.createObjectURL(blob);
+                   const a = document.createElement('a');
+                   a.href = url;
+                   a.download = 'payment-records.csv';
+                   a.click();
+                   window.URL.revokeObjectURL(url);
+                   toast.success('Payment records exported successfully');
+                 }}>
+                   <Download className="h-4 w-4 mr-2" />
+                   Export
+                 </Button>
               </div>
             </CardContent>
           </Card>

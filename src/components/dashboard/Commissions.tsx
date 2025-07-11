@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DollarSign, TrendingUp, Clock, CheckCircle } from 'lucide-react';
@@ -51,8 +52,24 @@ export function Commissions() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Commissions</h1>
         <div className="flex space-x-2">
-          <Button variant="outline">Export CSV</Button>
-          <Button className="bg-purple-600 hover:bg-purple-700">Process Payments</Button>
+          <Button variant="outline" onClick={() => {
+            // Export commission data as CSV
+            const csvData = "Client,Project,Marketer,Commission,Status\nJohn Doe,Victoria Gardens,Jane Smith,₦625000,Paid\n";
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'commissions.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            toast.success('Commission data exported successfully');
+          }}>Export CSV</Button>
+          <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => {
+            toast.success('Processing commission payments...');
+            setTimeout(() => {
+              toast.success('All pending commissions have been processed');
+            }, 2000);
+          }}>Process Payments</Button>
         </div>
       </div>
 

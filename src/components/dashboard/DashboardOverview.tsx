@@ -19,6 +19,7 @@ import { SendNoticeForm } from '@/components/dashboard/notices/SendNoticeForm';
 import { NewClientForm } from '@/components/dashboard/forms/NewClientForm';
 import { useResponsive } from '@/hooks/use-responsive';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const salesData = [
   { month: 'Jan', sales: 65, revenue: 2.4, allocations: 58 },
@@ -145,7 +146,20 @@ export function DashboardOverview() {
   ];
 
   const handleNewAction = (action: string) => {
-    console.log(`Creating new ${action}`);
+    // Navigate to the appropriate page for creating new items
+    const routes = {
+      'client': '/company/clients/new',
+      'project': '/company/projects/new', 
+      'marketer': '/company/agents-marketers',
+      'allocation': '/company/sales'
+    };
+    const route = routes[action as keyof typeof routes];
+    if (route) {
+      navigate(route);
+      toast.success(`Navigating to create new ${action}`);
+    } else {
+      toast.error(`Unknown action: ${action}`);
+    }
     if (action === 'payment') {
       setShowPaymentModal(true);
     } else if (action === 'client') {

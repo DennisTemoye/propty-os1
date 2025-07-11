@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Upload, Download, Share, Eye, Trash2, Plus, Search, Image, Video, Music, Filter } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface Document {
   id: number;
@@ -218,9 +219,13 @@ export function Documents() {
                       <Button size="sm" variant="outline" onClick={() => setViewDocument(doc)}>
                         <Eye className="h-3 w-3" />
                       </Button>
-                      <Button size="sm" variant="outline">
-                        <Download className="h-3 w-3" />
-                      </Button>
+                       <Button size="sm" variant="outline" onClick={() => {
+                         // Simulate document download
+                         toast.success(`Downloading ${doc.name}...`);
+                         // In real app, this would trigger actual download
+                       }}>
+                         <Download className="h-3 w-3" />
+                       </Button>
                       <Button size="sm" variant="outline" onClick={() => handleDelete(doc.id)}>
                         <Trash2 className="h-3 w-3" />
                       </Button>
@@ -250,12 +255,17 @@ export function Documents() {
                     <Button size="sm" variant="outline" onClick={() => setViewDocument(doc)}>
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button size="sm" variant="outline">
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Share className="h-4 w-4" />
-                    </Button>
+                     <Button size="sm" variant="outline" onClick={() => {
+                       toast.success(`Downloading ${doc.name}...`);
+                     }}>
+                       <Download className="h-4 w-4" />
+                     </Button>
+                     <Button size="sm" variant="outline" onClick={() => {
+                       navigator.clipboard.writeText(`${window.location.origin}/documents/${doc.id}`);
+                       toast.success('Document link copied to clipboard');
+                     }}>
+                       <Share className="h-4 w-4" />
+                     </Button>
                     <Button size="sm" variant="outline" onClick={() => handleDelete(doc.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -348,14 +358,23 @@ export function Documents() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <Button className="flex-1">
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
-                <Button variant="outline" className="flex-1">
-                  <Share className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
+                 <Button className="flex-1" onClick={() => {
+                   if (viewDocument) {
+                     toast.success(`Downloading ${viewDocument.name}...`);
+                   }
+                 }}>
+                   <Download className="h-4 w-4 mr-2" />
+                   Download
+                 </Button>
+                 <Button variant="outline" className="flex-1" onClick={() => {
+                   if (viewDocument) {
+                     navigator.clipboard.writeText(`${window.location.origin}/documents/${viewDocument.id}`);
+                     toast.success('Document link copied to clipboard');
+                   }
+                 }}>
+                   <Share className="h-4 w-4 mr-2" />
+                   Share
+                 </Button>
               </div>
             </div>
           )}

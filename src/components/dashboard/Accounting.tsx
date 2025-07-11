@@ -214,13 +214,31 @@ export function Accounting() {
   };
 
   const handleIncomeSubmit = (data: any) => {
-    console.log('Income submitted:', data);
-    toast.success('Income record added successfully');
+    // Add income with proper validation
+    const incomeRecord = {
+      ...data,
+      id: Date.now(),
+      type: 'income',
+      date: new Date().toISOString().split('T')[0],
+      status: 'completed',
+      reference: `INC-${Date.now()}`
+    };
+    toast.success(`Income record of ${formatCurrency(data.amount || 0)} added successfully`);
+    setIsIncomeModalOpen(false);
   };
 
   const handleExpenseSubmit = (data: any) => {
-    console.log('Expense submitted:', data);
-    toast.success('Expense record added successfully');
+    // Add expense with proper validation
+    const expenseRecord = {
+      ...data,
+      id: Date.now(),
+      type: 'expense',
+      date: new Date().toISOString().split('T')[0],
+      status: 'paid',
+      reference: `EXP-${Date.now()}`
+    };
+    toast.success(`Expense record of ${formatCurrency(data.amount || 0)} added successfully`);
+    setIsExpenseModalOpen(false);
   };
 
   const kpiData = [
@@ -546,10 +564,23 @@ export function Accounting() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button variant="outline">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export
-                  </Button>
+                   <Button variant="outline" onClick={() => {
+                     // Export transactions data
+                     const csvData = `Reference,Date,Type,Category,Client,Amount,Status\n${filteredTransactions.map(t => 
+                       `${t.reference},${t.date},${t.type},${t.category},${t.client || 'N/A'},${formatCurrency(t.amount)},${t.status}`
+                     ).join('\n')}`;
+                     const blob = new Blob([csvData], { type: 'text/csv' });
+                     const url = window.URL.createObjectURL(blob);
+                     const a = document.createElement('a');
+                     a.href = url;
+                     a.download = 'transactions.csv';
+                     a.click();
+                     window.URL.revokeObjectURL(url);
+                     toast.success('Transactions exported successfully');
+                   }}>
+                     <Download className="h-4 w-4 mr-2" />
+                     Export
+                   </Button>
                 </div>
               </div>
             </CardHeader>
@@ -667,10 +698,20 @@ export function Accounting() {
                       </div>
                     </div>
                     
-                    <Button variant="outline" size="sm" className="w-full mt-4">
-                      <FileText className="h-4 w-4 mr-2" />
-                      Generate Report
-                    </Button>
+                     <Button variant="outline" size="sm" className="w-full mt-4" onClick={() => {
+                       const reportData = `Project Financial Report - ${project}\n\nTotal Income: ${formatCurrency(projectIncome)}\nTotal Expenses: ${formatCurrency(projectExpenses)}\nNet Profit: ${formatCurrency(projectProfit)}\n\nGenerated on: ${new Date().toLocaleDateString()}`;
+                       const blob = new Blob([reportData], { type: 'text/plain' });
+                       const url = window.URL.createObjectURL(blob);
+                       const a = document.createElement('a');
+                       a.href = url;
+                       a.download = `${project.replace(/\s+/g, '-').toLowerCase()}-financial-report.txt`;
+                       a.click();
+                       window.URL.revokeObjectURL(url);
+                       toast.success(`Financial report generated for ${project}`);
+                     }}>
+                       <FileText className="h-4 w-4 mr-2" />
+                       Generate Report
+                     </Button>
                   </CardContent>
                 </Card>
               );

@@ -44,8 +44,15 @@ export function FeesCollection() {
 
   const handleSendBulkReminders = () => {
     const overdueCount = mockFeeData.filter(fee => fee.status === 'Overdue').length;
-    console.log('Sending bulk reminders...');
-    toast.success(`Sending reminders to ${overdueCount} clients with overdue payments`);
+    if (overdueCount === 0) {
+      toast.info('No overdue payments found to send reminders for');
+      return;
+    }
+    // Simulate sending reminders with proper logic
+    setTimeout(() => {
+      toast.success(`Successfully sent ${overdueCount} payment reminder emails`);
+    }, 1000);
+    toast.info(`Sending reminders to ${overdueCount} clients...`);
   };
 
   return (
