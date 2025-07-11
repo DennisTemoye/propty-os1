@@ -622,16 +622,28 @@ export function Accounting() {
                           {transaction.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-1">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+                       <TableCell>
+                         <div className="flex space-x-1">
+                           <Button variant="ghost" size="sm" onClick={() => {
+                             toast.info(`Viewing details for ${transaction.description}`);
+                           }}>
+                             <Eye className="h-4 w-4" />
+                           </Button>
+                           <Button variant="ghost" size="sm" onClick={() => {
+                             const receipt = `Transaction Receipt\n\nReference: ${transaction.reference}\nType: ${transaction.type}\nAmount: ${formatCurrency(transaction.amount)}\nDate: ${transaction.date}\nStatus: ${transaction.status}`;
+                             const blob = new Blob([receipt], { type: 'text/plain' });
+                             const url = window.URL.createObjectURL(blob);
+                             const a = document.createElement('a');
+                             a.href = url;
+                             a.download = `receipt-${transaction.reference}.txt`;
+                             a.click();
+                             window.URL.revokeObjectURL(url);
+                             toast.success(`Receipt downloaded for ${transaction.reference}`);
+                           }}>
+                             <Download className="h-4 w-4" />
+                           </Button>
+                         </div>
+                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
