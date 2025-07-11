@@ -29,6 +29,7 @@ const mockProjects = [
     startDate: '2024-01-01',
     expectedCompletion: '2025-12-31',
     totalBudget: '₦5,000,000,000',
+    terminologyType: 'units',
     blocks: [
       {
         id: 'Block-A',
@@ -36,6 +37,37 @@ const mockProjects = [
         units: 30,
         status: 'construction',
         description: 'Premium duplex units with modern amenities'
+      }
+    ]
+  },
+  {
+    id: 2,
+    name: 'Emerald Heights Land',
+    location: 'Abuja, FCT',
+    city: 'Abuja',
+    state: 'Federal Capital Territory',
+    category: 'Mixed',
+    type: 'Land Development',
+    status: 'ongoing',
+    developmentStage: 'Marketing',
+    totalBlocks: 8,
+    totalUnits: 200,
+    description: 'A mixed-use land development project with commercial and residential plots.',
+    projectManager: 'Bob Wilson',
+    tags: ['Mixed-Use', 'Land', 'Abuja'],
+    image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=1200&h=600&fit=crop',
+    projectSize: '80 hectares',
+    startDate: '2024-02-01',
+    expectedCompletion: '2026-12-31',
+    totalBudget: '₦4,200,000,000',
+    terminologyType: 'plots',
+    blocks: [
+      {
+        id: 'Block-B',
+        prototype: 'Commercial Plot',
+        units: 50,
+        status: 'marketing',
+        description: 'Prime commercial plots for business development'
       }
     ]
   }

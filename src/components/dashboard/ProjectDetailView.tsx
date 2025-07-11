@@ -67,11 +67,12 @@ const mockProjects = [
     tags: ['Premium', 'Residential', 'Lekki'],
     image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
     revenue: '₦2.5B',
-    lastActivity: '2 hours ago'
+    lastActivity: '2 hours ago',
+    terminologyType: 'units'
   },
   {
     id: 2,
-    name: 'Emerald Heights',
+    name: 'Emerald Heights Commercial',
     location: 'Abuja, FCT',
     city: 'Abuja',
     state: 'Federal Capital Territory',

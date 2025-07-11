@@ -32,11 +32,12 @@ const mockProjects = [
     developmentStage: 'Construction',
     revenue: '₦2.5B',
     lastActivity: '2 hours ago',
-    image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'
+    image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
+    terminologyType: 'units'
   },
   {
     id: 2,
-    name: 'Emerald Heights',
+    name: 'Emerald Heights Commercial',
     category: 'Mixed',
     type: 'Commercial',
     location: 'Abuja, FCT',
@@ -55,7 +56,8 @@ const mockProjects = [
     developmentStage: 'Marketing',
     revenue: '₦4.2B',
     lastActivity: '1 hour ago',
-    image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=450&fit=crop'
+    image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=450&fit=crop',
+    terminologyType: 'plots'
   },
   {
     id: 3,
