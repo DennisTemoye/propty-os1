@@ -32,38 +32,14 @@ import { toast } from 'sonner';
 
 import { DocumentsView } from '../documents/DocumentsView';
 import { ProjectBlocksTab } from './ProjectBlocksTab';
-import { ProjectSettingsTab } from './ProjectSettingsTab';
 import { getProjectImage, handleImageError } from '@/lib/utils';
 import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 
 import { Project } from '@/types/project';
 
 interface DevelopmentDetailViewProps {
-  project?: Project;
+  project: Project;
 }
-
-const mockProject: Project = {
-  id: 1,
-  name: 'Victoria Gardens Estate',
-  location: 'Lekki, Lagos',
-  category: 'Housing',
-  status: 'ongoing',
-  type: 'Residential',
-  totalUnits: 150,
-  soldUnits: 89,
-  reservedUnits: 23,
-  allocatedUnits: 89,
-  availableUnits: 38,
-  description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
-  projectManager: 'Alice Johnson',
-  tags: 'Premium, Residential, Lekki',
-  terminologyType: 'units' as const,
-  image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
-  projectSize: '50 hectares',
-  startDate: '2024-01-01',
-  expectedCompletion: '2025-12-31',
-  totalBudget: '₦5,000,000,000'
-};
 
 const mockDevelopmentDetails = {
   description: 'A premium residential estate featuring modern amenities and strategic location.',
@@ -93,11 +69,8 @@ const mockDevelopmentDetails = {
   ]
 };
 
-export function ProjectDetailView({ project: projectProp }: DevelopmentDetailViewProps = {}) {
-  const project = projectProp || mockProject;
+export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
   const [activeTab, setActiveTab] = useState('overview');
-  
-  console.log('ProjectDetailView rendering, activeTab:', activeTab);
   const [isUploadLayoutOpen, setIsUploadLayoutOpen] = useState(false);
   const [isUploadDocumentOpen, setIsUploadDocumentOpen] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState<any>(null);
@@ -338,10 +311,7 @@ export function ProjectDetailView({ project: projectProp }: DevelopmentDetailVie
       </div>
 
       {/* Enhanced Tabs with Functional Actions */}
-      <Tabs value={activeTab} onValueChange={(value) => {
-        console.log('Tab changing to:', value);
-        setActiveTab(value);
-      }}>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="layout">Layout</TabsTrigger>
@@ -567,17 +537,111 @@ export function ProjectDetailView({ project: projectProp }: DevelopmentDetailVie
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-4">
-          <ProjectSettingsTab project={{
-            id: project.id,
-            name: project.name,
-            location: project.location,
-            category: project.category,
-            type: project.type,
-            status: project.status,
-            description: project.description || mockDevelopmentDetails.description,
-            projectManager: project.projectManager || 'Alice Johnson',
-            internalNotes: 'Focus on completing ongoing construction blocks before launching new phases.'
-          }} />
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Project Settings</h2>
+            <div className="flex space-x-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="text-red-600 hover:text-red-700">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Project
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data including allocations, blocks, and units.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      className="bg-red-600 hover:bg-red-700"
+                      onClick={() => {
+                        console.log('Delete project:', project.id);
+                        toast.success('Project deleted successfully');
+                      }}
+                    >
+                      Delete Project
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              <Button onClick={() => {
+                // Save project settings with proper validation
+                const updatedProject = {
+                  ...project,
+                  lastModified: new Date().toISOString()
+                };
+                toast.success('Project settings saved successfully');
+                // In real app, this would update the project in state/backend
+              }}>
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </Button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Basic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="projectName">Project Name</Label>
+                  <Input id="projectName" defaultValue={project.name} />
+                </div>
+                <div>
+                  <Label htmlFor="location">Location</Label>
+                  <Input id="location" defaultValue={project.location} />
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea id="description" defaultValue={mockDevelopmentDetails.description} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Project Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="status">Status</Label>
+                  <Select defaultValue={project.status}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="paused">Paused</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="type">Type</Label>
+                  <Select defaultValue={project.type.toLowerCase()}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="residential">Residential</SelectItem>
+                      <SelectItem value="commercial">Commercial</SelectItem>
+                      <SelectItem value="mixed">Mixed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="expectedCompletion">Expected Completion</Label>
+                  <Input id="expectedCompletion" type="date" defaultValue={mockDevelopmentDetails.expectedCompletion} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 

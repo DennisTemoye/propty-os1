@@ -25,8 +25,6 @@ interface ProjectSettingsTabProps {
 }
 
 export function ProjectSettingsTab({ project }: ProjectSettingsTabProps) {
-  console.log('ProjectSettingsTab rendered with project:', project);
-  
   const [formData, setFormData] = useState({
     name: project.name,
     location: project.location,

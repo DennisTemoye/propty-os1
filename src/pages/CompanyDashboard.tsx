@@ -20,7 +20,7 @@ import { ReferralProgram } from '@/components/dashboard/ReferralProgram';
 import { HelpSupport } from '@/components/dashboard/HelpSupport';
 import { MobileWarningBanner } from '@/components/common/MobileWarningBanner';
 import { ResponsiveContainer } from '@/components/common/ResponsiveContainer';
-import { ProjectDetailView } from '@/components/dashboard/projects/ProjectDetailView';
+import { ProjectDetailView } from '@/components/dashboard/ProjectDetailView';
 import { ClientDetailView } from '@/components/dashboard/ClientDetailView';
 import { MarketerDetailView } from '@/components/dashboard/MarketerDetailView';
 import { useLocation } from 'react-router-dom';
