@@ -36,7 +36,9 @@ const mockClients = [
     nextPayment: '2024-02-15',
     documents: ['Allocation Letter', 'MoU', 'Payment Schedule'],
     paymentProgress: 60,
-    assignedDate: '2024-01-10'
+    assignedDate: '2024-01-10',
+    allocationStatus: 'allocated',
+    paymentStatus: 'partial'
   },
   {
     id: 2,
@@ -114,7 +116,9 @@ const mockClients = [
     nextPayment: '2024-02-20',
     documents: ['Allocation Letter', 'MoU', 'Payment Schedule', 'Investment Agreement'],
     paymentProgress: 41,
-    assignedDate: '2024-01-15'
+    assignedDate: '2024-01-15',
+    allocationStatus: 'allocated',
+    paymentStatus: 'partial'
   },
   {
     id: 3,
@@ -142,7 +146,9 @@ const mockClients = [
     nextPayment: null,
     documents: ['Allocation Letter', 'MoU', 'Payment Schedule', 'Certificate of Occupancy'],
     paymentProgress: 100,
-    assignedDate: '2023-12-01'
+    assignedDate: '2023-12-01',
+    allocationStatus: 'allocated',
+    paymentStatus: 'paid'
   },
   {
     id: 4,
@@ -159,7 +165,34 @@ const mockClients = [
     nextPayment: null,
     documents: ['KYC Documents'],
     paymentProgress: 0,
-    assignedDate: null
+    assignedDate: null,
+    allocationStatus: 'unallocated',
+    paymentStatus: 'unpaid'
+  },
+  {
+    id: 5,
+    name: 'David Brown',
+    email: 'david@example.com',
+    phone: '+234 805 678 9012',
+    address: '654 Surulere, Lagos',
+    nationalId: 'MNO123789456',
+    passportPhoto: null,
+    projects: [
+      {
+        name: 'Sunset Heights',
+        unit: 'Block A - Plot 15',
+        assignedDate: '2024-01-05'
+      }
+    ],
+    kycStatus: 'verified',
+    totalPaid: '₦5M',
+    balance: '₦20M',
+    nextPayment: '2024-03-01',
+    documents: ['Allocation Letter', 'MoU'],
+    paymentProgress: 20,
+    assignedDate: '2024-01-05',
+    allocationStatus: 'allocated',
+    paymentStatus: 'overdue'
   }
 ];
 
@@ -169,6 +202,8 @@ export function Clients() {
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [isDocumentsOpen, setIsDocumentsOpen] = useState(false);
   const [filterKyc, setFilterKyc] = useState<string>('all');
+  const [filterAllocation, setFilterAllocation] = useState<string>('all');
+  const [filterPayment, setFilterPayment] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const navigate = useNavigate();
@@ -184,11 +219,41 @@ export function Clients() {
     }
   };
 
+  const getAllocationStatusColor = (status: string) => {
+    switch (status) {
+      case 'allocated':
+        return 'bg-green-100 text-green-800';
+      case 'unallocated':
+        return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getPaymentStatusColor = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-800';
+      case 'partial':
+        return 'bg-blue-100 text-blue-800';
+      case 'overdue':
+        return 'bg-red-100 text-red-800';
+      case 'unpaid':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   const filteredClients = mockClients.filter(client => {
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          client.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesKyc = filterKyc === 'all' || client.kycStatus === filterKyc;
-    return matchesSearch && matchesKyc;
+    const matchesAllocation = filterAllocation === 'all' || client.allocationStatus === filterAllocation;
+    const matchesPayment = filterPayment === 'all' || client.paymentStatus === filterPayment;
+    return matchesSearch && matchesKyc && matchesAllocation && matchesPayment;
   });
 
   const handleClientClick = (clientId: number) => {
@@ -265,7 +330,7 @@ export function Clients() {
 
       {/* Filters and Search */}
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center flex-wrap">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -276,13 +341,36 @@ export function Clients() {
             />
           </div>
           <Select value={filterKyc} onValueChange={setFilterKyc}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-40 bg-background border-border z-10">
               <SelectValue placeholder="Filter by KYC" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-background border-border z-50">
               <SelectItem value="all">All KYC</SelectItem>
               <SelectItem value="verified">Verified</SelectItem>
               <SelectItem value="unverified">Unverified</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filterAllocation} onValueChange={setFilterAllocation}>
+            <SelectTrigger className="w-40 bg-background border-border z-10">
+              <SelectValue placeholder="Allocation Status" />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border z-50">
+              <SelectItem value="all">All Allocations</SelectItem>
+              <SelectItem value="allocated">Allocated</SelectItem>
+              <SelectItem value="unallocated">Unallocated</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filterPayment} onValueChange={setFilterPayment}>
+            <SelectTrigger className="w-40 bg-background border-border z-10">
+              <SelectValue placeholder="Payment Status" />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border z-50">
+              <SelectItem value="all">All Payments</SelectItem>
+              <SelectItem value="paid">Paid</SelectItem>
+              <SelectItem value="partial">Partial</SelectItem>
+              <SelectItem value="overdue">Overdue</SelectItem>
+              <SelectItem value="unpaid">Unpaid</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -300,7 +388,7 @@ export function Clients() {
             size="sm"
             onClick={() => setViewMode('table')}
           >
-            Table View
+            List View
           </Button>
         </div>
       </div>
@@ -332,6 +420,12 @@ export function Clients() {
                   <div className="flex flex-col gap-2">
                     <Badge className={getKycStatusColor(client.kycStatus)}>
                       KYC {client.kycStatus}
+                    </Badge>
+                    <Badge className={getAllocationStatusColor(client.allocationStatus)}>
+                      {client.allocationStatus}
+                    </Badge>
+                    <Badge className={getPaymentStatusColor(client.paymentStatus)}>
+                      {client.paymentStatus}
                     </Badge>
                   </div>
                 </div>
@@ -421,7 +515,7 @@ export function Clients() {
                 <TableRow>
                   <TableHead>Client</TableHead>
                   <TableHead>Projects/Plots</TableHead>
-                  <TableHead>KYC Status</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Payment Progress</TableHead>
                   <TableHead>Next Due</TableHead>
                   <TableHead>Actions</TableHead>
@@ -464,9 +558,17 @@ export function Clients() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge className={getKycStatusColor(client.kycStatus)}>
-                        KYC {client.kycStatus}
-                      </Badge>
+                      <div className="flex flex-col gap-1">
+                        <Badge className={getKycStatusColor(client.kycStatus)}>
+                          KYC {client.kycStatus}
+                        </Badge>
+                        <Badge className={getAllocationStatusColor(client.allocationStatus)}>
+                          {client.allocationStatus}
+                        </Badge>
+                        <Badge className={getPaymentStatusColor(client.paymentStatus)}>
+                          {client.paymentStatus}
+                        </Badge>
+                      </div>
                     </TableCell>
                     <TableCell>
                       {client.projects && client.projects.length > 0 ? (
