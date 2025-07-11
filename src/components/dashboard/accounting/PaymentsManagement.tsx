@@ -8,82 +8,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Filter, Download, Plus, DollarSign, Building, Users, Calendar } from 'lucide-react';
-import { InfrastructureFeeModal } from './InfrastructureFeeModal';
-import { ServiceChargeModal } from './ServiceChargeModal';
-
-// Mock data for all payments
-const mockPayments = [
-  {
-    id: 1,
-    type: 'Property Sale',
-    client: 'John Doe',
-    project: 'Victoria Gardens',
-    marketer: 'Jane Smith',
-    amount: 25000000,
-    status: 'completed',
-    date: '2024-01-15',
-    reference: 'PAY-001'
-  },
-  {
-    id: 2,
-    type: 'Infrastructure Fee',
-    client: 'Sarah Johnson',
-    project: 'Golden View Towers',
-    marketer: 'Mike Davis',
-    amount: 2500000,
-    status: 'pending',
-    date: '2024-01-20',
-    reference: 'INF-002'
-  },
-  {
-    id: 3,
-    type: 'Service Charge',
-    client: 'David Wilson',
-    project: 'Emerald Heights',
-    marketer: 'Sarah Johnson',
-    amount: 150000,
-    status: 'overdue',
-    date: '2024-01-01',
-    reference: 'SVC-003'
-  }
-];
-
-const mockInfrastructureFees = [
-  {
-    id: 1,
-    project: 'Victoria Gardens',
-    feeAmount: 5000000,
-    chargeType: 'milestone',
-    milestones: ['Foundation', 'Roofing', 'Completion'],
-    clients: [
-      { name: 'John Doe', status: 'paid', amountPaid: 5000000 },
-      { name: 'Jane Smith', status: 'partially_paid', amountPaid: 2500000 }
-    ]
-  }
-];
-
-const mockServiceCharges = [
-  {
-    id: 1,
-    project: 'Victoria Gardens',
-    chargeName: 'Estate Management',
-    amount: 50000,
-    frequency: 'monthly',
-    description: 'Monthly estate management and security fees',
-    clients: [
-      { name: 'John Doe', status: 'paid', lastPayment: '2024-01-15' },
-      { name: 'Jane Smith', status: 'overdue', lastPayment: '2023-12-15' }
-    ]
-  }
-];
+import { FeesPaymentsService } from '@/services/feesPaymentsService';
 
 export function PaymentsManagement() {
   const [activeTab, setActiveTab] = useState('all-payments');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [projectFilter, setProjectFilter] = useState('all');
-  const [showInfraModal, setShowInfraModal] = useState(false);
-  const [showServiceModal, setShowServiceModal] = useState(false);
+  
+  const mockPayments = FeesPaymentsService.getPayments();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -123,23 +56,13 @@ export function PaymentsManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Payments Management</h2>
-          <p className="text-gray-600">Centralized payment tracking and fee management</p>
+          <h2 className="text-2xl font-bold text-gray-900">Payment Records</h2>
+          <p className="text-gray-600">View all payment transactions and allocation history</p>
         </div>
         <div className="flex space-x-2">
-          <Button 
-            onClick={() => setShowInfraModal(true)}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Building className="h-4 w-4 mr-2" />
-            Infrastructure Fee
-          </Button>
-          <Button 
-            onClick={() => setShowServiceModal(true)}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <DollarSign className="h-4 w-4 mr-2" />
-            Service Charge
+          <Button variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export All
           </Button>
         </div>
       </div>
@@ -194,10 +117,8 @@ export function PaymentsManagement() {
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all-payments">All Payments</TabsTrigger>
-          <TabsTrigger value="infrastructure">Infrastructure Fees</TabsTrigger>
-          <TabsTrigger value="service-charges">Service Charges</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-1">
+          <TabsTrigger value="all-payments">Payment Records</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all-payments" className="space-y-4">
@@ -288,118 +209,8 @@ export function PaymentsManagement() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="infrastructure" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Infrastructure Fees by Project</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {mockInfrastructureFees.map((infra) => (
-                  <div key={infra.id} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-semibold text-lg">{infra.project}</h3>
-                        <p className="text-gray-600">Fee: {formatCurrency(infra.feeAmount)}</p>
-                        <p className="text-sm text-gray-500">
-                          Charge Type: {infra.chargeType === 'milestone' ? 'Milestone-based' : 'Full upfront'}
-                        </p>
-                      </div>
-                      <Button variant="outline" size="sm">Edit</Button>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-medium mb-2">Client Status</h4>
-                        <div className="space-y-2">
-                          {infra.clients.map((client, idx) => (
-                            <div key={idx} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                              <span>{client.name}</span>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-sm">{formatCurrency(client.amountPaid)}</span>
-                                <Badge className={getStatusColor(client.status)}>
-                                  {client.status.replace('_', ' ')}
-                                </Badge>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {infra.chargeType === 'milestone' && (
-                        <div>
-                          <h4 className="font-medium mb-2">Milestones</h4>
-                          <div className="space-y-1">
-                            {infra.milestones.map((milestone, idx) => (
-                              <div key={idx} className="p-2 bg-blue-50 rounded text-sm">
-                                {milestone}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="service-charges" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Service Charges by Project</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {mockServiceCharges.map((service) => (
-                  <div key={service.id} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-semibold text-lg">{service.chargeName}</h3>
-                        <p className="text-gray-600">{service.project}</p>
-                        <p className="text-sm text-gray-500">{service.description}</p>
-                        <p className="text-sm font-medium mt-1">
-                          {formatCurrency(service.amount)} / {service.frequency}
-                        </p>
-                      </div>
-                      <Button variant="outline" size="sm">Edit</Button>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-medium mb-2">Client Payment Status</h4>
-                      <div className="space-y-2">
-                        {service.clients.map((client, idx) => (
-                          <div key={idx} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                            <span>{client.name}</span>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm">Last: {client.lastPayment}</span>
-                              <Badge className={getStatusColor(client.status)}>
-                                {client.status}
-                              </Badge>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
 
-      {/* Modals */}
-      <InfrastructureFeeModal 
-        isOpen={showInfraModal}
-        onClose={() => setShowInfraModal(false)}
-      />
-      <ServiceChargeModal 
-        isOpen={showServiceModal}
-        onClose={() => setShowServiceModal(false)}
-      />
     </div>
   );
 }

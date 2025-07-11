@@ -15,49 +15,8 @@ import { RecordFeeModal } from './fees/RecordFeeModal';
 import { FeeDetailsModal } from './fees/FeeDetailsModal';
 import { SimplifiedFeesOverview } from './fees/SimplifiedFeesOverview';
 import { DownloadService } from '@/services/downloadService';
+import { FeesPaymentsService } from '@/services/feesPaymentsService';
 import { toast } from 'sonner';
-
-const mockFeeData = [
-  {
-    id: 1,
-    clientName: 'John Doe',
-    project: 'Victoria Gardens',
-    unit: 'Block A - Plot 02',
-    feeType: 'Infrastructure Fee',
-    amount: '₦5,000,000',
-    status: 'Partially Paid',
-    paid: '₦2,000,000',
-    outstanding: '₦3,000,000',
-    dueDate: '2024-02-15',
-    lastPayment: '2024-01-15'
-  },
-  {
-    id: 2,
-    clientName: 'Jane Smith',
-    project: 'Emerald Heights',
-    unit: 'Block B - Plot 12',
-    feeType: 'Service Charge',
-    amount: '₦50,000',
-    status: 'Overdue',
-    paid: '₦0',
-    outstanding: '₦50,000',
-    dueDate: '2024-01-30',
-    lastPayment: null
-  },
-  {
-    id: 3,
-    clientName: 'Mike Johnson',
-    project: 'Golden View',
-    unit: 'Block C - Plot 05',
-    feeType: 'Infrastructure Fee',
-    amount: '₦4,500,000',
-    status: 'Paid',
-    paid: '₦4,500,000',
-    outstanding: '₦0',
-    dueDate: '2024-01-01',
-    lastPayment: '2023-12-28'
-  }
-];
 
 export function FeesCollection() {
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
@@ -65,6 +24,8 @@ export function FeesCollection() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isFeeDetailsModalOpen, setIsFeeDetailsModalOpen] = useState(false);
   const [selectedFee, setSelectedFee] = useState<any>(null);
+  
+  const mockFeeData = FeesPaymentsService.getFees();
 
   const handleRecordPayment = (fee: any) => {
     setSelectedFee(fee);
@@ -92,8 +53,8 @@ export function FeesCollection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Fees Collection</h1>
-          <p className="text-gray-600 mt-1">Manage and track fee collections efficiently</p>
+          <h1 className="text-3xl font-bold text-gray-900">Fees Management</h1>
+          <p className="text-gray-600 mt-1">Setup, manage and collect project fees (Infrastructure, Service charges, etc.)</p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={handleExportFeeStatement} size="sm" className="hover:bg-primary/5 hover:border-primary/20 transition-all duration-200">
