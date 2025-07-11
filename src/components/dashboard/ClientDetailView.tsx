@@ -97,7 +97,7 @@ export function ClientDetailView() {
           </Button>
           <Button onClick={() => setIsSendNoticeOpen(true)} className="bg-purple-600 hover:bg-purple-700">
             <FileText className="h-4 w-4 mr-2" />
-            Send Notice
+            Notice
           </Button>
           <Button variant="outline" onClick={handleEdit}>
             <Edit className="h-4 w-4 mr-2" />

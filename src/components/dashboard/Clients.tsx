@@ -488,7 +488,7 @@ export function Clients() {
                     onClick={(e) => handleSendNotice(e, client)}
                   >
                     <FileText className="h-3 w-3 mr-1" />
-                    Send Notice
+                    Notice
                   </Button>
                   <Button 
                     variant="outline" 
