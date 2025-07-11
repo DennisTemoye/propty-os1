@@ -37,8 +37,7 @@ const mockClients = [
     documents: ['Allocation Letter', 'MoU', 'Payment Schedule'],
     paymentProgress: 60,
     assignedDate: '2024-01-10',
-    allocationStatus: 'allocated',
-    paymentStatus: 'partial'
+    status: 'Allocated'
   },
   {
     id: 2,
@@ -117,8 +116,7 @@ const mockClients = [
     documents: ['Allocation Letter', 'MoU', 'Payment Schedule', 'Investment Agreement'],
     paymentProgress: 41,
     assignedDate: '2024-01-15',
-    allocationStatus: 'allocated',
-    paymentStatus: 'partial'
+    status: 'Allocated'
   },
   {
     id: 3,
@@ -147,8 +145,7 @@ const mockClients = [
     documents: ['Allocation Letter', 'MoU', 'Payment Schedule', 'Certificate of Occupancy'],
     paymentProgress: 100,
     assignedDate: '2023-12-01',
-    allocationStatus: 'allocated',
-    paymentStatus: 'paid'
+    status: 'Paid'
   },
   {
     id: 4,
@@ -166,8 +163,7 @@ const mockClients = [
     documents: ['KYC Documents'],
     paymentProgress: 0,
     assignedDate: null,
-    allocationStatus: 'unallocated',
-    paymentStatus: 'unpaid'
+    status: 'New'
   },
   {
     id: 5,
@@ -191,8 +187,7 @@ const mockClients = [
     documents: ['Allocation Letter', 'MoU'],
     paymentProgress: 20,
     assignedDate: '2024-01-05',
-    allocationStatus: 'allocated',
-    paymentStatus: 'overdue'
+    status: 'Reserved'
   }
 ];
 
@@ -203,7 +198,6 @@ export function Clients() {
   const [isSendNoticeOpen, setIsSendNoticeOpen] = useState(false);
   const [filterKyc, setFilterKyc] = useState<string>('all');
   const [filterAllocation, setFilterAllocation] = useState<string>('all');
-  const [filterPayment, setFilterPayment] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const navigate = useNavigate();
@@ -219,29 +213,16 @@ export function Clients() {
     }
   };
 
-  const getAllocationStatusColor = (status: string) => {
+  const getClientStatusColor = (status: string) => {
     switch (status) {
-      case 'allocated':
-        return 'bg-green-100 text-green-800';
-      case 'unallocated':
+      case 'New':
         return 'bg-gray-100 text-gray-800';
-      case 'pending':
+      case 'Reserved':
         return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return 'bg-green-100 text-green-800';
-      case 'partial':
+      case 'Allocated':
         return 'bg-blue-100 text-blue-800';
-      case 'overdue':
-        return 'bg-red-100 text-red-800';
-      case 'unpaid':
-        return 'bg-gray-100 text-gray-800';
+      case 'Paid':
+        return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -251,9 +232,8 @@ export function Clients() {
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          client.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesKyc = filterKyc === 'all' || client.kycStatus === filterKyc;
-    const matchesAllocation = filterAllocation === 'all' || client.allocationStatus === filterAllocation;
-    const matchesPayment = filterPayment === 'all' || client.paymentStatus === filterPayment;
-    return matchesSearch && matchesKyc && matchesAllocation && matchesPayment;
+    const matchesStatus = filterAllocation === 'all' || client.status === filterAllocation;
+    return matchesSearch && matchesKyc && matchesStatus;
   });
 
   const handleClientClick = (clientId: number) => {
@@ -352,25 +332,14 @@ export function Clients() {
           </Select>
           <Select value={filterAllocation} onValueChange={setFilterAllocation}>
             <SelectTrigger className="w-40 bg-background border-border z-10">
-              <SelectValue placeholder="Allocation Status" />
+              <SelectValue placeholder="Client Status" />
             </SelectTrigger>
             <SelectContent className="bg-background border-border z-50">
-              <SelectItem value="all">All Allocations</SelectItem>
-              <SelectItem value="allocated">Allocated</SelectItem>
-              <SelectItem value="unallocated">Unallocated</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filterPayment} onValueChange={setFilterPayment}>
-            <SelectTrigger className="w-40 bg-background border-border z-10">
-              <SelectValue placeholder="Payment Status" />
-            </SelectTrigger>
-            <SelectContent className="bg-background border-border z-50">
-              <SelectItem value="all">All Payments</SelectItem>
-              <SelectItem value="paid">Paid</SelectItem>
-              <SelectItem value="partial">Partial</SelectItem>
-              <SelectItem value="overdue">Overdue</SelectItem>
-              <SelectItem value="unpaid">Unpaid</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="New">New</SelectItem>
+              <SelectItem value="Reserved">Reserved</SelectItem>
+              <SelectItem value="Allocated">Allocated</SelectItem>
+              <SelectItem value="Paid">Paid</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -436,8 +405,8 @@ export function Clients() {
                         <Badge className={getKycStatusColor(client.kycStatus)}>
                           KYC {client.kycStatus}
                         </Badge>
-                        <Badge className={getAllocationStatusColor(client.allocationStatus)}>
-                          {client.allocationStatus}
+                        <Badge className={getClientStatusColor(client.status)}>
+                          {client.status}
                         </Badge>
                       </div>
                     </div>
@@ -474,8 +443,8 @@ export function Clients() {
                       <Badge className={getKycStatusColor(client.kycStatus)}>
                         KYC {client.kycStatus}
                       </Badge>
-                      <Badge className={getAllocationStatusColor(client.allocationStatus)}>
-                        {client.allocationStatus}
+                      <Badge className={getClientStatusColor(client.status)}>
+                        {client.status}
                       </Badge>
                     </div>
                     <Button 
@@ -546,8 +515,8 @@ export function Clients() {
                             <Badge className={getKycStatusColor(client.kycStatus)}>
                               KYC {client.kycStatus}
                             </Badge>
-                            <Badge className={getAllocationStatusColor(client.allocationStatus)}>
-                              {client.allocationStatus}
+                            <Badge className={getClientStatusColor(client.status)}>
+                              {client.status}
                             </Badge>
                           </div>
                         </div>
@@ -571,7 +540,9 @@ export function Clients() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm text-gray-500">Payment Status</div>
+                      <Badge className={getClientStatusColor(client.status)}>
+                        {client.status}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       {client.projects && client.projects.length > 0 ? (
