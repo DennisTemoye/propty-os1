@@ -8,7 +8,7 @@ import { Form } from '@/components/ui/form';
 import { FormInput } from '@/components/shared/FormInput';
 import { FormSelect } from '@/components/shared/FormSelect';
 import { MapPin, Building2, Layers, Info, Plus, Trash2, Upload, X, FileText, Download, User, Tag } from 'lucide-react';
-import { projectFormSchema, ProjectFormData, projectCategoryOptions, projectStatusOptions, teamMemberOptions } from '@/forms/projectFormSchema';
+import { projectFormSchema, ProjectFormData, projectCategoryOptions, projectStatusOptions, teamMemberOptions, terminologyOptions } from '@/forms/projectFormSchema';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -65,7 +65,8 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
       totalBudget: project?.totalBudget || '',
       contactPerson: project?.contactPerson || '',
       contactPhone: project?.contactPhone || '',
-      contactEmail: project?.contactEmail || ''
+      contactEmail: project?.contactEmail || '',
+      terminologyType: project?.terminologyType || 'plots'
     }
   });
 
@@ -247,6 +248,17 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormSelect
                       control={form.control}
+                      name="terminologyType"
+                      label="Block Structure Type"
+                      placeholder="Select terminology"
+                      options={terminologyOptions}
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormSelect
+                      control={form.control}
                       name="projectManager"
                       label="Project Manager"
                       placeholder="Assign project manager"
@@ -336,7 +348,9 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                               </div>
                               
                               <div>
-                                <label className="text-sm font-medium text-left block">Units Count</label>
+                                <label className="text-sm font-medium text-left block">
+                                  {form.watch('terminologyType') === 'plots' ? 'Plots Count' : 'Units Count'}
+                                </label>
                                 <Input 
                                   type="number"
                                   placeholder="e.g., 30"

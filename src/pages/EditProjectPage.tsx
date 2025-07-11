@@ -21,6 +21,7 @@ const mockProjects = [
     developmentStage: 'Construction',
     totalBlocks: 5,
     totalUnits: 150,
+    terminologyType: 'plots' as const,
     description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
     projectManager: 'Alice Johnson',
     tags: ['Premium', 'Residential', 'Lekki'],
