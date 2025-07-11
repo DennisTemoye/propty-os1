@@ -3,7 +3,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play, Users, Building2, TrendingUp, Zap, Shield, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import proptyosDashboard from '@/assets/proptyos-dashboard-full.jpg';
 
 const HeroSection = () => {
   return (
@@ -37,31 +36,6 @@ const HeroSection = () => {
                 Streamline projects, manage clients, track sales, and scale your team with Africa's most comprehensive real estate platform. 
                 <span className="text-primary font-semibold"> Built for African markets.</span>
               </p>
-            </div>
-
-            {/* ProptyOS Dashboard Screenshot */}
-            <div className="mb-16">
-              <div className="text-center mb-8">
-                <h3 className="text-3xl font-bold text-foreground mb-4">Experience ProptyOS Dashboard</h3>
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                  Get a complete view of your real estate operations with our comprehensive management platform
-                </p>
-              </div>
-              
-              <div className="relative max-w-6xl mx-auto">
-                <div className="relative overflow-hidden rounded-2xl shadow-2xl border-2 border-border bg-card">
-                  <img 
-                    src={proptyosDashboard} 
-                    alt="ProptyOS Dashboard Interface" 
-                    className="w-full h-auto object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-                </div>
-                
-                {/* Floating elements for visual appeal */}
-                <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary/10 rounded-full blur-xl"></div>
-                <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-accent/10 rounded-full blur-xl"></div>
-              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
