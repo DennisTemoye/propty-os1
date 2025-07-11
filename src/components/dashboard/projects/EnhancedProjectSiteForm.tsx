@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
@@ -27,7 +26,6 @@ interface ProjectFormData {
   projectType: string;
   projectSize: number;
   developmentStage: string;
-  terminologyType: 'plots' | 'units';
   
   // Project Details
   totalUnits: number;
@@ -68,8 +66,6 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
   const [activeTab, setActiveTab] = useState('basic');
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(project?.amenities || []);
   const [blocks, setBlocks] = useState(project?.blocks || []);
-  
-  const { labels } = useProjectTerminology(project);
 
   const form = useForm<ProjectFormData>({
     defaultValues: {
@@ -81,7 +77,6 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
       projectSize: project?.projectSize || 0,
       developmentStage: project?.developmentStage || '',
       totalUnits: project?.totalUnits || 0,
-      terminologyType: project?.terminologyType || 'plots',
       projectManager: project?.projectManager || '',
       salesTeam: project?.salesTeam || [],
       amenities: project?.amenities || [],
@@ -325,44 +320,20 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="terminologyType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Block Structure Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select terminology" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="plots">Plots (for Land/Plot-based projects)</SelectItem>
-                            <SelectItem value="units">Units (for Building/Apartment-based projects)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="totalUnits"
-                    rules={{ required: `Total ${labels.unitsLower} is required`, min: { value: 1, message: 'Must be at least 1' } }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{labels.totalUnits} *</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder={`Enter total ${labels.unitsLower}`} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="totalUnits"
+                  rules={{ required: 'Total units is required', min: { value: 1, message: 'Must be at least 1' } }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Total Units *</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="Enter total units" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </CardContent>
             </Card>
 
@@ -427,12 +398,12 @@ export function EnhancedProjectSiteForm({ project, onClose }: EnhancedProjectSit
                             </Select>
                           </div>
                           <div>
-                            <label className="text-sm font-medium text-gray-700 mb-1 block">{labels.units}</label>
+                            <label className="text-sm font-medium text-gray-700 mb-1 block">Units</label>
                             <Input
                               type="number"
                               value={block.units}
                               onChange={(e) => updateBlock(block.id, 'units', Number(e.target.value))}
-                              placeholder={`Number of ${labels.unitsLower}`}
+                              placeholder="Number of units"
                             />
                           </div>
                           <div>

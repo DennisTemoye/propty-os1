@@ -23,7 +23,6 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
       blockId: '',
       plotId: '',
       allocationType: 'sale',
-      allocationPurpose: '',
       allocationDate: new Date().toISOString().split('T')[0],
       price: '',
       paymentPlan: '',
@@ -117,22 +116,6 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-left block mb-2">Allocation Purpose *</label>
-          <Select onValueChange={(value) => form.setValue('allocationPurpose', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select purpose" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="developing">Developing</SelectItem>
-              <SelectItem value="investment">Investment</SelectItem>
-              <SelectItem value="land-banking">Land Banking</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
           <label className="text-sm font-medium text-left block mb-2">Initial Status</label>
           <Select onValueChange={(value) => form.setValue('status', value)}>
             <SelectTrigger>
@@ -142,21 +125,6 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
               <SelectItem value="interested">Interested</SelectItem>
               <SelectItem value="offered">Offered</SelectItem>
               <SelectItem value="allocated">Allocated</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium text-left block mb-2">Payment Plan</label>
-          <Select onValueChange={(value) => form.setValue('paymentPlan', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select payment plan" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="full">Full Payment</SelectItem>
-              <SelectItem value="installments_6">6 Months Installment</SelectItem>
-              <SelectItem value="installments_12">12 Months Installment</SelectItem>
-              <SelectItem value="installments_24">24 Months Installment</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -180,6 +148,20 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
       </div>
 
+      <div>
+        <label className="text-sm font-medium text-left block mb-2">Payment Plan</label>
+        <Select onValueChange={(value) => form.setValue('paymentPlan', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select payment plan" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="full">Full Payment</SelectItem>
+            <SelectItem value="installments_6">6 Months Installment</SelectItem>
+            <SelectItem value="installments_12">12 Months Installment</SelectItem>
+            <SelectItem value="installments_24">24 Months Installment</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <div>
         <label className="text-sm font-medium text-left block mb-2">Notes</label>

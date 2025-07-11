@@ -46,7 +46,6 @@ export function NewAllocationForm({ onSubmit, onCancel }: NewAllocationFormProps
       initialPayment: '',
       marketerId: '',
       allocationMode: 'instant_allocation',
-      allocationPurpose: '',
       notes: ''
     }
   });
@@ -153,34 +152,18 @@ export function NewAllocationForm({ onSubmit, onCancel }: NewAllocationFormProps
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label>Allocation Mode *</Label>
-          <Select onValueChange={(value) => form.setValue('allocationMode', value)} defaultValue="instant_allocation">
-            <SelectTrigger>
-              <SelectValue placeholder="Select allocation mode" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="instant_allocation">Instant Allocation</SelectItem>
-              <SelectItem value="sales_offer">Sales Offer First</SelectItem>
-              <SelectItem value="reservation">Reservation</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label>Allocation Purpose *</Label>
-          <Select onValueChange={(value) => form.setValue('allocationPurpose', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select purpose" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="developing">Developing</SelectItem>
-              <SelectItem value="investment">Investment</SelectItem>
-              <SelectItem value="land-banking">Land Banking</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label>Allocation Mode *</Label>
+        <Select onValueChange={(value) => form.setValue('allocationMode', value)} defaultValue="instant_allocation">
+          <SelectTrigger>
+            <SelectValue placeholder="Select allocation mode" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="instant_allocation">Instant Allocation</SelectItem>
+            <SelectItem value="sales_offer">Sales Offer First</SelectItem>
+            <SelectItem value="reservation">Reservation</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
