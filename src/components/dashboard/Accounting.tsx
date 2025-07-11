@@ -22,7 +22,9 @@ export function Accounting() {
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [dateFilter, setDateFilter] = useState('this-month');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [marketerFilter, setMarketerFilter] = useState('all'); // New filter for marketers
+  const [marketerFilter, setMarketerFilter] = useState('all');
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+  const [showTransactionDetails, setShowTransactionDetails] = useState(false);
 
   // Mock data with comprehensive transaction types
   const mockTransactions = [
@@ -625,7 +627,8 @@ export function Accounting() {
                        <TableCell>
                          <div className="flex space-x-1">
                            <Button variant="ghost" size="sm" onClick={() => {
-                             toast.info(`Viewing details for ${transaction.description}`);
+                             setSelectedTransaction(transaction);
+                             setShowTransactionDetails(true);
                            }}>
                              <Eye className="h-4 w-4" />
                            </Button>
@@ -735,6 +738,78 @@ export function Accounting() {
           <AnalyticsCharts />
         </TabsContent>
       </Tabs>
+
+      {/* Transaction Details Modal */}
+      <Dialog open={showTransactionDetails} onOpenChange={setShowTransactionDetails}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Transaction Details</DialogTitle>
+            <DialogDescription>Complete information for transaction {selectedTransaction?.reference}</DialogDescription>
+          </DialogHeader>
+          {selectedTransaction && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-sm font-medium text-gray-500">Reference</span>
+                  <p className="font-mono">{selectedTransaction.reference}</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-gray-500">Date</span>
+                  <p>{selectedTransaction.date}</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-gray-500">Type</span>
+                  <p className="capitalize">{selectedTransaction.type}</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-gray-500">Category</span>
+                  <p>{selectedTransaction.category}</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-gray-500">Amount</span>
+                  <p className={`font-bold ${selectedTransaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                    {selectedTransaction.type === 'income' ? '+' : '-'}{formatCurrency(selectedTransaction.amount)}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-gray-500">Status</span>
+                  <Badge className={getStatusColor(selectedTransaction.status)}>
+                    {selectedTransaction.status}
+                  </Badge>
+                </div>
+                {selectedTransaction.client && (
+                  <div>
+                    <span className="text-sm font-medium text-gray-500">Client</span>
+                    <p>{selectedTransaction.client}</p>
+                  </div>
+                )}
+                {selectedTransaction.marketer && (
+                  <div>
+                    <span className="text-sm font-medium text-gray-500">Marketer</span>
+                    <p>{selectedTransaction.marketer}</p>
+                  </div>
+                )}
+                {selectedTransaction.project && (
+                  <div>
+                    <span className="text-sm font-medium text-gray-500">Project</span>
+                    <p>{selectedTransaction.project}</p>
+                  </div>
+                )}
+                {selectedTransaction.block && (
+                  <div>
+                    <span className="text-sm font-medium text-gray-500">Block</span>
+                    <p>{selectedTransaction.block}</p>
+                  </div>
+                )}
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-500">Description</span>
+                <p className="mt-1">{selectedTransaction.description}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
