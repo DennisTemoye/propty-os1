@@ -24,7 +24,7 @@ export function Accounting() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [marketerFilter, setMarketerFilter] = useState('all'); // New filter for marketers
 
-  // Mock data with marketer commissions integrated
+  // Mock data with comprehensive transaction types
   const mockTransactions = [
     {
       id: 1,
@@ -36,10 +36,68 @@ export function Accounting() {
       status: 'completed',
       reference: 'PS-001',
       client: 'John Doe',
-      marketer: 'Jane Smith'
+      marketer: 'Jane Smith',
+      project: 'Victoria Gardens',
+      block: 'Block A'
     },
     {
       id: 2,
+      type: 'income',
+      category: 'Instalment Payment',
+      description: 'Second instalment - Block B - Plot 08, Emerald Heights',
+      amount: 5000000,
+      date: '2024-01-18',
+      status: 'completed',
+      reference: 'INS-001',
+      client: 'Sarah Johnson',
+      marketer: 'Mike Davis',
+      project: 'Emerald Heights',
+      block: 'Block B'
+    },
+    {
+      id: 3,
+      type: 'income',
+      category: 'Survey Fee',
+      description: 'Survey fee for Block A - Plot 15, Victoria Gardens',
+      amount: 750000,
+      date: '2024-01-20',
+      status: 'completed',
+      reference: 'SUR-001',
+      client: 'David Wilson',
+      marketer: 'Jane Smith',
+      project: 'Victoria Gardens',
+      block: 'Block A'
+    },
+    {
+      id: 4,
+      type: 'income',
+      category: 'Legal Fee',
+      description: 'Legal documentation fee - Golden View Towers',
+      amount: 1200000,
+      date: '2024-01-22',
+      status: 'completed',
+      reference: 'LEG-001',
+      client: 'Michael Brown',
+      marketer: 'Sarah Johnson',
+      project: 'Golden View Towers',
+      block: 'Block C'
+    },
+    {
+      id: 5,
+      type: 'income',
+      category: 'Documentation Fee',
+      description: 'Title documentation processing fee',
+      amount: 850000,
+      date: '2024-01-25',
+      status: 'pending',
+      reference: 'DOC-001',
+      client: 'Lisa Anderson',
+      marketer: 'Mike Davis',
+      project: 'Emerald Heights',
+      block: 'Block A'
+    },
+    {
+      id: 6,
       type: 'expense',
       category: 'Commission',
       description: 'Sales commission for Jane Smith - John Doe allocation',
@@ -48,34 +106,48 @@ export function Accounting() {
       status: 'paid',
       reference: 'COM-001',
       client: 'John Doe',
-      marketer: 'Jane Smith'
+      marketer: 'Jane Smith',
+      project: 'Victoria Gardens',
+      block: 'Block A'
     },
     {
-      id: 3,
-      type: 'income',
-      category: 'Property Sales',
-      description: 'Sale of Block B - Plot 08, Emerald Heights',
-      amount: 30000000,
-      date: '2024-01-10',
-      status: 'completed',
-      reference: 'PS-002',
-      client: 'Sarah Johnson',
-      marketer: 'Mike Davis'
-    },
-    {
-      id: 4,
+      id: 7,
       type: 'expense',
-      category: 'Commission',
-      description: 'Sales commission for Mike Davis - Sarah Johnson allocation',
-      amount: 900000,
-      date: '2024-01-10',
-      status: 'pending',
-      reference: 'COM-002',
-      client: 'Sarah Johnson',
-      marketer: 'Mike Davis'
+      category: 'Office Expenses',
+      description: 'Monthly office rent and utilities',
+      amount: 850000,
+      date: '2024-01-01',
+      status: 'paid',
+      reference: 'OFF-001',
+      project: 'General',
+      block: 'N/A'
     },
     {
-      id: 5,
+      id: 8,
+      type: 'expense',
+      category: 'Staff Salaries',
+      description: 'January staff salaries and benefits',
+      amount: 4200000,
+      date: '2024-01-31',
+      status: 'paid',
+      reference: 'SAL-001',
+      project: 'General',
+      block: 'N/A'
+    },
+    {
+      id: 9,
+      type: 'expense',
+      category: 'Marketing',
+      description: 'Digital marketing and advertising campaigns',
+      amount: 1500000,
+      date: '2024-01-20',
+      status: 'paid',
+      reference: 'MKT-001',
+      project: 'General',
+      block: 'N/A'
+    },
+    {
+      id: 10,
       type: 'expense',
       category: 'Refund',
       description: 'Partial refund for allocation revocation - Robert Brown',
@@ -84,7 +156,9 @@ export function Accounting() {
       status: 'completed',
       reference: 'REF-001',
       client: 'Robert Brown',
-      marketer: 'Jane Smith'
+      marketer: 'Jane Smith',
+      project: 'Victoria Gardens',
+      block: 'Block B'
     }
   ];
 
@@ -262,10 +336,11 @@ export function Accounting() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
+          <TabsTrigger value="project-summaries">Project Summaries</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
@@ -283,10 +358,15 @@ export function Accounting() {
                     <SelectContent>
                       <SelectItem value="all">All Categories</SelectItem>
                       <SelectItem value="Property Sales">Property Sales</SelectItem>
+                      <SelectItem value="Instalment Payment">Instalment Payment</SelectItem>
+                      <SelectItem value="Survey Fee">Survey Fee</SelectItem>
+                      <SelectItem value="Legal Fee">Legal Fee</SelectItem>
+                      <SelectItem value="Documentation Fee">Documentation Fee</SelectItem>
                       <SelectItem value="Commission">Commission</SelectItem>
+                      <SelectItem value="Office Expenses">Office Expenses</SelectItem>
+                      <SelectItem value="Staff Salaries">Staff Salaries</SelectItem>
+                      <SelectItem value="Marketing">Marketing</SelectItem>
                       <SelectItem value="Refund">Refund</SelectItem>
-                      <SelectItem value="Infrastructure Fee">Infrastructure Fee</SelectItem>
-                      <SelectItem value="Service Charge">Service Charge</SelectItem>
                     </SelectContent>
                   </Select>
                   <Select value={marketerFilter} onValueChange={setMarketerFilter}>
@@ -385,10 +465,15 @@ export function Accounting() {
                     <SelectContent>
                       <SelectItem value="all">All Categories</SelectItem>
                       <SelectItem value="Property Sales">Property Sales</SelectItem>
+                      <SelectItem value="Instalment Payment">Instalment Payment</SelectItem>
+                      <SelectItem value="Survey Fee">Survey Fee</SelectItem>
+                      <SelectItem value="Legal Fee">Legal Fee</SelectItem>
+                      <SelectItem value="Documentation Fee">Documentation Fee</SelectItem>
                       <SelectItem value="Commission">Commission</SelectItem>
+                      <SelectItem value="Office Expenses">Office Expenses</SelectItem>
+                      <SelectItem value="Staff Salaries">Staff Salaries</SelectItem>
+                      <SelectItem value="Marketing">Marketing</SelectItem>
                       <SelectItem value="Refund">Refund</SelectItem>
-                      <SelectItem value="Infrastructure Fee">Infrastructure Fee</SelectItem>
-                      <SelectItem value="Service Charge">Service Charge</SelectItem>
                     </SelectContent>
                   </Select>
                   <Select value={marketerFilter} onValueChange={setMarketerFilter}>
@@ -469,6 +554,71 @@ export function Accounting() {
 
         <TabsContent value="payments" className="space-y-6">
           <PaymentsManagement />
+        </TabsContent>
+
+        <TabsContent value="project-summaries" className="space-y-6">
+          {/* Project Financial Summaries */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {['Victoria Gardens', 'Emerald Heights', 'Golden View Towers'].map((project) => {
+              const projectTransactions = filteredTransactions.filter(t => t.project === project);
+              const projectIncome = projectTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+              const projectExpenses = projectTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+              const projectProfit = projectIncome - projectExpenses;
+              
+              return (
+                <Card key={project} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">{project}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Total Income</span>
+                        <span className="font-semibold text-green-600">{formatCurrency(projectIncome)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Total Expenses</span>
+                        <span className="font-semibold text-red-600">{formatCurrency(projectExpenses)}</span>
+                      </div>
+                      <div className="border-t pt-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">Net Profit</span>
+                          <span className={`font-bold ${projectProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {formatCurrency(projectProfit)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Block-wise breakdown */}
+                    <div className="pt-2 border-t">
+                      <h4 className="text-sm font-medium mb-2">Block Performance</h4>
+                      <div className="space-y-1">
+                        {['Block A', 'Block B', 'Block C'].map((block) => {
+                          const blockTransactions = projectTransactions.filter(t => t.block === block);
+                          const blockIncome = blockTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+                          
+                          if (blockIncome === 0) return null;
+                          
+                          return (
+                            <div key={block} className="flex justify-between text-xs">
+                              <span className="text-gray-600">{block}</span>
+                              <span className="font-medium">{formatCurrency(blockIncome)}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    <Button variant="outline" size="sm" className="w-full mt-4">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Generate Report
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
