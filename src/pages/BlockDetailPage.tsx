@@ -30,6 +30,7 @@ const mockBlocks = [
     status: 'completed' as const,
     defaultPrice: '₦25,000,000',
     defaultSize: '500sqm',
+    defaultPrototype: '5 Bedroom Duplex',
     structureType: 'units' as const,
     units: [
       { id: '1', plotId: 'A-001', size: '500sqm', price: '₦25,000,000', status: 'sold' as const, client: 'John Doe', unitName: '5 Bedroom Duplex', bedrooms: 5, bathrooms: 4 },
@@ -49,6 +50,7 @@ const mockBlocks = [
     status: 'construction' as const,
     defaultPrice: '₦18,000,000',
     defaultSize: '400sqm',
+    defaultPrototype: '3 Bedroom Bungalow',
     structureType: 'units' as const,
     units: [
       { id: '4', plotId: 'B-001', size: '400sqm', price: '₦18,000,000', status: 'sold' as const, client: 'Mike Johnson', unitName: '3 Bedroom Bungalow', bedrooms: 3, bathrooms: 2 },
@@ -67,6 +69,7 @@ const mockBlocks = [
     status: 'planning' as const,
     defaultPrice: '₦35,000,000',
     defaultSize: '300sqm',
+    defaultPrototype: 'Residential Plot',
     structureType: 'plots' as const,
     units: [
       { id: '6', plotId: 'C-001', size: '300sqm', price: '₦35,000,000', status: 'sold' as const, client: 'ABC Corp', prototype: 'Residential Plot' },
@@ -356,6 +359,62 @@ export default function BlockDetailPage() {
                     value={blockData.defaultSize || ''} 
                     onChange={(e) => setBlockData({...blockData, defaultSize: e.target.value})}
                   />
+                </div>
+
+                <div>
+                  <Label htmlFor="defaultPrototype">
+                    Default {block.structureType === 'plots' ? 'Prototype' : 'Design'}
+                  </Label>
+                  {block.structureType === 'plots' ? (
+                    <Select 
+                      value={blockData.defaultPrototype || ''} 
+                      onValueChange={(value) => setBlockData({...blockData, defaultPrototype: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select default prototype" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white z-50">
+                        <SelectItem value="Residential Plot">Residential Plot</SelectItem>
+                        <SelectItem value="Commercial Plot">Commercial Plot</SelectItem>
+                        <SelectItem value="Mixed-Use Plot">Mixed-Use Plot</SelectItem>
+                        <SelectItem value="Industrial Plot">Industrial Plot</SelectItem>
+                        <SelectItem value="Agricultural Plot">Agricultural Plot</SelectItem>
+                        <SelectItem value="Recreational Plot">Recreational Plot</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Select 
+                      value={blockData.defaultPrototype || ''} 
+                      onValueChange={(value) => setBlockData({...blockData, defaultPrototype: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select default design" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white z-50">
+                        <SelectItem value="1 Bedroom Apartment">1 Bedroom Apartment</SelectItem>
+                        <SelectItem value="2 Bedroom Apartment">2 Bedroom Apartment</SelectItem>
+                        <SelectItem value="3 Bedroom Apartment">3 Bedroom Apartment</SelectItem>
+                        <SelectItem value="1 Bedroom Bungalow">1 Bedroom Bungalow</SelectItem>
+                        <SelectItem value="2 Bedroom Bungalow">2 Bedroom Bungalow</SelectItem>
+                        <SelectItem value="3 Bedroom Bungalow">3 Bedroom Bungalow</SelectItem>
+                        <SelectItem value="4 Bedroom Bungalow">4 Bedroom Bungalow</SelectItem>
+                        <SelectItem value="3 Bedroom Duplex">3 Bedroom Duplex</SelectItem>
+                        <SelectItem value="4 Bedroom Duplex">4 Bedroom Duplex</SelectItem>
+                        <SelectItem value="5 Bedroom Duplex">5 Bedroom Duplex</SelectItem>
+                        <SelectItem value="6 Bedroom Duplex">6 Bedroom Duplex</SelectItem>
+                        <SelectItem value="Studio Apartment">Studio Apartment</SelectItem>
+                        <SelectItem value="Penthouse">Penthouse</SelectItem>
+                        <SelectItem value="Townhouse">Townhouse</SelectItem>
+                        <SelectItem value="Villa">Villa</SelectItem>
+                        <SelectItem value="Commercial Unit">Commercial Unit</SelectItem>
+                        <SelectItem value="Office Space">Office Space</SelectItem>
+                        <SelectItem value="Retail Space">Retail Space</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This will be used as the default {block.structureType === 'plots' ? 'prototype' : 'design'} when adding new {labels.unitsLower}
+                  </p>
                 </div>
 
                 <div className="pt-4">

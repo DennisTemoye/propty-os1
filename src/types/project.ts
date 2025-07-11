@@ -38,6 +38,7 @@ export interface Block {
   status: 'planning' | 'construction' | 'completed' | 'on-hold';
   defaultPrice: string;
   defaultSize: string;
+  defaultPrototype?: string;
   // New field for block structure type
   structureType: 'plots' | 'units';
   units: Unit[];
