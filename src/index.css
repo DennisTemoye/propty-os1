@@ -44,13 +44,19 @@
 
     --radius: 0.75rem;
     
-    /* Professional gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(221 83% 53%));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(210 40% 92%));
-    --gradient-accent: linear-gradient(135deg, hsl(262 83% 58%), hsl(262 90% 50%));
+    /* Vibrant colorful gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(221 83% 53%));
+    --gradient-secondary: linear-gradient(135deg, hsl(142 76% 36%), hsl(168 76% 42%));
+    --gradient-accent: linear-gradient(135deg, hsl(262 83% 58%), hsl(292 90% 50%));
     --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 69% 58%));
-    --gradient-warning: linear-gradient(135deg, hsl(45 93% 47%), hsl(48 96% 53%));
-    --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(0 72% 51%));
+    --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%), hsl(48 96% 53%));
+    --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(348 83% 47%));
+    --gradient-blue: linear-gradient(135deg, hsl(221 83% 53%), hsl(262 83% 58%));
+    --gradient-purple: linear-gradient(135deg, hsl(262 83% 58%), hsl(292 84% 61%));
+    --gradient-emerald: linear-gradient(135deg, hsl(142 76% 36%), hsl(160 84% 39%));
+    --gradient-orange: linear-gradient(135deg, hsl(25 95% 53%), hsl(38 92% 50%));
+    --gradient-pink: linear-gradient(135deg, hsl(330 81% 60%), hsl(348 83% 47%));
+    --gradient-teal: linear-gradient(135deg, hsl(168 76% 42%), hsl(184 81% 29%));
     
     /* Professional shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);

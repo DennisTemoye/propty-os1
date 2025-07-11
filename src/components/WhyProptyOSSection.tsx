@@ -27,29 +27,34 @@ const WhyProptyOSSection = () => {
     },
   ];
 
+  const gradients = ['bg-gradient-blue', 'bg-gradient-emerald', 'bg-gradient-orange', 'bg-gradient-pink'];
+
   return (
-    <section id="about" className="py-20 bg-white dark:bg-gray-900">
+    <section id="about" className="py-20 bg-gradient-to-br from-background to-muted/50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-primary rounded-full text-white font-medium mb-6 shadow-lg">
+            🌍 Built for Africa
+          </div>
+          <h2 className="text-3xl lg:text-5xl font-bold text-foreground mb-6">
             Why Choose ProptyOS?
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Built specifically for African real estate markets with features that address unique local challenges and opportunities.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 dark:bg-gray-800">
+            <Card key={index} className="border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-card/80 backdrop-blur-sm hover:border-primary/30 group">
               <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <feature.icon className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                <div className={`w-16 h-16 ${gradients[index]} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                <h3 className="text-xl font-semibold text-foreground mb-4">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
               </CardContent>

@@ -7,11 +7,13 @@ import { Link } from 'react-router-dom';
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-background overflow-hidden">
-      {/* Modern geometric background */}
+      {/* Vibrant geometric background */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-80 h-80 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-32 right-20 w-96 h-96 bg-gradient-to-tr from-accent/5 to-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-gradient-to-bl from-primary/8 to-accent/8 rounded-full blur-2xl"></div>
+        <div className="absolute top-20 left-20 w-80 h-80 bg-gradient-purple opacity-30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-32 right-20 w-96 h-96 bg-gradient-emerald opacity-20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-gradient-blue opacity-25 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-20 left-1/3 w-72 h-72 bg-gradient-orange opacity-15 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-10 w-48 h-48 bg-gradient-pink opacity-20 rounded-full blur-2xl"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -79,25 +81,25 @@ const HeroSection = () => {
 
           {/* Feature highlights grid */}
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="bg-card/70 backdrop-blur-sm border border-border rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Building2 className="w-8 h-8 text-primary" />
+            <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:border-purple-300">
+              <div className="w-16 h-16 bg-gradient-purple rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Building2 className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-3">Project Management</h3>
               <p className="text-muted-foreground">Manage unlimited projects, blocks, and units with advanced mapping and allocation features.</p>
             </div>
 
-            <div className="bg-card/70 backdrop-blur-sm border border-border rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-accent/20 to-accent/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-accent-foreground" />
+            <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:border-emerald-300">
+              <div className="w-16 h-16 bg-gradient-emerald rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Users className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-3">Team Collaboration</h3>
               <p className="text-muted-foreground">Scale your team with role-based access, CRM pipelines, and commission management.</p>
             </div>
 
-            <div className="bg-card/70 backdrop-blur-sm border border-border rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <TrendingUp className="w-8 h-8 text-emerald-600" />
+            <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:border-orange-300">
+              <div className="w-16 h-16 bg-gradient-orange rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <TrendingUp className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-3">Analytics & Reports</h3>
               <p className="text-muted-foreground">Track sales performance, revenue analytics, and generate comprehensive reports.</p>

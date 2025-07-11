@@ -79,10 +79,20 @@ const FeaturesSection = () => {
     }
   ];
 
+  const gradients = [
+    'bg-gradient-purple', 'bg-gradient-blue', 'bg-gradient-emerald', 
+    'bg-gradient-orange', 'bg-gradient-pink', 'bg-gradient-teal',
+    'bg-gradient-purple', 'bg-gradient-emerald', 'bg-gradient-blue',
+    'bg-gradient-orange', 'bg-gradient-pink', 'bg-gradient-teal'
+  ];
+
   return (
-    <section id="features" className="py-20 bg-muted/30">
+    <section id="features" className="py-20 bg-gradient-to-br from-muted/30 to-accent/10">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-accent rounded-full text-white font-medium mb-6 shadow-lg">
+            ✨ Comprehensive Feature Set
+          </div>
           <h2 className="text-3xl lg:text-5xl font-bold text-foreground mb-6">
             Features Overview
           </h2>
@@ -93,9 +103,9 @@ const FeaturesSection = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="bg-card p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-border">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                <feature.icon className="w-6 h-6 text-primary" />
+            <div key={index} className="bg-card/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border hover:border-primary/30 group">
+              <div className={`w-12 h-12 ${gradients[index]} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                <feature.icon className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-3">
                 {feature.title}

@@ -75,10 +75,10 @@ const PricingSection = () => {
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-muted/20">
+    <section id="pricing" className="py-24 bg-gradient-to-br from-muted/20 to-primary/5">
       <div className="container mx-auto px-4">
         <div className="text-center mb-20">
-          <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-success rounded-full text-white font-medium mb-6 shadow-lg">
             💰 Transparent Per-User Pricing
           </div>
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
@@ -122,8 +122,8 @@ const PricingSection = () => {
                 )}
 
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <IconComponent className="w-8 h-8 text-primary" />
+                  <div className={`w-16 h-16 ${plan.isPopular ? 'bg-gradient-primary' : index === 0 ? 'bg-gradient-blue' : 'bg-gradient-purple'} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}>
+                    <IconComponent className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
                   <p className="text-muted-foreground mb-4">{plan.description}</p>

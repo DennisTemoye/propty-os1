@@ -128,7 +128,13 @@ export default {
 				'gradient-accent': 'var(--gradient-accent)',
 				'gradient-success': 'var(--gradient-success)',
 				'gradient-warning': 'var(--gradient-warning)',
-				'gradient-danger': 'var(--gradient-danger)'
+				'gradient-danger': 'var(--gradient-danger)',
+				'gradient-blue': 'var(--gradient-blue)',
+				'gradient-purple': 'var(--gradient-purple)',
+				'gradient-emerald': 'var(--gradient-emerald)',
+				'gradient-orange': 'var(--gradient-orange)',
+				'gradient-pink': 'var(--gradient-pink)',
+				'gradient-teal': 'var(--gradient-teal)'
 			},
 			boxShadow: {
 				'sm': 'var(--shadow-sm)',
