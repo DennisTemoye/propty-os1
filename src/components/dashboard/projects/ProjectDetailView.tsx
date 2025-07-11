@@ -32,6 +32,7 @@ import { toast } from 'sonner';
 
 import { DocumentsView } from '../documents/DocumentsView';
 import { ProjectBlocksTab } from './ProjectBlocksTab';
+import { ProjectSettingsTab } from './ProjectSettingsTab';
 import { getProjectImage, handleImageError } from '@/lib/utils';
 import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 
@@ -537,111 +538,17 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Project Settings</h2>
-            <div className="flex space-x-2">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="text-red-600 hover:text-red-700">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Project
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete "{project.name}"? This action cannot be undone and will remove all associated data including allocations, blocks, and units.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction 
-                      className="bg-red-600 hover:bg-red-700"
-                      onClick={() => {
-                        console.log('Delete project:', project.id);
-                        toast.success('Project deleted successfully');
-                      }}
-                    >
-                      Delete Project
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-              <Button onClick={() => {
-                // Save project settings with proper validation
-                const updatedProject = {
-                  ...project,
-                  lastModified: new Date().toISOString()
-                };
-                toast.success('Project settings saved successfully');
-                // In real app, this would update the project in state/backend
-              }}>
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="projectName">Project Name</Label>
-                  <Input id="projectName" defaultValue={project.name} />
-                </div>
-                <div>
-                  <Label htmlFor="location">Location</Label>
-                  <Input id="location" defaultValue={project.location} />
-                </div>
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" defaultValue={mockDevelopmentDetails.description} />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Project Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="status">Status</Label>
-                  <Select defaultValue={project.status}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="paused">Paused</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="type">Type</Label>
-                  <Select defaultValue={project.type.toLowerCase()}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="residential">Residential</SelectItem>
-                      <SelectItem value="commercial">Commercial</SelectItem>
-                      <SelectItem value="mixed">Mixed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="expectedCompletion">Expected Completion</Label>
-                  <Input id="expectedCompletion" type="date" defaultValue={mockDevelopmentDetails.expectedCompletion} />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <ProjectSettingsTab project={{
+            id: project.id,
+            name: project.name,
+            location: project.location,
+            category: project.category,
+            type: project.type,
+            status: project.status,
+            description: project.description || mockDevelopmentDetails.description,
+            projectManager: project.projectManager || 'Alice Johnson',
+            internalNotes: 'Focus on completing ongoing construction blocks before launching new phases.'
+          }} />
         </TabsContent>
       </Tabs>
 
