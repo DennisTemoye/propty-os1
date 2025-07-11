@@ -72,6 +72,8 @@ const mockDevelopmentDetails = {
 
 export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
   const [activeTab, setActiveTab] = useState('overview');
+  
+  console.log('ProjectDetailView rendering, activeTab:', activeTab);
   const [isUploadLayoutOpen, setIsUploadLayoutOpen] = useState(false);
   const [isUploadDocumentOpen, setIsUploadDocumentOpen] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState<any>(null);
@@ -312,7 +314,10 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
       </div>
 
       {/* Enhanced Tabs with Functional Actions */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={(value) => {
+        console.log('Tab changing to:', value);
+        setActiveTab(value);
+      }}>
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="layout">Layout</TabsTrigger>
