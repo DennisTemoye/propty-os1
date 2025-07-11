@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientDetailView } from './clients/ClientDetailView';
 import { AssignPropertyModal } from './clients/AssignPropertyModal';
 import { AddPaymentModal } from './clients/AddPaymentModal';
-import { ClientDocumentsView } from './clients/ClientDocumentsView';
+import { SendNoticeForm } from './notices/SendNoticeForm';
 import { useNavigate } from 'react-router-dom';
 
 const mockClients = [
@@ -200,7 +200,7 @@ export function Clients() {
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const [isAssignPropertyOpen, setIsAssignPropertyOpen] = useState(false);
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
-  const [isDocumentsOpen, setIsDocumentsOpen] = useState(false);
+  const [isSendNoticeOpen, setIsSendNoticeOpen] = useState(false);
   const [filterKyc, setFilterKyc] = useState<string>('all');
   const [filterAllocation, setFilterAllocation] = useState<string>('all');
   const [filterPayment, setFilterPayment] = useState<string>('all');
@@ -272,10 +272,10 @@ export function Clients() {
     setIsAddPaymentOpen(true);
   };
 
-  const handleViewDocuments = (e: React.MouseEvent, client: any) => {
+  const handleSendNotice = (e: React.MouseEvent, client: any) => {
     e.stopPropagation();
     setSelectedClient(client);
-    setIsDocumentsOpen(true);
+    setIsSendNoticeOpen(true);
   };
 
   return (
@@ -415,18 +415,15 @@ export function Clients() {
                       <CardTitle className="text-lg">{client.name}</CardTitle>
                       <p className="text-sm text-gray-600">{client.email}</p>
                       <p className="text-sm text-gray-600">{client.phone}</p>
+                      <div className="flex gap-2 mt-2">
+                        <Badge className={getKycStatusColor(client.kycStatus)}>
+                          KYC {client.kycStatus}
+                        </Badge>
+                        <Badge className={getAllocationStatusColor(client.allocationStatus)}>
+                          {client.allocationStatus}
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Badge className={getKycStatusColor(client.kycStatus)}>
-                      KYC {client.kycStatus}
-                    </Badge>
-                    <Badge className={getAllocationStatusColor(client.allocationStatus)}>
-                      {client.allocationStatus}
-                    </Badge>
-                    <Badge className={getPaymentStatusColor(client.paymentStatus)}>
-                      {client.paymentStatus}
-                    </Badge>
                   </div>
                 </div>
               </CardHeader>
@@ -488,10 +485,10 @@ export function Clients() {
                     variant="outline" 
                     size="sm" 
                     className="flex-1 hover:bg-primary/5 hover:border-primary/20 transition-all duration-200"
-                    onClick={(e) => handleViewDocuments(e, client)}
+                    onClick={(e) => handleSendNotice(e, client)}
                   >
                     <FileText className="h-3 w-3 mr-1" />
-                    Documents
+                    Send Notice
                   </Button>
                   <Button 
                     variant="outline" 
@@ -537,6 +534,14 @@ export function Clients() {
                           <div className="font-medium">{client.name}</div>
                           <div className="text-sm text-gray-500">{client.email}</div>
                           <div className="text-sm text-gray-500">{client.phone}</div>
+                          <div className="flex gap-2 mt-1">
+                            <Badge className={getKycStatusColor(client.kycStatus)}>
+                              KYC {client.kycStatus}
+                            </Badge>
+                            <Badge className={getAllocationStatusColor(client.allocationStatus)}>
+                              {client.allocationStatus}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -558,17 +563,7 @@ export function Clients() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-col gap-1">
-                        <Badge className={getKycStatusColor(client.kycStatus)}>
-                          KYC {client.kycStatus}
-                        </Badge>
-                        <Badge className={getAllocationStatusColor(client.allocationStatus)}>
-                          {client.allocationStatus}
-                        </Badge>
-                        <Badge className={getPaymentStatusColor(client.paymentStatus)}>
-                          {client.paymentStatus}
-                        </Badge>
-                      </div>
+                      <div className="text-sm text-gray-500">Payment Status</div>
                     </TableCell>
                     <TableCell>
                       {client.projects && client.projects.length > 0 ? (
@@ -612,7 +607,7 @@ export function Clients() {
                             Assign
                           </Button>
                         )}
-                        <Button variant="outline" size="sm" onClick={(e) => handleViewDocuments(e, client)}>
+                        <Button variant="outline" size="sm" onClick={(e) => handleSendNotice(e, client)}>
                           <FileText className="h-3 w-3" />
                         </Button>
                         <Button variant="outline" size="sm" onClick={(e) => handleAddPayment(e, client)}>
@@ -642,16 +637,16 @@ export function Clients() {
         client={selectedClient}
       />
 
-      {/* Documents Modal */}
-      <Dialog open={isDocumentsOpen} onOpenChange={setIsDocumentsOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      {/* Send Notice Modal */}
+      <Dialog open={isSendNoticeOpen} onOpenChange={setIsSendNoticeOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Client Documents - {selectedClient?.name}</DialogTitle>
+            <DialogTitle>Send Notice to {selectedClient?.name}</DialogTitle>
             <DialogDescription>
-              Manage documents for this client
+              Send a notice to this client via email or WhatsApp
             </DialogDescription>
           </DialogHeader>
-          {selectedClient && <ClientDocumentsView client={selectedClient} />}
+          <SendNoticeForm />
         </DialogContent>
       </Dialog>
     </div>
