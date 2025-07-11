@@ -48,5 +48,5 @@ export interface Unit {
   price: string;
   status: 'available' | 'reserved' | 'sold';
   client: string | null;
-  purpose?: 'developing' | 'land-banking' | 'investment';
+  allocationPurpose?: 'developing' | 'investment' | 'land-banking';
 }
