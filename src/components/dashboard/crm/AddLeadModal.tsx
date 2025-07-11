@@ -18,6 +18,8 @@ interface AddLeadModalProps {
   agents: string[];
   projects: string[];
   sources: string[];
+  editLead?: Lead | null;
+  onConvertToClient?: (leadId: string) => void;
 }
 
 export function AddLeadModal({ 
@@ -27,9 +29,20 @@ export function AddLeadModal({
   stages, 
   agents, 
   projects, 
-  sources 
+  sources,
+  editLead,
+  onConvertToClient
 }: AddLeadModalProps) {
   const form = useForm<Partial<Lead>>();
+  const isEditing = !!editLead;
+
+  React.useEffect(() => {
+    if (editLead) {
+      form.reset(editLead);
+    } else {
+      form.reset();
+    }
+  }, [editLead, form]);
 
   const onSubmit = (data: Partial<Lead>) => {
     if (!data.clientName || !data.email || !data.phone) {
@@ -52,9 +65,9 @@ export function AddLeadModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add New Lead</DialogTitle>
+          <DialogTitle>{isEditing ? 'Edit Lead' : 'Add New Lead'}</DialogTitle>
           <DialogDescription>
-            Create a new lead in your sales pipeline
+            {isEditing ? 'Update lead information' : 'Create a new lead in your sales pipeline'}
           </DialogDescription>
         </DialogHeader>
         
@@ -207,8 +220,20 @@ export function AddLeadModal({
           {/* Actions */}
           <div className="flex gap-3 pt-4">
             <Button type="submit" className="flex-1">
-              Add Lead
+              {isEditing ? 'Update Lead' : 'Add Lead'}
             </Button>
+            {isEditing && onConvertToClient && (
+              <Button 
+                type="button" 
+                onClick={() => {
+                  onConvertToClient(editLead.id);
+                  onClose();
+                }}
+                className="bg-gradient-primary hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0"
+              >
+                Convert to Client
+              </Button>
+            )}
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>

@@ -292,21 +292,55 @@ export function LeadDetailsDrawer({
 
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-3">
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center gap-2"
+                  onClick={() => window.open(`tel:${lead.phone}`, '_self')}
+                >
                   <Phone className="h-4 w-4" />
                   Call {lead.phone}
                 </Button>
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center gap-2"
+                  onClick={() => window.open(`mailto:${lead.email}`, '_blank')}
+                >
                   <Mail className="h-4 w-4" />
                   Email {lead.email}
                 </Button>
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center gap-2"
+                  onClick={() => window.open(`https://wa.me/${lead.phone.replace(/\D/g, '')}`, '_blank')}
+                >
                   <MessageSquare className="h-4 w-4" />
                   WhatsApp
                 </Button>
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center gap-2"
+                  onClick={() => {
+                    // Create calendar event link
+                    const eventTitle = encodeURIComponent(`Meeting with ${lead.clientName}`);
+                    const eventDetails = encodeURIComponent(`Sales meeting for ${lead.projectInterest || 'property interest'}`);
+                    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&details=${eventDetails}`;
+                    window.open(calendarUrl, '_blank');
+                  }}
+                >
                   <Calendar className="h-4 w-4" />
                   Schedule Meeting
+                </Button>
+                <Button 
+                  className="bg-gradient-primary hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0"
+                  onClick={() => {
+                    // Convert lead to client functionality
+                    toast.success('Lead converted to client successfully!');
+                    const newLead = { ...lead, stage: 'won_deal' };
+                    onUpdateLead(newLead);
+                  }}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Convert to Client
                 </Button>
               </div>
             </TabsContent>

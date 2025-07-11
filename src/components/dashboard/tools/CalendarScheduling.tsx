@@ -12,6 +12,7 @@ import { Plus, Calendar as CalendarIcon, Clock, User, Building, Bell } from 'luc
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { EnhancedCalendarScheduling as EnhancedCalendar } from './EnhancedCalendarScheduling';
 
 interface CalendarEvent {
   id: string;
@@ -65,6 +66,11 @@ const eventTypes = [
 ];
 
 export function CalendarSchedulingPage() {
+  // Re-export the enhanced version for backward compatibility
+  return <EnhancedCalendar />;
+}
+
+function EnhancedCalendarScheduling() {
   const [events, setEvents] = useState<CalendarEvent[]>(mockEvents);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);

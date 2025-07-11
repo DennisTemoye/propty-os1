@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileText, Download, Upload, Trash2, Plus, Search, Filter, Eye } from 'lucide-react';
+import { FileText, Download, Upload, Trash2, Plus, Search, Filter, Eye, MessageSquare } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -134,8 +134,43 @@ export function DocumentManagerPage() {
   };
 
   const handleDownload = (doc: Document) => {
-    console.log('Downloading:', doc.fileName);
-    toast.success(`Downloading ${doc.fileName}`);
+    // Create a mock blob for download simulation
+    const blob = new Blob(['Mock document content'], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = doc.fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success(`Downloaded ${doc.fileName}`);
+  };
+
+  const handleGenerateDocument = (type: string, entityName: string) => {
+    const templates = {
+      'allocation_letter': 'Allocation Letter',
+      'mou': 'Memorandum of Understanding',
+      'payment_receipt': 'Payment Receipt',
+      'invoice': 'Invoice'
+    };
+    
+    const newDocument: Document = {
+      id: Date.now().toString(),
+      title: `${templates[type as keyof typeof templates]} - ${entityName}`,
+      fileName: `${type}_${entityName.replace(/\s+/g, '_').toLowerCase()}.pdf`,
+      category: templates[type as keyof typeof templates],
+      linkedTo: type === 'allocation_letter' ? 'client' : 'project',
+      linkedId: '1',
+      linkedName: entityName,
+      fileSize: '1.2 MB',
+      fileType: 'PDF',
+      uploadDate: new Date().toISOString().split('T')[0],
+      uploadedBy: 'System Generated'
+    };
+    
+    setDocuments(prev => [...prev, newDocument]);
+    toast.success(`${templates[type as keyof typeof templates]} generated successfully`);
   };
 
   const getCategoryColor = (category: string) => {
@@ -160,10 +195,26 @@ export function DocumentManagerPage() {
           <h1 className="text-3xl font-bold text-gray-900">Document Manager</h1>
           <p className="text-gray-600 mt-1">Store and manage signed documents, survey plans, allocation letters, etc.</p>
         </div>
-        <Button onClick={() => setIsUploadOpen(true)} className="bg-gradient-accent hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0">
-          <Plus className="h-4 w-4 mr-2" />
-          Upload Document
-        </Button>
+        <div className="flex gap-2">
+          <Select onValueChange={(value) => {
+            const [type, entity] = value.split('|');
+            handleGenerateDocument(type, entity);
+          }}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Generate Document" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="allocation_letter|John Doe">Allocation Letter - John Doe</SelectItem>
+              <SelectItem value="mou|Victoria Gardens">MoU - Victoria Gardens</SelectItem>
+              <SelectItem value="payment_receipt|Jane Smith">Payment Receipt - Jane Smith</SelectItem>
+              <SelectItem value="invoice|Lagos Estate">Invoice - Lagos Estate</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button onClick={() => setIsUploadOpen(true)} className="bg-gradient-accent hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0">
+            <Plus className="h-4 w-4 mr-2" />
+            Upload Document
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -295,6 +346,17 @@ export function DocumentManagerPage() {
                     <Button size="sm" variant="outline" onClick={() => handleDownload(doc)}>
                       <Download className="h-4 w-4" />
                     </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => {
+                        const shareUrl = `${window.location.origin}/documents/${doc.id}`;
+                        navigator.clipboard.writeText(shareUrl);
+                        toast.success('Document link copied to clipboard');
+                      }}
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                    </Button>
                     <Button size="sm" variant="outline" onClick={() => handleDelete(doc.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -363,7 +425,22 @@ export function DocumentManagerPage() {
             </div>
             <div>
               <label className="text-sm font-medium">File Upload</label>
-              <Input type="file" accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" />
+              <Input 
+                type="file" 
+                accept=".pdf,.doc,.docx,.jpg,.png,.jpeg,.xls,.xlsx" 
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    // Auto-populate title if not set
+                    if (!formData.title) {
+                      setFormData(prev => ({ ...prev, title: file.name.replace(/\.[^/.]+$/, "") }));
+                    }
+                  }
+                }}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Supported formats: PDF, DOC, DOCX, JPG, PNG, JPEG, XLS, XLSX (Max 10MB)
+              </p>
             </div>
             <div className="flex gap-2">
               <Button type="submit" className="flex-1">Upload Document</Button>

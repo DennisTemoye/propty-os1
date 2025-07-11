@@ -69,10 +69,22 @@ export function CRMPipelinesMain() {
   };
 
   const handleEditLead = (lead: Lead) => {
-    // For now, we'll just open the add lead modal with the data pre-filled
-    // In a real implementation, you might want a separate edit modal
+    // Pre-populate form with lead data
+    setSelectedLead(lead);
     setIsAddLeadOpen(true);
-    toast.info('Edit functionality would open here');
+  };
+
+  const handleConvertToClient = (leadId: string) => {
+    const lead = leads.find(l => l.id === leadId);
+    if (lead) {
+      // Update lead status to won_deal
+      setLeads(prev => prev.map(l => 
+        l.id === leadId 
+          ? { ...l, stage: 'won_deal', lastActivity: new Date().toISOString() }
+          : l
+      ));
+      toast.success(`${lead.clientName} converted to client successfully!`);
+    }
   };
 
   const getFilteredLeads = () => {
@@ -320,12 +332,17 @@ export function CRMPipelinesMain() {
         {/* Modals and Drawers */}
         <AddLeadModal
           isOpen={isAddLeadOpen}
-          onClose={() => setIsAddLeadOpen(false)}
+          onClose={() => {
+            setIsAddLeadOpen(false);
+            setSelectedLead(null);
+          }}
           onAddLead={handleAddLead}
           stages={stages}
           agents={agents}
           projects={projects}
           sources={sources}
+          editLead={selectedLead}
+          onConvertToClient={handleConvertToClient}
         />
 
         <LeadDetailsDrawer
