@@ -55,7 +55,7 @@ const HeroSection = () => {
                   className="bg-card/80 backdrop-blur-sm text-foreground hover:bg-card px-10 py-6 text-xl font-semibold rounded-2xl transition-all duration-300 min-w-[200px]"
                 >
                   <Play className="mr-3 h-6 w-6" />
-                  Watch Demo
+                  Book Demo
                 </Button>
               </Link>
             </div>
