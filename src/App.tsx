@@ -20,7 +20,7 @@ import NotFound from './pages/NotFound';
 // Dashboard Pages
 import CompanyDashboard from './pages/CompanyDashboard';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
-import ProjectBlocksPage from './pages/ProjectBlocksPage';
+import BlockDetailPage from './pages/BlockDetailPage';
 import EditClientPage from './pages/EditClientPage';
 import NewClientPage from './pages/NewClientPage';
 import MarketersCommissionPage from './pages/MarketersCommissionPage';
@@ -59,7 +59,8 @@ function App() {
             {/* Specific Edit Routes - These need to be before dashboard wildcard */}
             <Route path="/company/projects/new" element={<NewProjectPage />} />
             <Route path="/company/projects/:id/edit" element={<EditProjectPage />} />
-            <Route path="/company/projects/:id/blocks" element={<ProjectBlocksPage />} />
+            <Route path="/company/projects/:projectId/blocks/:blockId" element={<BlockDetailPage />} />
+            <Route path="/company/projects/:id/blocks" element={<CompanyDashboard />} />
             <Route path="/company/projects/:id" element={<CompanyDashboard />} />
             <Route path="/company/clients/:id/edit" element={<EditClientPage />} />
             <Route path="/company/clients/:id" element={<CompanyDashboard />} />

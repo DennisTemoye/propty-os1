@@ -9,9 +9,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Building, Plus, Edit, Trash2, Users } from 'lucide-react';
 import { toast } from 'sonner';
-import { BlockDetailModal } from './BlockDetailModal';
 import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 import { Project } from '@/types/project';
+import { useNavigate } from 'react-router-dom';
 
 interface ProjectBlocksTabProps {
   project: Project;
@@ -75,10 +75,9 @@ const mockBlocks = [
 ];
 
 export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
+  const navigate = useNavigate();
   const [blocks, setBlocks] = useState(mockBlocks);
   const [isAddBlockOpen, setIsAddBlockOpen] = useState(false);
-  const [selectedBlock, setSelectedBlock] = useState<any>(null);
-  const [isBlockDetailOpen, setIsBlockDetailOpen] = useState(false);
   
   const { labels } = useProjectTerminology(project);
 
@@ -120,8 +119,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
   };
 
   const handleBlockClick = (block: any) => {
-    setSelectedBlock(block);
-    setIsBlockDetailOpen(true);
+    navigate(`/company/projects/${project.id}/blocks/${block.id}`);
   };
 
   const handleUpdateBlock = (updatedBlock: any) => {
@@ -341,20 +339,6 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
           </Card>
         ))}
       </div>
-
-      {/* Block Detail Modal */}
-      {selectedBlock && (
-        <BlockDetailModal
-          isOpen={isBlockDetailOpen}
-          onClose={() => {
-            setIsBlockDetailOpen(false);
-            setSelectedBlock(null);
-          }}
-          block={selectedBlock}
-          onUpdate={handleUpdateBlock}
-          onDelete={handleDeleteBlock}
-        />
-      )}
     </div>
   );
 }
