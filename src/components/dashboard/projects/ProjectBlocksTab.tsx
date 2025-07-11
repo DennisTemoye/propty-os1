@@ -30,17 +30,48 @@ const mockBlocks = [
     status: 'completed',
     defaultPrice: '₦25,000,000',
     defaultSize: '500sqm',
+    blockStructure: 'units',
     units: [
-      { id: '1', plotId: 'A-001', size: '500sqm', price: '₦25,000,000', status: 'sold', client: 'John Doe' },
-      { id: '2', plotId: 'A-002', size: '500sqm', price: '₦25,000,000', status: 'available', client: null },
-      { id: '3', plotId: 'A-003', size: '500sqm', price: '₦25,000,000', status: 'reserved', client: 'Jane Smith' },
+      { 
+        id: '1', 
+        plotId: 'A-001', 
+        size: '500sqm', 
+        price: '₦25,000,000', 
+        status: 'sold', 
+        client: 'John Doe',
+        unitName: '5 Bedroom Duplex',
+        bedrooms: 5,
+        bathrooms: 4
+      },
+      { 
+        id: '2', 
+        plotId: 'A-002', 
+        size: '500sqm', 
+        price: '₦25,000,000', 
+        status: 'available', 
+        client: null,
+        unitName: '5 Bedroom Duplex',
+        bedrooms: 5,
+        bathrooms: 4
+      },
+      { 
+        id: '3', 
+        plotId: 'A-003', 
+        size: '500sqm', 
+        price: '₦25,000,000', 
+        status: 'reserved', 
+        client: 'Jane Smith',
+        unitName: '5 Bedroom Duplex',
+        bedrooms: 5,
+        bathrooms: 4
+      },
     ]
   },
   {
     id: 'B',
     name: 'Block B',
-    type: 'bungalow',
-    description: 'Single-story bungalow units',
+    type: 'residential-land',
+    description: 'Premium residential plots for development',
     totalUnits: 25,
     availableUnits: 12,
     reservedUnits: 5,
@@ -48,16 +79,33 @@ const mockBlocks = [
     status: 'construction',
     defaultPrice: '₦18,000,000',
     defaultSize: '400sqm',
+    blockStructure: 'plots',
     units: [
-      { id: '4', plotId: 'B-001', size: '400sqm', price: '₦18,000,000', status: 'sold', client: 'Mike Johnson' },
-      { id: '5', plotId: 'B-002', size: '400sqm', price: '₦18,000,000', status: 'available', client: null },
+      { 
+        id: '4', 
+        plotId: 'B-001', 
+        size: '400sqm', 
+        price: '₦18,000,000', 
+        status: 'sold', 
+        client: 'Mike Johnson',
+        prototype: 'Residential A'
+      },
+      { 
+        id: '5', 
+        plotId: 'B-002', 
+        size: '400sqm', 
+        price: '₦18,000,000', 
+        status: 'available', 
+        client: null,
+        prototype: 'Residential A'
+      },
     ]
   },
   {
     id: 'C',
     name: 'Block C',
-    type: 'commercial',
-    description: 'Commercial units for business purposes',
+    type: 'mixed-development',
+    description: 'Mixed-use development with both units and plots',
     totalUnits: 20,
     availableUnits: 15,
     reservedUnits: 3,
@@ -65,8 +113,28 @@ const mockBlocks = [
     status: 'planning',
     defaultPrice: '₦35,000,000',
     defaultSize: '300sqm',
+    blockStructure: 'mixed',
     units: [
-      { id: '6', plotId: 'C-001', size: '300sqm', price: '₦35,000,000', status: 'sold', client: 'ABC Corp' },
+      { 
+        id: '6', 
+        plotId: 'C-001', 
+        size: '300sqm', 
+        price: '₦35,000,000', 
+        status: 'sold', 
+        client: 'ABC Corp',
+        unitName: 'Commercial Shop',
+        bedrooms: 0,
+        bathrooms: 2
+      },
+      { 
+        id: '7', 
+        plotId: 'C-P01', 
+        size: '250sqm', 
+        price: '₦30,000,000', 
+        status: 'available', 
+        client: null,
+        prototype: 'Commercial Plot'
+      },
     ]
   }
 ];
@@ -107,6 +175,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
       status: 'planning',
       defaultPrice: formData.get('defaultPrice') as string,
       defaultSize: formData.get('defaultSize') as string,
+      blockStructure: formData.get('blockStructure') as 'plots' | 'units' | 'mixed',
       units: []
     };
     
@@ -173,6 +242,21 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
                       <SelectItem value="bungalow">Bungalow</SelectItem>
                       <SelectItem value="commercial">Commercial</SelectItem>
                       <SelectItem value="utility">Utility</SelectItem>
+                      <SelectItem value="residential-land">Residential Land</SelectItem>
+                      <SelectItem value="mixed-development">Mixed Development</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="blockStructure">Block Structure</Label>
+                  <Select name="blockStructure" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select structure" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="units">Units (Housing/Buildings)</SelectItem>
+                      <SelectItem value="plots">Plots (Land Development)</SelectItem>
+                      <SelectItem value="mixed">Mixed (Units + Plots)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -258,6 +342,16 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
             <CardContent className="space-y-3">
               <div className="text-sm text-gray-600">
                 {block.description}
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">
+                  {block.blockStructure === 'units' ? 'Units' : 
+                   block.blockStructure === 'plots' ? 'Plots' : 'Mixed'}
+                </Badge>
+                <Badge variant="secondary" className="text-xs">
+                  {block.type}
+                </Badge>
               </div>
               
               <div className="grid grid-cols-2 gap-2 text-sm">
