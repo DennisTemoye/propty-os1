@@ -126,11 +126,15 @@ export function MarketersCommission() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [marketerFilter, setMarketerFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [dateFilter, setDateFilter] = useState('all');
+  const [projectFilter, setProjectFilter] = useState('all');
   
   // Marketer filters
   const [marketerStatusFilter, setMarketerStatusFilter] = useState('all');
   const [marketerRoleFilter, setMarketerRoleFilter] = useState('all');
   const [marketerSearchTerm, setMarketerSearchTerm] = useState('');
+  const [performanceDateFilter, setPerformanceDateFilter] = useState('all');
+  const [performanceProjectFilter, setPerformanceProjectFilter] = useState('all');
   
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -141,7 +145,12 @@ export function MarketersCommission() {
     const matchesMarketer = marketerFilter === 'all' || commission.marketerName === marketerFilter;
     const matchesSearch = commission.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          commission.project.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesStatus && matchesMarketer && matchesSearch;
+    const matchesDate = dateFilter === 'all' || 
+      (dateFilter === 'this-month' && new Date(commission.saleDate).getMonth() === new Date().getMonth()) ||
+      (dateFilter === 'last-month' && new Date(commission.saleDate).getMonth() === new Date().getMonth() - 1) ||
+      (dateFilter === 'this-year' && new Date(commission.saleDate).getFullYear() === new Date().getFullYear());
+    const matchesProject = projectFilter === 'all' || commission.project === projectFilter;
+    return matchesStatus && matchesMarketer && matchesSearch && matchesDate && matchesProject;
   });
 
   // Filter marketers based on filters
@@ -150,7 +159,9 @@ export function MarketersCommission() {
     const matchesRole = marketerRoleFilter === 'all' || marketer.role === marketerRoleFilter;
     const matchesSearch = marketer.name.toLowerCase().includes(marketerSearchTerm.toLowerCase()) ||
                          marketer.email.toLowerCase().includes(marketerSearchTerm.toLowerCase());
-    return matchesStatus && matchesRole && matchesSearch;
+    const matchesPerformanceProject = performanceProjectFilter === 'all' || 
+      marketer.projects.includes(performanceProjectFilter);
+    return matchesStatus && matchesRole && matchesSearch && matchesPerformanceProject;
   });
 
   const getStatusColor = (status: string) => {
@@ -382,7 +393,7 @@ export function MarketersCommission() {
           {/* Marketer Filters */}
           <Card className="bg-white">
             <CardContent className="p-4">
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Search</label>
                   <Input
@@ -420,6 +431,35 @@ export function MarketersCommission() {
                   </Select>
                 </div>
                 <div className="space-y-2">
+                  <label className="text-sm font-medium">Project</label>
+                  <Select value={performanceProjectFilter} onValueChange={setPerformanceProjectFilter}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Projects</SelectItem>
+                      <SelectItem value="Victoria Gardens">Victoria Gardens</SelectItem>
+                      <SelectItem value="Emerald Heights">Emerald Heights</SelectItem>
+                      <SelectItem value="Golden View">Golden View</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Performance Period</label>
+                  <Select value={performanceDateFilter} onValueChange={setPerformanceDateFilter}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Time</SelectItem>
+                      <SelectItem value="this-month">This Month</SelectItem>
+                      <SelectItem value="last-month">Last Month</SelectItem>
+                      <SelectItem value="this-quarter">This Quarter</SelectItem>
+                      <SelectItem value="this-year">This Year</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
                   <label className="text-sm font-medium">View</label>
                   <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'grid' | 'list')}>
                     <ToggleGroupItem value="grid" aria-label="Grid view">
@@ -430,20 +470,20 @@ export function MarketersCommission() {
                     </ToggleGroupItem>
                   </ToggleGroup>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Actions</label>
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => {
-                      setMarketerStatusFilter('all');
-                      setMarketerRoleFilter('all');
-                      setMarketerSearchTerm('');
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
-                </div>
+              </div>
+              <div className="mt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setMarketerStatusFilter('all');
+                    setMarketerRoleFilter('all');
+                    setMarketerSearchTerm('');
+                    setPerformanceDateFilter('all');
+                    setPerformanceProjectFilter('all');
+                  }}
+                >
+                  Clear All Filters
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -716,7 +756,7 @@ export function MarketersCommission() {
           {/* Commission Filters */}
           <Card className="bg-white">
             <CardContent className="p-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Search</label>
                   <Input
@@ -756,18 +796,60 @@ export function MarketersCommission() {
                   </Select>
                 </div>
                 <div className="space-y-2">
+                  <label className="text-sm font-medium">Project</label>
+                  <Select value={projectFilter} onValueChange={setProjectFilter}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Projects</SelectItem>
+                      <SelectItem value="Victoria Gardens">Victoria Gardens</SelectItem>
+                      <SelectItem value="Emerald Heights">Emerald Heights</SelectItem>
+                      <SelectItem value="Golden View">Golden View</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Date Period</label>
+                  <Select value={dateFilter} onValueChange={setDateFilter}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Time</SelectItem>
+                      <SelectItem value="this-month">This Month</SelectItem>
+                      <SelectItem value="last-month">Last Month</SelectItem>
+                      <SelectItem value="this-quarter">This Quarter</SelectItem>
+                      <SelectItem value="this-year">This Year</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
                   <label className="text-sm font-medium">Actions</label>
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => {
-                      setStatusFilter('all');
-                      setMarketerFilter('all');
-                      setSearchTerm('');
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
+                  <div className="space-y-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        setStatusFilter('all');
+                        setMarketerFilter('all');
+                        setProjectFilter('all');
+                        setDateFilter('all');
+                        setSearchTerm('');
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                      onClick={handleExportCSV}
+                    >
+                      <Download className="h-3 w-3 mr-1" />
+                      Export CSV
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>

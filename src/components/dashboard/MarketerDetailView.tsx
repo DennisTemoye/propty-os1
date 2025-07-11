@@ -7,7 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Phone, Mail, Users, DollarSign, TrendingUp, Calendar, FileText, Download, Eye, Trophy, Edit } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Users, DollarSign, TrendingUp, Calendar, FileText, Download, Eye, Trophy, Edit, Settings } from 'lucide-react';
+import { ProjectCommissionSettings } from './marketers/ProjectCommissionSettings';
 import { toast } from 'sonner';
 
 const mockMarketer = {
@@ -185,9 +186,10 @@ export function MarketerDetailView() {
 
       {/* Tabs */}
       <Tabs defaultValue="sales" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="sales">Sales</TabsTrigger>
           <TabsTrigger value="commissions">Commissions</TabsTrigger>
+          <TabsTrigger value="commission-settings">Commission Settings</TabsTrigger>
           <TabsTrigger value="activity">Activity Log</TabsTrigger>
         </TabsList>
 
@@ -269,6 +271,13 @@ export function MarketerDetailView() {
               </Table>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="commission-settings" className="space-y-6">
+          <ProjectCommissionSettings 
+            marketerId={mockMarketer.id.toString()} 
+            marketerName={mockMarketer.name} 
+          />
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-6">
