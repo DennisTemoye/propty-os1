@@ -415,14 +415,6 @@ export function Clients() {
                       <CardTitle className="text-lg">{client.name}</CardTitle>
                       <p className="text-sm text-gray-600">{client.email}</p>
                       <p className="text-sm text-gray-600">{client.phone}</p>
-                      <div className="flex gap-2 mt-2">
-                        <Badge className={getKycStatusColor(client.kycStatus)}>
-                          KYC {client.kycStatus}
-                        </Badge>
-                        <Badge className={getAllocationStatusColor(client.allocationStatus)}>
-                          {client.allocationStatus}
-                        </Badge>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -440,6 +432,14 @@ export function Clients() {
                           +{client.projects.length - 1} more
                         </div>
                       )}
+                      <div className="flex gap-2 mt-2">
+                        <Badge className={getKycStatusColor(client.kycStatus)}>
+                          KYC {client.kycStatus}
+                        </Badge>
+                        <Badge className={getAllocationStatusColor(client.allocationStatus)}>
+                          {client.allocationStatus}
+                        </Badge>
+                      </div>
                     </div>
                     
                     <div>
@@ -469,6 +469,14 @@ export function Clients() {
                     <div className="text-center py-4 text-gray-500">
                       <Building className="h-8 w-8 mx-auto mb-2 opacity-50" />
                       <p className="text-sm">No property assigned</p>
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                      <Badge className={getKycStatusColor(client.kycStatus)}>
+                        KYC {client.kycStatus}
+                      </Badge>
+                      <Badge className={getAllocationStatusColor(client.allocationStatus)}>
+                        {client.allocationStatus}
+                      </Badge>
                     </div>
                     <Button 
                       onClick={(e) => handleAssignProperty(e, client)}
