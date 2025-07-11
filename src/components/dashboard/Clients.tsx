@@ -368,7 +368,7 @@ export function Clients() {
           {filteredClients.map((client) => (
             <Card 
               key={client.id} 
-              className="hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-border hover:border-primary/20 rounded-xl transform hover:scale-[1.02] hover:shadow-glow animate-fade-in"
+              className="hover:shadow-md cursor-pointer bg-white border border-border hover:border-primary/20 rounded-xl"
               onClick={() => handleClientClick(client.id)}
             >
               <CardHeader>

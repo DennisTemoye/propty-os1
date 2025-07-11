@@ -258,7 +258,7 @@ export function DashboardOverview() {
             {!isMobile && <ThemeToggle />}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className={`bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${isMobile ? 'flex-1 text-sm py-2' : 'px-6 py-3'}`}>
+                <Button className={`bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-lg ${isMobile ? 'flex-1 text-sm py-2' : 'px-6 py-3'}`}>
                   <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
                   {isMobile ? 'New' : 'New'}
                 </Button>
@@ -330,7 +330,7 @@ export function DashboardOverview() {
             <div
               key={index}
               onClick={kpi.onClick}
-              className="cursor-pointer transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:ring-offset-2 rounded-xl animate-fade-in hover:shadow-xl"
+              className="cursor-pointer rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20"
               style={{ animationDelay: `${index * 0.1}s` }}
               tabIndex={0}
               role="button"
@@ -356,7 +356,7 @@ export function DashboardOverview() {
             ? 'grid-cols-1' 
             : 'grid-cols-1 lg:grid-cols-2'
         }`}>
-          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden animate-fade-in">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl overflow-hidden">
             <CardHeader className="pb-2 sm:pb-4">
               <CardTitle className={`font-semibold text-gray-800 dark:text-white ${isMobile ? 'text-base' : 'text-lg'}`}>
                 Sales & Allocations Performance
@@ -523,7 +523,7 @@ export function DashboardOverview() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-100 dark:border-green-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/1')}>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-100 dark:border-green-800 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30" onClick={() => navigate('/company/developments/1')}>
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />
@@ -538,7 +538,7 @@ export function DashboardOverview() {
                     <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/2')}>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30" onClick={() => navigate('/company/developments/2')}>
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />
@@ -553,7 +553,7 @@ export function DashboardOverview() {
                     <div className="text-xs text-gray-500 dark:text-gray-400">Revenue</div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-100 dark:border-purple-800 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/company/developments/3')}>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-100 dark:border-purple-800 cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/30" onClick={() => navigate('/company/developments/3')}>
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="h-6 w-6 text-white" />

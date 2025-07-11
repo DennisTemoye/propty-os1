@@ -99,7 +99,7 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
         
         {/* Sidebar Drawer */}
         <div className={cn(
-          'fixed left-0 top-0 h-full w-80 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 z-50 transform transition-all duration-300 shadow-2xl backdrop-blur-sm',
+          'fixed left-0 top-0 h-full w-80 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 z-50 transform transition-transform duration-200 shadow-2xl backdrop-blur-sm',
           isOpen ? 'translate-x-0' : '-translate-x-full',
           className
         )}>
@@ -131,7 +131,7 @@ export function CompanySidebar({ className, isOpen = true, onClose }: CompanySid
                   key={item.path}
                   variant={isActivePath(item.path) ? 'secondary' : 'ghost'}
                   className={cn(
-                    'w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none transition-all duration-200 transform hover:scale-105',
+                    'w-full justify-start text-blue-100 hover:bg-blue-800/50 hover:text-white border-none',
                     isActivePath(item.path) && 'bg-blue-700 text-white shadow-lg ring-2 ring-blue-400/50'
                   )}
                   onClick={() => handleNavigate(item.path)}
