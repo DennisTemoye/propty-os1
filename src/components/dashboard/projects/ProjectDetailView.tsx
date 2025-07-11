@@ -39,8 +39,31 @@ import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 import { Project } from '@/types/project';
 
 interface DevelopmentDetailViewProps {
-  project: Project;
+  project?: Project;
 }
+
+const mockProject: Project = {
+  id: 1,
+  name: 'Victoria Gardens Estate',
+  location: 'Lekki, Lagos',
+  category: 'Housing',
+  status: 'ongoing',
+  type: 'Residential',
+  totalUnits: 150,
+  soldUnits: 89,
+  reservedUnits: 23,
+  allocatedUnits: 89,
+  availableUnits: 38,
+  description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
+  projectManager: 'Alice Johnson',
+  tags: 'Premium, Residential, Lekki',
+  terminologyType: 'units' as const,
+  image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
+  projectSize: '50 hectares',
+  startDate: '2024-01-01',
+  expectedCompletion: '2025-12-31',
+  totalBudget: '₦5,000,000,000'
+};
 
 const mockDevelopmentDetails = {
   description: 'A premium residential estate featuring modern amenities and strategic location.',
@@ -70,7 +93,8 @@ const mockDevelopmentDetails = {
   ]
 };
 
-export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
+export function ProjectDetailView({ project: projectProp }: DevelopmentDetailViewProps = {}) {
+  const project = projectProp || mockProject;
   const [activeTab, setActiveTab] = useState('overview');
   
   console.log('ProjectDetailView rendering, activeTab:', activeTab);
