@@ -3,6 +3,9 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play, Users, Building2, TrendingUp, Zap, Shield, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import dashboardOverview from '@/assets/dashboard-overview.jpg';
+import dashboardProjects from '@/assets/dashboard-projects.jpg';
+import dashboardClients from '@/assets/dashboard-clients.jpg';
 
 const HeroSection = () => {
   return (
@@ -36,6 +39,63 @@ const HeroSection = () => {
                 Streamline projects, manage clients, track sales, and scale your team with Africa's most comprehensive real estate platform. 
                 <span className="text-primary font-semibold"> Built for African markets.</span>
               </p>
+            </div>
+
+            {/* Dashboard Screenshots */}
+            <div className="mb-12">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-semibold text-foreground mb-3">See ProptyOS in Action</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Experience the power of comprehensive real estate management with our intuitive dashboards
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <div className="group cursor-pointer">
+                  <div className="relative overflow-hidden rounded-2xl shadow-xl border border-border bg-card">
+                    <img 
+                      src={dashboardOverview} 
+                      alt="Dashboard Overview" 
+                      className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h4 className="text-white font-semibold text-lg mb-1">Dashboard Overview</h4>
+                      <p className="text-white/80 text-sm">Complete project analytics and KPIs</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="group cursor-pointer">
+                  <div className="relative overflow-hidden rounded-2xl shadow-xl border border-border bg-card">
+                    <img 
+                      src={dashboardProjects} 
+                      alt="Project Management" 
+                      className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h4 className="text-white font-semibold text-lg mb-1">Project Management</h4>
+                      <p className="text-white/80 text-sm">Unit allocation and mapping tools</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="group cursor-pointer">
+                  <div className="relative overflow-hidden rounded-2xl shadow-xl border border-border bg-card">
+                    <img 
+                      src={dashboardClients} 
+                      alt="Client Management" 
+                      className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h4 className="text-white font-semibold text-lg mb-1">Client Management</h4>
+                      <p className="text-white/80 text-sm">CRM pipelines and sales tracking</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
