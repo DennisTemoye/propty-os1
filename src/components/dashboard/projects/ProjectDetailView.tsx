@@ -29,8 +29,9 @@ import {
   Map
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { BlocksUnitsManager } from './BlocksUnitsManager';
+
 import { DocumentsView } from '../documents/DocumentsView';
+import { ProjectBlocksTab } from './ProjectBlocksTab';
 import { getProjectImage, handleImageError } from '@/lib/utils';
 import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 
@@ -504,10 +505,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         </TabsContent>
 
         <TabsContent value="blocks" className="space-y-4">
-          <BlocksUnitsManager 
-            project={project} 
-            onAssignUnit={() => {}} 
-          />
+          <ProjectBlocksTab project={project} />
         </TabsContent>
 
         <TabsContent value="sales" className="space-y-4">

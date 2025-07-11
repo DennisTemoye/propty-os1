@@ -54,6 +54,7 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
       name: project?.name || '',
       location: project?.location || '',
       category: project?.category || '',
+      terminologyType: project?.terminologyType || 'plots',
       description: project?.description || '',
       status: project?.status || '',
       projectSize: project?.projectSize || '',
@@ -92,10 +93,19 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
   const addBlock = () => {
     setBlocks([...blocks, {
       id: `Block-${blocks.length + 1}`,
+      name: `Block ${String.fromCharCode(65 + blocks.length)}`,
+      type: '',
       prototype: '',
-      units: 0,
+      totalUnits: 0,
+      availableUnits: 0,
+      reservedUnits: 0,
+      soldUnits: 0,
       status: 'planning',
-      description: ''
+      description: '',
+      structureType: 'plots', // Default to plots
+      defaultPrice: '',
+      defaultSize: '',
+      units: []
     }]);
     onFormChange?.();
   };
@@ -200,6 +210,28 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                     />
                   </div>
 
+                  <FormField
+                    control={form.control}
+                    name="terminologyType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-left">Primary Structure Type</FormLabel>
+                        <FormControl>
+                          <Select value={field.value || 'plots'} onValueChange={field.onChange}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select structure type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="plots">Plots (Land Development)</SelectItem>
+                              <SelectItem value="units">Units (Housing/Buildings)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <FormInput
                     control={form.control}
                     name="description"
@@ -301,67 +333,102 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                               </Button>
                             </div>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                              <div>
-                                <label className="text-sm font-medium text-left block">Block ID</label>
-                                <Input 
-                                  placeholder="e.g., Block A"
-                                  value={block.id}
-                                  onChange={(e) => updateBlock(index, 'id', e.target.value)}
-                                />
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="text-sm font-medium text-left block">Block Name</label>
+                                  <Input 
+                                    placeholder="e.g., Block A"
+                                    value={block.name || block.id}
+                                    onChange={(e) => updateBlock(index, 'name', e.target.value)}
+                                  />
+                                </div>
+                                
+                                <div>
+                                  <label className="text-sm font-medium text-left block">Structure Type</label>
+                                  <Select 
+                                    value={block.structureType || 'plots'}
+                                    onValueChange={(value) => updateBlock(index, 'structureType', value)}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select structure type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="plots">Plots (Land Development)</SelectItem>
+                                      <SelectItem value="units">Units (Housing/Buildings)</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
                               </div>
-                              
-                              <div>
-                                <label className="text-sm font-medium text-left block">Prototype</label>
-                                <Select 
-                                  value={block.prototype}
-                                  onValueChange={(value) => updateBlock(index, 'prototype', value)}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select prototype" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="Duplex">Duplex</SelectItem>
-                                    <SelectItem value="Bungalow">Bungalow</SelectItem>
-                                    <SelectItem value="Apartment">Apartment</SelectItem>
-                                    <SelectItem value="Townhouse">Townhouse</SelectItem>
-                                    <SelectItem value="Commercial">Commercial</SelectItem>
-                                    <SelectItem value="Office">Office</SelectItem>
-                                    <SelectItem value="Retail">Retail</SelectItem>
-                                    <SelectItem value="Standard Plots">Standard Plots</SelectItem>
-                                    <SelectItem value="Premium Plots">Premium Plots</SelectItem>
-                                    <SelectItem value="Corner Plots">Corner Plots</SelectItem>
-                                  </SelectContent>
-                                </Select>
+
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                  <label className="text-sm font-medium text-left block">Block Type</label>
+                                  <Select 
+                                    value={block.type}
+                                    onValueChange={(value) => updateBlock(index, 'type', value)}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="duplex">Duplex</SelectItem>
+                                      <SelectItem value="bungalow">Bungalow</SelectItem>
+                                      <SelectItem value="apartment">Apartment</SelectItem>
+                                      <SelectItem value="commercial">Commercial</SelectItem>
+                                      <SelectItem value="land">Land Plot</SelectItem>
+                                      <SelectItem value="utility">Utility</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                
+                                <div>
+                                  <label className="text-sm font-medium text-left block">Total {block.structureType === 'units' ? 'Units' : 'Plots'}</label>
+                                  <Input 
+                                    type="number"
+                                    placeholder="e.g., 30"
+                                    value={block.totalUnits || 0}
+                                    onChange={(e) => updateBlock(index, 'totalUnits', parseInt(e.target.value) || 0)}
+                                  />
+                                </div>
+                                
+                                <div>
+                                  <label className="text-sm font-medium text-left block">Status</label>
+                                  <Select 
+                                    value={block.status}
+                                    onValueChange={(value) => updateBlock(index, 'status', value)}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="planning">Planning</SelectItem>
+                                      <SelectItem value="construction">Construction</SelectItem>
+                                      <SelectItem value="completed">Completed</SelectItem>
+                                      <SelectItem value="on-hold">On Hold</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
                               </div>
-                              
-                              <div>
-                                <label className="text-sm font-medium text-left block">Units Count</label>
-                                <Input 
-                                  type="number"
-                                  placeholder="e.g., 30"
-                                  value={block.units}
-                                  onChange={(e) => updateBlock(index, 'units', parseInt(e.target.value) || 0)}
-                                />
-                              </div>
-                              
-                              <div>
-                                <label className="text-sm font-medium text-left block">Status</label>
-                                <Select 
-                                  value={block.status}
-                                  onValueChange={(value) => updateBlock(index, 'status', value)}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select status" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="planning">Planning</SelectItem>
-                                    <SelectItem value="surveyed">Surveyed</SelectItem>
-                                    <SelectItem value="construction">Construction</SelectItem>
-                                    <SelectItem value="completed">Completed</SelectItem>
-                                    <SelectItem value="marketing">Marketing</SelectItem>
-                                  </SelectContent>
-                                </Select>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="text-sm font-medium text-left block">Default Price</label>
+                                  <Input 
+                                    placeholder="e.g., ₦25,000,000"
+                                    value={block.defaultPrice || ''}
+                                    onChange={(e) => updateBlock(index, 'defaultPrice', e.target.value)}
+                                  />
+                                </div>
+                                
+                                <div>
+                                  <label className="text-sm font-medium text-left block">Default Size</label>
+                                  <Input 
+                                    placeholder="e.g., 500sqm"
+                                    value={block.defaultSize || ''}
+                                    onChange={(e) => updateBlock(index, 'defaultSize', e.target.value)}
+                                  />
+                                </div>
                               </div>
                             </div>
                             
