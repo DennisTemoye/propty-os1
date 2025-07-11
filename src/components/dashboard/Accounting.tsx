@@ -345,96 +345,97 @@ export function Accounting() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* Recent Transactions with Enhanced Filtering */}
+          {/* Financial Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-0 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-blue-600 font-medium">Total Sales</p>
+                    <p className="text-2xl font-bold text-blue-900">
+                      {formatCurrency(filteredTransactions.filter(t => t.category === 'Property Sales').reduce((sum, t) => sum + t.amount, 0))}
+                    </p>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-0 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-green-600 font-medium">Instalments</p>
+                    <p className="text-2xl font-bold text-green-900">
+                      {formatCurrency(filteredTransactions.filter(t => t.category === 'Instalment Payment').reduce((sum, t) => sum + t.amount, 0))}
+                    </p>
+                  </div>
+                  <DollarSign className="h-8 w-8 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-0 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-orange-600 font-medium">Additional Fees</p>
+                    <p className="text-2xl font-bold text-orange-900">
+                      {formatCurrency(filteredTransactions.filter(t => ['Survey Fee', 'Legal Fee', 'Documentation Fee'].includes(t.category)).reduce((sum, t) => sum + t.amount, 0))}
+                    </p>
+                  </div>
+                  <FileText className="h-8 w-8 text-orange-600" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-0 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-purple-600 font-medium">Refunds</p>
+                    <p className="text-2xl font-bold text-purple-900">
+                      {formatCurrency(totalRefunds)}
+                    </p>
+                  </div>
+                  <TrendingDown className="h-8 w-8 text-purple-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recent Activity */}
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Recent Transactions</CardTitle>
-                <div className="flex space-x-2">
-                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      <SelectItem value="Property Sales">Property Sales</SelectItem>
-                      <SelectItem value="Instalment Payment">Instalment Payment</SelectItem>
-                      <SelectItem value="Survey Fee">Survey Fee</SelectItem>
-                      <SelectItem value="Legal Fee">Legal Fee</SelectItem>
-                      <SelectItem value="Documentation Fee">Documentation Fee</SelectItem>
-                      <SelectItem value="Commission">Commission</SelectItem>
-                      <SelectItem value="Office Expenses">Office Expenses</SelectItem>
-                      <SelectItem value="Staff Salaries">Staff Salaries</SelectItem>
-                      <SelectItem value="Marketing">Marketing</SelectItem>
-                      <SelectItem value="Refund">Refund</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={marketerFilter} onValueChange={setMarketerFilter}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Marketer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Marketers</SelectItem>
-                      {marketers.map(marketer => (
-                        <SelectItem key={marketer} value={marketer}>
-                          {marketer}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Client/Marketer</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredTransactions.slice(0, 10).map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell>{transaction.date}</TableCell>
-                      <TableCell>
-                        <Badge variant={transaction.type === 'income' ? 'default' : 'secondary'}>
-                          {transaction.type}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{transaction.category}</TableCell>
-                      <TableCell className="max-w-xs truncate">{transaction.description}</TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div>{transaction.client}</div>
-                          {transaction.marketer && (
-                            <div className="text-gray-500">via {transaction.marketer}</div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className={`font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+              <div className="space-y-4">
+                {filteredTransactions.slice(0, 5).map((transaction) => (
+                  <div key={transaction.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
+                        {transaction.type === 'income' ? 
+                          <TrendingUp className={`h-4 w-4 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`} /> :
+                          <TrendingDown className={`h-4 w-4 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`} />
+                        }
+                      </div>
+                      <div>
+                        <p className="font-medium">{transaction.description}</p>
+                        <p className="text-sm text-gray-500">{transaction.date} • {transaction.category}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`font-bold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                         {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(transaction.status)}>
-                          {transaction.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                      </p>
+                      <Badge className={getStatusColor(transaction.status)}>
+                        {transaction.status}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
