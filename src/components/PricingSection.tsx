@@ -75,19 +75,19 @@ const PricingSection = () => {
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <section id="pricing" className="py-24 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-20">
-          <div className="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-6">
+          <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
             💰 Transparent Per-User Pricing
           </div>
-          <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
+          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
             Simple, Scalable Pricing
           </h2>
-          <p className="text-xl text-slate-600 max-w-4xl mx-auto mb-8">
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
             Pay only for what you use. Scale your team up or down anytime. All plans include our core real estate management features with no hidden fees.
           </p>
-          <div className="inline-flex items-center justify-center bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-3 rounded-full font-medium">
+          <div className="inline-flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 px-6 py-3 rounded-full font-medium">
             <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
             Annual billing saves up to 25% • 14-day free trial for all plans
           </div>
@@ -101,13 +101,13 @@ const PricingSection = () => {
                 key={index}
                 className={`relative rounded-3xl border-2 p-8 transition-all duration-500 hover:shadow-2xl ${
                   plan.isPopular
-                    ? 'border-purple-500 shadow-xl scale-105 bg-gradient-to-br from-white to-purple-50/50'
-                    : 'border-slate-200 hover:border-purple-300 bg-white/80 backdrop-blur-sm hover:scale-105'
+                    ? 'border-primary shadow-xl scale-105 bg-gradient-to-br from-card to-primary/5'
+                    : 'border-border hover:border-primary/50 bg-card/80 backdrop-blur-sm hover:scale-105'
                 }`}
               >
                 {plan.isPopular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+                    <span className="bg-gradient-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-bold shadow-lg">
                       ⭐ Most Popular
                     </span>
                   </div>
@@ -122,23 +122,23 @@ const PricingSection = () => {
                 )}
 
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <IconComponent className="w-8 h-8 text-purple-600" />
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <IconComponent className="w-8 h-8 text-primary" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">{plan.name}</h3>
-                  <p className="text-slate-600 mb-4">{plan.description}</p>
+                  <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
+                  <p className="text-muted-foreground mb-4">{plan.description}</p>
                   
                   <div className="mb-4">
                     <div className="flex items-center justify-center gap-2 mb-2">
                       {plan.originalPrice !== plan.price && plan.originalPrice !== "Custom" && (
-                        <span className="text-lg text-slate-400 line-through">{plan.originalPrice}</span>
+                        <span className="text-lg text-muted-foreground line-through">{plan.originalPrice}</span>
                       )}
-                      <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
+                      <span className="text-4xl font-bold text-foreground">{plan.price}</span>
                     </div>
-                    <span className="text-slate-600 font-medium">{plan.period}</span>
+                    <span className="text-muted-foreground font-medium">{plan.period}</span>
                   </div>
 
-                  <div className="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">
+                  <div className="inline-flex items-center px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
                     <Users className="w-4 h-4 mr-1" />
                     {plan.users}
                   </div>
@@ -148,7 +148,7 @@ const PricingSection = () => {
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
                       <Check className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0 mt-0.5" />
-                      <span className="text-slate-700">{feature}</span>
+                      <span className="text-muted-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -156,14 +156,14 @@ const PricingSection = () => {
                 <Button
                   className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
                     plan.isPopular
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border-2 border-transparent hover:border-purple-300'
+                      ? 'bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl'
+                      : 'bg-muted hover:bg-muted/80 text-foreground border-2 border-transparent hover:border-primary/50'
                   }`}
                 >
                   {plan.name === 'Enterprise' ? 'Contact Sales' : 'Start Free Trial'}
                 </Button>
 
-                <p className="text-center text-sm text-slate-500 mt-4">
+                <p className="text-center text-sm text-muted-foreground mt-4">
                   {plan.name === 'Enterprise' ? 'Custom onboarding included' : 'No credit card required'}
                 </p>
               </div>
@@ -173,9 +173,9 @@ const PricingSection = () => {
 
         {/* Additional pricing info */}
         <div className="mt-16 text-center">
-          <div className="bg-white/80 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 max-w-4xl mx-auto">
-            <h3 className="text-2xl font-bold text-slate-900 mb-4">All plans include:</h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-slate-700">
+          <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-8 max-w-4xl mx-auto">
+            <h3 className="text-2xl font-bold text-foreground mb-4">All plans include:</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-muted-foreground">
               <div className="flex items-center">
                 <Check className="w-5 h-5 text-emerald-500 mr-2" />
                 <span>14-day free trial</span>

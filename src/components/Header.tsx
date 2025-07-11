@@ -17,12 +17,12 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+            <Link to="/" className="text-2xl font-bold text-primary">
               ProptyOS
             </Link>
           </div>
@@ -31,31 +31,31 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <button 
               onClick={() => scrollToSection('about')}
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               About
             </button>
             <button 
               onClick={() => scrollToSection('features')}
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               Features
             </button>
             <button 
               onClick={() => scrollToSection('pricing')}
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               Pricing
             </button>
             <button 
               onClick={() => scrollToSection('contact')}
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               Contact
             </button>
             <button 
               onClick={() => scrollToSection('faq')}
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               FAQ
             </button>
@@ -65,12 +65,12 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             <ThemeToggle />
             <Link to="/login">
-              <Button variant="ghost" className="text-gray-700 dark:text-gray-300">
+              <Button variant="ghost">
                 Login
               </Button>
             </Link>
             <Link to="/signup">
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+              <Button className="bg-gradient-primary text-primary-foreground hover:opacity-90">
                 Get Started
               </Button>
             </Link>
@@ -92,46 +92,46 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="md:hidden py-4 border-t border-border">
             <nav className="flex flex-col space-y-4">
               <button 
                 onClick={() => scrollToSection('about')}
-                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+                className="text-left text-muted-foreground hover:text-primary transition-colors py-2"
               >
                 About
               </button>
               <button 
                 onClick={() => scrollToSection('features')}
-                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+                className="text-left text-muted-foreground hover:text-primary transition-colors py-2"
               >
                 Features
               </button>
               <button 
                 onClick={() => scrollToSection('pricing')}
-                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+                className="text-left text-muted-foreground hover:text-primary transition-colors py-2"
               >
                 Pricing
               </button>
               <button 
                 onClick={() => scrollToSection('contact')}
-                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+                className="text-left text-muted-foreground hover:text-primary transition-colors py-2"
               >
                 Contact
               </button>
               <button 
                 onClick={() => scrollToSection('faq')}
-                className="text-left text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+                className="text-left text-muted-foreground hover:text-primary transition-colors py-2"
               >
                 FAQ
               </button>
-              <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200 dark:border-gray-800">
+              <div className="flex flex-col space-y-2 pt-4 border-t border-border">
                 <Link to="/login">
-                  <Button variant="ghost" className="w-full justify-start text-gray-700 dark:text-gray-300">
+                  <Button variant="ghost" className="w-full justify-start">
                     Login
                   </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                  <Button className="w-full bg-gradient-primary text-primary-foreground hover:opacity-90">
                     Get Started
                   </Button>
                 </Link>
