@@ -7,12 +7,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 
 interface NewAllocationFormProps {
   onClose: () => void;
 }
 
 export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
+  const { labels } = useProjectTerminology({ terminologyType: 'plots' });
+  
   const form = useForm({
     defaultValues: {
       clientId: '',
@@ -83,7 +86,7 @@ export function NewAllocationForm({ onClose }: NewAllocationFormProps) {
         </div>
 
         <div>
-          <Label htmlFor="unitId" className="text-sm font-medium text-left block mb-2">Plot</Label>
+          <Label htmlFor="unitId" className="text-sm font-medium text-left block mb-2">{labels.unit}</Label>
           <Select onValueChange={(value) => form.setValue('plotId', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select plot" />

@@ -12,9 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Building, Users, Edit, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { UnitEditModal } from './UnitEditModal';
+import { useProjectTerminology } from '@/hooks/useProjectTerminology';
+import { Project } from '@/types/project';
 
 interface BlocksUnitsManagerProps {
-  project: any;
+  project: Project;
   onAssignUnit: (unit: any) => void;
 }
 
@@ -26,6 +28,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
   const [editingUnit, setEditingUnit] = useState<any>(null);
 
   const form = useForm();
+  const { labels } = useProjectTerminology(project);
 
   const mockBlocks = [
     {
@@ -99,7 +102,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="blocks">Blocks Management</TabsTrigger>
-          <TabsTrigger value="units">Units Management</TabsTrigger>
+          <TabsTrigger value="units">{labels.unitsManagement}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -116,7 +119,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
                 <div className="text-2xl font-bold text-gray-900">
                   {mockBlocks.reduce((sum, block) => sum + block.totalUnits, 0)}
                 </div>
-                <div className="text-sm text-gray-500">Total Units</div>
+                <div className="text-sm text-gray-500">{labels.totalUnits}</div>
               </CardContent>
             </Card>
             <Card>
@@ -124,7 +127,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
                 <div className="text-2xl font-bold text-green-600">
                   {mockBlocks.reduce((sum, block) => sum + block.availableUnits, 0)}
                 </div>
-                <div className="text-sm text-gray-500">Available Units</div>
+                <div className="text-sm text-gray-500">{labels.availableUnits}</div>
               </CardContent>
             </Card>
             <Card>
@@ -132,7 +135,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
                 <div className="text-2xl font-bold text-red-600">
                   {mockBlocks.reduce((sum, block) => sum + block.soldUnits, 0)}
                 </div>
-                <div className="text-sm text-gray-500">Sold Units</div>
+                <div className="text-sm text-gray-500">{labels.soldUnits}</div>
               </CardContent>
             </Card>
           </div>
@@ -151,7 +154,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
                           <h3 className="font-semibold text-lg">{block.name}</h3>
                           <p className="text-sm text-gray-600">{block.type}</p>
                         </div>
-                        <Badge variant="outline">{block.totalUnits} units</Badge>
+                        <Badge variant="outline">{block.totalUnits} {labels.unitsLower}</Badge>
                       </div>
                       <p className="text-sm text-gray-600 mb-3">{block.description}</p>
                       
@@ -283,19 +286,19 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
 
         <TabsContent value="units" className="space-y-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Units Management</h3>
+            <h3 className="text-lg font-semibold">{labels.unitsManagement}</h3>
             <Dialog open={isNewUnitOpen} onOpenChange={setIsNewUnitOpen}>
               <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Unit
-                </Button>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add {labels.unit}
+                  </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Unit</DialogTitle>
+                  <DialogTitle>Add New {labels.unit}</DialogTitle>
                   <DialogDescription>
-                    Add a new unit to an existing block
+                    Add a new {labels.unitLower} to an existing block
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={form.handleSubmit(onSubmitUnit)} className="space-y-4">
@@ -315,11 +318,11 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
                     </Select>
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Plot ID</label>
-                    <Input placeholder="e.g., Block A - Plot 06" {...form.register('plotId')} />
+                    <label className="text-sm font-medium">{labels.unitColumn}</label>
+                    <Input placeholder={`e.g., Block A - ${labels.unit} 06`} {...form.register('plotId')} />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Plot Size</label>
+                    <label className="text-sm font-medium">{labels.unit} Size</label>
                     <Input placeholder="e.g., 500sqm" {...form.register('size')} />
                   </div>
                   <div>
@@ -327,7 +330,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
                     <Input placeholder="e.g., ₦25M" {...form.register('price')} />
                   </div>
                   <div className="flex gap-2">
-                    <Button type="submit" className="flex-1">Create Unit</Button>
+                    <Button type="submit" className="flex-1">Create {labels.unit}</Button>
                     <Button type="button" variant="outline" onClick={() => setIsNewUnitOpen(false)}>
                       Cancel
                     </Button>
@@ -342,7 +345,7 @@ export function BlocksUnitsManager({ project, onAssignUnit }: BlocksUnitsManager
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Plot ID</TableHead>
+                    <TableHead>{labels.unitColumn}</TableHead>
                     <TableHead>Block</TableHead>
                     <TableHead>Size</TableHead>
                     <TableHead>Price</TableHead>

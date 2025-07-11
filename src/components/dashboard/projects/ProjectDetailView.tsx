@@ -32,23 +32,12 @@ import { toast } from 'sonner';
 import { BlocksUnitsManager } from './BlocksUnitsManager';
 import { DocumentsView } from '../documents/DocumentsView';
 import { getProjectImage, handleImageError } from '@/lib/utils';
+import { useProjectTerminology } from '@/hooks/useProjectTerminology';
+
+import { Project } from '@/types/project';
 
 interface DevelopmentDetailViewProps {
-  project: {
-    id: number;
-    name: string;
-    location: string;
-    totalUnits: number;
-    soldUnits: number;
-    reservedUnits: number;
-    availableUnits: number;
-    status: string;
-    type: string;
-    documentTitle?: string;
-    projectSize?: string;
-    developmentStage?: string;
-    image?: string;
-  };
+  project: Project;
 }
 
 const mockDevelopmentDetails = {
@@ -85,6 +74,8 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
   const [isUploadDocumentOpen, setIsUploadDocumentOpen] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState<any>(null);
   const [isBlockDetailOpen, setIsBlockDetailOpen] = useState(false);
+  
+  const { labels } = useProjectTerminology(project);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -231,7 +222,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-2xl font-bold text-green-600">{project.soldUnits}</div>
-                <div className="text-sm text-gray-500">Units Sold</div>
+                <div className="text-sm text-gray-500">{labels.soldUnits}</div>
               </div>
               <Building className="h-8 w-8 text-green-600" />
             </div>
@@ -264,7 +255,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-2xl font-bold text-orange-600">{project.availableUnits}</div>
-                <div className="text-sm text-gray-500">Available Units</div>
+                <div className="text-sm text-gray-500">{labels.availableUnits}</div>
               </div>
               <Building className="h-8 w-8 text-orange-600" />
             </div>
@@ -323,7 +314,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="layout">Layout</TabsTrigger>
-          <TabsTrigger value="blocks">Blocks</TabsTrigger>
+          <TabsTrigger value="blocks">{labels.blockUnitsManagement.split(' &')[0]}</TabsTrigger>
           <TabsTrigger value="sales">Sales</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -347,7 +338,7 @@ export function ProjectDetailView({ project }: DevelopmentDetailViewProps) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Development Stage:</span>
-                    <span>{project.developmentStage}</span>
+                    <span>{project.developmentStage || project.status}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Start Date:</span>

@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Save, Trash2, Plus, Edit, Users } from 'lucide-react';
 import { toast } from 'sonner';
+import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 
 interface BlockDetailModalProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ interface BlockDetailModalProps {
 export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }: BlockDetailModalProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [blockData, setBlockData] = useState(block || {});
+  
+  const { labels } = useProjectTerminology({ terminologyType: 'plots' });
 
   if (!block) return null;
 
@@ -106,7 +109,7 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="units">Units ({block.units?.length || 0})</TabsTrigger>
+            <TabsTrigger value="units">{labels.units} ({block.units?.length || 0})</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -164,7 +167,7 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <div className="text-2xl font-bold text-gray-900">{block.totalUnits}</div>
-                    <div className="text-sm text-gray-500">Total Units</div>
+                    <div className="text-sm text-gray-500">{labels.totalUnits}</div>
                   </div>
                   <div className="text-center p-4 bg-green-50 rounded-lg">
                     <div className="text-2xl font-bold text-green-600">{block.availableUnits}</div>
@@ -195,10 +198,10 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
 
           <TabsContent value="units" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Unit Management</h3>
+              <h3 className="text-lg font-semibold">{labels.unitsManagement}</h3>
               <Button size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Unit
+                Add {labels.unit}
               </Button>
             </div>
 
@@ -206,7 +209,7 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Plot ID</TableHead>
+                    <TableHead>{labels.unitColumn}</TableHead>
                     <TableHead>Size</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Status</TableHead>

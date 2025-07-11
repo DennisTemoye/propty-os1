@@ -16,7 +16,8 @@ export const projectFormSchema = z.object({
   totalBudget: z.string().optional(),
   contactPerson: z.string().optional(),
   contactPhone: z.string().optional(),
-  contactEmail: z.string().email('Invalid email format').optional().or(z.literal(''))
+  contactEmail: z.string().email('Invalid email format').optional().or(z.literal('')),
+  terminologyType: z.enum(['plots', 'units']).default('plots')
 });
 
 export type ProjectFormData = z.infer<typeof projectFormSchema>;
@@ -50,6 +51,12 @@ export const legacyDevelopmentStageToStatus = {
   'Sales': 'Selling',
   'Handover': 'Selling'
 };
+
+// Terminology options for Project Configuration
+export const terminologyOptions = [
+  { value: 'plots', label: 'Plots (for Land/Plot-based projects)' },
+  { value: 'units', label: 'Units (for Building/Apartment-based projects)' }
+];
 
 // Mock team members for Project Manager assignment
 export const teamMemberOptions = [

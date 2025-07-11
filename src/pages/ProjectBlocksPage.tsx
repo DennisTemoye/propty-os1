@@ -11,11 +11,14 @@ const mockProjects = [
     id: 1,
     name: 'Victoria Gardens Estate',
     location: 'Lekki, Lagos',
+    category: 'Housing',
+    type: 'Residential',
     totalUnits: 150,
     soldUnits: 89,
     reservedUnits: 23,
     availableUnits: 38,
-    status: 'active'
+    status: 'active',
+    terminologyType: 'plots' as const
   }
 ];
 

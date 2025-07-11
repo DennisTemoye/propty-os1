@@ -10,12 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Building, Plus, Edit, Trash2, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { BlockDetailModal } from './BlockDetailModal';
+import { useProjectTerminology } from '@/hooks/useProjectTerminology';
+import { Project } from '@/types/project';
 
 interface ProjectBlocksTabProps {
-  project: {
-    id: number;
-    name: string;
-  };
+  project: Project;
 }
 
 const mockBlocks = [
@@ -77,6 +76,8 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
   const [isAddBlockOpen, setIsAddBlockOpen] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState<any>(null);
   const [isBlockDetailOpen, setIsBlockDetailOpen] = useState(false);
+  
+  const { labels } = useProjectTerminology(project);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -139,7 +140,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Blocks & Units Management</h2>
+        <h2 className="text-2xl font-bold">{labels.blockUnitsManagement}</h2>
         <div className="flex space-x-2">
           <Dialog open={isAddBlockOpen} onOpenChange={setIsAddBlockOpen}>
             <DialogTrigger asChild>
@@ -209,7 +210,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
           <CardContent className="p-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{totalUnits}</div>
-              <div className="text-sm text-gray-500">Total Units</div>
+              <div className="text-sm text-gray-500">{labels.totalUnits}</div>
             </div>
           </CardContent>
         </Card>
@@ -217,7 +218,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
           <CardContent className="p-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{totalSold}</div>
-              <div className="text-sm text-gray-500">Sold Units</div>
+              <div className="text-sm text-gray-500">{labels.soldUnits}</div>
             </div>
           </CardContent>
         </Card>
@@ -225,7 +226,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
           <CardContent className="p-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">{totalReserved}</div>
-              <div className="text-sm text-gray-500">Reserved Units</div>
+              <div className="text-sm text-gray-500">{labels.reservedUnits}</div>
             </div>
           </CardContent>
         </Card>
@@ -233,7 +234,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
           <CardContent className="p-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">{totalAvailable}</div>
-              <div className="text-sm text-gray-500">Available Units</div>
+              <div className="text-sm text-gray-500">{labels.availableUnits}</div>
             </div>
           </CardContent>
         </Card>
@@ -311,7 +312,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
                   }}
                 >
                   <Users className="h-3 w-3 mr-1" />
-                  Units
+                  {labels.units}
                 </Button>
               </div>
             </CardContent>
