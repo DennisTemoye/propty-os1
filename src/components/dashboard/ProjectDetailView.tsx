@@ -35,6 +35,7 @@ import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAlloca
 import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
 import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
 import { getProjectImage, handleImageError } from '@/lib/utils';
+import { useProjectTerminology } from '@/hooks/useProjectTerminology';
 import { toast } from 'sonner';
 
 const mockProjects = [
@@ -51,6 +52,7 @@ const mockProjects = [
     totalBlocks: 5,
     totalUnits: 150,
     availableUnits: 38,
+    soldUnits: 89,
     allocatedUnits: 89,
     reservedUnits: 23,
     pendingAllocations: 8,
@@ -64,11 +66,11 @@ const mockProjects = [
     description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
     projectManager: 'Alice Johnson',
     internalNotes: 'Focus on completing Block A before marketing Block C plots.',
-    tags: ['Premium', 'Residential', 'Lekki'],
+    tags: 'Premium, Residential, Lekki',
     image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
     revenue: '₦2.5B',
     lastActivity: '2 hours ago',
-    terminologyType: 'units'
+    terminologyType: 'units' as const
   },
   {
     id: 2,
@@ -83,6 +85,7 @@ const mockProjects = [
     totalBlocks: 8,
     totalUnits: 200,
     availableUnits: 32,
+    soldUnits: 156,
     allocatedUnits: 156,
     reservedUnits: 12,
     pendingAllocations: 5,
@@ -96,10 +99,11 @@ const mockProjects = [
     description: 'A modern mixed-use development in the heart of Abuja.',
     projectManager: 'Bob Wilson',
     internalNotes: 'Commercial plots showing strong interest.',
-    tags: ['Mixed-Use', 'Commercial', 'Abuja'],
+    tags: 'Mixed-Use, Commercial, Abuja',
     image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=450&fit=crop',
     revenue: '₦4.2B',
-    lastActivity: '1 hour ago'
+    lastActivity: '1 hour ago',
+    terminologyType: 'plots' as const
   },
   {
     id: 3,
@@ -127,10 +131,11 @@ const mockProjects = [
     description: 'Luxury towers with stunning city views on Victoria Island.',
     projectManager: 'Carol Davis',
     internalNotes: 'High-end luxury market showing excellent response.',
-    tags: ['Luxury', 'High-rise', 'Victoria Island'],
+    tags: 'Luxury, High-rise, Victoria Island',
     image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
     revenue: '₦6.8B',
-    lastActivity: '30 minutes ago'
+    lastActivity: '30 minutes ago',
+    terminologyType: 'units' as const
   },
   {
     id: 4,
@@ -158,7 +163,7 @@ const mockProjects = [
     description: 'Premium residential development in the prestigious Ikoyi area.',
     projectManager: 'David Brown',
     internalNotes: 'Nearly sold out, focus on final plot sales.',
-    tags: ['Premium', 'Ikoyi', 'Nearly Complete'],
+    tags: 'Premium, Ikoyi, Nearly Complete',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=450&fit=crop',
     revenue: '₦3.9B',
     lastActivity: '3 hours ago'
@@ -189,7 +194,7 @@ const mockProjects = [
     description: 'Strategic mixed-use development in Marina business district.',
     projectManager: 'Eva Martinez',
     internalNotes: 'Planning phase progressing well.',
-    tags: ['Mixed-Use', 'Marina', 'Business District'],
+    tags: 'Mixed-Use, Marina, Business District',
     image: 'https://images.unsplash.com/photo-1503602642458-232114445914?w=800&h=450&fit=crop',
     revenue: '₦5.5B',
     lastActivity: '45 minutes ago'
@@ -220,7 +225,7 @@ const mockProjects = [
     description: 'Large residential estate with family-friendly amenities in Ajah.',
     projectManager: 'Frank Wilson',
     internalNotes: 'Strong demand from young families, good infrastructure access.',
-    tags: ['Family', 'Residential', 'Ajah'],
+    tags: 'Family, Residential, Ajah',
     image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=450&fit=crop',
     revenue: '₦7.2B',
     lastActivity: '1 hour ago'
@@ -251,7 +256,7 @@ const mockProjects = [
     description: 'Expansive land development project with excellent future potential.',
     projectManager: 'Grace Thompson',
     internalNotes: 'Land banking opportunity, strong investor interest.',
-    tags: ['Land', 'Investment', 'Epe'],
+    tags: 'Land, Investment, Epe',
     image: 'https://images.unsplash.com/photo-1501127122-970c479ebc57?w=800&h=450&fit=crop',
     revenue: '₦4.8B',
     lastActivity: '2 hours ago'
@@ -282,7 +287,7 @@ const mockProjects = [
     description: 'Ultra-luxury waterfront development on exclusive Banana Island.',
     projectManager: 'Henry Adams',
     internalNotes: 'Premium pricing, targeting ultra-high net worth individuals.',
-    tags: ['Ultra-Luxury', 'Waterfront', 'Banana Island'],
+    tags: 'Ultra-Luxury, Waterfront, Banana Island',
     image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=450&fit=crop',
     revenue: '₦8.5B',
     lastActivity: '4 hours ago'
@@ -313,7 +318,7 @@ const mockProjects = [
     description: 'Modern commercial complex in the bustling Ikeja business district.',
     projectManager: 'Ivy Chen',
     internalNotes: 'Strong commercial demand, good location for businesses.',
-    tags: ['Commercial', 'Business', 'Ikeja'],
+    tags: 'Commercial, Business, Ikeja',
     image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&h=450&fit=crop',
     revenue: '₦3.8B',
     lastActivity: '6 hours ago'
@@ -344,7 +349,7 @@ const mockProjects = [
     description: 'Affordable residential development in the historic city of Ibadan.',
     projectManager: 'Jack Robinson',
     internalNotes: 'Pre-launch phase, targeting middle-income families.',
-    tags: ['Affordable', 'Residential', 'Ibadan'],
+    tags: 'Affordable, Residential, Ibadan',
     image: 'https://images.unsplash.com/photo-1560185893-a55cbc9701bc?w=800&h=450&fit=crop',
     revenue: '₦1.2B',
     lastActivity: '1 day ago'
@@ -375,7 +380,7 @@ const mockProjects = [
     description: 'Test development project for validation of new processes.',
     projectManager: 'Test Manager',
     internalNotes: 'This is a test project for system validation.',
-    tags: ['Test', 'Planning', 'Kano'],
+    tags: 'Test, Planning, Kano',
     revenue: '₦800M',
     lastActivity: '3 days ago'
   }
@@ -394,6 +399,7 @@ export function ProjectDetailView() {
   const [reallocateData, setReallocateData] = useState<any>(null);
   
   const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
+  const { labels } = useProjectTerminology(project);
 
   if (!project) {
     return (
@@ -498,7 +504,7 @@ export function ProjectDetailView() {
         <div className="flex items-center gap-2">
           <Button onClick={handleAllocateUnit} size="sm" className="bg-gradient-primary hover:opacity-90">
             <UserPlus className="h-4 w-4 mr-2" />
-            Allocate Plot
+            {labels.allocateUnit}
           </Button>
           
           <DropdownMenu>
@@ -597,7 +603,7 @@ export function ProjectDetailView() {
               </div>
               <div className="text-center">
                 <div className="text-2xl lg:text-3xl font-bold">{project.totalUnits}</div>
-                <div className="text-sm text-white/80">Total Plots</div>
+                <div className="text-sm text-white/80">{labels.totalUnits}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl lg:text-3xl font-bold">{project.totalClients}</div>

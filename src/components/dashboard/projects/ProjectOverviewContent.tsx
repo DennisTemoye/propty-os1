@@ -11,7 +11,7 @@ interface ProjectOverviewContentProps {
     description: string;
     projectManager: string;
     internalNotes: string;
-    tags: string[];
+    tags: string;
     allocationRate: number;
   };
 }
@@ -69,8 +69,8 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
                   Tags
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline">{tag}</Badge>
+                  {project.tags.split(', ').map((tag, index) => (
+                    <Badge key={index} variant="outline">{tag.trim()}</Badge>
                   ))}
                 </div>
               </div>
