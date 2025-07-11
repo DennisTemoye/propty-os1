@@ -23,9 +23,9 @@ export const projectFormSchema = z.object({
 export type ProjectFormData = z.infer<typeof projectFormSchema>;
 
 export const projectCategoryOptions = [
-  { value: 'Housing', label: 'Housing' },
   { value: 'Land', label: 'Land' },
-  { value: 'Both', label: 'Both' }
+  { value: 'Housing', label: 'Housing' },
+  { value: 'Mixed', label: 'Mixed' }
 ];
 
 export const projectStatusOptions = [

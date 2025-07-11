@@ -8,6 +8,7 @@ export interface Project {
   totalUnits: number;
   soldUnits: number;
   reservedUnits: number;
+  allocatedUnits: number;
   availableUnits: number;
   description?: string;
   projectSize?: string;
@@ -34,6 +35,7 @@ export interface Block {
   totalUnits: number;
   availableUnits: number;
   reservedUnits: number;
+  allocatedUnits: number;
   soldUnits: number;
   status: 'planning' | 'construction' | 'completed' | 'on-hold';
   defaultPrice: string;
@@ -49,7 +51,7 @@ export interface Unit {
   plotId: string;
   size: string;
   price: string;
-  status: 'available' | 'reserved' | 'sold';
+  status: 'available' | 'reserved' | 'allocated' | 'sold';
   client: string | null;
   purpose?: 'developing' | 'land-banking' | 'investment';
   // Fields for Units (housing)

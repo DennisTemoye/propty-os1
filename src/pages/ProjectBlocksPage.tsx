@@ -16,6 +16,7 @@ const mockProjects = [
     totalUnits: 150,
     soldUnits: 89,
     reservedUnits: 23,
+    allocatedUnits: 5,
     availableUnits: 38,
     status: 'active',
     terminologyType: 'plots' as const

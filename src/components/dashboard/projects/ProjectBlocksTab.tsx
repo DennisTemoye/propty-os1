@@ -26,6 +26,7 @@ const mockBlocks = [
     totalUnits: 30,
     availableUnits: 8,
     reservedUnits: 7,
+    allocatedUnits: 10,
     soldUnits: 15,
     status: 'completed',
     defaultPrice: '₦25,000,000',
@@ -45,6 +46,7 @@ const mockBlocks = [
     totalUnits: 25,
     availableUnits: 12,
     reservedUnits: 5,
+    allocatedUnits: 5,
     soldUnits: 8,
     status: 'construction',
     defaultPrice: '₦18,000,000',
@@ -63,6 +65,7 @@ const mockBlocks = [
     totalUnits: 20,
     availableUnits: 15,
     reservedUnits: 3,
+    allocatedUnits: 0,
     soldUnits: 2,
     status: 'planning',
     defaultPrice: '₦35,000,000',
@@ -105,6 +108,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
       totalUnits: parseInt(formData.get('totalUnits') as string),
       availableUnits: parseInt(formData.get('totalUnits') as string),
       reservedUnits: 0,
+      allocatedUnits: 0,
       soldUnits: 0,
       status: 'planning' as const,
       defaultPrice: formData.get('defaultPrice') as string,
@@ -137,6 +141,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
   const totalUnits = blocks.reduce((sum, block) => sum + block.totalUnits, 0);
   const totalSold = blocks.reduce((sum, block) => sum + block.soldUnits, 0);
   const totalReserved = blocks.reduce((sum, block) => sum + block.reservedUnits, 0);
+  const totalAllocated = blocks.reduce((sum, block) => sum + (block.allocatedUnits || 0), 0);
   const totalAvailable = blocks.reduce((sum, block) => sum + block.availableUnits, 0);
 
   return (
@@ -220,7 +225,7 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
@@ -242,6 +247,14 @@ export function ProjectBlocksTab({ project }: ProjectBlocksTabProps) {
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">{totalReserved}</div>
               <div className="text-sm text-gray-500">{labels.reservedUnits}</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-indigo-600">{totalAllocated}</div>
+              <div className="text-sm text-gray-500">{labels.allocatedUnits}</div>
             </div>
           </CardContent>
         </Card>
