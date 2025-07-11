@@ -345,7 +345,7 @@ export function Accounting() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* Financial Summary Cards */}
+          {/* Financial Summary Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-0 shadow-lg">
               <CardContent className="p-6">
@@ -393,9 +393,9 @@ export function Accounting() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-purple-600 font-medium">Refunds</p>
+                    <p className="text-sm text-purple-600 font-medium">Commission Paid</p>
                     <p className="text-2xl font-bold text-purple-900">
-                      {formatCurrency(totalRefunds)}
+                      {formatCurrency(totalCommissions)}
                     </p>
                   </div>
                   <TrendingDown className="h-8 w-8 text-purple-600" />
@@ -404,37 +404,93 @@ export function Accounting() {
             </Card>
           </div>
 
-          {/* Recent Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {filteredTransactions.slice(0, 5).map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                    <div className="flex items-center space-x-3">
-                      <div className={`p-2 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
-                        {transaction.type === 'income' ? 
-                          <TrendingUp className={`h-4 w-4 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`} /> :
-                          <TrendingDown className={`h-4 w-4 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`} />
-                        }
+          {/* Performance Summary Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Monthly Performance Trend</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 flex items-center justify-center text-gray-500">
+                  <div className="text-center">
+                    <TrendingUp className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                    <p>Performance chart will be displayed here</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Property Sales</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                        <div className="bg-blue-600 h-2 rounded-full" style={{width: '75%'}}></div>
                       </div>
-                      <div>
-                        <p className="font-medium">{transaction.description}</p>
-                        <p className="text-sm text-gray-500">{transaction.date} • {transaction.category}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className={`font-bold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                        {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                      </p>
-                      <Badge className={getStatusColor(transaction.status)}>
-                        {transaction.status}
-                      </Badge>
+                      <span className="text-sm text-gray-600">75%</span>
                     </div>
                   </div>
-                ))}
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Instalments</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                        <div className="bg-green-600 h-2 rounded-full" style={{width: '15%'}}></div>
+                      </div>
+                      <span className="text-sm text-gray-600">15%</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Additional Fees</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                        <div className="bg-orange-600 h-2 rounded-full" style={{width: '10%'}}></div>
+                      </div>
+                      <span className="text-sm text-gray-600">10%</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick Actions Dashboard */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions & Alerts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-red-800">Overdue Payments</span>
+                  </div>
+                  <p className="text-2xl font-bold text-red-700">3</p>
+                  <p className="text-xs text-red-600">Requires immediate attention</p>
+                </div>
+                
+                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-yellow-800">Pending Commissions</span>
+                  </div>
+                  <p className="text-2xl font-bold text-yellow-700">5</p>
+                  <p className="text-xs text-yellow-600">Awaiting processing</p>
+                </div>
+                
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-green-800">Processed Today</span>
+                  </div>
+                  <p className="text-2xl font-bold text-green-700">12</p>
+                  <p className="text-xs text-green-600">Transactions completed</p>
+                </div>
               </div>
             </CardContent>
           </Card>
