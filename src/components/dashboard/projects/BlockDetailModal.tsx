@@ -12,9 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Save, Trash2, Plus, Edit, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { useProjectTerminology } from '@/hooks/useProjectTerminology';
-import { AddUnitModal } from './AddUnitModal';
-import { DynamicUnitsTable } from './DynamicUnitsTable';
-import { Unit } from '@/types/project';
 
 interface BlockDetailModalProps {
   isOpen: boolean;
@@ -27,7 +24,6 @@ interface BlockDetailModalProps {
 export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }: BlockDetailModalProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [blockData, setBlockData] = useState(block || {});
-  const [isAddUnitOpen, setIsAddUnitOpen] = useState(false);
   
   const { labels } = useProjectTerminology({ terminologyType: 'plots' });
 
@@ -42,19 +38,6 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
   const handleDelete = () => {
     onDelete(block.id);
     onClose();
-  };
-
-  const handleAddUnit = (unit: Unit) => {
-    const updatedBlock = {
-      ...blockData,
-      units: [...(blockData.units || []), unit],
-      availableUnits: blockData.availableUnits + (unit.status === 'available' ? 1 : 0),
-      reservedUnits: blockData.reservedUnits + (unit.status === 'reserved' ? 1 : 0),
-      soldUnits: blockData.soldUnits + (unit.status === 'sold' ? 1 : 0),
-      totalUnits: blockData.totalUnits + 1
-    };
-    setBlockData(updatedBlock);
-    onUpdate(updatedBlock);
   };
 
   const getStatusColor = (status: string) => {
@@ -160,36 +143,10 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
                         <SelectItem value="bungalow">Bungalow</SelectItem>
                         <SelectItem value="commercial">Commercial</SelectItem>
                         <SelectItem value="utility">Utility</SelectItem>
-                        <SelectItem value="residential-land">Residential Land</SelectItem>
-                        <SelectItem value="mixed-development">Mixed Development</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (
                     <p className="text-sm font-medium">{block.type}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label>Block Structure</Label>
-                  {isEditing ? (
-                    <Select 
-                      value={blockData.blockStructure || block.blockStructure} 
-                      onValueChange={(value) => setBlockData({...blockData, blockStructure: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="units">Units (Housing/Buildings)</SelectItem>
-                        <SelectItem value="plots">Plots (Land Development)</SelectItem>
-                        <SelectItem value="mixed">Mixed (Units + Plots)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <p className="text-sm font-medium">
-                      {block.blockStructure === 'units' ? 'Units (Housing/Buildings)' : 
-                       block.blockStructure === 'plots' ? 'Plots (Land Development)' : 'Mixed (Units + Plots)'}
-                    </p>
                   )}
                 </div>
 
@@ -241,42 +198,64 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
 
           <TabsContent value="units" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
-                {block.blockStructure === 'plots' ? 'Plots Management' : 
-                 block.blockStructure === 'units' ? 'Units Management' : 'Units/Plots Management'}
-              </h3>
-              <Button size="sm" onClick={() => setIsAddUnitOpen(true)}>
+              <h3 className="text-lg font-semibold">{labels.unitsManagement}</h3>
+              <Button size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Add {block.blockStructure === 'plots' ? 'Plot' : block.blockStructure === 'units' ? 'Unit' : 'Unit/Plot'}
+                Add {labels.unit}
               </Button>
             </div>
 
-            <DynamicUnitsTable 
-              block={blockData}
-              units={blockData.units || []}
-              onEditUnit={(unit) => {
-                // TODO: Implement edit unit modal
-                console.log('Edit unit:', unit);
-              }}
-              onDeleteUnit={(unitId) => {
-                const updatedUnits = blockData.units?.filter((u: any) => u.id !== unitId) || [];
-                const updatedBlock = {
-                  ...blockData,
-                  units: updatedUnits,
-                  totalUnits: updatedUnits.length,
-                  availableUnits: updatedUnits.filter((u: any) => u.status === 'available').length,
-                  reservedUnits: updatedUnits.filter((u: any) => u.status === 'reserved').length,
-                  soldUnits: updatedUnits.filter((u: any) => u.status === 'sold').length,
-                };
-                setBlockData(updatedBlock);
-                onUpdate(updatedBlock);
-                toast.success(`${block.blockStructure === 'plots' ? 'Plot' : 'Unit'} deleted successfully!`);
-              }}
-              onAssignUnit={(unit) => {
-                // TODO: Implement assign unit modal
-                console.log('Assign unit:', unit);
-              }}
-            />
+            <div className="border rounded-lg">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{labels.unitColumn}</TableHead>
+                    <TableHead>Size</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {block.units?.map((unit: any) => (
+                    <TableRow key={unit.id}>
+                      <TableCell className="font-medium">{unit.plotId}</TableCell>
+                      <TableCell>{unit.size}</TableCell>
+                      <TableCell className="font-medium">{unit.price}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(unit.status)}>
+                          {unit.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{unit.client || '-'}</TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          {unit.status === 'available' && (
+                            <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                              <Users className="h-3 w-3 mr-1" />
+                              Assign
+                            </Button>
+                          )}
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button variant="outline" size="sm" className="text-red-600">
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )) || (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                        No units found in this block
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4">
@@ -328,13 +307,6 @@ export function BlockDetailModal({ isOpen, onClose, block, onUpdate, onDelete }:
             </div>
           </TabsContent>
         </Tabs>
-
-        <AddUnitModal 
-          isOpen={isAddUnitOpen}
-          onClose={() => setIsAddUnitOpen(false)}
-          block={blockData}
-          onAddUnit={handleAddUnit}
-        />
       </DialogContent>
     </Dialog>
   );

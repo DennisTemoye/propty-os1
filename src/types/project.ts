@@ -38,7 +38,6 @@ export interface Block {
   status: 'planning' | 'construction' | 'completed' | 'on-hold';
   defaultPrice: string;
   defaultSize: string;
-  blockStructure: 'plots' | 'units' | 'mixed';
   units: Unit[];
 }
 
@@ -50,10 +49,4 @@ export interface Unit {
   status: 'available' | 'reserved' | 'sold';
   client: string | null;
   purpose?: 'developing' | 'land-banking' | 'investment';
-  // Additional fields for Units (housing)
-  unitName?: string; // Optional unit naming (e.g., 5 Bedroom Duplex)
-  bedrooms?: number;
-  bathrooms?: number;
-  // Additional field for Plots (land)
-  prototype?: string;
 }
