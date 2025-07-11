@@ -8,11 +8,11 @@ import { User, FileText, Tag, Clock, Activity } from 'lucide-react';
 
 interface ProjectOverviewContentProps {
   project: {
-    description: string;
-    projectManager: string;
-    internalNotes: string;
-    tags: string;
-    allocationRate: number;
+    description?: string;
+    projectManager?: string;
+    internalNotes?: string;
+    tags?: string;
+    allocationRate?: number;
   };
 }
 
@@ -49,18 +49,18 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
             <CardContent className="space-y-4">
               <div className="text-left">
                 <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Project Description</h4>
-                <p className="text-gray-900 text-left">{project.description}</p>
+                <p className="text-gray-900 text-left">{project.description || 'No description available'}</p>
               </div>
               
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4 text-gray-400" />
                 <span className="text-sm text-gray-500">Project Manager:</span>
-                <span className="font-medium">{project.projectManager}</span>
+                <span className="font-medium">{project.projectManager || 'Not assigned'}</span>
               </div>
 
               <div className="text-left">
                 <h4 className="text-sm font-medium text-gray-500 mb-2 text-left">Internal Notes</h4>
-                <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-md text-left">{project.internalNotes}</p>
+                <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-md text-left">{project.internalNotes || 'No internal notes'}</p>
               </div>
 
               <div>
@@ -69,9 +69,9 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
                   Tags
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {project.tags.split(', ').map((tag, index) => (
+                  {project.tags ? project.tags.split(', ').map((tag, index) => (
                     <Badge key={index} variant="outline">{tag.trim()}</Badge>
-                  ))}
+                  )) : <span className="text-sm text-muted-foreground">No tags</span>}
                 </div>
               </div>
             </CardContent>
@@ -85,16 +85,16 @@ export function ProjectOverviewContent({ project }: ProjectOverviewContentProps)
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Allocation Rate</span>
-                  <span>{project.allocationRate}%</span>
+                  <span>{project.allocationRate || 0}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3">
                   <div 
                     className="bg-blue-600 h-3 rounded-full transition-all duration-300" 
-                    style={{ width: `${project.allocationRate}%` }}
+                    style={{ width: `${project.allocationRate || 0}%` }}
                   ></div>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  {project.allocationRate >= 75 ? 'Excellent progress!' : 'Good momentum, keep going!'}
+                  {(project.allocationRate || 0) >= 75 ? 'Excellent progress!' : 'Good momentum, keep going!'}
                 </p>
               </div>
             </CardContent>
