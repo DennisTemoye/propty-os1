@@ -99,8 +99,8 @@ const stages: { key: SalesPipelineStage; label: string; color: string; bgColor: 
   { key: 'lead', label: 'Lead', color: 'text-blue-700', bgColor: 'bg-blue-50' },
   { key: 'inspection', label: 'Inspection', color: 'text-purple-700', bgColor: 'bg-purple-50' },
   { key: 'offer', label: 'Offer', color: 'text-amber-700', bgColor: 'bg-amber-50' },
-  { key: 'paid', label: 'Paid', color: 'text-emerald-700', bgColor: 'bg-emerald-50' },
-  { key: 'allocation', label: 'Allocation', color: 'text-green-700', bgColor: 'bg-green-50' }
+  { key: 'allocation', label: 'Allocation', color: 'text-green-700', bgColor: 'bg-green-50' },
+  { key: 'paid', label: 'Paid', color: 'text-emerald-700', bgColor: 'bg-emerald-50' }
 ];
 
 export function SalesPipelineBoard({ onMoveToStage, onViewDetails, onAllocatePlot }: SalesPipelineBoardProps) {
