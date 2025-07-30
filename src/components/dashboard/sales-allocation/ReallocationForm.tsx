@@ -1,12 +1,20 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { AlertTriangle } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { AlertTriangle } from "lucide-react";
+import { ClientsService } from "@/services/clientsService";
+import { AllocationService } from "@/services/allocationService";
 
 interface ReallocationFormProps {
   onSubmit: (data: any) => void;
@@ -16,60 +24,104 @@ interface ReallocationFormProps {
 const mockAllocatedPlots = [
   {
     id: 1,
-    plotId: 'Block A - Plot 02',
-    project: 'Victoria Gardens',
-    currentClient: 'John Doe',
-    currentClientId: 'client-1',
-    saleAmount: '₦25M'
+    plotId: "Block A - Plot 02",
+    project: "Victoria Gardens",
+    currentClient: "John Doe",
+    currentClientId: "client-1",
+    saleAmount: "₦25M",
   },
   {
     id: 2,
-    plotId: 'Block B - Plot 08',
-    project: 'Golden View',
-    currentClient: 'Jane Williams',
-    currentClientId: 'client-2',
-    saleAmount: '₦30M'
-  }
+    plotId: "Block B - Plot 08",
+    project: "Golden View",
+    currentClient: "Jane Williams",
+    currentClientId: "client-2",
+    saleAmount: "₦30M",
+  },
 ];
 
 const mockClients = [
-  { id: 'client3', name: 'Robert Brown', email: 'robert@example.com' },
-  { id: 'client4', name: 'Sarah Wilson', email: 'sarah@example.com' },
-  { id: 'client5', name: 'Michael Davis', email: 'michael@example.com' }
+  { id: "client3", name: "Robert Brown", email: "robert@example.com" },
+  { id: "client4", name: "Sarah Wilson", email: "sarah@example.com" },
+  { id: "client5", name: "Michael Davis", email: "michael@example.com" },
 ];
 
-export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) {
+export function ReallocationForm({
+  onSubmit,
+  onCancel,
+}: ReallocationFormProps) {
+  const [currentAllocation, setCurrentAllocation] = useState<any[]>([]);
+  const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
+  const [newClient, setNewClient] = useState<any[]>([]);
+  const fetchCurrentAllocation = async () => {
+    const response = await AllocationService.getAllAllocations();
+    setCurrentAllocation(response.data);
+    console.log(response.data);
+  };
+
+  const fetchNewClient = async () => {
+    const response = await ClientsService.getClients();
+    setNewClient(response.data.data);
+    console.log(response.data.data);
+  };
+
+  useEffect(() => {
+    fetchCurrentAllocation();
+    fetchNewClient();
+  }, []);
   const form = useForm({
     defaultValues: {
-      currentAllocationId: '',
-      newClientId: '',
-      reason: '',
-      saleAmount: '',
-      initialPayment: '',
-      notes: ''
-    }
+      currentAllocationId: "",
+      newClientId: "",
+      reason: "",
+      saleAmount: "",
+      initialPayment: "",
+      notes: "",
+    },
   });
 
-  const handleSubmit = (data: any) => {
-    onSubmit(data);
-    toast.success('Reallocation submitted for approval!');
+  const handleSubmit = async (data: any) => {
+    console.log(data);
+    try {
+      const response = await AllocationService.reallocatePlot(data);
+      toast.success("Reallocation submitted for approval!");
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+    // onSubmit(data);
+    // toast.success("Reallocation submitted for approval!");
   };
 
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
       <div>
         <Label>Current Allocation *</Label>
-        <Select onValueChange={(value) => form.setValue('currentAllocationId', value)}>
-          <SelectTrigger>
+        <Select
+          onValueChange={(value) => {
+            form.setValue("currentAllocationId", value);
+            setSelectedAllocation(
+              currentAllocation.find((allocation) => allocation._id === value)
+            );
+          }}
+        >
+          <SelectTrigger className="text-left w-full">
             <SelectValue placeholder="Select current allocation" />
           </SelectTrigger>
           <SelectContent>
-            {mockAllocatedPlots.map((allocation) => (
-              <SelectItem key={allocation.id} value={allocation.id.toString()}>
-                <div>
-                  <div className="font-medium">{allocation.plotId}</div>
-                  <div className="text-xs text-gray-500">
-                    {allocation.project} - {allocation.currentClient} - {allocation.saleAmount}
+            {currentAllocation?.map((allocation) => (
+              <SelectItem
+                key={allocation._id}
+                value={allocation._id.toString()}
+              >
+                <div className="w-full">
+                  <div className="font-medium w-full">
+                    {allocation.blockId.name}
+                  </div>
+                  <div className="text-xs w-full text-gray-500">
+                    {allocation.projectId.projectName} -{" "}
+                    {allocation.allocatedTo.firstName}{" "}
+                    {allocation.allocatedTo.lastName} - {allocation.totalAmount}
                   </div>
                 </div>
               </SelectItem>
@@ -80,15 +132,17 @@ export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) 
 
       <div>
         <Label>New Client *</Label>
-        <Select onValueChange={(value) => form.setValue('newClientId', value)}>
-          <SelectTrigger>
+        <Select onValueChange={(value) => form.setValue("newClientId", value)}>
+          <SelectTrigger className="text-left">
             <SelectValue placeholder="Select new client" />
           </SelectTrigger>
           <SelectContent>
-            {mockClients.map((client) => (
-              <SelectItem key={client.id} value={client.id}>
+            {newClient?.map((client) => (
+              <SelectItem key={client._id} value={client._id}>
                 <div>
-                  <div className="font-medium">{client.name}</div>
+                  <div className="font-medium">
+                    {client.firstName} {client.lastName}
+                  </div>
                   <div className="text-xs text-gray-500">{client.email}</div>
                 </div>
               </SelectItem>
@@ -99,8 +153,8 @@ export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) 
 
       <div>
         <Label>Reason for Reallocation *</Label>
-        <Textarea 
-          {...form.register('reason', { required: true })}
+        <Textarea
+          {...form.register("reason", { required: true })}
           placeholder="Provide a detailed reason for the reallocation..."
           rows={3}
         />
@@ -109,18 +163,18 @@ export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label>New Sale Amount (₦)</Label>
-          <Input 
+          <Input
             type="number"
-            {...form.register('saleAmount')}
+            {...form.register("saleAmount")}
             placeholder="e.g., 25000000"
           />
         </div>
 
         <div>
           <Label>Initial Payment (₦)</Label>
-          <Input 
+          <Input
             type="number"
-            {...form.register('initialPayment')}
+            {...form.register("initialPayment")}
             placeholder="e.g., 5000000"
           />
         </div>
@@ -128,8 +182,8 @@ export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) 
 
       <div>
         <Label>Additional Notes</Label>
-        <Textarea 
-          {...form.register('notes')}
+        <Textarea
+          {...form.register("notes")}
           placeholder="Any additional information about this reallocation..."
           rows={2}
         />
@@ -139,10 +193,13 @@ export function ReallocationForm({ onSubmit, onCancel }: ReallocationFormProps) 
         <div className="flex items-start space-x-2">
           <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
           <div>
-            <p className="text-sm text-yellow-800 font-medium">Important: Plot Reallocation</p>
+            <p className="text-sm text-yellow-800 font-medium">
+              Important: Plot Reallocation
+            </p>
             <p className="text-sm text-yellow-700 mt-1">
-              This action will transfer the plot from the current client to the new client. 
-              This requires approval and may involve refund processing.
+              This action will transfer the plot from the current client to the
+              new client. This requires approval and may involve refund
+              processing.
             </p>
           </div>
         </div>

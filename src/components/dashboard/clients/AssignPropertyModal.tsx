@@ -1,113 +1,224 @@
-
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Building, Check, User } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Building, Check, User, Loader2, AlertCircle } from "lucide-react";
+import { ProjectsService } from "@/services/projectsService";
+import { AllocationService } from "@/services/allocationService";
+import { toast } from "sonner";
+import { Project, Block, Unit } from "@/types/project";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface AssignPropertyModalProps {
   isOpen: boolean;
   onClose: () => void;
   client: any;
+  onSuccess?: () => void;
 }
 
-const mockProjects = [
-  {
-    id: 1,
-    name: 'Victoria Gardens Estate',
-    location: 'Lekki, Lagos',
-    blocks: [
-      {
-        id: 1,
-        name: 'Block A',
-        type: 'Duplex',
-        availableUnits: [
-          { id: 1, plotId: 'Block A - Plot 01', size: '500sqm', price: '₦25M' },
-          { id: 4, plotId: 'Block A - Plot 04', size: '500sqm', price: '₦25M' },
-          { id: 5, plotId: 'Block A - Plot 05', size: '500sqm', price: '₦25M' }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Block B',
-        type: 'Bungalow',
-        availableUnits: [
-          { id: 6, plotId: 'Block B - Plot 01', size: '400sqm', price: '₦18M' },
-          { id: 8, plotId: 'Block B - Plot 03', size: '400sqm', price: '₦18M' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Emerald Heights',
-    location: 'Abuja, FCT',
-    blocks: [
-      {
-        id: 3,
-        name: 'Block C',
-        type: 'Commercial',
-        availableUnits: [
-          { id: 10, plotId: 'Block C - Plot 01', size: '300sqm', price: '₦35M' },
-          { id: 11, plotId: 'Block C - Plot 02', size: '300sqm', price: '₦35M' }
-        ]
-      }
-    ]
-  }
-];
+export function AssignPropertyModal({
+  isOpen,
+  onClose,
+  client,
+  onSuccess,
+}: AssignPropertyModalProps) {
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedBlock, setSelectedBlock] = useState<Block | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
+  const [assignmentType, setAssignmentType] = useState<"reserved" | "sold">(
+    "reserved"
+  );
+  const [step, setStep] = useState<
+    "project" | "block" | "unit" | "confirm" | "success"
+  >("project");
 
-export function AssignPropertyModal({ isOpen, onClose, client }: AssignPropertyModalProps) {
-  const [selectedProject, setSelectedProject] = useState<any>(null);
-  const [selectedBlock, setSelectedBlock] = useState<any>(null);
-  const [selectedUnit, setSelectedUnit] = useState<any>(null);
-  const [assignmentType, setAssignmentType] = useState<'reserved' | 'sold'>('reserved');
-  const [step, setStep] = useState<'project' | 'block' | 'unit' | 'confirm' | 'success'>('project');
+  // API state
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [availableUnits, setAvailableUnits] = useState<Unit[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingProjects, setLoadingProjects] = useState(false);
+  const [loadingUnits, setLoadingUnits] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch projects on modal open
+  useEffect(() => {
+    if (isOpen && projects.length === 0) {
+      fetchProjects();
+    }
+  }, [isOpen]);
+
+  const fetchProjects = async () => {
+    setLoadingProjects(true);
+    setError(null);
+    try {
+      const response = await ProjectsService.getProjects();
+      if (response.success && response.data) {
+        // Handle both array and paginated response
+        const projectsData = Array.isArray(response.data)
+          ? response.data
+          : response.data.data || [];
+        setProjects(projectsData);
+        console.log(projectsData);
+      } else {
+        setError("Failed to fetch projects");
+        toast.error("Failed to fetch projects");
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      setError("Failed to fetch projects");
+      toast.error("Failed to fetch projects");
+    } finally {
+      setLoadingProjects(false);
+    }
+  };
+
+  const fetchAvailableUnits = async (projectId: string, blockId: string) => {
+    setLoadingUnits(true);
+    setError(null);
+    try {
+      // Get the selected block to access its units
+      const block = selectedProject?.blocks?.find(
+        (b: Block) => b._id === blockId
+      );
+      if (block && block.units) {
+        // Filter for available units in the selected block
+        const availableBlockUnits = block.units.filter(
+          (unit: Unit) => unit.status === "available"
+        );
+        setAvailableUnits(availableBlockUnits);
+      } else {
+        // Fallback: try to fetch units from API if not available in block
+        const response = await ProjectsService.getProjectUnits(projectId);
+        if (response.success && response.data) {
+          const blockUnits = response.data.filter(
+            (unit: Unit) =>
+              unit.status === "available" && unit.projectId === projectId
+          );
+          setAvailableUnits(blockUnits);
+        } else {
+          setError("Failed to fetch available units");
+          toast.error("Failed to fetch available units");
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching units:", error);
+      setError("Failed to fetch available units");
+      toast.error("Failed to fetch available units");
+    } finally {
+      setLoadingUnits(false);
+    }
+  };
 
   const handleProjectSelect = (projectId: string) => {
-    const project = mockProjects.find(p => p.id.toString() === projectId);
-    setSelectedProject(project);
+    const project = projects.find((p) => p._id === projectId);
+    setSelectedProject(project || null);
     setSelectedBlock(null);
     setSelectedUnit(null);
-    setStep('block');
+    setStep("block");
   };
 
   const handleBlockSelect = (blockId: string) => {
-    const block = selectedProject?.blocks.find((b: any) => b.id.toString() === blockId);
-    setSelectedBlock(block);
+    const block = selectedProject?.blocks?.find(
+      (b: Block) => b._id === blockId
+    );
+    setSelectedBlock(block || null);
     setSelectedUnit(null);
-    setStep('unit');
+    setStep("unit");
+
+    // Fetch available units for this block
+    if (selectedProject?._id && blockId) {
+      fetchAvailableUnits(selectedProject._id, blockId);
+    }
   };
 
   const handleUnitSelect = (unit: any) => {
     setSelectedUnit(unit);
-    setStep('confirm');
+    setStep("confirm");
   };
 
-  const handleConfirmAssignment = () => {
-    console.log('Assigning property to client:', {
-      client: client?.name,
-      project: selectedProject?.name,
-      block: selectedBlock?.name,
-      unit: selectedUnit?.plotId,
-      type: assignmentType
-    });
-    setStep('success');
-    
-    setTimeout(() => {
-      onClose();
-      resetModal();
-    }, 2000);
+  const handleConfirmAssignment = async () => {
+    if (!selectedProject || !selectedBlock || !selectedUnit || !client) {
+      toast.error("Missing required information for assignment");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const allocationData = {
+        clientId: client._id,
+        projectId: selectedProject._id,
+        blockId: selectedBlock._id,
+        unitId: selectedUnit.id,
+        plotId:
+          selectedProject.terminologyType === "plots"
+            ? selectedUnit.plotId
+            : selectedUnit.unitNumber || selectedUnit.plotId,
+        assignmentType: assignmentType,
+        status: assignmentType === "reserved" ? "Reserved" : "Allocated",
+        assignedDate: new Date().toISOString(),
+        price: selectedUnit.price,
+        size: selectedUnit.size,
+      };
+
+      const response = await AllocationService.createAllocation(allocationData);
+
+      if (response.success) {
+        toast.success("Property assigned successfully!");
+        setStep("success");
+
+        // Call onSuccess callback if provided
+        if (onSuccess) {
+          onSuccess();
+        }
+
+        setTimeout(() => {
+          onClose();
+          resetModal();
+        }, 2000);
+      } else {
+        toast.error(response.message || "Failed to assign property");
+      }
+    } catch (error) {
+      console.error("Error assigning property:", error);
+      toast.error("Failed to assign property");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetModal = () => {
     setSelectedProject(null);
     setSelectedBlock(null);
     setSelectedUnit(null);
-    setAssignmentType('reserved');
-    setStep('project');
+    setAssignmentType("reserved");
+    setStep("project");
+    setAvailableUnits([]);
+    setError(null);
+    setLoading(false);
+    setLoadingProjects(false);
+    setLoadingUnits(false);
   };
 
   const handleClose = () => {
@@ -121,9 +232,7 @@ export function AssignPropertyModal({ isOpen, onClose, client }: AssignPropertyM
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            Assign Property to {client.name}
-          </DialogTitle>
+          <DialogTitle>Assign Property to {client.name}</DialogTitle>
           <DialogDescription>
             Select a project, block, and available unit to assign to this client
           </DialogDescription>
@@ -131,14 +240,20 @@ export function AssignPropertyModal({ isOpen, onClose, client }: AssignPropertyM
 
         {/* Progress Steps */}
         <div className="flex items-center space-x-2 mb-6">
-          {['project', 'block', 'unit', 'confirm'].map((currentStep, index) => (
+          {["project", "block", "unit", "confirm"].map((currentStep, index) => (
             <React.Fragment key={currentStep}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                step === currentStep ? 'bg-purple-600 text-white' : 
-                ['project', 'block', 'unit', 'confirm'].indexOf(step) > index ? 'bg-green-600 text-white' : 
-                'bg-gray-200 text-gray-600'
-              }`}>
-                {['project', 'block', 'unit', 'confirm'].indexOf(step) > index ? (
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                  step === currentStep
+                    ? "bg-purple-600 text-white"
+                    : ["project", "block", "unit", "confirm"].indexOf(step) >
+                      index
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
+                {["project", "block", "unit", "confirm"].indexOf(step) >
+                index ? (
                   <Check className="h-4 w-4" />
                 ) : (
                   index + 1
@@ -149,116 +264,191 @@ export function AssignPropertyModal({ isOpen, onClose, client }: AssignPropertyM
           ))}
         </div>
 
-        {step === 'project' && (
+        {step === "project" && (
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Select Project</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockProjects.map((project) => (
-                <Card 
-                  key={project.id} 
-                  className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => handleProjectSelect(project.id.toString())}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-medium">{project.name}</h4>
-                        <p className="text-sm text-gray-600">{project.location}</p>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {project.blocks.length} blocks, {project.blocks.reduce((sum, block) => sum + block.availableUnits.length, 0)} available units
-                        </p>
+            {loadingProjects ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                <span className="ml-2 text-gray-600">Loading projects...</span>
+              </div>
+            ) : error ? (
+              <div className="flex items-center justify-center py-8 text-red-600">
+                <AlertCircle className="h-8 w-8 mr-2" />
+                <span>{error}</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {projects.map((project) => (
+                  <Card
+                    key={project._id}
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => handleProjectSelect(project._id)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium">{project.projectName}</h4>
+                          <p className="text-sm text-gray-600">
+                            {project.location}
+                          </p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {project.blocks?.length || 0} blocks,{" "}
+                            {project.availableUnits || 0} available{" "}
+                            {project.terminologyType === "plots"
+                              ? "plots"
+                              : "units"}
+                          </p>
+                        </div>
+                        <Building className="h-6 w-6 text-gray-400" />
                       </div>
-                      <Building className="h-6 w-6 text-gray-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {step === 'block' && selectedProject && (
+        {step === "block" && selectedProject && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Select Block in {selectedProject.name}</h3>
-              <Button variant="outline" onClick={() => setStep('project')}>
+              <h3 className="text-lg font-medium">
+                Select Block in {selectedProject.name}
+              </h3>
+              <Button variant="outline" onClick={() => setStep("project")}>
                 Back to Projects
               </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {selectedProject.blocks.map((block: any) => (
-                <Card 
-                  key={block.id} 
-                  className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => handleBlockSelect(block.id.toString())}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-medium">{block.name}</h4>
-                        <p className="text-sm text-gray-600">{block.type}</p>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {block.availableUnits.length} available units
-                        </p>
+            {selectedProject.blocks && selectedProject.blocks.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedProject.blocks.map((block: Block) => (
+                  <Card
+                    key={block._id}
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => handleBlockSelect(block._id || "")}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium">{block.name}</h4>
+                          <p className="text-sm text-gray-600">{block.type}</p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {block.availableUnits || 0} available{" "}
+                            {selectedProject?.terminologyType === "plots"
+                              ? "plots"
+                              : "units"}
+                          </p>
+                        </div>
+                        <Badge variant="outline">
+                          {block.availableUnits || 0}{" "}
+                          {selectedProject?.terminologyType === "plots"
+                            ? "plots"
+                            : "units"}
+                        </Badge>
                       </div>
-                      <Badge variant="outline">{block.availableUnits.length} units</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Building className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No blocks available for this project</p>
+              </div>
+            )}
           </div>
         )}
 
-        {step === 'unit' && selectedBlock && (
+        {step === "unit" && selectedBlock && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Select Unit in {selectedBlock.name}</h3>
-              <Button variant="outline" onClick={() => setStep('block')}>
+              <h3 className="text-lg font-medium">
+                Select{" "}
+                {selectedProject?.terminologyType === "plots" ? "Plot" : "Unit"}{" "}
+                in {selectedBlock.name}
+              </h3>
+              <Button variant="outline" onClick={() => setStep("block")}>
                 Back to Blocks
               </Button>
             </div>
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Plot ID</TableHead>
-                      <TableHead>Size</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {selectedBlock.availableUnits.map((unit: any) => (
-                      <TableRow key={unit.id} className="cursor-pointer hover:bg-gray-50"
-                               onClick={() => handleUnitSelect(unit)}>
-                        <TableCell className="font-medium">{unit.plotId}</TableCell>
-                        <TableCell>{unit.size}</TableCell>
-                        <TableCell className="font-medium">{unit.price}</TableCell>
-                        <TableCell>
-                          <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                            Select
-                          </Button>
-                        </TableCell>
+            {loadingUnits ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                <span className="ml-2 text-gray-600">
+                  Loading available units...
+                </span>
+              </div>
+            ) : availableUnits.length > 0 ? (
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>
+                          {selectedProject?.terminologyType === "plots"
+                            ? "Plot ID"
+                            : "Unit ID"}
+                        </TableHead>
+                        <TableHead>Size</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>Action</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {availableUnits.map((unit: Unit) => (
+                        <TableRow
+                          key={unit.id}
+                          className="cursor-pointer hover:bg-gray-50"
+                          onClick={() => handleUnitSelect(unit)}
+                        >
+                          <TableCell className="font-medium">
+                            {selectedProject?.terminologyType === "plots"
+                              ? unit.plotId
+                              : unit.unitNumber || unit.plotId}
+                          </TableCell>
+                          <TableCell>{unit.size}</TableCell>
+                          <TableCell className="font-medium">
+                            {formatCurrency(Number(unit.price))}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700"
+                            >
+                              Select
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Building className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>
+                  No available{" "}
+                  {selectedProject?.terminologyType === "plots"
+                    ? "plots"
+                    : "units"}{" "}
+                  in this block
+                </p>
+              </div>
+            )}
           </div>
         )}
 
-        {step === 'confirm' && selectedUnit && (
+        {step === "confirm" && selectedUnit && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Confirm Assignment</h3>
-              <Button variant="outline" onClick={() => setStep('unit')}>
+              <Button variant="outline" onClick={() => setStep("unit")}>
                 Back to Units
               </Button>
             </div>
-            
+
             {/* Assignment Summary */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
@@ -268,9 +458,18 @@ export function AssignPropertyModal({ isOpen, onClose, client }: AssignPropertyM
                     Client Details
                   </h4>
                   <div className="space-y-2 text-sm">
-                    <div><span className="font-medium">Name:</span> {client.name}</div>
-                    <div><span className="font-medium">Email:</span> {client.email}</div>
-                    <div><span className="font-medium">Phone:</span> {client.phone}</div>
+                    <div>
+                      <span className="font-medium">Name:</span>{" "}
+                      {`${client.firstName || ""} ${
+                        client.lastName || ""
+                      }`.trim()}
+                    </div>
+                    <div>
+                      <span className="font-medium">Email:</span> {client.email}
+                    </div>
+                    <div>
+                      <span className="font-medium">Phone:</span> {client.phone}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -282,11 +481,33 @@ export function AssignPropertyModal({ isOpen, onClose, client }: AssignPropertyM
                     Property Details
                   </h4>
                   <div className="space-y-2 text-sm">
-                    <div><span className="font-medium">Project:</span> {selectedProject?.name}</div>
-                    <div><span className="font-medium">Block:</span> {selectedBlock?.name}</div>
-                    <div><span className="font-medium">Unit:</span> {selectedUnit?.plotId}</div>
-                    <div><span className="font-medium">Size:</span> {selectedUnit?.size}</div>
-                    <div><span className="font-medium">Price:</span> {selectedUnit?.price}</div>
+                    <div>
+                      <span className="font-medium">Project:</span>{" "}
+                      {selectedProject?.name}
+                    </div>
+                    <div>
+                      <span className="font-medium">Block:</span>{" "}
+                      {selectedBlock?.name}
+                    </div>
+                    <div>
+                      <span className="font-medium">
+                        {selectedProject?.terminologyType === "plots"
+                          ? "Plot"
+                          : "Unit"}
+                        :
+                      </span>{" "}
+                      {selectedProject?.terminologyType === "plots"
+                        ? selectedUnit?.plotId
+                        : selectedUnit?.unitNumber || selectedUnit?.plotId}
+                    </div>
+                    <div>
+                      <span className="font-medium">Size:</span>{" "}
+                      {selectedUnit?.size}
+                    </div>
+                    <div>
+                      <span className="font-medium">Price:</span>{" "}
+                      {selectedUnit?.price}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -295,12 +516,19 @@ export function AssignPropertyModal({ isOpen, onClose, client }: AssignPropertyM
             {/* Assignment Type */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Assignment Type</label>
-              <Select value={assignmentType} onValueChange={(value: 'reserved' | 'sold') => setAssignmentType(value)}>
+              <Select
+                value={assignmentType}
+                onValueChange={(value: "reserved" | "sold") =>
+                  setAssignmentType(value)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="reserved">Reserved (Pending Payment)</SelectItem>
+                  <SelectItem value="reserved">
+                    Reserved (Pending Payment)
+                  </SelectItem>
                   <SelectItem value="sold">Sold (Payment Completed)</SelectItem>
                 </SelectContent>
               </Select>
@@ -308,24 +536,42 @@ export function AssignPropertyModal({ isOpen, onClose, client }: AssignPropertyM
 
             {/* Action Buttons */}
             <div className="flex gap-4">
-              <Button onClick={handleConfirmAssignment} className="flex-1 bg-green-600 hover:bg-green-700">
-                Confirm Assignment
+              <Button
+                onClick={handleConfirmAssignment}
+                className="flex-1 bg-green-600 hover:bg-green-700"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Assigning...
+                  </>
+                ) : (
+                  "Confirm Assignment"
+                )}
               </Button>
             </div>
           </div>
         )}
 
-        {step === 'success' && (
+        {step === "success" && (
           <div className="text-center py-8">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check className="h-8 w-8 text-green-600" />
             </div>
-            <h3 className="text-lg font-medium text-green-900 mb-2">Property Assigned Successfully!</h3>
+            <h3 className="text-lg font-medium text-green-900 mb-2">
+              Property Assigned Successfully!
+            </h3>
             <p className="text-gray-600 mb-4">
-              {selectedUnit?.plotId} has been assigned to {client?.name}.
+              {selectedProject?.terminologyType === "plots"
+                ? selectedUnit?.plotId
+                : selectedUnit?.unitNumber || selectedUnit?.plotId}{" "}
+              has been assigned to{" "}
+              {`${client?.firstName || ""} ${client?.lastName || ""}`.trim()}.
             </p>
             <p className="text-sm text-gray-500">
-              Assignment documents are being generated and will be available in the client's profile.
+              Assignment documents are being generated and will be available in
+              the client's profile.
             </p>
           </div>
         )}

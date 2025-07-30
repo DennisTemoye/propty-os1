@@ -1,14 +1,36 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { User, Phone, MapPin, Building, Users, FileText, CreditCard } from 'lucide-react';
-import { genderOptions, maritalStatusOptions, idTypeOptions, relationshipOptions, referralSourceOptions } from '@/forms/clientFormSchema';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import {
+  User,
+  Phone,
+  MapPin,
+  Building,
+  Users,
+  FileText,
+  CreditCard,
+} from "lucide-react";
+import {
+  genderOptions,
+  maritalStatusOptions,
+  idTypeOptions,
+  relationshipOptions,
+  referralSourceOptions,
+} from "@/forms/clientFormSchema";
+import { ClientsService } from "@/services/clientsService";
+import { clientFormSchema } from "@/forms/clientFormSchema";
 
 interface NewClientFormProps {
   onClose: () => void;
@@ -17,37 +39,96 @@ interface NewClientFormProps {
 export function NewClientForm({ onClose }: NewClientFormProps) {
   const form = useForm({
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      otherName: '',
-      gender: '',
-      maritalStatus: '',
-      nationality: '',
-      occupation: '',
-      employerBusiness: '',
-      email: '',
-      phone: '',
-      idType: '',
-      nationalId: '',
-      address: '',
-      city: '',
-      state: '',
-      nextOfKinName: '',
-      nextOfKinRelationship: '',
-      nextOfKinAddress: '',
-      nextOfKinEmail: '',
-      nextOfKinPhone: '',
-      clientType: 'individual',
-      referralSource: '',
-      notes: ''
-    }
+      firstName: "",
+      lastName: "",
+      otherName: "",
+      gender: "",
+      maritalStatus: "",
+      nationality: "",
+      occupation: "",
+      employerBusiness: "",
+      email: "",
+      phone: "",
+      idType: "",
+      nationalId: "",
+      address: "",
+      city: "",
+      state: "",
+      nextOfKinName: "",
+      nextOfKinRelationship: "",
+      nextOfKinAddress: "",
+      nextOfKinEmail: "",
+      nextOfKinPhone: "",
+      clientType: "individual",
+      referralSource: "",
+      notes: "",
+    },
+    mode: "onChange",
   });
 
-  const onSubmit = (data: any) => {
-    console.log('Creating new client:', data);
-    toast.success('Client created successfully!');
-    onClose();
-    form.reset();
+  const onSubmit = async (data: any) => {
+    console.log(data);
+    // Validate required fields
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "address",
+      "gender",
+      "maritalStatus",
+      "idType",
+      "nextOfKinRelationship",
+    ];
+
+    const missingFields = requiredFields.filter((field) => !data[field]);
+
+    if (missingFields.length > 0) {
+      toast.error(
+        `Please fill in all required fields: ${missingFields.join(", ")}`
+      );
+      return;
+    }
+
+    // Transform form data to match API structure - sending flat fields
+    const clientData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      nationality: data.nationality,
+      nationalId: data.nationalId,
+      address: data.address,
+      city: data.city,
+      state: data.state,
+      occupation: data.occupation,
+      employerBusiness: data.employerBusiness,
+      referralSource: data.referralSource,
+      // Additional fields
+      gender: data.gender,
+      maritalStatus: data.maritalStatus,
+      idType: data.idType,
+      nextOfKinName: data.nextOfKinName,
+      nextOfKinRelationship: data.nextOfKinRelationship,
+      nextOfKinAddress: data.nextOfKinAddress,
+      nextOfKinEmail: data.nextOfKinEmail,
+      nextOfKinPhone: data.nextOfKinPhone,
+      clientType: data.clientType,
+      notes: data.notes,
+    };
+
+    try {
+      const response = await ClientsService.createClient(clientData);
+      if (response.success) {
+        console.log("Creating new client:", clientData);
+        toast.success(response.message || "Client created successfully!");
+        onClose();
+      } else {
+        toast.error(response.message || "Failed to create client");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create client");
+    }
   };
 
   return (
@@ -57,7 +138,9 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
           <User className="h-8 w-8 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900">Add New Client</h2>
-        <p className="text-gray-600 mt-1">Fill in the details below to create a comprehensive client profile</p>
+        <p className="text-gray-600 mt-1">
+          Fill in the details below to create a comprehensive client profile
+        </p>
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -75,10 +158,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   First Name *
                 </label>
-                <Input 
-                  {...form.register('firstName', { required: true })}
+                <Input
+                  {...form.register("firstName", { required: true })}
                   placeholder="Enter first name"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
 
@@ -86,10 +169,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Last Name *
                 </label>
-                <Input 
-                  {...form.register('lastName', { required: true })}
+                <Input
+                  {...form.register("lastName", { required: true })}
                   placeholder="Enter last name"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
 
@@ -97,10 +180,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Other Name
                 </label>
-                <Input 
-                  {...form.register('otherName')}
+                <Input
+                  {...form.register("otherName")}
                   placeholder="Enter other name"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
             </div>
@@ -108,9 +191,12 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 text-left block">
-                  Gender
+                  Gender *
                 </label>
-                <Select onValueChange={(value) => form.setValue('gender', value)}>
+                <Select
+                  onValueChange={(value) => form.setValue("gender", value)}
+                  value={form.watch("gender")}
+                >
                   <SelectTrigger className="h-11">
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
@@ -122,13 +208,21 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                {form.formState.errors.gender && (
+                  <p className="text-sm text-red-600">Gender is required</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 text-left block">
-                  Marital Status
+                  Marital Status *
                 </label>
-                <Select onValueChange={(value) => form.setValue('maritalStatus', value)}>
+                <Select
+                  onValueChange={(value) =>
+                    form.setValue("maritalStatus", value)
+                  }
+                  value={form.watch("maritalStatus")}
+                >
                   <SelectTrigger className="h-11">
                     <SelectValue placeholder="Select marital status" />
                   </SelectTrigger>
@@ -140,18 +234,23 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                {form.formState.errors.maritalStatus && (
+                  <p className="text-sm text-red-600">
+                    Marital status is required
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Nationality
                 </label>
-                <Input 
-                  {...form.register('nationality')}
+                <Input
+                  {...form.register("nationality")}
                   placeholder="e.g., Nigerian"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
 
@@ -159,10 +258,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Occupation
                 </label>
-                <Input 
-                  {...form.register('occupation')}
+                <Input
+                  {...form.register("occupation")}
                   placeholder="Enter occupation"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
             </div>
@@ -171,10 +270,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
               <label className="text-sm font-medium text-gray-700 text-left block">
                 Employer/Business Name
               </label>
-              <Input 
-                {...form.register('employerBusiness')}
+              <Input
+                {...form.register("employerBusiness")}
                 placeholder="Enter employer or business name"
-                className="h-11" 
+                className="h-11"
               />
             </div>
           </CardContent>
@@ -194,11 +293,11 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Email Address *
                 </label>
-                <Input 
+                <Input
                   type="email"
-                  {...form.register('email', { required: true })}
+                  {...form.register("email", { required: true })}
                   placeholder="Enter email address"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
 
@@ -206,10 +305,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Phone Number *
                 </label>
-                <Input 
-                  {...form.register('phone', { required: true })}
+                <Input
+                  {...form.register("phone", { required: true })}
                   placeholder="Enter phone number"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
             </div>
@@ -228,9 +327,12 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 text-left block">
-                  ID Type
+                  ID Type *
                 </label>
-                <Select onValueChange={(value) => form.setValue('idType', value)}>
+                <Select
+                  onValueChange={(value) => form.setValue("idType", value)}
+                  value={form.watch("idType")}
+                >
                   <SelectTrigger className="h-11">
                     <SelectValue placeholder="Select ID type" />
                   </SelectTrigger>
@@ -242,16 +344,19 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                {form.formState.errors.idType && (
+                  <p className="text-sm text-red-600">ID type is required</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   ID Number
                 </label>
-                <Input 
-                  {...form.register('nationalId')}
+                <Input
+                  {...form.register("nationalId")}
                   placeholder="Enter ID number"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
             </div>
@@ -271,10 +376,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
               <label className="text-sm font-medium text-gray-700 text-left block">
                 Permanent Residential Address *
               </label>
-              <Input 
-                {...form.register('address', { required: true })}
+              <Input
+                {...form.register("address", { required: true })}
                 placeholder="Enter full address"
-                className="h-11" 
+                className="h-11"
               />
             </div>
 
@@ -283,10 +388,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   City
                 </label>
-                <Input 
-                  {...form.register('city')}
+                <Input
+                  {...form.register("city")}
                   placeholder="Enter city"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
 
@@ -294,10 +399,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   State
                 </label>
-                <Input 
-                  {...form.register('state')}
+                <Input
+                  {...form.register("state")}
                   placeholder="Enter state"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
             </div>
@@ -318,18 +423,23 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Next of Kin Full Name
                 </label>
-                <Input 
-                  {...form.register('nextOfKinName')}
+                <Input
+                  {...form.register("nextOfKinName")}
                   placeholder="Enter next of kin name"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 text-left block">
-                  Relationship
+                  Relationship *
                 </label>
-                <Select onValueChange={(value) => form.setValue('nextOfKinRelationship', value)}>
+                <Select
+                  onValueChange={(value) =>
+                    form.setValue("nextOfKinRelationship", value)
+                  }
+                  value={form.watch("nextOfKinRelationship")}
+                >
                   <SelectTrigger className="h-11">
                     <SelectValue placeholder="Select relationship" />
                   </SelectTrigger>
@@ -341,6 +451,11 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                {form.formState.errors.nextOfKinRelationship && (
+                  <p className="text-sm text-red-600">
+                    Relationship is required
+                  </p>
+                )}
               </div>
             </div>
 
@@ -348,10 +463,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
               <label className="text-sm font-medium text-gray-700 text-left block">
                 Next of Kin Address
               </label>
-              <Input 
-                {...form.register('nextOfKinAddress')}
+              <Input
+                {...form.register("nextOfKinAddress")}
                 placeholder="Enter next of kin address"
-                className="h-11" 
+                className="h-11"
               />
             </div>
 
@@ -360,11 +475,11 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Next of Kin Email
                 </label>
-                <Input 
+                <Input
                   type="email"
-                  {...form.register('nextOfKinEmail')}
+                  {...form.register("nextOfKinEmail")}
                   placeholder="Enter next of kin email"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
 
@@ -372,10 +487,10 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Next of Kin Phone
                 </label>
-                <Input 
-                  {...form.register('nextOfKinPhone')}
+                <Input
+                  {...form.register("nextOfKinPhone")}
                   placeholder="Enter next of kin phone"
-                  className="h-11" 
+                  className="h-11"
                 />
               </div>
             </div>
@@ -396,7 +511,9 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                 <label className="text-sm font-medium text-gray-700 text-left block">
                   Client Type
                 </label>
-                <Select onValueChange={(value) => form.setValue('clientType', value)}>
+                <Select
+                  onValueChange={(value) => form.setValue("clientType", value)}
+                >
                   <SelectTrigger className="h-11">
                     <SelectValue placeholder="Select client type" />
                   </SelectTrigger>
@@ -410,9 +527,14 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 text-left block">
-                  Referral Source
+                  Referral Source *
                 </label>
-                <Select onValueChange={(value) => form.setValue('referralSource', value)}>
+                <Select
+                  onValueChange={(value) =>
+                    form.setValue("referralSource", value)
+                  }
+                  value={form.watch("referralSource")}
+                >
                   <SelectTrigger className="h-11">
                     <SelectValue placeholder="Select source" />
                   </SelectTrigger>
@@ -424,6 +546,11 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                {form.formState.errors.referralSource && (
+                  <p className="text-sm text-red-600">
+                    Referral source is required
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -439,9 +566,11 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 text-left block">Notes</label>
-              <Textarea 
-                {...form.register('notes')}
+              <label className="text-sm font-medium text-gray-700 text-left block">
+                Notes
+              </label>
+              <Textarea
+                {...form.register("notes")}
                 placeholder="Additional notes about the client..."
                 className="min-h-[100px] resize-none"
               />
@@ -453,11 +582,19 @@ export function NewClientForm({ onClose }: NewClientFormProps) {
 
         {/* Action Buttons */}
         <div className="flex gap-3 pt-4">
-          <Button type="submit" className="flex-1 h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+          <Button
+            type="submit"
+            className="flex-1 h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+          >
             <User className="h-4 w-4 mr-2" />
             Create Client
           </Button>
-          <Button type="button" variant="outline" onClick={onClose} className="h-12 px-8">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            className="h-12 px-8"
+          >
             Cancel
           </Button>
         </div>

@@ -1,19 +1,57 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Building, Plus, Edit, Trash2, Users, UserPlus, Eye, Home } from 'lucide-react';
-import { toast } from 'sonner';
-import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Building,
+  Plus,
+  Edit,
+  Trash2,
+  Users,
+  UserPlus,
+  Eye,
+  Home,
+} from "lucide-react";
+import { toast } from "sonner";
+import { AllocateUnitModal } from "@/components/dashboard/sales-allocation/AllocateUnitModal";
 
 interface EnhancedBlocksTabProps {
   project: {
@@ -24,55 +62,103 @@ interface EnhancedBlocksTabProps {
 
 const mockBlocks = [
   {
-    id: 'A',
-    name: 'Block A',
-    type: 'duplex',
-    description: 'Luxury duplex plots with modern amenities',
+    id: "A",
+    name: "Block A",
+    type: "duplex",
+    description: "Luxury duplex plots with modern amenities",
     totalPlots: 30,
     availablePlots: 8,
     reservedPlots: 7,
     soldPlots: 15,
-    status: 'completed',
-    defaultPrice: '₦25,000,000',
-    defaultSize: '500sqm',
+    status: "completed",
+    defaultPrice: "₦25,000,000",
+    defaultSize: "500sqm",
     prototypeDetails: {
       bedrooms: 4,
       bathrooms: 3,
-      features: ['Swimming Pool', 'Garden', 'Parking'],
-      image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop'
+      features: ["Swimming Pool", "Garden", "Parking"],
+      image:
+        "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop",
     },
     plots: [
-      { id: '1', plotId: 'A-001', size: '500sqm', price: '₦25,000,000', status: 'sold', client: 'John Doe', bedrooms: 4, bathrooms: 3 },
-      { id: '2', plotId: 'A-002', size: '500sqm', price: '₦25,000,000', status: 'available', client: null, bedrooms: 4, bathrooms: 3 },
-      { id: '3', plotId: 'A-003', size: '500sqm', price: '₦25,000,000', status: 'reserved', client: 'Jane Smith', bedrooms: 4, bathrooms: 3 },
-    ]
+      {
+        id: "1",
+        plotId: "A-001",
+        size: "500sqm",
+        price: "₦25,000,000",
+        status: "sold",
+        client: "John Doe",
+        bedrooms: 4,
+        bathrooms: 3,
+      },
+      {
+        id: "2",
+        plotId: "A-002",
+        size: "500sqm",
+        price: "₦25,000,000",
+        status: "available",
+        client: null,
+        bedrooms: 4,
+        bathrooms: 3,
+      },
+      {
+        id: "3",
+        plotId: "A-003",
+        size: "500sqm",
+        price: "₦25,000,000",
+        status: "reserved",
+        client: "Jane Smith",
+        bedrooms: 4,
+        bathrooms: 3,
+      },
+    ],
   },
   {
-    id: 'B',
-    name: 'Block B',
-    type: 'bungalow',
-    description: 'Single-story bungalow plots',
+    id: "B",
+    name: "Block B",
+    type: "bungalow",
+    description: "Single-story bungalow plots",
     totalPlots: 25,
     availablePlots: 12,
     reservedPlots: 5,
     soldPlots: 8,
-    status: 'construction',
-    defaultPrice: '₦18,000,000',
-    defaultSize: '400sqm',
+    status: "construction",
+    defaultPrice: "₦18,000,000",
+    defaultSize: "400sqm",
     prototypeDetails: {
       bedrooms: 3,
       bathrooms: 2,
-      features: ['Garden', 'Parking'],
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=450&fit=crop'
+      features: ["Garden", "Parking"],
+      image:
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=450&fit=crop",
     },
     plots: [
-      { id: '4', plotId: 'B-001', size: '400sqm', price: '₦18,000,000', status: 'sold', client: 'Mike Johnson', bedrooms: 3, bathrooms: 2 },
-      { id: '5', plotId: 'B-002', size: '400sqm', price: '₦18,000,000', status: 'available', client: null, bedrooms: 3, bathrooms: 2 },
-    ]
-  }
+      {
+        id: "4",
+        plotId: "B-001",
+        size: "400sqm",
+        price: "₦18,000,000",
+        status: "sold",
+        client: "Mike Johnson",
+        bedrooms: 3,
+        bathrooms: 2,
+      },
+      {
+        id: "5",
+        plotId: "B-002",
+        size: "400sqm",
+        price: "₦18,000,000",
+        status: "available",
+        client: null,
+        bedrooms: 3,
+        bathrooms: 2,
+      },
+    ],
+  },
 ];
 
 export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
+  console.log({ project });
   const [blocks, setBlocks] = useState(mockBlocks);
   const [isAddBlockOpen, setIsAddBlockOpen] = useState(false);
   const [isEditBlockOpen, setIsEditBlockOpen] = useState(false);
@@ -81,93 +167,104 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
   const [isAllocatePlotOpen, setIsAllocatePlotOpen] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState<any>(null);
   const [selectedPlot, setSelectedPlot] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [usePrototype, setUsePrototype] = useState(true);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'construction':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'planning':
-        return 'bg-blue-100 text-blue-800';
-      case 'on-hold':
-        return 'bg-red-100 text-red-800';
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "construction":
+        return "bg-yellow-100 text-yellow-800";
+      case "planning":
+        return "bg-blue-100 text-blue-800";
+      case "on-hold":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getPlotStatusColor = (status: string) => {
     switch (status) {
-      case 'sold':
-        return 'bg-green-100 text-green-800';
-      case 'reserved':
-        return 'bg-orange-100 text-orange-800';
-      case 'available':
-        return 'bg-blue-100 text-blue-800';
+      case "sold":
+        return "bg-green-100 text-green-800";
+      case "reserved":
+        return "bg-orange-100 text-orange-800";
+      case "available":
+        return "bg-blue-100 text-blue-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const handleAddBlock = (formData: FormData) => {
     const newBlock = {
       id: String.fromCharCode(65 + blocks.length),
-      name: formData.get('blockName') as string,
-      type: formData.get('blockType') as string,
-      description: formData.get('description') as string,
-      totalPlots: parseInt(formData.get('totalPlots') as string),
-      availablePlots: parseInt(formData.get('totalPlots') as string),
+      name: formData.get("blockName") as string,
+      type: formData.get("blockType") as string,
+      description: formData.get("description") as string,
+      totalPlots: parseInt(formData.get("totalPlots") as string),
+      availablePlots: parseInt(formData.get("totalPlots") as string),
       reservedPlots: 0,
       soldPlots: 0,
-      status: 'planning',
-      defaultPrice: formData.get('defaultPrice') as string,
-      defaultSize: formData.get('defaultSize') as string,
+      status: "planning",
+      defaultPrice: formData.get("defaultPrice") as string,
+      defaultSize: formData.get("defaultSize") as string,
       prototypeDetails: {
-        bedrooms: parseInt(formData.get('bedrooms') as string) || 0,
-        bathrooms: parseInt(formData.get('bathrooms') as string) || 0,
-        features: (formData.get('features') as string)?.split(',').map(f => f.trim()) || [],
-        image: formData.get('prototypeImage') as string || ''
+        bedrooms: parseInt(formData.get("bedrooms") as string) || 0,
+        bathrooms: parseInt(formData.get("bathrooms") as string) || 0,
+        features:
+          (formData.get("features") as string)
+            ?.split(",")
+            .map((f) => f.trim()) || [],
+        image: (formData.get("prototypeImage") as string) || "",
       },
-      plots: []
+      plots: [],
     };
-    
+
     setBlocks([...blocks, newBlock]);
-    toast.success('Block added successfully!');
+    toast.success("Block added successfully!");
     setIsAddBlockOpen(false);
   };
 
   const handleEditBlock = (formData: FormData) => {
     if (!selectedBlock) return;
-    
+
     const updatedBlock = {
       ...selectedBlock,
-      name: formData.get('blockName') as string,
-      type: formData.get('blockType') as string,
-      description: formData.get('description') as string,
-      defaultPrice: formData.get('defaultPrice') as string,
-      defaultSize: formData.get('defaultSize') as string,
+      name: formData.get("blockName") as string,
+      type: formData.get("blockType") as string,
+      description: formData.get("description") as string,
+      defaultPrice: formData.get("defaultPrice") as string,
+      defaultSize: formData.get("defaultSize") as string,
       prototypeDetails: {
-        bedrooms: parseInt(formData.get('bedrooms') as string) || 0,
-        bathrooms: parseInt(formData.get('bathrooms') as string) || 0,
-        features: (formData.get('features') as string)?.split(',').map(f => f.trim()) || [],
-        image: formData.get('prototypeImage') as string || selectedBlock.prototypeDetails?.image || ''
-      }
+        bedrooms: parseInt(formData.get("bedrooms") as string) || 0,
+        bathrooms: parseInt(formData.get("bathrooms") as string) || 0,
+        features:
+          (formData.get("features") as string)
+            ?.split(",")
+            .map((f) => f.trim()) || [],
+        image:
+          (formData.get("prototypeImage") as string) ||
+          selectedBlock.prototypeDetails?.image ||
+          "",
+      },
     };
-    
-    setBlocks(blocks.map(block => 
-      block.id === selectedBlock.id ? updatedBlock : block
-    ));
-    toast.success('Block updated successfully!');
+
+    setBlocks(
+      blocks.map((block) =>
+        block.id === selectedBlock.id ? updatedBlock : block
+      )
+    );
+    toast.success("Block updated successfully!");
     setIsEditBlockOpen(false);
     setSelectedBlock(null);
   };
 
   const handleDeleteBlock = (blockId: string) => {
-    setBlocks(blocks.filter(block => block.id !== blockId));
-    toast.success('Block deleted successfully!');
+    setBlocks(blocks.filter((block) => block.id !== blockId));
+    toast.success("Block deleted successfully!");
   };
 
   const handleAddPlot = (formData: FormData) => {
@@ -176,28 +273,38 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
     const blockPrototype = selectedBlock.prototypeDetails;
     const newPlot = {
       id: `${selectedBlock.plots.length + 1}`,
-      plotId: formData.get('plotId') as string,
-      size: usePrototype ? selectedBlock.defaultSize : (formData.get('size') as string),
-      price: usePrototype ? selectedBlock.defaultPrice : (formData.get('price') as string),
-      bedrooms: usePrototype ? blockPrototype?.bedrooms : parseInt(formData.get('bedrooms') as string) || 0,
-      bathrooms: usePrototype ? blockPrototype?.bathrooms : parseInt(formData.get('bathrooms') as string) || 0,
-      status: 'available',
-      client: null
+      plotId: formData.get("plotId") as string,
+      size: usePrototype
+        ? selectedBlock.defaultSize
+        : (formData.get("size") as string),
+      price: usePrototype
+        ? selectedBlock.defaultPrice
+        : (formData.get("price") as string),
+      bedrooms: usePrototype
+        ? blockPrototype?.bedrooms
+        : parseInt(formData.get("bedrooms") as string) || 0,
+      bathrooms: usePrototype
+        ? blockPrototype?.bathrooms
+        : parseInt(formData.get("bathrooms") as string) || 0,
+      status: "available",
+      client: null,
     };
 
     const updatedBlock = {
       ...selectedBlock,
       plots: [...selectedBlock.plots, newPlot],
       totalPlots: selectedBlock.totalPlots + 1,
-      availablePlots: selectedBlock.availablePlots + 1
+      availablePlots: selectedBlock.availablePlots + 1,
     };
 
-    setBlocks(blocks.map(block => 
-      block.id === selectedBlock.id ? updatedBlock : block
-    ));
-    
+    setBlocks(
+      blocks.map((block) =>
+        block.id === selectedBlock.id ? updatedBlock : block
+      )
+    );
+
     setSelectedBlock(updatedBlock);
-    toast.success('Plot added successfully!');
+    toast.success("Plot added successfully!");
     setIsAddPlotOpen(false);
   };
 
@@ -206,26 +313,28 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
 
     const updatedPlot = {
       ...selectedPlot,
-      plotId: formData.get('plotId') as string,
-      size: formData.get('size') as string,
-      price: formData.get('price') as string,
-      bedrooms: parseInt(formData.get('bedrooms') as string) || 0,
-      bathrooms: parseInt(formData.get('bathrooms') as string) || 0,
+      plotId: formData.get("plotId") as string,
+      size: formData.get("size") as string,
+      price: formData.get("price") as string,
+      bedrooms: parseInt(formData.get("bedrooms") as string) || 0,
+      bathrooms: parseInt(formData.get("bathrooms") as string) || 0,
     };
 
     const updatedBlock = {
       ...selectedBlock,
-      plots: selectedBlock.plots.map((plot: any) => 
+      plots: selectedBlock.plots.map((plot: any) =>
         plot.id === selectedPlot.id ? updatedPlot : plot
-      )
+      ),
     };
 
-    setBlocks(blocks.map(block => 
-      block.id === selectedBlock.id ? updatedBlock : block
-    ));
-    
+    setBlocks(
+      blocks.map((block) =>
+        block.id === selectedBlock.id ? updatedBlock : block
+      )
+    );
+
     setSelectedBlock(updatedBlock);
-    toast.success('Plot updated successfully!');
+    toast.success("Plot updated successfully!");
     setIsEditPlotOpen(false);
     setSelectedPlot(null);
   };
@@ -233,22 +342,35 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
   const handleDeletePlot = (plotId: string) => {
     if (!selectedBlock) return;
 
-    const plotToDelete = selectedBlock.plots.find((plot: any) => plot.id === plotId);
+    const plotToDelete = selectedBlock.plots.find(
+      (plot: any) => plot.id === plotId
+    );
     const updatedBlock = {
       ...selectedBlock,
       plots: selectedBlock.plots.filter((plot: any) => plot.id !== plotId),
       totalPlots: selectedBlock.totalPlots - 1,
-      availablePlots: plotToDelete?.status === 'available' ? selectedBlock.availablePlots - 1 : selectedBlock.availablePlots,
-      soldPlots: plotToDelete?.status === 'sold' ? selectedBlock.soldPlots - 1 : selectedBlock.soldPlots,
-      reservedPlots: plotToDelete?.status === 'reserved' ? selectedBlock.reservedPlots - 1 : selectedBlock.reservedPlots
+      availablePlots:
+        plotToDelete?.status === "available"
+          ? selectedBlock.availablePlots - 1
+          : selectedBlock.availablePlots,
+      soldPlots:
+        plotToDelete?.status === "sold"
+          ? selectedBlock.soldPlots - 1
+          : selectedBlock.soldPlots,
+      reservedPlots:
+        plotToDelete?.status === "reserved"
+          ? selectedBlock.reservedPlots - 1
+          : selectedBlock.reservedPlots,
     };
 
-    setBlocks(blocks.map(block => 
-      block.id === selectedBlock.id ? updatedBlock : block
-    ));
-    
+    setBlocks(
+      blocks.map((block) =>
+        block.id === selectedBlock.id ? updatedBlock : block
+      )
+    );
+
     setSelectedBlock(updatedBlock);
-    toast.success('Plot deleted successfully!');
+    toast.success("Plot deleted successfully!");
   };
 
   const handleAllocatePlot = (plotId: string) => {
@@ -261,8 +383,14 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
 
   const totalPlots = blocks.reduce((sum, block) => sum + block.totalPlots, 0);
   const totalSold = blocks.reduce((sum, block) => sum + block.soldPlots, 0);
-  const totalReserved = blocks.reduce((sum, block) => sum + block.reservedPlots, 0);
-  const totalAvailable = blocks.reduce((sum, block) => sum + block.availablePlots, 0);
+  const totalReserved = blocks.reduce(
+    (sum, block) => sum + block.reservedPlots,
+    0
+  );
+  const totalAvailable = blocks.reduce(
+    (sum, block) => sum + block.availablePlots,
+    0
+  );
 
   return (
     <div className="space-y-6">
@@ -284,7 +412,9 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{totalPlots}</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {totalPlots}
+                  </div>
                   <div className="text-sm text-gray-500">Total Plots</div>
                 </div>
               </CardContent>
@@ -292,7 +422,9 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{totalSold}</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {totalSold}
+                  </div>
                   <div className="text-sm text-gray-500">Sold Plots</div>
                 </div>
               </CardContent>
@@ -300,7 +432,9 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">{totalReserved}</div>
+                  <div className="text-2xl font-bold text-orange-600">
+                    {totalReserved}
+                  </div>
                   <div className="text-sm text-gray-500">Reserved Plots</div>
                 </div>
               </CardContent>
@@ -308,7 +442,9 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">{totalAvailable}</div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {totalAvailable}
+                  </div>
                   <div className="text-sm text-gray-500">Available Plots</div>
                 </div>
               </CardContent>
@@ -318,7 +454,10 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
           {/* Blocks Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {blocks.map((block) => (
-              <Card key={block.id} className="hover:shadow-md transition-shadow">
+              <Card
+                key={block.id}
+                className="hover:shadow-md transition-shadow"
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg flex items-center">
@@ -334,40 +473,51 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                   <div className="text-sm text-gray-600">
                     {block.description}
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-center p-2 bg-gray-50 rounded">
-                      <div className="font-semibold text-gray-900">{block.totalPlots}</div>
+                      <div className="font-semibold text-gray-900">
+                        {block.totalPlots}
+                      </div>
                       <div className="text-gray-500">Total</div>
                     </div>
                     <div className="text-center p-2 bg-green-50 rounded">
-                      <div className="font-semibold text-green-600">{block.soldPlots}</div>
+                      <div className="font-semibold text-green-600">
+                        {block.soldPlots}
+                      </div>
                       <div className="text-gray-500">Sold</div>
                     </div>
                     <div className="text-center p-2 bg-orange-50 rounded">
-                      <div className="font-semibold text-orange-600">{block.reservedPlots}</div>
+                      <div className="font-semibold text-orange-600">
+                        {block.reservedPlots}
+                      </div>
                       <div className="text-gray-500">Reserved</div>
                     </div>
                     <div className="text-center p-2 bg-blue-50 rounded">
-                      <div className="font-semibold text-blue-600">{block.availablePlots}</div>
+                      <div className="font-semibold text-blue-600">
+                        {block.availablePlots}
+                      </div>
                       <div className="text-gray-500">Available</div>
                     </div>
                   </div>
 
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(block.soldPlots / block.totalPlots) * 100}%` }}
+                      style={{
+                        width: `${(block.soldPlots / block.totalPlots) * 100}%`,
+                      }}
                     ></div>
                   </div>
                   <div className="text-xs text-gray-500 text-center">
-                    {Math.round((block.soldPlots / block.totalPlots) * 100)}% sold
+                    {Math.round((block.soldPlots / block.totalPlots) * 100)}%
+                    sold
                   </div>
 
                   <div className="flex space-x-2 pt-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       className="flex-1"
                       onClick={() => {
                         setSelectedBlock(block);
@@ -377,13 +527,13 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                       <Edit className="h-3 w-3 mr-1" />
                       Edit
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       className="flex-1"
                       onClick={() => {
                         setSelectedBlock(block);
-                        setActiveTab('details');
+                        setActiveTab("details");
                       }}
                     >
                       <Users className="h-3 w-3 mr-1" />
@@ -391,7 +541,11 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button size="sm" variant="outline" className="text-red-600">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600"
+                        >
                           <Trash2 className="h-3 w-3" />
                         </Button>
                       </AlertDialogTrigger>
@@ -399,12 +553,13 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete Block</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete {block.name}? This will also delete all plots in this block.
+                            Are you sure you want to delete {block.name}? This
+                            will also delete all plots in this block.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction 
+                          <AlertDialogAction
                             className="bg-red-600 hover:bg-red-700"
                             onClick={() => handleDeleteBlock(block.id)}
                           >
@@ -425,15 +580,19 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setActiveTab('overview')}
+                  <Button
+                    variant="outline"
+                    onClick={() => setActiveTab("overview")}
                   >
                     ← Back to Overview
                   </Button>
                   <div>
-                    <h3 className="text-lg font-semibold">{selectedBlock.name} Plots</h3>
-                    <p className="text-sm text-gray-500">{selectedBlock.description}</p>
+                    <h3 className="text-lg font-semibold">
+                      {selectedBlock.name} Plots
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {selectedBlock.description}
+                    </p>
                   </div>
                 </div>
                 <Button onClick={() => setIsAddPlotOpen(true)}>
@@ -451,24 +610,40 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <p><strong>Bedrooms:</strong> {selectedBlock.prototypeDetails.bedrooms}</p>
-                        <p><strong>Bathrooms:</strong> {selectedBlock.prototypeDetails.bathrooms}</p>
-                        <p><strong>Default Size:</strong> {selectedBlock.defaultSize}</p>
-                        <p><strong>Default Price:</strong> {selectedBlock.defaultPrice}</p>
+                        <p>
+                          <strong>Bedrooms:</strong>{" "}
+                          {selectedBlock.prototypeDetails.bedrooms}
+                        </p>
+                        <p>
+                          <strong>Bathrooms:</strong>{" "}
+                          {selectedBlock.prototypeDetails.bathrooms}
+                        </p>
+                        <p>
+                          <strong>Default Size:</strong>{" "}
+                          {selectedBlock.defaultSize}
+                        </p>
+                        <p>
+                          <strong>Default Price:</strong>{" "}
+                          {selectedBlock.defaultPrice}
+                        </p>
                         <div>
                           <strong>Features:</strong>
                           <ul className="list-disc list-inside mt-1">
-                            {selectedBlock.prototypeDetails.features.map((feature: string, index: number) => (
-                              <li key={index} className="text-sm">{feature}</li>
-                            ))}
+                            {selectedBlock.prototypeDetails.features.map(
+                              (feature: string, index: number) => (
+                                <li key={index} className="text-sm">
+                                  {feature}
+                                </li>
+                              )
+                            )}
                           </ul>
                         </div>
                       </div>
                       {selectedBlock.prototypeDetails.image && (
                         <div>
-                          <img 
-                            src={selectedBlock.prototypeDetails.image} 
-                            alt="Prototype" 
+                          <img
+                            src={selectedBlock.prototypeDetails.image}
+                            alt="Prototype"
                             className="w-full h-48 object-cover rounded-lg"
                           />
                         </div>
@@ -500,7 +675,9 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                     <TableBody>
                       {selectedBlock.plots.map((plot: any) => (
                         <TableRow key={plot.id}>
-                          <TableCell className="font-medium">{plot.plotId}</TableCell>
+                          <TableCell className="font-medium">
+                            {plot.plotId}
+                          </TableCell>
                           <TableCell>{plot.size}</TableCell>
                           <TableCell>{plot.price}</TableCell>
                           <TableCell>{plot.bedrooms}</TableCell>
@@ -510,7 +687,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                               {plot.status}
                             </Badge>
                           </TableCell>
-                          <TableCell>{plot.client || '-'}</TableCell>
+                          <TableCell>{plot.client || "-"}</TableCell>
                           <TableCell>
                             <div className="flex space-x-1">
                               <Button
@@ -523,7 +700,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                               >
                                 <Edit className="h-3 w-3" />
                               </Button>
-                              {plot.status === 'available' && (
+                              {plot.status === "available" && (
                                 <Button
                                   size="sm"
                                   variant="outline"
@@ -534,20 +711,29 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                               )}
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                  <Button size="sm" variant="outline" className="text-red-600">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-600"
+                                  >
                                     <Trash2 className="h-3 w-3" />
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Plot</AlertDialogTitle>
+                                    <AlertDialogTitle>
+                                      Delete Plot
+                                    </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Are you sure you want to delete plot {plot.plotId}?
+                                      Are you sure you want to delete plot{" "}
+                                      {plot.plotId}?
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction 
+                                    <AlertDialogCancel>
+                                      Cancel
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
                                       className="bg-red-600 hover:bg-red-700"
                                       onClick={() => handleDeletePlot(plot.id)}
                                     >
@@ -572,7 +758,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
               <p className="text-muted-foreground mb-4">
                 Select a block from the overview to view its plots
               </p>
-              <Button onClick={() => setActiveTab('overview')}>
+              <Button onClick={() => setActiveTab("overview")}>
                 Go to Overview
               </Button>
             </div>
@@ -586,15 +772,23 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
           <DialogHeader>
             <DialogTitle>Add New Block</DialogTitle>
           </DialogHeader>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            handleAddBlock(formData);
-          }} className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              handleAddBlock(formData);
+            }}
+            className="space-y-4"
+          >
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="blockName">Block Name</Label>
-                <Input id="blockName" name="blockName" placeholder="e.g., Block D" required />
+                <Input
+                  id="blockName"
+                  name="blockName"
+                  placeholder="e.g., Block D"
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="blockType">Block Type</Label>
@@ -613,43 +807,86 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             </div>
             <div>
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" placeholder="Brief description" />
+              <Textarea
+                id="description"
+                name="description"
+                placeholder="Brief description"
+              />
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="totalPlots">Total Plots</Label>
-                <Input id="totalPlots" name="totalPlots" type="number" placeholder="e.g., 20" required />
+                <Input
+                  id="totalPlots"
+                  name="totalPlots"
+                  type="number"
+                  placeholder="e.g., 20"
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="defaultPrice">Default Plot Price</Label>
-                <Input id="defaultPrice" name="defaultPrice" placeholder="e.g., ₦25,000,000" />
+                <Input
+                  id="defaultPrice"
+                  name="defaultPrice"
+                  placeholder="e.g., ₦25,000,000"
+                />
               </div>
               <div>
                 <Label htmlFor="defaultSize">Default Plot Size</Label>
-                <Input id="defaultSize" name="defaultSize" placeholder="e.g., 500sqm" />
+                <Input
+                  id="defaultSize"
+                  name="defaultSize"
+                  placeholder="e.g., 500sqm"
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="bedrooms">Bedrooms</Label>
-                <Input id="bedrooms" name="bedrooms" type="number" placeholder="e.g., 4" />
+                <Input
+                  id="bedrooms"
+                  name="bedrooms"
+                  type="number"
+                  placeholder="e.g., 4"
+                />
               </div>
               <div>
                 <Label htmlFor="bathrooms">Bathrooms</Label>
-                <Input id="bathrooms" name="bathrooms" type="number" placeholder="e.g., 3" />
+                <Input
+                  id="bathrooms"
+                  name="bathrooms"
+                  type="number"
+                  placeholder="e.g., 3"
+                />
               </div>
             </div>
             <div>
               <Label htmlFor="features">Features (comma-separated)</Label>
-              <Input id="features" name="features" placeholder="e.g., Swimming Pool, Garden, Parking" />
+              <Input
+                id="features"
+                name="features"
+                placeholder="e.g., Swimming Pool, Garden, Parking"
+              />
             </div>
             <div>
-              <Label htmlFor="prototypeImage">Prototype Image URL (optional)</Label>
-              <Input id="prototypeImage" name="prototypeImage" type="url" placeholder="https://..." />
+              <Label htmlFor="prototypeImage">
+                Prototype Image URL (optional)
+              </Label>
+              <Input
+                id="prototypeImage"
+                name="prototypeImage"
+                type="url"
+                placeholder="https://..."
+              />
             </div>
             <div className="flex gap-2">
               <Button type="submit">Add Block</Button>
-              <Button type="button" variant="outline" onClick={() => setIsAddBlockOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAddBlockOpen(false)}
+              >
                 Cancel
               </Button>
             </div>
@@ -664,19 +901,31 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             <DialogTitle>Edit Block</DialogTitle>
           </DialogHeader>
           {selectedBlock && (
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              handleEditBlock(formData);
-            }} className="space-y-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                handleEditBlock(formData);
+              }}
+              className="space-y-4"
+            >
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="blockName">Block Name</Label>
-                  <Input id="blockName" name="blockName" defaultValue={selectedBlock.name} required />
+                  <Input
+                    id="blockName"
+                    name="blockName"
+                    defaultValue={selectedBlock.name}
+                    required
+                  />
                 </div>
                 <div>
                   <Label htmlFor="blockType">Block Type</Label>
-                  <Select name="blockType" defaultValue={selectedBlock.type} required>
+                  <Select
+                    name="blockType"
+                    defaultValue={selectedBlock.type}
+                    required
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -691,39 +940,76 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Textarea id="description" name="description" defaultValue={selectedBlock.description} />
+                <Textarea
+                  id="description"
+                  name="description"
+                  defaultValue={selectedBlock.description}
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="defaultPrice">Default Plot Price</Label>
-                  <Input id="defaultPrice" name="defaultPrice" defaultValue={selectedBlock.defaultPrice} />
+                  <Input
+                    id="defaultPrice"
+                    name="defaultPrice"
+                    defaultValue={selectedBlock.defaultPrice}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="defaultSize">Default Plot Size</Label>
-                  <Input id="defaultSize" name="defaultSize" defaultValue={selectedBlock.defaultSize} />
+                  <Input
+                    id="defaultSize"
+                    name="defaultSize"
+                    defaultValue={selectedBlock.defaultSize}
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="bedrooms">Bedrooms</Label>
-                  <Input id="bedrooms" name="bedrooms" type="number" defaultValue={selectedBlock.prototypeDetails?.bedrooms} />
+                  <Input
+                    id="bedrooms"
+                    name="bedrooms"
+                    type="number"
+                    defaultValue={selectedBlock.prototypeDetails?.bedrooms}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="bathrooms">Bathrooms</Label>
-                  <Input id="bathrooms" name="bathrooms" type="number" defaultValue={selectedBlock.prototypeDetails?.bathrooms} />
+                  <Input
+                    id="bathrooms"
+                    name="bathrooms"
+                    type="number"
+                    defaultValue={selectedBlock.prototypeDetails?.bathrooms}
+                  />
                 </div>
               </div>
               <div>
                 <Label htmlFor="features">Features (comma-separated)</Label>
-                <Input id="features" name="features" defaultValue={selectedBlock.prototypeDetails?.features?.join(', ')} />
+                <Input
+                  id="features"
+                  name="features"
+                  defaultValue={selectedBlock.prototypeDetails?.features?.join(
+                    ", "
+                  )}
+                />
               </div>
               <div>
                 <Label htmlFor="prototypeImage">Prototype Image URL</Label>
-                <Input id="prototypeImage" name="prototypeImage" type="url" defaultValue={selectedBlock.prototypeDetails?.image} />
+                <Input
+                  id="prototypeImage"
+                  name="prototypeImage"
+                  type="url"
+                  defaultValue={selectedBlock.prototypeDetails?.image}
+                />
               </div>
               <div className="flex gap-2">
                 <Button type="submit">Update Block</Button>
-                <Button type="button" variant="outline" onClick={() => setIsEditBlockOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditBlockOpen(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -738,22 +1024,32 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
           <DialogHeader>
             <DialogTitle>Add Plot to {selectedBlock?.name}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            handleAddPlot(formData);
-          }} className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              handleAddPlot(formData);
+            }}
+            className="space-y-4"
+          >
             <div>
               <Label htmlFor="plotId">Plot ID</Label>
-              <Input id="plotId" name="plotId" placeholder="e.g., A-004" required />
+              <Input
+                id="plotId"
+                name="plotId"
+                placeholder="e.g., A-004"
+                required
+              />
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="usePrototype" 
-                checked={usePrototype} 
+              <Checkbox
+                id="usePrototype"
+                checked={usePrototype}
                 onCheckedChange={(checked) => setUsePrototype(checked === true)}
               />
-              <Label htmlFor="usePrototype">Use prototype details for this plot</Label>
+              <Label htmlFor="usePrototype">
+                Use prototype details for this plot
+              </Label>
             </div>
             {!usePrototype && (
               <>
@@ -764,24 +1060,42 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
                   </div>
                   <div>
                     <Label htmlFor="price">Price</Label>
-                    <Input id="price" name="price" placeholder="e.g., ₦25,000,000" />
+                    <Input
+                      id="price"
+                      name="price"
+                      placeholder="e.g., ₦25,000,000"
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="bedrooms">Bedrooms</Label>
-                    <Input id="bedrooms" name="bedrooms" type="number" placeholder="e.g., 4" />
+                    <Input
+                      id="bedrooms"
+                      name="bedrooms"
+                      type="number"
+                      placeholder="e.g., 4"
+                    />
                   </div>
                   <div>
                     <Label htmlFor="bathrooms">Bathrooms</Label>
-                    <Input id="bathrooms" name="bathrooms" type="number" placeholder="e.g., 3" />
+                    <Input
+                      id="bathrooms"
+                      name="bathrooms"
+                      type="number"
+                      placeholder="e.g., 3"
+                    />
                   </div>
                 </div>
               </>
             )}
             <div className="flex gap-2">
               <Button type="submit">Add Plot</Button>
-              <Button type="button" variant="outline" onClick={() => setIsAddPlotOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAddPlotOpen(false)}
+              >
                 Cancel
               </Button>
             </div>
@@ -796,38 +1110,68 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
             <DialogTitle>Edit Plot</DialogTitle>
           </DialogHeader>
           {selectedPlot && (
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              handleEditPlot(formData);
-            }} className="space-y-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                handleEditPlot(formData);
+              }}
+              className="space-y-4"
+            >
               <div>
                 <Label htmlFor="plotId">Plot ID</Label>
-                <Input id="plotId" name="plotId" defaultValue={selectedPlot.plotId} required />
+                <Input
+                  id="plotId"
+                  name="plotId"
+                  defaultValue={selectedPlot.plotId}
+                  required
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="size">Size</Label>
-                  <Input id="size" name="size" defaultValue={selectedPlot.size} />
+                  <Input
+                    id="size"
+                    name="size"
+                    defaultValue={selectedPlot.size}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="price">Price</Label>
-                  <Input id="price" name="price" defaultValue={selectedPlot.price} />
+                  <Input
+                    id="price"
+                    name="price"
+                    defaultValue={selectedPlot.price}
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="bedrooms">Bedrooms</Label>
-                  <Input id="bedrooms" name="bathrooms" type="number" defaultValue={selectedPlot.bedrooms} />
+                  <Input
+                    id="bedrooms"
+                    name="bathrooms"
+                    type="number"
+                    defaultValue={selectedPlot.bedrooms}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="bathrooms">Bathrooms</Label>
-                  <Input id="bathrooms" name="bathrooms" type="number" defaultValue={selectedPlot.bathrooms} />
+                  <Input
+                    id="bathrooms"
+                    name="bathrooms"
+                    type="number"
+                    defaultValue={selectedPlot.bathrooms}
+                  />
                 </div>
               </div>
               <div className="flex gap-2">
                 <Button type="submit">Update Plot</Button>
-                <Button type="button" variant="outline" onClick={() => setIsEditPlotOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditPlotOpen(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -844,7 +1188,7 @@ export function EnhancedBlocksTab({ project }: EnhancedBlocksTabProps) {
           setSelectedPlot(null);
         }}
         onSubmit={() => {
-          toast.success('Plot allocated successfully!');
+          toast.success("Plot allocated successfully!");
           setIsAllocatePlotOpen(false);
           setSelectedPlot(null);
         }}

@@ -1,73 +1,115 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Form } from '@/components/ui/form';
-import { FormInput } from '@/components/shared/FormInput';
-import { FormSelect } from '@/components/shared/FormSelect';
-import { MapPin, Building2, Layers, Info, Plus, Trash2, Upload, X, FileText, Download, User, Tag } from 'lucide-react';
-import { projectFormSchema, ProjectFormData, projectCategoryOptions, projectStatusOptions, teamMemberOptions } from '@/forms/projectFormSchema';
-import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Form } from "@/components/ui/form";
+import { FormInput } from "@/components/shared/FormInput";
+import { FormSelect } from "@/components/shared/FormSelect";
+import {
+  MapPin,
+  Building2,
+  Layers,
+  Info,
+  Plus,
+  Trash2,
+  Upload,
+  X,
+  FileText,
+  Download,
+  User,
+  Tag,
+} from "lucide-react";
+import {
+  projectFormSchema,
+  ProjectFormData,
+  projectCategoryOptions,
+  projectStatusOptions,
+  teamMemberOptions,
+} from "@/forms/projectFormSchema";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { ProjectsService } from "@/services/projectsService";
 
 interface UnifiedProjectFormProps {
   project?: any;
   onClose: () => void;
   onFormChange?: () => void;
-  mode?: 'create' | 'edit';
+  mode?: "create" | "edit";
 }
 
 // Mock documents for demonstration
 const mockDocuments = [
   {
     id: 1,
-    name: 'Building Permit.pdf',
-    type: 'PDF',
-    size: '2.1 MB',
-    uploadDate: '2024-01-15',
-    category: 'Legal'
+    name: "Building Permit.pdf",
+    type: "PDF",
+    size: "2.1 MB",
+    uploadDate: "2024-01-15",
+    category: "Legal",
   },
   {
     id: 2,
-    name: 'Site Layout.dwg',
-    type: 'DWG',
-    size: '5.8 MB',
-    uploadDate: '2024-01-10',
-    category: 'Technical'
-  }
+    name: "Site Layout.dwg",
+    type: "DWG",
+    size: "5.8 MB",
+    uploadDate: "2024-01-10",
+    category: "Technical",
+  },
 ];
 
-export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'create' }: UnifiedProjectFormProps) {
+export function UnifiedProjectForm({
+  project,
+  onClose,
+  onFormChange,
+  mode = "create",
+}: UnifiedProjectFormProps) {
   const [blocks, setBlocks] = useState(project?.blocks || []);
-  const [imagePreview, setImagePreview] = useState<string | null>(project?.image || null);
-  const [documents, setDocuments] = useState(project?.documents || mockDocuments);
-  
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    project?.image || null
+  );
+  const [documents, setDocuments] = useState(
+    project?.documents || mockDocuments
+  );
+
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
-      name: project?.name || '',
-      location: project?.location || '',
-      category: project?.category || '',
-      terminologyType: project?.terminologyType || 'plots',
-      description: project?.description || '',
-      status: project?.status || '',
-      projectSize: project?.projectSize || '',
-      documentTitle: project?.documentTitle || '',
-      projectManager: project?.projectManager || '',
-      tags: project?.tags?.join(', ') || '',
-      startDate: project?.startDate || '',
-      expectedCompletion: project?.expectedCompletion || '',
-      totalBudget: project?.totalBudget || '',
-      contactPerson: project?.contactPerson || '',
-      contactPhone: project?.contactPhone || '',
-      contactEmail: project?.contactEmail || ''
-    }
+      projectName: project?.projectName || "",
+      location: project?.location || "",
+      primaryStructureType: project?.terminologyType || "plots",
+      projectCategory: project?.category || "Land",
+      projectDescription: project?.description || "",
+      projectStatus: project?.status || "Planning",
+      projectSize: project?.projectSize || "",
+      documentTitle: project?.documentTitle || "",
+      projectManager: project?.projectManager || "",
+      tags: project?.tags || "",
+      startDate: project?.startDate || "",
+      expectedCompletion: project?.expectedCompletion || "",
+      totalBudget: project?.totalBudget || "",
+      contactPerson: project?.contactPerson || "",
+      contactPhone: project?.contactPhone || "",
+      contactEmail: project?.contactEmail || "",
+      blocks: project?.blocks || [],
+    },
   });
 
   // Watch form changes
@@ -76,37 +118,92 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
     onFormChange?.();
   }, [watchedFields, blocks, onFormChange]);
 
-  const onSubmit = (data: ProjectFormData) => {
-    const projectData = {
-      ...data,
-      blocks,
-      image: imagePreview,
-      documents,
-      tags: data.tags ? data.tags.split(',').map(tag => tag.trim()) : []
-    };
-    
-    console.log(`${mode === 'create' ? 'Creating' : 'Updating'} project:`, projectData);
-    toast.success(mode === 'create' ? 'Project created successfully!' : 'Project updated successfully!');
-    onClose();
+  const onSubmit = async (data: ProjectFormData) => {
+    try {
+      console.log("data", data);
+      console.log("blocks", blocks);
+      // Transform blocks to match API structure
+      const transformedBlocks = blocks.map(
+        (block: any) => (
+          console.log("block", block.defaultSize),
+          {
+            name: block.name,
+            structureType: block.structureType,
+            blockType: block.blockType || "residential",
+            type: block.type || "",
+            totalPlots:
+              block.structureType === "plots" ? block.totalPlots || 0 : 0,
+            totalUnits:
+              block.structureType === "units" ? block.totalUnits || 0 : 0,
+            status: block.status || "planning",
+            defaultPrice: block.defaultPrice || 0,
+            defaultSize: block.defaultSize || "",
+            description: block.description || "",
+            units: block.units || [],
+          }
+        )
+      );
+
+      const contact = {
+        contactPerson: data.contactPerson || "Project Manager",
+        contactPhone: data.contactPhone || "+234 xxx xxx xxxx",
+        contactEmail: data.contactEmail || "project@company.com",
+      };
+
+      const projectData = {
+        projectName: data.projectName,
+        location: data.location,
+        projectCategory: data.projectCategory,
+        description: data.projectDescription,
+        status: data.projectStatus,
+        terminologyType: data.primaryStructureType,
+        projectSize: data.projectSize,
+        documentTitle: data.documentTitle,
+        projectManager: data.projectManager,
+        tags: data.tags,
+        startDate: data.startDate || new Date().toISOString().split("T")[0],
+        expectedCompletion:
+          data.expectedCompletion ||
+          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0],
+        totalBudget: data.totalBudget || "₦0",
+        ...contact,
+        blocks: transformedBlocks,
+        image: imagePreview,
+        documents,
+      } as any;
+
+      const response = await ProjectsService.createProject(projectData);
+      if (response.success) {
+        toast.success("Project created successfully!");
+      } else {
+        toast.error("Failed to create project");
+      }
+    } catch (error) {
+      toast.error("Failed to create project");
+    } finally {
+      // onClose();
+    }
   };
 
   const addBlock = () => {
-    setBlocks([...blocks, {
-      id: `Block-${blocks.length + 1}`,
-      name: `Block ${String.fromCharCode(65 + blocks.length)}`,
-      type: '',
-      prototype: '',
-      totalUnits: 0,
-      availableUnits: 0,
-      reservedUnits: 0,
-      soldUnits: 0,
-      status: 'planning',
-      description: '',
-      structureType: 'plots', // Default to plots
-      defaultPrice: '',
-      defaultSize: '',
-      units: []
-    }]);
+    setBlocks([
+      ...blocks,
+      {
+        name: `Block ${String.fromCharCode(65 + blocks.length)}`,
+        structureType: "plots",
+        blockType: "residential",
+        type: "",
+        totalPlots: 0,
+        totalUnits: 0,
+        status: "planning",
+        defaultPrice: 0,
+        defaultSize: "",
+        description: "",
+        units: [],
+      },
+    ]);
     onFormChange?.();
   };
 
@@ -116,6 +213,7 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
   };
 
   const updateBlock = (index: number, field: string, value: any) => {
+    console.log("Updating block", index, field, value);
     const updatedBlocks = [...blocks];
     updatedBlocks[index] = { ...updatedBlocks[index], [field]: value };
     setBlocks(updatedBlocks);
@@ -145,32 +243,35 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
       const newDocument = {
         id: documents.length + 1,
         name: file.name,
-        type: file.name.split('.').pop()?.toUpperCase() || 'FILE',
+        type: file.name.split(".").pop()?.toUpperCase() || "FILE",
         size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
-        uploadDate: new Date().toISOString().split('T')[0],
-        category: 'General'
+        uploadDate: new Date().toISOString().split("T")[0],
+        category: "General",
       };
       setDocuments([...documents, newDocument]);
       onFormChange?.();
-      toast.success('Document uploaded successfully!');
+      toast.success("Document uploaded successfully!");
     }
   };
 
   const removeDocument = (id: number) => {
-    setDocuments(documents.filter(doc => doc.id !== id));
+    setDocuments(documents.filter((doc) => doc.id !== id));
     onFormChange?.();
-    toast.success('Document removed successfully!');
+    toast.success("Document removed successfully!");
   };
 
   const downloadDocument = (doc: any) => {
-    console.log('Downloading:', doc.name);
+    console.log("Downloading:", doc.name);
     toast.info(`Downloading ${doc.name}...`);
   };
 
   return (
     <div className="max-w-4xl mx-auto">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pb-20">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 pb-20"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Content - Left Column (2/3 width) */}
             <div className="lg:col-span-2 space-y-6">
@@ -185,7 +286,7 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                 <CardContent className="space-y-4">
                   <FormInput
                     control={form.control}
-                    name="name"
+                    name="projectName"
                     label="Project Name"
                     placeholder="e.g., Victoria Gardens Estate"
                     required
@@ -202,7 +303,7 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
 
                     <FormSelect
                       control={form.control}
-                      name="category"
+                      name="projectCategory"
                       label="Project Category"
                       placeholder="Select category"
                       options={projectCategoryOptions}
@@ -212,18 +313,30 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
 
                   <FormField
                     control={form.control}
-                    name="terminologyType"
+                    name="primaryStructureType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-left">Primary Structure Type</FormLabel>
+                        <FormLabel className="text-left">
+                          Primary Structure Type
+                        </FormLabel>
                         <FormControl>
-                          <Select value={field.value || 'plots'} onValueChange={field.onChange}>
+                          <Select
+                            value={field.value || "plots"}
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              updateBlock(0, "structureType", value);
+                            }}
+                          >
                             <SelectTrigger>
                               <SelectValue placeholder="Select structure type" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="plots">Plots (Land Development)</SelectItem>
-                              <SelectItem value="units">Units (Housing/Buildings)</SelectItem>
+                              <SelectItem value="plots">
+                                Plots (Land Development)
+                              </SelectItem>
+                              <SelectItem value="units">
+                                Units (Housing/Buildings)
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -234,7 +347,7 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
 
                   <FormInput
                     control={form.control}
-                    name="description"
+                    name="projectDescription"
                     label="Project Description"
                     placeholder="Brief description of the project..."
                     type="textarea"
@@ -261,7 +374,7 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormSelect
                       control={form.control}
-                      name="status"
+                      name="projectStatus"
                       label="Project Status"
                       placeholder="Select status"
                       options={projectStatusOptions}
@@ -303,7 +416,12 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                       <Layers className="h-5 w-5 mr-2" />
                       Blocks & Structure
                     </CardTitle>
-                    <Button type="button" onClick={addBlock} variant="outline" size="sm">
+                    <Button
+                      type="button"
+                      onClick={addBlock}
+                      variant="outline"
+                      size="sm"
+                    >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Block
                     </Button>
@@ -313,18 +431,24 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                   {blocks.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                       <Layers className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                      <p>No blocks defined yet. Add your first block to get started.</p>
+                      <p>
+                        No blocks defined yet. Add your first block to get
+                        started.
+                      </p>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       {blocks.map((block: any, index: number) => (
-                        <Card key={index} className="border-l-4 border-l-blue-500">
+                        <Card
+                          key={index}
+                          className="border-l-4 border-l-blue-500"
+                        >
                           <CardContent className="p-4">
                             <div className="flex items-center justify-between mb-3">
                               <Badge variant="outline">Block {index + 1}</Badge>
-                              <Button 
+                              <Button
                                 type="button"
-                                variant="outline" 
+                                variant="outline"
                                 size="sm"
                                 onClick={() => removeBlock(index)}
                                 className="text-red-600 hover:text-red-700"
@@ -332,30 +456,42 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                                 <Trash2 className="h-3 w-3" />
                               </Button>
                             </div>
-                            
+
                             <div className="space-y-4">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                  <label className="text-sm font-medium text-left block">Block Name</label>
-                                  <Input 
+                                  <label className="text-sm font-medium text-left block">
+                                    Block Name
+                                  </label>
+                                  <Input
                                     placeholder="e.g., Block A"
                                     value={block.name || block.id}
-                                    onChange={(e) => updateBlock(index, 'name', e.target.value)}
+                                    onChange={(e) =>
+                                      updateBlock(index, "name", e.target.value)
+                                    }
                                   />
                                 </div>
-                                
+
                                 <div>
-                                  <label className="text-sm font-medium text-left block">Structure Type</label>
-                                  <Select 
-                                    value={block.structureType || 'plots'}
-                                    onValueChange={(value) => updateBlock(index, 'structureType', value)}
+                                  <label className="text-sm font-medium text-left block">
+                                    Structure Type
+                                  </label>
+                                  <Select
+                                    value={block.structureType || "plots"}
+                                    onValueChange={(value) =>
+                                      updateBlock(index, "structureType", value)
+                                    }
                                   >
                                     <SelectTrigger>
                                       <SelectValue placeholder="Select structure type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      <SelectItem value="plots">Plots (Land Development)</SelectItem>
-                                      <SelectItem value="units">Units (Housing/Buildings)</SelectItem>
+                                      <SelectItem value="plots">
+                                        Plots (Land Development)
+                                      </SelectItem>
+                                      <SelectItem value="units">
+                                        Units (Housing/Buildings)
+                                      </SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </div>
@@ -363,49 +499,99 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
 
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                  <label className="text-sm font-medium text-left block">Block Type</label>
-                                  <Select 
+                                  <label className="text-sm font-medium text-left block">
+                                    Block Type
+                                  </label>
+                                  <Select
                                     value={block.type}
-                                    onValueChange={(value) => updateBlock(index, 'type', value)}
+                                    onValueChange={(value) =>
+                                      updateBlock(index, "type", value)
+                                    }
                                   >
                                     <SelectTrigger>
                                       <SelectValue placeholder="Select type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      <SelectItem value="duplex">Duplex</SelectItem>
-                                      <SelectItem value="bungalow">Bungalow</SelectItem>
-                                      <SelectItem value="apartment">Apartment</SelectItem>
-                                      <SelectItem value="commercial">Commercial</SelectItem>
-                                      <SelectItem value="land">Land Plot</SelectItem>
-                                      <SelectItem value="utility">Utility</SelectItem>
+                                      <SelectItem value="duplex">
+                                        Duplex
+                                      </SelectItem>
+                                      <SelectItem value="bungalow">
+                                        Bungalow
+                                      </SelectItem>
+                                      <SelectItem value="apartment">
+                                        Apartment
+                                      </SelectItem>
+                                      <SelectItem value="commercial">
+                                        Commercial
+                                      </SelectItem>
+                                      <SelectItem value="land">
+                                        Land Plot
+                                      </SelectItem>
+                                      <SelectItem value="utility">
+                                        Utility
+                                      </SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </div>
-                                
+
                                 <div>
-                                  <label className="text-sm font-medium text-left block">Total {block.structureType === 'units' ? 'Units' : 'Plots'}</label>
-                                  <Input 
+                                  <label className="text-sm font-medium text-left block">
+                                    Total{" "}
+                                    {block.structureType === "units"
+                                      ? "Units"
+                                      : "Plots"}
+                                  </label>
+                                  <Input
                                     type="number"
+                                    name={`total${block.structureType
+                                      .slice(0, 1)
+                                      .toUpperCase()}${block.structureType.slice(
+                                      1
+                                    )}`}
                                     placeholder="e.g., 30"
-                                    value={block.totalUnits || 0}
-                                    onChange={(e) => updateBlock(index, 'totalUnits', parseInt(e.target.value) || 0)}
+                                    value={
+                                      block.totalUnits || block.totalPlots || 0
+                                    }
+                                    onChange={(e) =>
+                                      updateBlock(
+                                        index,
+                                        `total${block.structureType
+                                          .slice(0, 1)
+                                          .toUpperCase()}${block.structureType.slice(
+                                          1
+                                        )}`,
+                                        parseInt(e.target.value) || 0
+                                      )
+                                    }
                                   />
                                 </div>
-                                
+
                                 <div>
-                                  <label className="text-sm font-medium text-left block">Status</label>
-                                  <Select 
+                                  <label className="text-sm font-medium text-left block">
+                                    Status
+                                  </label>
+                                  <Select
                                     value={block.status}
-                                    onValueChange={(value) => updateBlock(index, 'status', value)}
+                                    onValueChange={(value) =>
+                                      updateBlock(index, "status", value)
+                                    }
                                   >
                                     <SelectTrigger>
                                       <SelectValue placeholder="Select status" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      <SelectItem value="planning">Planning</SelectItem>
-                                      <SelectItem value="construction">Construction</SelectItem>
-                                      <SelectItem value="completed">Completed</SelectItem>
-                                      <SelectItem value="on-hold">On Hold</SelectItem>
+                                      <SelectItem value="planning">
+                                        Planning
+                                      </SelectItem>
+                                      <SelectItem value="construction">
+                                        Construction
+                                      </SelectItem>
+                                      <SelectItem value="completed">
+                                        Completed
+                                      </SelectItem>
+                                      <SelectItem value="on-hold">
+                                        On Hold
+                                      </SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </div>
@@ -413,32 +599,56 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
 
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                  <label className="text-sm font-medium text-left block">Default Price</label>
-                                  <Input 
+                                  <label className="text-sm font-medium text-left block">
+                                    Default Price
+                                  </label>
+                                  <Input
                                     placeholder="e.g., ₦25,000,000"
-                                    value={block.defaultPrice || ''}
-                                    onChange={(e) => updateBlock(index, 'defaultPrice', e.target.value)}
+                                    value={block.defaultPrice || ""}
+                                    onChange={(e) =>
+                                      updateBlock(
+                                        index,
+                                        "defaultPrice",
+                                        e.target.value
+                                      )
+                                    }
                                   />
                                 </div>
-                                
+
                                 <div>
-                                  <label className="text-sm font-medium text-left block">Default Size</label>
-                                  <Input 
+                                  <label className="text-sm font-medium text-left block">
+                                    Default Size
+                                  </label>
+                                  <Input
                                     placeholder="e.g., 500sqm"
-                                    value={block.defaultSize || ''}
-                                    onChange={(e) => updateBlock(index, 'defaultSize', e.target.value)}
+                                    value={block.defaultSize || ""}
+                                    onChange={(e) =>
+                                      updateBlock(
+                                        index,
+                                        "defaultSize",
+                                        e.target.value
+                                      )
+                                    }
                                   />
                                 </div>
                               </div>
                             </div>
-                            
+
                             <div className="mt-3">
-                              <label className="text-sm font-medium text-left block">Description</label>
-                              <Textarea 
+                              <label className="text-sm font-medium text-left block">
+                                Description
+                              </label>
+                              <Textarea
                                 placeholder="Brief description of this block..."
                                 className="mt-1"
                                 value={block.description}
-                                onChange={(e) => updateBlock(index, 'description', e.target.value)}
+                                onChange={(e) =>
+                                  updateBlock(
+                                    index,
+                                    "description",
+                                    e.target.value
+                                  )
+                                }
                               />
                             </div>
                           </CardContent>
@@ -464,7 +674,9 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                       name="startDate"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-left">Start Date</FormLabel>
+                          <FormLabel className="text-left">
+                            Start Date
+                          </FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
                           </FormControl>
@@ -478,7 +690,9 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                       name="expectedCompletion"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-left">Expected Completion</FormLabel>
+                          <FormLabel className="text-left">
+                            Expected Completion
+                          </FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
                           </FormControl>
@@ -492,9 +706,14 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                       name="totalBudget"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-left">Total Budget</FormLabel>
+                          <FormLabel className="text-left">
+                            Total Budget
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g., ₦5,000,000,000" {...field} />
+                            <Input
+                              placeholder="e.g., ₦5,000,000,000"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -510,13 +729,15 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
               {/* Project Image */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg text-left">Project Image</CardTitle>
+                  <CardTitle className="text-lg text-left">
+                    Project Image
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {imagePreview ? (
                     <div className="relative">
-                      <img 
-                        src={imagePreview} 
+                      <img
+                        src={imagePreview}
                         alt="Project preview"
                         className="w-full h-48 object-cover rounded-lg"
                       />
@@ -534,8 +755,13 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
                       <div className="text-center">
                         <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                        <Label htmlFor="image-upload" className="cursor-pointer">
-                          <span className="text-blue-600 hover:text-blue-700">Upload image</span>
+                        <Label
+                          htmlFor="image-upload"
+                          className="cursor-pointer"
+                        >
+                          <span className="text-blue-600 hover:text-blue-700">
+                            Upload image
+                          </span>
                         </Label>
                         <Input
                           id="image-upload"
@@ -566,13 +792,20 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                     {/* Existing Documents */}
                     {documents.length > 0 && (
                       <div className="space-y-2 mb-4">
-                        <h4 className="text-sm font-medium text-gray-700">Uploaded Documents</h4>
+                        <h4 className="text-sm font-medium text-gray-700">
+                          Uploaded Documents
+                        </h4>
                         {documents.map((doc) => (
-                          <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div
+                            key={doc.id}
+                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                          >
                             <div className="flex items-center space-x-3">
                               <FileText className="h-5 w-5 text-blue-600" />
                               <div>
-                                <div className="text-sm font-medium">{doc.name}</div>
+                                <div className="text-sm font-medium">
+                                  {doc.name}
+                                </div>
                                 <div className="text-xs text-gray-500">
                                   {doc.category} • {doc.size} • {doc.uploadDate}
                                 </div>
@@ -607,8 +840,13 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
                       <div className="text-center">
                         <FileText className="h-6 w-6 text-gray-400 mx-auto mb-2" />
-                        <Label htmlFor="documents-upload" className="cursor-pointer">
-                          <span className="text-blue-600 hover:text-blue-700 text-sm">Upload documents</span>
+                        <Label
+                          htmlFor="documents-upload"
+                          className="cursor-pointer"
+                        >
+                          <span className="text-blue-600 hover:text-blue-700 text-sm">
+                            Upload documents
+                          </span>
                         </Label>
                         <Input
                           id="documents-upload"
@@ -640,9 +878,14 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                     name="contactPerson"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-left">Contact Person</FormLabel>
+                        <FormLabel className="text-left">
+                          Contact Person
+                        </FormLabel>
                         <FormControl>
-                          <Input placeholder="Project Manager/Lead" {...field} />
+                          <Input
+                            placeholder="Project Manager/Lead"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -654,7 +897,9 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                     name="contactPhone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-left">Contact Phone</FormLabel>
+                        <FormLabel className="text-left">
+                          Contact Phone
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="+234 xxx xxx xxxx" {...field} />
                         </FormControl>
@@ -668,9 +913,15 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
                     name="contactEmail"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-left">Contact Email</FormLabel>
+                        <FormLabel className="text-left">
+                          Contact Email
+                        </FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="project@company.com" {...field} />
+                          <Input
+                            type="email"
+                            placeholder="project@company.com"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -685,12 +936,12 @@ export function UnifiedProjectForm({ project, onClose, onFormChange, mode = 'cre
         {/* Fixed Submit Button */}
         <div className="fixed bottom-0 right-0 left-64 bg-white border-t border-gray-200 p-4 z-30">
           <div className="flex justify-end space-x-2 max-w-4xl mx-auto">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="bg-purple-600 hover:bg-purple-700"
               onClick={form.handleSubmit(onSubmit)}
             >
-              {mode === 'create' ? 'Create Project' : 'Update Project'}
+              {mode === "create" ? "Create Project" : "Update Project"}
             </Button>
           </div>
         </div>

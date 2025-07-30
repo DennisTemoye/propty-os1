@@ -1,60 +1,87 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Eye, Ban, Download, Search, History, ArrowRight, AlertTriangle, Calendar, User, DollarSign } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Eye,
+  Ban,
+  Download,
+  Search,
+  History,
+  ArrowRight,
+  AlertTriangle,
+  Calendar,
+  User,
+  DollarSign,
+} from "lucide-react";
+import { SalesService } from "@/services/sales";
+import { ProjectsService } from "@/services/projectsService";
+import { ClientsService } from "@/services/clientsService";
+import { formatDate } from "@/utils/formatDate";
 
 const mockAllocationHistory = [
   {
     id: 1,
-    type: 'allocation',
-    clientName: 'John Doe',
-    unit: 'Block A - Plot 02',
-    project: 'Victoria Gardens',
-    status: 'allocated',
-    paymentStatus: 'partial',
-    date: '2024-01-15',
+    type: "allocation",
+    clientName: "John Doe",
+    unit: "Block A - Plot 02",
+    project: "Victoria Gardens",
+    status: "allocated",
+    paymentStatus: "partial",
+    date: "2024-01-15",
     totalAmount: 25000000,
     paidAmount: 15000000,
-    marketer: 'Jane Smith',
-    admin: 'Admin User'
+    marketer: "Jane Smith",
+    admin: "Admin User",
   },
   {
     id: 2,
-    type: 'reallocation',
-    unit: 'Block B - Plot 08',
-    project: 'Emerald Heights',
-    oldClient: 'David Wilson',
-    newClient: 'Sarah Johnson',
-    date: '2024-01-10',
-    reason: 'Unit Resale',
-    admin: 'Admin User',
-    oldClientPhone: '+234 803 456 7890',
-    newClientPhone: '+234 804 567 8901',
-    marketer: 'Mike Davis',
-    transferFee: 750000
+    type: "reallocation",
+    unit: "Block B - Plot 08",
+    project: "Emerald Heights",
+    oldClient: "David Wilson",
+    newClient: "Sarah Johnson",
+    date: "2024-01-10",
+    reason: "Unit Resale",
+    admin: "Admin User",
+    oldClientPhone: "+234 803 456 7890",
+    newClientPhone: "+234 804 567 8901",
+    marketer: "Mike Davis",
+    transferFee: 750000,
   },
   {
     id: 3,
-    type: 'revoked',
-    clientName: 'Michael Thompson',
-    unit: 'Block A - Plot 18',
-    project: 'Victoria Gardens',
-    date: '2024-01-18',
-    reason: 'Payment Default',
-    refundStatus: 'Partial',
-    refundType: 'partial',
+    type: "revoked",
+    clientName: "Michael Thompson",
+    unit: "Block A - Plot 18",
+    project: "Victoria Gardens",
+    date: "2024-01-18",
+    reason: "Payment Default",
+    refundStatus: "Partial",
+    refundType: "partial",
     originalAmount: 25000000,
     refundedAmount: 20000000,
     refundPercentage: 80,
-    admin: 'Admin User',
-    clientPhone: '+234 801 234 5678',
-    marketer: 'Jane Smith'
-  }
+    admin: "Admin User",
+    clientPhone: "+234 801 234 5678",
+    marketer: "Jane Smith",
+  },
 ];
 
 interface HistoryTabProps {
@@ -62,77 +89,101 @@ interface HistoryTabProps {
 }
 
 export function HistoryTab({ onRevoke }: HistoryTabProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [projectFilter, setProjectFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [projectFilter, setProjectFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
+  const [history, setHistory] = useState<any[]>([]);
+  const [projects, setProjects] = useState<{ [key: string]: any }>({});
+  const [clients, setClients] = useState<{ [key: string]: any }>({});
 
-  const filteredHistory = mockAllocationHistory.filter(item => {
-    const matchesSearch = 
-      (item.clientName && item.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.oldClient && item.oldClient.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.newClient && item.newClient.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      item.unit.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesType = typeFilter === 'all' || item.type === typeFilter;
-    const matchesProject = projectFilter === 'all' || item.project === projectFilter;
-    
+  const fetchHistory = async () => {
+    try {
+      const response = await SalesService.getSales();
+      console.log("history", response);
+      const historyData = response.data.data;
+      setHistory(historyData);
+
+      // Fetch related data if we have history items
+    } catch (error) {
+      console.error("Error fetching history data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []); // Only run once on component mount
+
+  const filteredHistory = history.filter((item) => {
+    const clientName = item.clientId?.firstName || item.client?.name || "";
+    const projectName = item.projectId?.projectName || "";
+
+    const matchesSearch =
+      clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.unit && item.unit.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesType = typeFilter === "all" || item.type === typeFilter;
+    const matchesProject =
+      projectFilter === "all" || projectName === projectFilter;
+
     return matchesSearch && matchesType && matchesProject;
   });
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
       minimumFractionDigits: 0,
     }).format(amount);
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'allocated':
-        return 'bg-green-100 text-green-800';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+      case "allocated":
+        return "bg-green-100 text-green-800";
+      case "completed":
+        return "bg-blue-100 text-blue-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getReasonColor = (reason: string) => {
     switch (reason) {
-      case 'Unit Resale':
-        return 'bg-green-100 text-green-800';
-      case 'Client Transfer':
-        return 'bg-blue-100 text-blue-800';
-      case 'Payment Default':
-        return 'bg-red-100 text-red-800';
-      case 'Administrative Change':
-        return 'bg-purple-100 text-purple-800';
+      case "Unit Resale":
+        return "bg-green-100 text-green-800";
+      case "Client Transfer":
+        return "bg-blue-100 text-blue-800";
+      case "Payment Default":
+        return "bg-red-100 text-red-800";
+      case "Administrative Change":
+        return "bg-purple-100 text-purple-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getRefundStatusColor = (status: string) => {
     switch (status) {
-      case 'Full':
-        return 'bg-green-100 text-green-800';
-      case 'Partial':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Pending':
-        return 'bg-red-100 text-red-800';
+      case "Full":
+        return "bg-green-100 text-green-800";
+      case "Partial":
+        return "bg-yellow-100 text-yellow-800";
+      case "Pending":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const projects = [...new Set(mockAllocationHistory.map(h => h.project))];
+  const projectNames = [
+    ...new Set(history.map((h) => h.projectId?.projectName).filter(Boolean)),
+  ];
 
   const renderTableHeaders = () => {
-    if (typeFilter === 'allocation') {
+    if (typeFilter === "allocation") {
       return (
         <TableRow>
           <TableHead>Client Name</TableHead>
@@ -144,7 +195,7 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
           <TableHead>Actions</TableHead>
         </TableRow>
       );
-    } else if (typeFilter === 'reallocation') {
+    } else if (typeFilter === "reallocation") {
       return (
         <TableRow>
           <TableHead>Unit & Project</TableHead>
@@ -156,7 +207,7 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
           <TableHead>Admin</TableHead>
         </TableRow>
       );
-    } else if (typeFilter === 'revoked') {
+    } else if (typeFilter === "revoked") {
       return (
         <TableRow>
           <TableHead>Client & Unit</TableHead>
@@ -184,26 +235,32 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
   };
 
   const renderTableRow = (item: any) => {
-    if (typeFilter === 'allocation' && item.type === 'allocation') {
+    if (typeFilter === "allocation" && item.type === "allocation") {
+      console.log("item", item);
+
+      const clientName =
+        item.client?.firstName || item.client?.name || "Unknown Client";
+      const projectName = item.project?.projectName || "Unknown Project";
+
       return (
         <TableRow key={item.id}>
-          <TableCell className="font-medium">{item.clientName}</TableCell>
+          <TableCell className="font-medium">{clientName}</TableCell>
           <TableCell>
             <div>
               <div className="font-medium">{item.unit}</div>
               <div className="text-sm text-gray-500">via {item.marketer}</div>
             </div>
           </TableCell>
-          <TableCell>{item.project}</TableCell>
+          <TableCell>{projectName}</TableCell>
           <TableCell>
-            <Badge className={getStatusColor(item.status)}>
-              {item.status}
-            </Badge>
+            <Badge className={getStatusColor(item.status)}>{item.status}</Badge>
           </TableCell>
           <TableCell>{item.date}</TableCell>
           <TableCell>
             <div>
-              <div className="font-medium">{formatCurrency(item.totalAmount)}</div>
+              <div className="font-medium">
+                {formatCurrency(item.totalAmount)}
+              </div>
               <div className="text-sm text-gray-500">
                 Paid: {formatCurrency(item.paidAmount)}
               </div>
@@ -214,9 +271,9 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
               <Button variant="ghost" size="sm">
                 <Eye className="h-4 w-4" />
               </Button>
-              {item.status === 'allocated' && onRevoke && (
-                <Button 
-                  variant="ghost" 
+              {item.status === "allocated" && onRevoke && (
+                <Button
+                  variant="ghost"
                   size="sm"
                   onClick={() => onRevoke(item)}
                   className="text-red-600 hover:text-red-700"
@@ -228,32 +285,38 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
           </TableCell>
         </TableRow>
       );
-    } else if (typeFilter === 'reallocation' && item.type === 'reallocation') {
+    } else if (typeFilter === "reallocation" && item.type === "reallocation") {
+      const projectName = item.projectId?.projectName || "Unknown Project";
+
       return (
         <TableRow key={item.id}>
           <TableCell>
             <div>
               <div className="font-medium">{item.unit}</div>
-              <div className="text-sm text-gray-500">{item.project}</div>
+              <div className="text-sm text-gray-500">{projectName}</div>
             </div>
           </TableCell>
           <TableCell>
             <div className="flex items-center space-x-2">
               <div className="text-center">
                 <div className="font-medium text-red-600">{item.oldClient}</div>
-                <div className="text-xs text-gray-500">{item.oldClientPhone}</div>
+                <div className="text-xs text-gray-500">
+                  {item.oldClientPhone}
+                </div>
               </div>
               <ArrowRight className="h-4 w-4 text-gray-400" />
               <div className="text-center">
-                <div className="font-medium text-green-600">{item.newClient}</div>
-                <div className="text-xs text-gray-500">{item.newClientPhone}</div>
+                <div className="font-medium text-green-600">
+                  {item.newClient}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {item.newClientPhone}
+                </div>
               </div>
             </div>
           </TableCell>
           <TableCell>
-            <Badge className={getReasonColor(item.reason)}>
-              {item.reason}
-            </Badge>
+            <Badge className={getReasonColor(item.reason)}>{item.reason}</Badge>
           </TableCell>
           <TableCell>
             <div className="flex items-center space-x-1">
@@ -273,13 +336,17 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
           <TableCell className="text-sm text-gray-600">{item.admin}</TableCell>
         </TableRow>
       );
-    } else if (typeFilter === 'revoked' && item.type === 'revoked') {
+    } else if (typeFilter === "revoked" && item.type === "revoked") {
+      const clientName =
+        item.client?.firstName || item.client?.name || "Unknown Client";
+      const projectName = item.project?.projectName || "Unknown Project";
+
       return (
         <TableRow key={item.id}>
           <TableCell>
             <div>
               <div className="font-medium flex items-center space-x-2">
-                <span>{item.clientName}</span>
+                <span>{clientName}</span>
                 <AlertTriangle className="h-4 w-4 text-red-500" />
               </div>
               <div className="text-sm text-gray-500">{item.unit}</div>
@@ -287,7 +354,7 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
               <div className="text-xs text-gray-400">via {item.marketer}</div>
             </div>
           </TableCell>
-          <TableCell className="font-medium">{item.project}</TableCell>
+          <TableCell className="font-medium">{projectName}</TableCell>
           <TableCell>
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4 text-gray-400" />
@@ -295,9 +362,7 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
             </div>
           </TableCell>
           <TableCell>
-            <Badge className={getReasonColor(item.reason)}>
-              {item.reason}
-            </Badge>
+            <Badge className={getReasonColor(item.reason)}>{item.reason}</Badge>
           </TableCell>
           <TableCell>
             <Badge className={getRefundStatusColor(item.refundStatus)}>
@@ -309,12 +374,16 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
               <div className="flex items-center space-x-1 text-sm">
                 <DollarSign className="h-3 w-3 text-gray-400" />
                 <span className="text-gray-600">Original:</span>
-                <span className="font-medium">{formatCurrency(item.originalAmount)}</span>
+                <span className="font-medium">
+                  {formatCurrency(item.originalAmount)}
+                </span>
               </div>
               <div className="flex items-center space-x-1 text-sm">
                 <DollarSign className="h-3 w-3 text-green-600" />
                 <span className="text-gray-600">Refunded:</span>
-                <span className="font-medium text-green-600">{formatCurrency(item.refundedAmount)}</span>
+                <span className="font-medium text-green-600">
+                  {formatCurrency(item.refundedAmount)}
+                </span>
               </div>
             </div>
           </TableCell>
@@ -326,37 +395,57 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
           </TableCell>
         </TableRow>
       );
-    } else if (typeFilter === 'all') {
+    } else if (typeFilter === "all") {
+      console.log("item", item);
+      const clientName =
+        item.clientId?.firstName || item.clientId?.name || "Unknown Client";
+      const projectName = item.projectId?.projectName || "Unknown Project";
+
       return (
         <TableRow key={item.id}>
           <TableCell>
-            <Badge variant="outline" className={
-              item.type === 'allocation' ? 'bg-blue-100 text-blue-800' :
-              item.type === 'reallocation' ? 'bg-purple-100 text-purple-800' :
-              'bg-red-100 text-red-800'
-            }>
+            <Badge
+              variant="outline"
+              className={
+                item.type === "allocation"
+                  ? "bg-blue-100 text-blue-800"
+                  : item.type === "reallocation"
+                  ? "bg-purple-100 text-purple-800"
+                  : "bg-red-100 text-red-800"
+              }
+            >
               {item.type}
             </Badge>
           </TableCell>
           <TableCell>
             <div>
-              <div className="font-medium">
-                {item.clientName || `${item.oldClient} → ${item.newClient}`}
-              </div>
+              <div className="font-medium">{clientName}</div>
               <div className="text-sm text-gray-500">{item.unit}</div>
             </div>
           </TableCell>
-          <TableCell>{item.project}</TableCell>
-          <TableCell>{item.date}</TableCell>
+          <TableCell>{projectName}</TableCell>
+          <TableCell>{formatDate(item.saleDate)}</TableCell>
           <TableCell>
-            {item.totalAmount && formatCurrency(item.totalAmount)}
-            {item.transferFee && formatCurrency(item.transferFee)}
-            {item.originalAmount && formatCurrency(item.originalAmount)}
+            {item.saleAmount && formatCurrency(item.saleAmount)}
+            {/* {item.transferFee && formatCurrency(item.transferFee)}
+            {item.originalAmount && formatCurrency(item.originalAmount)} */}
           </TableCell>
           <TableCell>
-            {item.status && <Badge className={getStatusColor(item.status)}>{item.status}</Badge>}
-            {item.reason && <Badge className={getReasonColor(item.reason)}>{item.reason}</Badge>}
-            {item.refundStatus && <Badge className={getRefundStatusColor(item.refundStatus)}>{item.refundStatus}</Badge>}
+            {item.status && (
+              <Badge className={getStatusColor(item.status)}>
+                {item.status}
+              </Badge>
+            )}
+            {item.reason && (
+              <Badge className={getReasonColor(item.reason)}>
+                {item.reason}
+              </Badge>
+            )}
+            {item.refundStatus && (
+              <Badge className={getRefundStatusColor(item.refundStatus)}>
+                {item.refundStatus}
+              </Badge>
+            )}
           </TableCell>
           <TableCell>
             <Button variant="ghost" size="sm">
@@ -419,8 +508,10 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Projects</SelectItem>
-                {projects.map(project => (
-                  <SelectItem key={project} value={project}>{project}</SelectItem>
+                {projectNames.map((projectName) => (
+                  <SelectItem key={projectName} value={projectName}>
+                    {projectName}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -440,11 +531,12 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
 
           {/* Table */}
           <Table>
-            <TableHeader>
-              {renderTableHeaders()}
-            </TableHeader>
+            <TableHeader>{renderTableHeaders()}</TableHeader>
             <TableBody>
-              {filteredHistory.map((item) => renderTableRow(item))}
+              {filteredHistory.map((item) => {
+                console.log("item", item);
+                return renderTableRow(item);
+              })}
             </TableBody>
           </Table>
 

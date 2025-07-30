@@ -1,20 +1,37 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { 
-  ArrowLeft, 
-  Edit, 
-  MapPin, 
-  User, 
-  UserPlus, 
-  Trash2, 
-  Building, 
-  Clock, 
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ProjectsService } from "@/services/projectsService";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  ArrowLeft,
+  Edit,
+  MapPin,
+  User,
+  UserPlus,
+  Trash2,
+  Building,
+  Clock,
   MoreHorizontal,
   DollarSign,
   TrendingUp,
@@ -25,137 +42,74 @@ import {
   BarChart3,
   Eye,
   Settings,
-  Share2
-} from 'lucide-react';
-import { ProjectOverviewContent } from '@/components/dashboard/projects/ProjectOverviewContent';
-import { ProjectBlocksTab } from '@/components/dashboard/projects/ProjectBlocksTab';
-import { ProjectDocumentsTab } from '@/components/dashboard/projects/ProjectDocumentsTab';
-import { ProjectSalesHistoryTab } from '@/components/dashboard/projects/ProjectSalesHistoryTab';
-import { RevokeAllocationModal } from '@/components/dashboard/forms/RevokeAllocationModal';
-import { AllocateUnitModal } from '@/components/dashboard/sales-allocation/AllocateUnitModal';
-import { ReallocationModal } from '@/components/dashboard/forms/ReallocationModal';
-import { getProjectImage, handleImageError } from '@/lib/utils';
-import { useProjectTerminology } from '@/hooks/useProjectTerminology';
-import { Project } from '@/types/project';
-import { toast } from 'sonner';
+  Share2,
+} from "lucide-react";
+import { ProjectOverviewContent } from "@/components/dashboard/projects/ProjectOverviewContent";
+import { ProjectBlocksTab } from "@/components/dashboard/projects/ProjectBlocksTab";
+import { ProjectDocumentsTab } from "@/components/dashboard/projects/ProjectDocumentsTab";
+import { ProjectSalesHistoryTab } from "@/components/dashboard/projects/ProjectSalesHistoryTab";
+import { RevokeAllocationModal } from "@/components/dashboard/forms/RevokeAllocationModal";
+import { AllocateUnitModal } from "@/components/dashboard/sales-allocation/AllocateUnitModal";
+import { ReallocationModal } from "@/components/dashboard/forms/ReallocationModal";
+import { getProjectImage, handleImageError } from "@/lib/utils";
+import { useProjectTerminology } from "@/hooks/useProjectTerminology";
+import { Project } from "@/types/project";
+import { toast } from "sonner";
 
-// Extended interface for the project detail view that includes all fields used in the component
-interface ProjectDetailData extends Project {
-  developmentStage: string;
-  totalBlocks: number;
-  allocatedUnits: number;
-  totalClients: number;
-  allocationRate: number;
-  revenue: string;
-  pendingAllocations: number;
-  internalNotes: string;
-}
-
-const mockProjects: ProjectDetailData[] = [
-  {
-    id: 1,
-    name: 'Victoria Gardens Estate',
-    location: 'Lekki, Lagos',
-    category: 'Housing',
-    status: 'ongoing',
-    type: 'Residential',
-    totalUnits: 150,
-    soldUnits: 89,
-    reservedUnits: 23,
-    availableUnits: 38,
-    description: 'A premium residential estate featuring modern amenities and strategic location in the heart of Lekki.',
-    projectManager: 'Alice Johnson',
-    tags: 'Premium, Residential, Lekki',
-    terminologyType: 'units' as const,
-    image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
-    // Extended fields for the view
-    developmentStage: 'Construction',
-    totalBlocks: 5,
-    allocatedUnits: 89,
-    totalClients: 89,
-    allocationRate: 59,
-    revenue: '₦2.5B',
-    pendingAllocations: 8,
-    internalNotes: 'Focus on completing Block A before marketing Block C units.'
-  },
-  {
-    id: 2,
-    name: 'Emerald Heights Commercial',
-    location: 'Abuja, FCT',
-    category: 'Mixed',
-    status: 'ongoing',
-    type: 'Commercial',
-    totalUnits: 200,
-    soldUnits: 156,
-    reservedUnits: 12,
-    availableUnits: 32,
-    description: 'A modern mixed-use development in the heart of Abuja.',
-    projectManager: 'Bob Wilson',
-    tags: 'Mixed-Use, Commercial, Abuja',
-    terminologyType: 'plots' as const,
-    image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=450&fit=crop',
-    // Extended fields for the view
-    developmentStage: 'Marketing',
-    totalBlocks: 8,
-    allocatedUnits: 156,
-    totalClients: 156,
-    allocationRate: 78,
-    revenue: '₦4.2B',
-    pendingAllocations: 5,
-    internalNotes: 'Commercial plots showing strong interest.'
-  },
-  {
-    id: 3,
-    name: 'Golden View Towers',
-    location: 'Victoria Island, Lagos',
-    category: 'Housing',
-    status: 'ongoing',
-    type: 'Residential',
-    totalUnits: 300,
-    soldUnits: 245,
-    reservedUnits: 18,
-    availableUnits: 37,
-    description: 'Luxury towers with stunning city views on Victoria Island.',
-    projectManager: 'Carol Davis',
-    tags: 'Luxury, High-rise, Victoria Island',
-    terminologyType: 'units' as const,
-    image: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop',
-    // Extended fields for the view
-    developmentStage: 'Pre-Launch',
-    totalBlocks: 12,
-    allocatedUnits: 245,
-    totalClients: 245,
-    allocationRate: 82,
-    revenue: '₦6.8B',
-    pendingAllocations: 12,
-    internalNotes: 'High-end luxury market showing excellent response.'
-  }
-];
-
-export function ProjectDetailView() {
+export function ProjectDetailView({ project }: { project: any }) {
   const params = useParams();
   const navigate = useNavigate();
-  
+
+  const projectData = project?.data || project;
+  console.log({ projectData });
   const projectId = params.projectId || params.id;
-  
+
   const [isAllocateUnitOpen, setIsAllocateUnitOpen] = useState(false);
   const [isReallocateOpen, setIsReallocateOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
   const [selectedAllocation, setSelectedAllocation] = useState<any>(null);
   const [reallocateData, setReallocateData] = useState<any>(null);
-  
-  const project = mockProjects.find(p => p.id === parseInt(projectId || '1'));
+  const [loading, setLoading] = useState(true);
+
+  // Fetch project data from API
+  useEffect(() => {
+    if (project) {
+      console.log({ project });
+      setLoading(false);
+    }
+  }, [project]);
+
   const { labels } = useProjectTerminology(project);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
+        <Building className="h-16 w-16 text-muted-foreground animate-pulse" />
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-foreground">
+            Loading Project...
+          </h2>
+          <p className="text-muted-foreground">
+            Please wait while we fetch the project details.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
         <Building className="h-16 w-16 text-muted-foreground" />
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-foreground">Project Not Found</h2>
-          <p className="text-muted-foreground">The requested project could not be found.</p>
+          <h2 className="text-2xl font-bold text-foreground">
+            Project Not Found
+          </h2>
+          <p className="text-muted-foreground">
+            The requested project could not be found.
+          </p>
         </div>
-        <Button onClick={() => navigate('/company/projects')} variant="outline">
+        <Button onClick={() => navigate("/company/projects")} variant="outline">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Projects
         </Button>
@@ -163,61 +117,116 @@ export function ProjectDetailView() {
     );
   }
 
+  // Calculate derived values with fallbacks
+  const totalPlots = projectData.totalPlots || 0;
+  const totalUnits = projectData.totalUnits || totalPlots;
+  const availableUnits =
+    projectData.availableUnits || projectData.availablePlots || 0;
+  const allocatedUnits =
+    projectData.allocatedUnits || projectData.noOfAllocations || 0;
+  const reservedUnits = projectData.reservedUnits || 0;
+  const soldUnits = projectData.soldUnits || 0;
+  const totalClients = projectData.totalClients || allocatedUnits;
+  const allocationRate =
+    projectData.allocationRate ||
+    (totalUnits > 0 ? Math.round((allocatedUnits / totalUnits) * 100) : 0);
+  const revenue = projectData.revenue || projectData.totalRevenue || 0;
+  const pendingAllocations = projectData.pendingAllocations || 0;
+  const blocks = projectData.blocks || [];
+  const developmentStage =
+    projectData.developmentStage ||
+    (projectData as any).projectStatus ||
+    "Planning";
+  const projectStatus =
+    projectData.status || (projectData as any).projectStatus || "Planning";
+
+  console.log("blocks", blocks);
   const getStatusVariant = (status: string) => {
-    switch (status) {
-      case 'ongoing': return 'default';
-      case 'completed': return 'secondary';
-      case 'upcoming': return 'outline';
-      default: return 'outline';
+    if (!status) return "outline";
+
+    switch (status.toLowerCase()) {
+      case "ongoing":
+      case "selling":
+      case "presale":
+        return "default";
+      case "completed":
+      case "sold out":
+        return "secondary";
+      case "upcoming":
+      case "planning":
+      case "documentation":
+        return "outline";
+      default:
+        return "outline";
     }
   };
 
   const getStageColor = (stage: string) => {
+    if (!stage) return "bg-gray-50 text-gray-700 border-gray-200";
+
     switch (stage) {
-      case 'Construction': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'Marketing': return 'bg-green-50 text-green-700 border-green-200';
-      case 'Pre-Launch': return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'Planning': return 'bg-orange-50 text-orange-700 border-orange-200';
-      case 'Handover': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      default: return 'bg-gray-50 text-gray-700 border-gray-200';
+      case "Construction":
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case "Marketing":
+      case "Selling":
+        return "bg-green-50 text-green-700 border-green-200";
+      case "Pre-Launch":
+      case "Presale":
+        return "bg-purple-50 text-purple-700 border-purple-200";
+      case "Planning":
+        return "bg-orange-50 text-orange-700 border-orange-200";
+      case "Handover":
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "Documentation":
+        return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
   const handleAllocateUnit = () => setIsAllocateUnitOpen(true);
-  
+
   const handleEditProject = () => {
-    navigate(`/company/projects/${project.id}/edit`);
+    navigate(`/company/projects/${projectData._id}/edit`);
   };
-  
+
   const handleViewBlocks = () => {
-    navigate(`/company/projects/${project.id}/blocks`);
+    navigate(`/company/projects/${projectData._id}/blocks`);
   };
-  
+
   const handleViewReports = () => {
-    navigate('/company/reports', { state: { projectId: project.id, projectName: project.name } });
+    navigate("/company/reports", {
+      state: { projectId: projectData._id, projectName: projectData.name },
+    });
   };
-  
+
   const handleViewSalesAllocation = () => {
-    navigate('/company/sales', { state: { projectId: project.id, projectName: project.name } });
+    navigate("/company/sales", {
+      state: { projectId: projectData._id, projectName: projectData.name },
+    });
   };
-  
+
   const handleReallocate = (unitId: string, clientName: string) => {
     setReallocateData({ unitId, clientName });
     setIsReallocateOpen(true);
   };
-  
+
   const handleRevoke = (allocation: any) => {
     setSelectedAllocation(allocation);
     setIsRevokeOpen(true);
   };
-  
+
   const handleDeleteProject = () => {
-    toast.success(`Project "${project.name}" has been deleted successfully.`);
-    navigate('/company/projects');
+    toast.success(
+      `Project "${projectData.name}" has been deleted successfully.`
+    );
+    navigate("/company/projects");
   };
 
   const handlePendingAllocations = () => {
-    navigate('/company/sales?tab=pending', { state: { projectId: project.id } });
+    navigate("/company/sales?tab=pending", {
+      state: { projectId: projectData._id },
+    });
   };
 
   return (
@@ -225,10 +234,10 @@ export function ProjectDetailView() {
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
-            onClick={() => navigate('/company/projects')}
+            onClick={() => navigate("/company/projects")}
             className="shrink-0"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -236,23 +245,27 @@ export function ProjectDetailView() {
           </Button>
           <div className="min-w-0">
             <h1 className="text-2xl lg:text-3xl font-bold text-foreground truncate">
-              {project.name}
+              {projectData.name}
             </h1>
             <div className="flex items-center gap-2 mt-1">
               <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
               <span className="text-muted-foreground text-sm truncate">
-                {project.location}
+                {projectData.location}
               </span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={handleAllocateUnit} size="sm" className="bg-gradient-primary hover:opacity-90">
+          <Button
+            onClick={handleAllocateUnit}
+            size="sm"
+            className="bg-gradient-primary hover:opacity-90"
+          >
             <UserPlus className="h-4 w-4 mr-2" />
             {labels.allocateUnit}
           </Button>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
@@ -288,7 +301,10 @@ export function ProjectDetailView() {
               <DropdownMenuSeparator />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                    className="text-destructive focus:text-destructive"
+                  >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete Project
                   </DropdownMenuItem>
@@ -297,12 +313,13 @@ export function ProjectDetailView() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Project</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete "{project.name}"? This action cannot be undone.
+                      Are you sure you want to delete "{projectData.name}"? This
+                      action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction 
+                    <AlertDialogAction
                       onClick={handleDeleteProject}
                       className="bg-destructive hover:bg-destructive/90"
                     >
@@ -319,24 +336,36 @@ export function ProjectDetailView() {
       {/* Project Hero Banner */}
       <Card className="overflow-hidden">
         <div className="relative h-64 lg:h-80">
-          <img 
-            src={getProjectImage(project)} 
-            alt={project.name}
+          <img
+            src={
+              projectData.image ||
+              "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=450&fit=crop"
+            }
+            alt={projectData.name}
             className="w-full h-full object-cover"
             onError={handleImageError}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-          
+
           {/* Overlays */}
           <div className="absolute top-4 left-4">
-            <Badge variant={getStatusVariant(project.status)} className="bg-background/90 backdrop-blur-sm">
-              {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+            <Badge
+              variant={getStatusVariant(projectStatus)}
+              className="bg-background/90 backdrop-blur-sm"
+            >
+              {projectStatus
+                ? projectStatus.charAt(0).toUpperCase() + projectStatus.slice(1)
+                : "Unknown"}
             </Badge>
           </div>
-          
+
           <div className="absolute top-4 right-4">
-            <Badge className={`${getStageColor(project.developmentStage)} backdrop-blur-sm border`}>
-              {project.developmentStage}
+            <Badge
+              className={`${getStageColor(
+                developmentStage
+              )} backdrop-blur-sm border`}
+            >
+              {developmentStage}
             </Badge>
           </div>
 
@@ -344,19 +373,27 @@ export function ProjectDetailView() {
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               <div className="text-center">
-                <div className="text-2xl lg:text-3xl font-bold">{project.totalBlocks}</div>
+                <div className="text-2xl lg:text-3xl font-bold">
+                  {blocks.length}
+                </div>
                 <div className="text-sm text-white/80">Blocks</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl lg:text-3xl font-bold">{project.totalUnits}</div>
+                <div className="text-2xl lg:text-3xl font-bold">
+                  {totalUnits}
+                </div>
                 <div className="text-sm text-white/80">{labels.totalUnits}</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl lg:text-3xl font-bold">{project.totalClients}</div>
+                <div className="text-2xl lg:text-3xl font-bold">
+                  {totalClients}
+                </div>
                 <div className="text-sm text-white/80">Clients</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl lg:text-3xl font-bold">{project.allocationRate}%</div>
+                <div className="text-2xl lg:text-3xl font-bold">
+                  {allocationRate}%
+                </div>
                 <div className="text-sm text-white/80">Allocation Rate</div>
               </div>
             </div>
@@ -371,54 +408,64 @@ export function ProjectDetailView() {
             <div className="flex items-center justify-center mb-2">
               <Home className="h-5 w-5 text-green-600" />
             </div>
-            <div className="text-2xl font-bold text-green-600">{project.availableUnits}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {availableUnits}
+            </div>
             <div className="text-sm text-muted-foreground">Available</div>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
               <Building className="h-5 w-5 text-blue-600" />
             </div>
-            <div className="text-2xl font-bold text-blue-600">{project.allocatedUnits}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {allocatedUnits}
+            </div>
             <div className="text-sm text-muted-foreground">Allocated</div>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
               <Clock className="h-5 w-5 text-orange-600" />
             </div>
-            <div className="text-2xl font-bold text-orange-600">{project.reservedUnits}</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {reservedUnits}
+            </div>
             <div className="text-sm text-muted-foreground">Reserved</div>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
               <Users className="h-5 w-5 text-purple-600" />
             </div>
-            <div className="text-2xl font-bold text-purple-600">{project.totalClients}</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {totalClients}
+            </div>
             <div className="text-sm text-muted-foreground">Total Clients</div>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
               <DollarSign className="h-5 w-5 text-emerald-600" />
             </div>
-            <div className="text-lg lg:text-xl font-bold text-emerald-600">{project.revenue}</div>
+            <div className="text-lg lg:text-xl font-bold text-emerald-600">
+              ₦{revenue.toLocaleString()}
+            </div>
             <div className="text-sm text-muted-foreground">Revenue</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Pending Allocations Alert */}
-      {project.pendingAllocations > 0 && (
+      {pendingAllocations > 0 && (
         <Card className="border-orange-200 bg-orange-50/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -426,14 +473,14 @@ export function ProjectDetailView() {
                 <Clock className="h-5 w-5 text-orange-600" />
                 <div>
                   <h3 className="font-semibold text-orange-900">
-                    {project.pendingAllocations} Pending Allocations
+                    {pendingAllocations} Pending Allocations
                   </h3>
                   <p className="text-sm text-orange-700">
                     Requires your attention for approval
                   </p>
                 </div>
               </div>
-              <Button 
+              <Button
                 size="sm"
                 onClick={handlePendingAllocations}
                 className="bg-orange-600 hover:bg-orange-700 text-white"
@@ -450,33 +497,41 @@ export function ProjectDetailView() {
         <Tabs defaultValue="overview" className="w-full">
           <CardHeader className="pb-3">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview" className="text-xs lg:text-sm">Overview</TabsTrigger>
-              <TabsTrigger value="blocks" className="text-xs lg:text-sm">Blocks</TabsTrigger>
-              <TabsTrigger value="sales" className="text-xs lg:text-sm">Sales</TabsTrigger>
-              <TabsTrigger value="documents" className="text-xs lg:text-sm">Documents</TabsTrigger>
+              <TabsTrigger value="overview" className="text-xs lg:text-sm">
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="blocks" className="text-xs lg:text-sm">
+                Blocks
+              </TabsTrigger>
+              <TabsTrigger value="sales" className="text-xs lg:text-sm">
+                Sales
+              </TabsTrigger>
+              <TabsTrigger value="documents" className="text-xs lg:text-sm">
+                Documents
+              </TabsTrigger>
             </TabsList>
           </CardHeader>
-          
+
           <TabsContent value="overview" className="p-6 pt-0">
-            <ProjectOverviewContent project={project} />
+            <ProjectOverviewContent project={projectData} />
           </TabsContent>
-          
+
           <TabsContent value="blocks" className="p-6 pt-0">
-            <ProjectBlocksTab project={project} />
+            <ProjectBlocksTab project={projectData} />
           </TabsContent>
-          
+
           <TabsContent value="sales" className="p-6 pt-0">
-            <ProjectSalesHistoryTab 
-              project={project} 
-              onReallocate={handleReallocate} 
-              onRevoke={handleRevoke} 
+            <ProjectSalesHistoryTab
+              project={projectData}
+              onReallocate={handleReallocate}
+              onRevoke={handleRevoke}
             />
           </TabsContent>
-          
+
           <TabsContent value="documents" className="p-6 pt-0">
-            <ProjectDocumentsTab project={project} />
+            <ProjectDocumentsTab project={projectData} />
           </TabsContent>
-          
+
           <TabsContent value="analytics" className="p-6 pt-0">
             <div className="text-center py-12">
               <BarChart3 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -484,12 +539,10 @@ export function ProjectDetailView() {
               <p className="text-muted-foreground mb-4">
                 Detailed analytics and reporting for this project
               </p>
-              <Button onClick={handleViewReports}>
-                View Full Reports
-              </Button>
+              <Button onClick={handleViewReports}>View Full Reports</Button>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="settings" className="p-6 pt-0">
             <div className="text-center py-12">
               <Settings className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -497,9 +550,7 @@ export function ProjectDetailView() {
               <p className="text-muted-foreground mb-4">
                 Manage project configuration and preferences
               </p>
-              <Button onClick={handleEditProject}>
-                Edit Project Settings
-              </Button>
+              <Button onClick={handleEditProject}>Edit Project Settings</Button>
             </div>
           </TabsContent>
         </Tabs>
@@ -510,7 +561,7 @@ export function ProjectDetailView() {
         isOpen={isAllocateUnitOpen}
         onClose={() => setIsAllocateUnitOpen(false)}
         onSubmit={() => {
-          toast.success('Plot allocated successfully!');
+          toast.success("Plot allocated successfully!");
           setIsAllocateUnitOpen(false);
         }}
       />
@@ -524,7 +575,7 @@ export function ProjectDetailView() {
           }}
           allocation={reallocateData}
           onReallocate={() => {
-            toast.success('Plot reallocated successfully!');
+            toast.success("Plot reallocated successfully!");
             setIsReallocateOpen(false);
             setReallocateData(null);
           }}
@@ -540,7 +591,7 @@ export function ProjectDetailView() {
           }}
           allocation={selectedAllocation}
           onRevoke={() => {
-            toast.success('Allocation revoked successfully!');
+            toast.success("Allocation revoked successfully!");
             setIsRevokeOpen(false);
             setSelectedAllocation(null);
           }}
