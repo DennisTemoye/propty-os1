@@ -201,19 +201,27 @@ export function MarketersCommission() {
     const matchesStatus =
       statusFilter === "all" || commission.status === statusFilter;
     const matchesMarketer =
-      marketerFilter === "all" || commission.marketerName === marketerFilter;
+      marketerFilter === "all" ||
+      `${commission.marketerId?.firstName} ${commission.marketerId?.lastName}` ===
+        marketerFilter;
     const matchesSearch =
-      commission.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      commission.project.toLowerCase().includes(searchTerm.toLowerCase());
+      commission?.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      commission?.marketerId?.firstName
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      commission?.marketerId?.lastName
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
     const matchesDate =
       dateFilter === "all" ||
       (dateFilter === "this-month" &&
-        new Date(commission.saleDate).getMonth() === new Date().getMonth()) ||
+        new Date(commission.period?.startDate).getMonth() ===
+          new Date().getMonth()) ||
       (dateFilter === "last-month" &&
-        new Date(commission.saleDate).getMonth() ===
+        new Date(commission.period?.startDate).getMonth() ===
           new Date().getMonth() - 1) ||
       (dateFilter === "this-year" &&
-        new Date(commission.saleDate).getFullYear() ===
+        new Date(commission.period?.startDate).getFullYear() ===
           new Date().getFullYear());
     const matchesProject =
       projectFilter === "all" || commission.project === projectFilter;
@@ -277,28 +285,34 @@ export function MarketersCommission() {
   const activeMarketers = marketers.filter(
     (marketer) => marketer.status === "active"
   ).length;
-  const totalLeads = marketers.reduce(
-    (sum, marketer) => sum + (marketer.leads || 0),
+
+  // Calculate total sales from commissions data
+  const totalSales = commissions.reduce(
+    (sum, commission) => sum + (commission.totalSales || 0),
     0
   );
-  const totalSales = marketers.reduce(
-    (sum, marketer) => sum + (marketer.sales || 0),
+
+  // Calculate total sales volume from commissions data
+  const totalSalesVolume = commissions.reduce(
+    (sum, commission) => sum + (commission.totalAmount || 0),
     0
   );
+
+  // Calculate total commission paid
   const totalCommissionPaid = commissions
     .filter((c) => c.status === "paid")
-    .reduce(
-      (sum, c) =>
-        sum + parseFloat(c.commissionAmount.replace("₦", "").replace("K", "")),
-      0
-    );
+    .reduce((sum, c) => {
+      const amount = Number(c.commissionAmount) || 0;
+      return sum + amount;
+    }, 0);
+
+  // Calculate total commission pending
   const totalCommissionPending = commissions
     .filter((c) => c.status === "pending" || c.status === "approved")
-    .reduce(
-      (sum, c) =>
-        sum + parseFloat(c.commissionAmount.replace("₦", "").replace("K", "")),
-      0
-    );
+    .reduce((sum, c) => {
+      const amount = Number(c.commissionAmount) || 0;
+      return sum + amount;
+    }, 0);
 
   const kpiData = [
     {
@@ -320,8 +334,17 @@ export function MarketersCommission() {
       cardBg: "from-emerald-50 to-emerald-100",
     },
     {
+      title: "Total Sales Volume",
+      value: `₦${(totalSalesVolume / 1000000).toFixed(1)}M`,
+      subtitle: "Total revenue",
+      icon: DollarSign,
+      color: "text-green-700",
+      bgColor: "bg-green-100",
+      cardBg: "from-green-50 to-green-100",
+    },
+    {
       title: "Commission Paid",
-      value: `₦${totalCommissionPaid.toFixed(0)}K`,
+      value: `₦${(totalCommissionPaid / 1000).toFixed(0)}K`,
       subtitle: "This period",
       icon: CheckCircle,
       color: "text-blue-700",
@@ -330,7 +353,7 @@ export function MarketersCommission() {
     },
     {
       title: "Commission Pending",
-      value: `₦${totalCommissionPending.toFixed(0)}K`,
+      value: `₦${(totalCommissionPending / 1000).toFixed(0)}K`,
       subtitle: "Awaiting payment",
       icon: Clock,
       color: "text-amber-700",
@@ -339,10 +362,10 @@ export function MarketersCommission() {
     },
   ];
 
-  const handleMarkAsPaid = (commissionId: number) => {
+  const handleMarkAsPaid = (commissionId: string) => {
     setCommissions((prev) =>
       prev.map((commission) =>
-        commission.id === commissionId
+        commission._id === commissionId
           ? {
               ...commission,
               status: "paid",
@@ -480,7 +503,7 @@ export function MarketersCommission() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {kpiData.map((kpi, index) => (
           <Card
             key={index}
@@ -1007,8 +1030,11 @@ export function MarketersCommission() {
                     <SelectContent>
                       <SelectItem value="all">All Marketers</SelectItem>
                       {marketers.map((marketer) => (
-                        <SelectItem key={marketer.id} value={marketer.name}>
-                          {marketer.name}
+                        <SelectItem
+                          key={marketer._id}
+                          value={`${marketer.firstName} ${marketer.lastName}`}
+                        >
+                          {marketer.firstName} {marketer.lastName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -1087,47 +1113,53 @@ export function MarketersCommission() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Marketer</TableHead>
-                    <TableHead>Client/Property</TableHead>
-                    <TableHead>Sale Amount</TableHead>
+                    <TableHead>Sales Details</TableHead>
+                    <TableHead>Total Amount</TableHead>
                     <TableHead>Commission</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Due Date</TableHead>
+                    <TableHead>Period</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredCommissions.map((commission) => (
-                    <TableRow key={commission.id} className="hover:bg-gray-50">
+                    <TableRow key={commission._id} className="hover:bg-gray-50">
                       <TableCell>
                         <div>
                           <div className="font-medium">
-                            {commission.marketerName}
+                            {commission.marketerId?.firstName}{" "}
+                            {commission.marketerId?.lastName}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {commission.marketerId?.email}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div>
                           <div className="font-medium">
-                            {commission.clientName}
+                            {commission.salesIds?.length || 0} Sales
                           </div>
                           <div className="text-sm text-gray-500">
-                            {commission.project}
+                            {commission.notes}
                           </div>
                           <div className="text-xs text-gray-400">
-                            {commission.unit}
+                            {commission.salesIds?.[0]?.unitNumber &&
+                              `Unit: ${commission.salesIds[0].unitNumber}`}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="font-medium">
-                        {commission.saleAmount}
+                        ₦{commission.totalAmount?.toLocaleString()}
                       </TableCell>
                       <TableCell>
                         <div>
                           <div className="font-medium text-purple-600">
-                            {commission.commissionAmount}
+                            ₦{commission.commissionAmount?.toLocaleString()}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {commission.commissionRate}
+                            {commission.commissionRate}% (
+                            {commission.commissionType})
                           </div>
                         </div>
                       </TableCell>
@@ -1141,12 +1173,21 @@ export function MarketersCommission() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm">{commission.dueDate}</div>
-                        {commission.paidDate && (
-                          <div className="text-xs text-green-600">
-                            Paid: {commission.paidDate}
-                          </div>
-                        )}
+                        <div className="text-sm">
+                          {new Date(
+                            commission.period?.endDate
+                          ).toLocaleDateString()}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Period:{" "}
+                          {new Date(
+                            commission.period?.startDate
+                          ).toLocaleDateString()}{" "}
+                          -{" "}
+                          {new Date(
+                            commission.period?.endDate
+                          ).toLocaleDateString()}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
@@ -1154,7 +1195,7 @@ export function MarketersCommission() {
                             <Button
                               size="sm"
                               className="bg-green-600 hover:bg-green-700"
-                              onClick={() => handleMarkAsPaid(commission.id)}
+                              onClick={() => handleMarkAsPaid(commission._id)}
                             >
                               <CheckCircle className="h-3 w-3 mr-1" />
                               Mark Paid
@@ -1166,7 +1207,7 @@ export function MarketersCommission() {
                             onClick={() =>
                               toast({
                                 title: "View Commission",
-                                description: `Viewing commission details for ${commission.clientName}`,
+                                description: `Viewing commission details for ${commission.marketerId?.firstName} ${commission.marketerId?.lastName}`,
                               })
                             }
                           >
