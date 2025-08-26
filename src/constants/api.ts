@@ -1,8 +1,7 @@
 // API Configuration Constants
 export const API_CONFIG = {
   // Base URL - change this to your actual API endpoint
-  BASE_URL:
-    import.meta.env.NEXT_PUBLIC_APP_API_ENDPOINT || "http://localhost:3000/api",
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
 
   // API Version
   VERSION: "v1",
@@ -26,11 +25,6 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: "/auth/forgot-password",
     RESET_PASSWORD: "/auth/reset-password",
     VERIFY_EMAIL: "/auth/verify-email",
-  },
-
-  // Dashboard
-  DASHBOARD: {
-    OVERVIEW: "/dashboard",
   },
 
   // Users
@@ -76,7 +70,6 @@ export const API_ENDPOINTS = {
     ALLOCATIONS: (id: string) => `/clients/${id}/allocations`,
   },
 
-  //plots
   // Marketers
   MARKETERS: {
     BASE: "/marketers",
@@ -166,8 +159,8 @@ export const API_ENDPOINTS = {
 
   // Allocations
   PLOT_ALLOCATIONS: {
-    BASE: "/plots/allocations",
-    REALLOCATE: (id: string) => `/plots/allocations/${id}/reallocate`,
+    BASE: "/plots/allocation",
+    REALLOCATE: (id: string) => `/plots/reallocate/${id}`,
   },
 };
 
