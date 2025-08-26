@@ -14,35 +14,48 @@ import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import { Receipt, Search, Loader2 } from "lucide-react";
 import { useFeeTypes } from "@/hooks/useFeeCollection";
+import { useProjects, useClients } from "@/hooks/useApi";
 import { FeeType } from "@/services/feeCollectionService";
 
 interface RecordFeeModalProps {
   onClose: () => void;
 }
 
-// Mock data - in real app this would come from API
-const projectClients = {
-  "victoria-gardens": [
-    { id: "john-doe", name: "John Doe" },
-    { id: "jane-smith", name: "Jane Smith" },
-  ],
-  "emerald-heights": [
-    { id: "mike-johnson", name: "Mike Johnson" },
-    { id: "sarah-wilson", name: "Sarah Wilson" },
-  ],
-  "golden-view": [
-    { id: "david-brown", name: "David Brown" },
-    { id: "lisa-davis", name: "Lisa Davis" },
-  ],
-  "sunset-heights": [
-    { id: "robert-taylor", name: "Robert Taylor" },
-    { id: "emma-white", name: "Emma White" },
-  ],
-};
-
 export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
   const [clientSearch, setClientSearch] = useState("");
   const { feeTypes, loading: feeTypesLoading } = useFeeTypes();
+
+  // Use real data from API hooks
+  const { projects, isLoading: projectsLoading } = useProjects();
+  const { clients, isLoading: clientsLoading } = useClients();
+
+  // Ensure feeTypes is always an array
+  const safeFeeTypes = Array.isArray(feeTypes) ? feeTypes : [];
+
+  // Ensure projects is always an array
+  const safeProjects = Array.isArray(projects) ? projects : [];
+
+  // Ensure clients is always an array
+  const safeClients = Array.isArray(clients) ? clients : [];
+
+  // Debug logging
+  useEffect(() => {
+    console.log("RecordFeeModal data:", {
+      projects: safeProjects.length,
+      clients: safeClients.length,
+      feeTypes: safeFeeTypes.length,
+      projectsLoading,
+      clientsLoading,
+      feeTypesLoading,
+    });
+  }, [
+    safeProjects,
+    safeClients,
+    safeFeeTypes,
+    projectsLoading,
+    clientsLoading,
+    feeTypesLoading,
+  ]);
 
   const form = useForm({
     defaultValues: {
@@ -62,23 +75,120 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
 
   const availableClients = useMemo(() => {
     if (!selectedProject) return [];
-    return projectClients[selectedProject as keyof typeof projectClients] || [];
-  }, [selectedProject]);
+    // For now, return all clients since we don't have project-client relationships in the current data
+    // In a real implementation, you might want to filter clients by project
+    // This could be done by:
+    // 1. Adding a projectId field to clients
+    // 2. Creating a separate project-clients relationship table
+    // 3. Filtering clients based on allocations or assignments
+    return safeClients;
+  }, [selectedProject, safeClients]);
 
   const filteredClients = useMemo(() => {
     if (!clientSearch) return availableClients;
-    return availableClients.filter((client) =>
-      client.name.toLowerCase().includes(clientSearch.toLowerCase())
-    );
+    if (!Array.isArray(availableClients)) return [];
+    return availableClients.filter((client) => {
+      const clientName = `${client.firstName || ""} ${
+        client.lastName || ""
+      }`.trim();
+      return clientName.toLowerCase().includes(clientSearch.toLowerCase());
+    });
   }, [availableClients, clientSearch]);
 
   const onSubmit = (data: any) => {
-    console.log("Recording new fee:", data);
+    // Validate required fields
+    if (
+      !data.project ||
+      !data.clientName ||
+      !data.feeType ||
+      !data.amount ||
+      !data.dueDate
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    // Validate amount is a positive number
+    const amount = parseFloat(data.amount.replace(/[₦,]/g, ""));
+    if (isNaN(amount) || amount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    // Find the selected project and client for additional data
+    const selectedProjectData = safeProjects.find(
+      (p) => p.name === data.project
+    );
+    const selectedClientData = safeClients.find(
+      (c) => (c._id || c.id) === data.clientName
+    );
+    const selectedFeeTypeData = safeFeeTypes.find(
+      (ft) => ft.id === data.feeType
+    );
+
+    if (!selectedProjectData || !selectedClientData || !selectedFeeTypeData) {
+      toast.error("Invalid selection. Please try again.");
+      return;
+    }
+
+    // Prepare fee data for submission
+    const feeData = {
+      projectId: selectedProjectData._id || selectedProjectData.id,
+      clientId: selectedClientData._id || selectedClientData.id,
+      feeTypeId: selectedFeeTypeData.id,
+      amount: amount,
+      dueDate: data.dueDate,
+      description:
+        data.description ||
+        `${selectedFeeTypeData.name} for ${selectedProjectData.name}`,
+      unit: data.unit || undefined,
+      status: data.status || "pending",
+      currency: "NGN",
+    };
+
+    console.log("Recording new fee:", feeData);
     toast.success("Fee recorded successfully!");
     onClose();
     form.reset();
     setClientSearch("");
   };
+
+  // Check if any data is still loading
+  const isLoading = projectsLoading || clientsLoading || feeTypesLoading;
+
+  // Check if we have data available
+  const hasProjects = safeProjects.length > 0;
+  const hasClients = safeClients.length > 0;
+  const hasFeeTypes = safeFeeTypes.length > 0;
+
+  // Show loading state if any data is still loading
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600">Loading fee collection data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if no data is available
+  if (!hasProjects || !hasClients || !hasFeeTypes) {
+    return (
+      <div className="p-6 text-center">
+        <div className="text-red-600 mb-4">
+          <p className="font-medium">Unable to load required data</p>
+          {!hasProjects && <p className="text-sm">No projects available</p>}
+          {!hasClients && <p className="text-sm">No clients available</p>}
+          {!hasFeeTypes && <p className="text-sm">No fee types available</p>}
+        </div>
+        <Button onClick={onClose} variant="outline">
+          Close
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -92,9 +202,11 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
             render={({ field }) => (
               <Select
                 onValueChange={(value) => {
-                  field.onChange(value);
-                  form.setValue("clientName", ""); // Reset client when project changes
-                  setClientSearch("");
+                  if (value && value !== "no-projects") {
+                    field.onChange(value);
+                    form.setValue("clientName", ""); // Reset client when project changes
+                    setClientSearch("");
+                  }
                 }}
                 value={field.value}
               >
@@ -102,14 +214,22 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
                   <SelectValue placeholder="Select project first" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="victoria-gardens">
-                    Victoria Gardens
-                  </SelectItem>
-                  <SelectItem value="emerald-heights">
-                    Emerald Heights
-                  </SelectItem>
-                  <SelectItem value="golden-view">Golden View</SelectItem>
-                  <SelectItem value="sunset-heights">Sunset Heights</SelectItem>
+                  {projectsLoading ? (
+                    <div className="flex items-center justify-center p-4">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span>Loading projects...</span>
+                    </div>
+                  ) : safeProjects.length > 0 ? (
+                    safeProjects.map((project) => (
+                      <SelectItem key={project.id} value={project.name}>
+                        {project.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="no-projects" disabled>
+                      No projects available
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             )}
@@ -137,7 +257,11 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
               rules={{ required: true }}
               render={({ field }) => (
                 <Select
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    if (value && value !== "no-results") {
+                      field.onChange(value);
+                    }
+                  }}
                   value={field.value}
                   disabled={!selectedProject}
                 >
@@ -151,13 +275,24 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    {filteredClients.map((client) => (
-                      <SelectItem key={client.id} value={client.id}>
-                        {client.name}
-                      </SelectItem>
-                    ))}
-                    {filteredClients.length === 0 && selectedProject && (
-                      <SelectItem value="" disabled>
+                    {clientsLoading ? (
+                      <div className="flex items-center justify-center p-4">
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        <span>Loading clients...</span>
+                      </div>
+                    ) : filteredClients.length > 0 ? (
+                      filteredClients.map((client) => (
+                        <SelectItem
+                          key={client._id || client.id}
+                          value={client._id || client.id}
+                        >
+                          {`${client.firstName || ""} ${
+                            client.lastName || ""
+                          }`.trim()}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-results" disabled>
                         {clientSearch
                           ? "No clients found"
                           : "No clients available"}
@@ -185,7 +320,14 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select
+                onValueChange={(value) => {
+                  if (value && value !== "no-fee-types") {
+                    field.onChange(value);
+                  }
+                }}
+                value={field.value}
+              >
                 <SelectTrigger>
                   <SelectValue
                     placeholder={
@@ -199,14 +341,14 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
                       <span>Loading fee types...</span>
                     </div>
-                  ) : feeTypes.length > 0 ? (
-                    feeTypes.map((feeType) => (
+                  ) : safeFeeTypes.length > 0 ? (
+                    safeFeeTypes.map((feeType) => (
                       <SelectItem key={feeType.id} value={feeType.id}>
                         {feeType.name}
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem value="" disabled>
+                    <SelectItem value="no-fee-types" disabled>
                       No fee types available
                     </SelectItem>
                   )}

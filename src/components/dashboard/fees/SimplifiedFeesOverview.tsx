@@ -50,6 +50,21 @@ export function SimplifiedFeesOverview({
     });
   }, [loading, error, fees]);
 
+  // Ensure fees is always an array to prevent filter errors
+  const safeFees = Array.isArray(fees) ? fees : [];
+
+  // Filter fees safely
+  const filteredFees = safeFees.filter((fee) => {
+    const matchesSearch =
+      !searchTerm ||
+      fee.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      fee.id.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus = filterStatus === "all" || fee.status === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
@@ -83,21 +98,22 @@ export function SimplifiedFeesOverview({
     }
   };
 
-  const filteredFees = fees.filter((fee) => {
-    // Note: We'll need to fetch client and project names separately or include them in the fee data
-    const matchesSearch =
-      fee.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fee.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === "all" || fee.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
-
-  const totalCollected = fees.reduce((sum, fee) => sum + fee.totalPaid, 0);
-  const totalOutstanding = fees.reduce(
+  const totalCollected = safeFees.reduce((sum, fee) => sum + fee.totalPaid, 0);
+  const totalOutstanding = safeFees.reduce(
     (sum, fee) => sum + fee.outstandingBalance,
     0
   );
-  const overdueCount = fees.filter((fee) => fee.status === "overdue").length;
+  const overdueAmount = safeFees
+    .filter((fee) => fee.status === "overdue")
+    .reduce((sum, fee) => sum + fee.outstandingBalance, 0);
+  const overdueCount = safeFees.filter(
+    (fee) => fee.status === "overdue"
+  ).length;
+
+  // Calculate collection rate safely
+  const totalFees = totalCollected + totalOutstanding;
+  const collectionRate =
+    totalFees > 0 ? Math.round((totalCollected / totalFees) * 100) : 0;
 
   return (
     <div className="space-y-6">

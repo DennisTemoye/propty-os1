@@ -82,10 +82,24 @@ export const useFees = (options: UseFeesOptions = {}) => {
           // Clear timeout on success
           clearTimeout(loadingTimeout);
 
-          if (response.success) {
-            setFees(response.data.data);
-            setPagination(response.data.pagination);
+          if (response.success && response.data) {
+            setFees(response.data.data || []);
+            setPagination(
+              response.data.pagination || {
+                currentPage: 1,
+                totalPages: 1,
+                totalItems: 0,
+                itemsPerPage: 10,
+              }
+            );
           } else {
+            setFees([]); // Ensure we always have an array
+            setPagination({
+              currentPage: 1,
+              totalPages: 1,
+              totalItems: 0,
+              itemsPerPage: 10,
+            });
             setError(response.message || "Failed to fetch fees");
             toast.error(response.message || "Failed to fetch fees");
           }
@@ -99,6 +113,15 @@ export const useFees = (options: UseFeesOptions = {}) => {
             );
             return attemptFetch();
           }
+
+          // Set empty arrays on final failure
+          setFees([]);
+          setPagination({
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 0,
+            itemsPerPage: 10,
+          });
 
           const errorMessage = feeCollectionService.handleError(error);
           setError(errorMessage);
@@ -255,14 +278,37 @@ export const useFeeTypes = (options: UseFeeTypesOptions = {}) => {
         // Clear timeout on success
         clearTimeout(loadingTimeout);
 
-        if (response.success) {
-          setFeeTypes(response.data.data);
-          setPagination(response.data.pagination);
+        if (response.success && response.data) {
+          setFeeTypes(response.data.data || []);
+          setPagination(
+            response.data.pagination || {
+              currentPage: 1,
+              totalPages: 1,
+              totalItems: 0,
+              itemsPerPage: 10,
+            }
+          );
         } else {
+          setFeeTypes([]); // Ensure we always have an array
+          setPagination({
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 0,
+            itemsPerPage: 10,
+          });
           setError(response.message || "Failed to fetch fee types");
           toast.error(response.message || "Failed to fetch fee types");
         }
       } catch (error) {
+        // Set empty arrays on failure
+        setFeeTypes([]);
+        setPagination({
+          currentPage: 1,
+          totalPages: 1,
+          totalItems: 0,
+          itemsPerPage: 10,
+        });
+
         const errorMessage = feeCollectionService.handleError(error);
         setError(errorMessage);
         toast.error(errorMessage);
@@ -389,14 +435,37 @@ export const usePayments = (options: UsePaymentsOptions = {}) => {
         // Clear timeout on success
         clearTimeout(loadingTimeout);
 
-        if (response.success) {
-          setPayments(response.data.data);
-          setPagination(response.data.pagination);
+        if (response.success && response.data) {
+          setPayments(response.data.data || []);
+          setPagination(
+            response.data.pagination || {
+              currentPage: 1,
+              totalPages: 1,
+              totalItems: 0,
+              itemsPerPage: 10,
+            }
+          );
         } else {
+          setPayments([]); // Ensure we always have an array
+          setPagination({
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 0,
+            itemsPerPage: 10,
+          });
           setError(response.message || "Failed to fetch payments");
           toast.error(response.message || "Failed to fetch payments");
         }
       } catch (error) {
+        // Set empty arrays on failure
+        setPayments([]);
+        setPagination({
+          currentPage: 1,
+          totalPages: 1,
+          totalItems: 0,
+          itemsPerPage: 10,
+        });
+
         const errorMessage = feeCollectionService.handleError(error);
         setError(errorMessage);
         toast.error(errorMessage);
@@ -520,13 +589,34 @@ export const useAnalytics = () => {
         // Clear timeout on success
         clearTimeout(loadingTimeout);
 
-        if (response.success) {
+        if (response.success && response.data) {
           setCollectionSummary(response.data);
         } else {
+          // Set default empty data on failure
+          setCollectionSummary({
+            totalFees: 0,
+            totalCollected: 0,
+            totalOutstanding: 0,
+            overdueAmount: 0,
+            overdueCount: 0,
+            collectionRate: 0,
+            currency: "NGN",
+          });
           setError(response.message || "Failed to fetch collection summary");
           toast.error(response.message || "Failed to fetch collection summary");
         }
       } catch (error) {
+        // Set default empty data on failure
+        setCollectionSummary({
+          totalFees: 0,
+          totalCollected: 0,
+          totalOutstanding: 0,
+          overdueAmount: 0,
+          overdueCount: 0,
+          collectionRate: 0,
+          currency: "NGN",
+        });
+
         const errorMessage = feeCollectionService.handleError(error);
         setError(errorMessage);
         toast.error(errorMessage);

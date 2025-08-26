@@ -1,5 +1,18 @@
 import { apiClient } from "./api";
 
+/**
+ * Fee Collection Service
+ *
+ * This service now uses real API calls instead of mock data.
+ *
+ * To set up the API connection:
+ * 1. Create a .env file in your project root
+ * 2. Add: VITE_API_BASE_URL=http://localhost:3000/api (or your actual API endpoint)
+ * 3. Ensure your backend API is running and accessible
+ *
+ * The service includes comprehensive error handling for when the API is not available.
+ */
+
 // Types based on the API specification
 export interface FeeType {
   id: string;
@@ -235,7 +248,7 @@ const mockPayments: Payment[] = [
 ];
 
 // Configuration for development mode
-const USE_MOCK_DATA = process.env.NODE_ENV === "development"; // Only use mock data in development
+const USE_MOCK_DATA = false; // Use real API calls instead of mock data
 
 // Mock service implementations
 const mockFeeTypesService = {
@@ -836,11 +849,20 @@ const mockAnalyticsService = {
 // Fee Types Management
 export const feeTypesService = {
   async create(feeTypeData: Partial<FeeType>): Promise<ApiResponse<FeeType>> {
-    const response = await apiClient.post(
-      "/fee-collection/fee-types",
-      feeTypeData
-    );
-    return response.data;
+    try {
+      const response = await apiClient.post(
+        "/fee-collection/fee-types",
+        feeTypeData
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fee type creation failed:", error);
+      return {
+        success: false,
+        message: "Failed to create fee type. Please check your API connection.",
+        data: {} as FeeType, // Return empty object instead of null
+      };
+    }
   },
 
   async getAll(
@@ -853,44 +875,99 @@ export const feeTypesService = {
       search?: string;
     } = {}
   ): Promise<ApiResponse<PaginatedResponse<FeeType>>> {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined) queryParams.append(key, value.toString());
-    });
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) queryParams.append(key, value.toString());
+      });
 
-    const response = await apiClient.get(
-      `/fee-collection/fee-types?${queryParams}`
-    );
-    return response.data;
+      const response = await apiClient.get(
+        `/fee-collection/fee-types?${queryParams}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fee types fetch failed:", error);
+      return {
+        success: false,
+        message: "Failed to fetch fee types. Please check your API connection.",
+        data: {
+          data: [],
+          pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 0,
+            itemsPerPage: 10,
+          },
+        },
+      };
+    }
   },
 
   async getById(id: string): Promise<ApiResponse<FeeType>> {
-    const response = await apiClient.get(`/fee-collection/fee-types/${id}`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/fee-collection/fee-types/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Fee type fetch failed:", error);
+      return {
+        success: false,
+        message: "Failed to fetch fee type. Please check your API connection.",
+        data: {} as FeeType, // Return empty object instead of null
+      };
+    }
   },
 
   async update(
     id: string,
     updateData: Partial<FeeType>
   ): Promise<ApiResponse<FeeType>> {
-    const response = await apiClient.put(
-      `/fee-collection/fee-types/${id}`,
-      updateData
-    );
-    return response.data;
+    try {
+      const response = await apiClient.put(
+        `/fee-collection/fee-types/${id}`,
+        updateData
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fee type update failed:", error);
+      return {
+        success: false,
+        message: "Failed to update fee type. Please check your API connection.",
+        data: {} as FeeType, // Return empty object instead of null
+      };
+    }
   },
 
   async delete(id: string): Promise<ApiResponse<void>> {
-    const response = await apiClient.delete(`/fee-collection/fee-types/${id}`);
-    return response.data;
+    try {
+      const response = await apiClient.delete(
+        `/fee-collection/fee-types/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fee type deletion failed:", error);
+      return {
+        success: false,
+        message: "Failed to delete fee type. Please check your API connection.",
+        data: undefined,
+      };
+    }
   },
 };
 
 // Fee Management
 export const feesService = {
   async create(feeData: Partial<Fee>): Promise<ApiResponse<Fee>> {
-    const response = await apiClient.post("/fee-collection/fees", feeData);
-    return response.data;
+    try {
+      const response = await apiClient.post("/fee-collection/fees", feeData);
+      return response.data;
+    } catch (error) {
+      console.error("Fee creation failed:", error);
+      return {
+        success: false,
+        message: "Failed to create fee. Please check your API connection.",
+        data: {} as Fee, // Return empty object instead of null
+      };
+    }
   },
 
   async getAll(
@@ -907,34 +984,80 @@ export const feesService = {
       search?: string;
     } = {}
   ): Promise<ApiResponse<PaginatedResponse<Fee>>> {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined) queryParams.append(key, value.toString());
-    });
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) queryParams.append(key, value.toString());
+      });
 
-    const response = await apiClient.get(`/fee-collection/fees?${queryParams}`);
-    return response.data;
+      const response = await apiClient.get(
+        `/fee-collection/fees?${queryParams}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fees fetch failed:", error);
+      return {
+        success: false,
+        message: "Failed to fetch fees. Please check your API connection.",
+        data: {
+          data: [],
+          pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 0,
+            itemsPerPage: 10,
+          },
+        },
+      };
+    }
   },
 
   async getById(id: string): Promise<ApiResponse<Fee>> {
-    const response = await apiClient.get(`/fee-collection/fees/${id}`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/fee-collection/fees/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Fee fetch failed:", error);
+      return {
+        success: false,
+        message: "Failed to fetch fee. Please check your API connection.",
+        data: {} as Fee, // Return empty object instead of null
+      };
+    }
   },
 
   async update(
     id: string,
     updateData: Partial<Fee>
   ): Promise<ApiResponse<Fee>> {
-    const response = await apiClient.put(
-      `/fee-collection/fees/${id}`,
-      updateData
-    );
-    return response.data;
+    try {
+      const response = await apiClient.put(
+        `/fee-collection/fees/${id}`,
+        updateData
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fee update failed:", error);
+      return {
+        success: false,
+        message: "Failed to update fee. Please check your API connection.",
+        data: {} as Fee, // Return empty object instead of null
+      };
+    }
   },
 
   async delete(id: string): Promise<ApiResponse<void>> {
-    const response = await apiClient.delete(`/fee-collection/fees/${id}`);
-    return response.data;
+    try {
+      const response = await apiClient.delete(`/fee-collection/fees/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Fee deletion failed:", error);
+      return {
+        success: false,
+        message: "Failed to delete fee. Please check your API connection.",
+        data: undefined,
+      };
+    }
   },
 
   async getClientFees(
@@ -946,26 +1069,53 @@ export const feesService = {
       limit?: number;
     } = {}
   ): Promise<ApiResponse<PaginatedResponse<Fee>>> {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined) queryParams.append(key, value.toString());
-    });
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) queryParams.append(key, value.toString());
+      });
 
-    const response = await apiClient.get(
-      `/fee-collection/clients/${clientId}/fees?${queryParams}`
-    );
-    return response.data;
+      const response = await apiClient.get(
+        `/fee-collection/clients/${clientId}/fees?${queryParams}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Client fees fetch failed:", error);
+      return {
+        success: false,
+        message:
+          "Failed to fetch client fees. Please check your API connection.",
+        data: {
+          data: [],
+          pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 0,
+            itemsPerPage: 10,
+          },
+        },
+      };
+    }
   },
 };
 
 // Payment Management
 export const paymentsService = {
   async record(paymentData: Partial<Payment>): Promise<ApiResponse<Payment>> {
-    const response = await apiClient.post(
-      "/fee-collection/payments",
-      paymentData
-    );
-    return response.data;
+    try {
+      const response = await apiClient.post(
+        "/fee-collection/payments",
+        paymentData
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Payment recording failed:", error);
+      return {
+        success: false,
+        message: "Failed to record payment. Please check your API connection.",
+        data: {} as Payment, // Return empty object instead of null
+      };
+    }
   },
 
   async updateStatus(
@@ -973,27 +1123,55 @@ export const paymentsService = {
     status: string,
     notes?: string
   ): Promise<ApiResponse<Payment>> {
-    const response = await apiClient.patch(
-      `/fee-collection/payments/${paymentId}/status`,
-      { status, notes }
-    );
-    return response.data;
+    try {
+      const response = await apiClient.patch(
+        `/fee-collection/payments/${paymentId}/status`,
+        { status, notes }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Payment status update failed:", error);
+      return {
+        success: false,
+        message:
+          "Failed to update payment status. Please check your API connection.",
+        data: {} as Payment, // Return empty object instead of null
+      };
+    }
   },
 
   async refund(
     paymentId: string,
     notes?: string
   ): Promise<ApiResponse<Payment>> {
-    const response = await apiClient.post(
-      `/fee-collection/payments/${paymentId}/refund`,
-      { notes }
-    );
-    return response.data;
+    try {
+      const response = await apiClient.post(
+        `/fee-collection/payments/${paymentId}/refund`,
+        { notes }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Payment refund failed:", error);
+      return {
+        success: false,
+        message: "Failed to refund payment. Please check your API connection.",
+        data: {} as Payment, // Return empty object instead of null
+      };
+    }
   },
 
   async getById(id: string): Promise<ApiResponse<Payment>> {
-    const response = await apiClient.get(`/fee-collection/payments/${id}`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/fee-collection/payments/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Payment fetch failed:", error);
+      return {
+        success: false,
+        message: "Failed to fetch payment. Please check your API connection.",
+        data: {} as Payment, // Return empty object instead of null
+      };
+    }
   },
 
   async getAll(
@@ -1008,15 +1186,32 @@ export const paymentsService = {
       limit?: number;
     } = {}
   ): Promise<ApiResponse<PaginatedResponse<Payment>>> {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined) queryParams.append(key, value.toString());
-    });
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) queryParams.append(key, value.toString());
+      });
 
-    const response = await apiClient.get(
-      `/fee-collection/payments?${queryParams}`
-    );
-    return response.data;
+      const response = await apiClient.get(
+        `/fee-collection/payments?${queryParams}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Payments fetch failed:", error);
+      return {
+        success: false,
+        message: "Failed to fetch payments. Please check your API connection.",
+        data: {
+          data: [],
+          pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 0,
+            itemsPerPage: 10,
+          },
+        },
+      };
+    }
   },
 };
 
@@ -1030,25 +1225,62 @@ export const analyticsService = {
       clientId?: string;
     } = {}
   ): Promise<ApiResponse<CollectionSummary>> {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined) queryParams.append(key, value.toString());
-    });
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) queryParams.append(key, value.toString());
+      });
 
-    const response = await apiClient.get(
-      `/fee-collection/analytics/collection-summary?${queryParams}`
-    );
-    return response.data;
+      const response = await apiClient.get(
+        `/fee-collection/analytics/collection-summary?${queryParams}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Collection summary fetch failed:", error);
+      return {
+        success: false,
+        message:
+          "Failed to fetch collection summary. Please check your API connection.",
+        data: {
+          totalFees: 0,
+          totalCollected: 0,
+          totalOutstanding: 0,
+          overdueAmount: 0,
+          overdueCount: 0,
+          collectionRate: 0,
+          currency: "NGN",
+        },
+      };
+    }
   },
 
   async getProjectPerformance(
     projectId: string,
     period: "daily" | "weekly" | "monthly" | "yearly" = "monthly"
   ): Promise<ApiResponse<ProjectPerformance>> {
-    const response = await apiClient.get(
-      `/fee-collection/analytics/projects/${projectId}/performance?period=${period}`
-    );
-    return response.data;
+    try {
+      const response = await apiClient.get(
+        `/fee-collection/analytics/projects/${projectId}/performance?period=${period}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Project performance fetch failed:", error);
+      return {
+        success: false,
+        message:
+          "Failed to fetch project performance. Please check your API connection.",
+        data: {
+          projectId,
+          projectName: `Project ${projectId}`,
+          totalFees: 0,
+          totalCollected: 0,
+          outstandingAmount: 0,
+          collectionRate: 0,
+          overdueAmount: 0,
+          overdueCount: 0,
+        },
+      };
+    }
   },
 
   async getOverdueReport(
@@ -1059,15 +1291,30 @@ export const analyticsService = {
       limit?: number;
     } = {}
   ): Promise<ApiResponse<OverdueReport>> {
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined) queryParams.append(key, value.toString());
-    });
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) queryParams.append(key, value.toString());
+      });
 
-    const response = await apiClient.get(
-      `/fee-collection/analytics/overdue-report?${queryParams}`
-    );
-    return response.data;
+      const response = await apiClient.get(
+        `/fee-collection/analytics/overdue-report?${queryParams}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Overdue report fetch failed:", error);
+      return {
+        success: false,
+        message:
+          "Failed to fetch overdue report. Please check your API connection.",
+        data: {
+          fees: [],
+          totalOverdue: 0,
+          totalAmount: 0,
+          averageDaysOverdue: 0,
+        },
+      };
+    }
   },
 };
 

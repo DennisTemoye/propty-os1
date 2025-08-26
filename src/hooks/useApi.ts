@@ -5,18 +5,15 @@ import {
   LoginCredentials,
   RegisterData,
 } from "@/services/authService";
-import {
-  ProjectsService,
-  Project,
-  CreateProjectData,
-  UpdateProjectData,
-} from "@/services/projectsService";
+
 import {
   ClientsService,
   Client,
   CreateClientData,
   UpdateClientData,
 } from "@/services/clientsService";
+import { ProjectsService } from "@/services/projectsService";
+import { CreateProjectData, UpdateProjectData } from "@/types/project";
 
 // Query keys for React Query
 export const queryKeys = {
@@ -149,6 +146,7 @@ export const useProjects = (filters?: any) => {
     mutationFn: (data: CreateProjectData) =>
       ProjectsService.createProject(data),
     onSuccess: (response) => {
+      console.log("response>>>>>>", response);
       if (response.success) {
         toast.success("Project created successfully!");
         // Invalidate projects list
