@@ -27,6 +27,11 @@ export const API_ENDPOINTS = {
     VERIFY_EMAIL: "/auth/verify-email",
   },
 
+  // Dashboard
+  DASHBOARD: {
+    OVERVIEW: "/dashboard",
+  },
+
   // Users
   USERS: {
     BASE: "/users",
@@ -70,6 +75,7 @@ export const API_ENDPOINTS = {
     ALLOCATIONS: (id: string) => `/clients/${id}/allocations`,
   },
 
+  //plots
   // Marketers
   MARKETERS: {
     BASE: "/marketers",
@@ -159,8 +165,8 @@ export const API_ENDPOINTS = {
 
   // Allocations
   PLOT_ALLOCATIONS: {
-    BASE: "/plots/allocation",
-    REALLOCATE: (id: string) => `/plots/reallocate/${id}`,
+    BASE: "/plots/allocations",
+    REALLOCATE: (id: string) => `/plots/allocations/${id}/reallocate`,
   },
 };
 

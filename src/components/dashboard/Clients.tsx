@@ -408,6 +408,7 @@ export function Clients() {
                     Notice
                   </Button>
                   <Button
+                    disabled={client.projects.length < 1}
                     variant="outline"
                     size="sm"
                     className="flex-1 hover:bg-accent hover:border-primary/20 transition-all duration-200"

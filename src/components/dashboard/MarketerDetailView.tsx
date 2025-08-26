@@ -288,7 +288,9 @@ export function MarketerDetailView() {
                     {sales.map((sale) => (
                       <TableRow key={sale._id}>
                         <TableCell className="font-medium">
-                          {sale.clientId.firstName} {sale.clientId.lastName}
+                          {sale.clientId
+                            ? `${sale.clientId.firstName} ${sale.clientId.lastName}`
+                            : "Unknown Client"}
                         </TableCell>
                         <TableCell>{sale.unitNumber}</TableCell>
                         <TableCell className="font-medium">
@@ -337,7 +339,9 @@ export function MarketerDetailView() {
                     {sales.map((sale) => (
                       <TableRow key={sale._id}>
                         <TableCell className="font-medium">
-                          {sale.clientId.firstName} {sale.clientId.lastName}
+                          {sale.clientId
+                            ? `${sale.clientId.firstName} ${sale.clientId.lastName}`
+                            : "Unknown Client"}
                         </TableCell>
                         <TableCell className="font-medium">
                           {formatCurrency(sale.saleAmount)}

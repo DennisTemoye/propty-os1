@@ -29,6 +29,29 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
+// Add request timeout interceptor
+apiClient.interceptors.request.use(
+  (config) => {
+    // Add request timeout
+    const timeoutId = setTimeout(() => {
+      console.warn("Request timeout - cancelling request");
+      // Cancel the request if it takes too long
+      if (config.signal && !config.signal.aborted) {
+        // Create a new AbortController to abort the request
+        const controller = new AbortController();
+        controller.abort();
+      }
+    }, API_CONFIG.TIMEOUT + 5000); // 5 seconds buffer
+
+    // Store timeout ID for cleanup
+    (config as any).timeoutId = timeoutId;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Request interceptor with middleware
 apiClient.interceptors.request.use(
   async (config) => {
@@ -50,6 +73,12 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   async (response: AxiosResponse) => {
     try {
+      // Clean up timeout
+      const config = response.config as any;
+      if (config.timeoutId) {
+        clearTimeout(config.timeoutId);
+      }
+
       // Execute response middleware chain
       const processedResponse =
         await defaultMiddlewareChain.executeResponseMiddleware(response);
@@ -60,6 +89,12 @@ apiClient.interceptors.response.use(
   },
   async (error: AxiosError) => {
     try {
+      // Clean up timeout
+      const config = error.config as any;
+      if (config?.timeoutId) {
+        clearTimeout(config.timeoutId);
+      }
+
       // Execute error middleware chain
       const processedError =
         await defaultMiddlewareChain.executeErrorMiddleware(error);

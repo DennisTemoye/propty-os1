@@ -64,6 +64,10 @@ export interface Block {
   reservedUnits?: number;
   allocatedUnits?: number;
   soldUnits?: number;
+  // Plot-specific fields
+  availablePlots?: number;
+  reservedPlots?: number;
+  soldPlots?: number;
   status: BlockStatus;
   defaultPrice?: string | number;
   defaultSize?: string;

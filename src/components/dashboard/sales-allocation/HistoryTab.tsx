@@ -30,7 +30,7 @@ import {
   User,
   DollarSign,
 } from "lucide-react";
-import { SalesService } from "@/services/sales";
+import { SalesService, SaleRecord } from "@/services/sales";
 import { ProjectsService } from "@/services/projectsService";
 import { ClientsService } from "@/services/clientsService";
 import { formatDate } from "@/utils/formatDate";
@@ -93,20 +93,96 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
   const [typeFilter, setTypeFilter] = useState("all");
   const [projectFilter, setProjectFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<SaleRecord[]>([]);
   const [projects, setProjects] = useState<{ [key: string]: any }>({});
   const [clients, setClients] = useState<{ [key: string]: any }>({});
+
+  // Helper functions moved to top to avoid initialization order issues
+  const getClientFullName = (client: any) => {
+    if (!client) return "Unknown Client";
+    const firstName = client.firstName || "";
+    const lastName = client.lastName || "";
+    return `${firstName} ${lastName}`.trim() || "Unknown Client";
+  };
+
+  const getMarketerFullName = (marketer: any) => {
+    if (!marketer) return "Unknown Marketer";
+    const firstName = marketer.firstName || "";
+    const lastName = marketer.lastName || "";
+    return `${firstName} ${lastName}`.trim() || "Unknown Marketer";
+  };
+
+  const getProjectName = (project: any) => {
+    if (!project) return "Unknown Project";
+    return project.projectName || "Unknown Project";
+  };
+
+  const getPaymentStatus = (saleAmount: number, initialPayment: number) => {
+    if (initialPayment >= saleAmount) return "Fully Paid";
+    if (initialPayment > 0) return "Partially Paid";
+    return "Not Paid";
+  };
+
+  const getPaymentStatusColor = (
+    saleAmount: number,
+    initialPayment: number
+  ) => {
+    if (initialPayment >= saleAmount) return "bg-green-100 text-green-800";
+    if (initialPayment > 0) return "bg-yellow-100 text-yellow-800";
+    return "bg-red-100 text-red-800";
+  };
+
+  const formatPhoneNumber = (phone: string) => {
+    if (!phone) return "No Phone";
+    // Format Nigerian phone numbers
+    const cleaned = phone.replace(/\D/g, "");
+    if (cleaned.length === 11 && cleaned.startsWith("0")) {
+      return `+234 ${cleaned.slice(1, 4)} ${cleaned.slice(
+        4,
+        7
+      )} ${cleaned.slice(7)}`;
+    }
+    if (cleaned.length === 10 && cleaned.startsWith("234")) {
+      return `+${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(
+        6,
+        8
+      )} ${cleaned.slice(8)}`;
+    }
+    return phone;
+  };
+
+  const getEmailDisplay = (email: string) => {
+    return email || null;
+  };
+
+  const getLocationDisplay = (project: any) => {
+    return project?.location || null;
+  };
+
+  const getPaymentMethodDisplay = (method: string) => {
+    if (!method) return "Not specified";
+    return method.charAt(0).toUpperCase() + method.slice(1);
+  };
+
+  const getNotesDisplay = (notes: string) => {
+    return notes || null;
+  };
+
+  const getRemainingBalance = (saleAmount: number, initialPayment: number) => {
+    return Math.max(0, saleAmount - initialPayment);
+  };
 
   const fetchHistory = async () => {
     try {
       const response = await SalesService.getSales();
       console.log("history", response);
-      const historyData = response.data.data;
+      const historyData = response?.data?.data?.sales || [];
       setHistory(historyData);
 
       // Fetch related data if we have history items
     } catch (error) {
       console.error("Error fetching history data:", error);
+      setHistory([]);
     }
   };
 
@@ -115,18 +191,55 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
   }, []); // Only run once on component mount
 
   const filteredHistory = history.filter((item) => {
-    const clientName = item.clientId?.firstName || item.client?.name || "";
-    const projectName = item.projectId?.projectName || "";
+    if (!item || !item.clientId || !item.projectId) {
+      return false;
+    }
+
+    const clientName = getClientFullName(item.clientId);
+    const projectName = getProjectName(item.projectId);
 
     const matchesSearch =
       clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.unit && item.unit.toLowerCase().includes(searchTerm.toLowerCase()));
+      (item.unitNumber &&
+        item.unitNumber.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const matchesType = typeFilter === "all" || item.type === typeFilter;
+    // Since the API only returns sales data, we'll treat all items as allocations
+    const matchesType = typeFilter === "all" || typeFilter === "allocation";
     const matchesProject =
       projectFilter === "all" || projectName === projectFilter;
 
-    return matchesSearch && matchesType && matchesProject;
+    // Date filtering
+    let matchesDate = true;
+    if (dateFilter !== "all" && item.saleDate) {
+      const saleDate = new Date(item.saleDate);
+      const now = new Date();
+
+      switch (dateFilter) {
+        case "this-month":
+          matchesDate =
+            saleDate.getMonth() === now.getMonth() &&
+            saleDate.getFullYear() === now.getFullYear();
+          break;
+        case "last-month":
+          const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1);
+          matchesDate =
+            saleDate.getMonth() === lastMonth.getMonth() &&
+            saleDate.getFullYear() === lastMonth.getFullYear();
+          break;
+        case "this-quarter":
+          const quarter = Math.floor(now.getMonth() / 3);
+          const saleQuarter = Math.floor(saleDate.getMonth() / 3);
+          matchesDate =
+            saleQuarter === quarter &&
+            saleDate.getFullYear() === now.getFullYear();
+          break;
+        case "this-year":
+          matchesDate = saleDate.getFullYear() === now.getFullYear();
+          break;
+      }
+    }
+
+    return matchesSearch && matchesType && matchesProject && matchesDate;
   });
 
   const formatCurrency = (amount: number) => {
@@ -179,17 +292,30 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
   };
 
   const projectNames = [
-    ...new Set(history.map((h) => h.projectId?.projectName).filter(Boolean)),
+    ...new Set(
+      history
+        .map((h) => getProjectName(h.projectId))
+        .filter((name) => name !== "Unknown Project")
+    ),
+  ];
+
+  // Get unique client names for search suggestions
+  const clientNames = [
+    ...new Set(
+      history
+        .map((h) => getClientFullName(h.clientId))
+        .filter((name) => name !== "Unknown Client")
+    ),
   ];
 
   const renderTableHeaders = () => {
-    if (typeFilter === "allocation") {
+    if (typeFilter === "allocation" || typeFilter === "all") {
       return (
         <TableRow>
           <TableHead>Client Name</TableHead>
           <TableHead>Unit</TableHead>
           <TableHead>Project</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead>Payment Status</TableHead>
           <TableHead>Date</TableHead>
           <TableHead>Amount</TableHead>
           <TableHead>Actions</TableHead>
@@ -235,35 +361,83 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
   };
 
   const renderTableRow = (item: any) => {
-    if (typeFilter === "allocation" && item.type === "allocation") {
+    if (typeFilter === "allocation" || typeFilter === "all") {
       console.log("item", item);
 
-      const clientName =
-        item.client?.firstName || item.client?.name || "Unknown Client";
-      const projectName = item.project?.projectName || "Unknown Project";
+      const clientName = getClientFullName(item.clientId);
+      const projectName = getProjectName(item.projectId);
 
       return (
-        <TableRow key={item.id}>
-          <TableCell className="font-medium">{clientName}</TableCell>
+        <TableRow key={item._id}>
           <TableCell>
             <div>
-              <div className="font-medium">{item.unit}</div>
-              <div className="text-sm text-gray-500">via {item.marketer}</div>
+              <div className="font-medium">{clientName}</div>
+              {getEmailDisplay(item.clientId?.email) && (
+                <div className="text-sm text-gray-500">
+                  {getEmailDisplay(item.clientId?.email)}
+                </div>
+              )}
+              {formatPhoneNumber(item.clientId?.phone) && (
+                <div className="text-xs text-gray-400">
+                  {formatPhoneNumber(item.clientId?.phone)}
+                </div>
+              )}
             </div>
           </TableCell>
-          <TableCell>{projectName}</TableCell>
           <TableCell>
-            <Badge className={getStatusColor(item.status)}>{item.status}</Badge>
+            <div>
+              <div className="font-medium">{item.unitNumber}</div>
+              <div className="text-sm text-gray-500">
+                via {getMarketerFullName(item.marketerId)}
+              </div>
+            </div>
           </TableCell>
-          <TableCell>{item.date}</TableCell>
+          <TableCell>
+            <div>
+              <div className="font-medium">{projectName}</div>
+              {getLocationDisplay(item.projectId) && (
+                <div className="text-sm text-gray-500">
+                  {getLocationDisplay(item.projectId)}
+                </div>
+              )}
+            </div>
+          </TableCell>
+          <TableCell>
+            <Badge
+              className={getPaymentStatusColor(
+                item.saleAmount,
+                item.initialPayment
+              )}
+            >
+              {getPaymentStatus(item.saleAmount, item.initialPayment)}
+            </Badge>
+          </TableCell>
+          <TableCell>{formatDate(item.saleDate)}</TableCell>
           <TableCell>
             <div>
               <div className="font-medium">
-                {formatCurrency(item.totalAmount)}
+                {formatCurrency(item.saleAmount)}
               </div>
               <div className="text-sm text-gray-500">
-                Paid: {formatCurrency(item.paidAmount)}
+                Paid: {formatCurrency(item.initialPayment)}
               </div>
+              {getRemainingBalance(item.saleAmount, item.initialPayment) >
+                0 && (
+                <div className="text-sm text-red-600">
+                  Remaining:{" "}
+                  {formatCurrency(
+                    getRemainingBalance(item.saleAmount, item.initialPayment)
+                  )}
+                </div>
+              )}
+              <div className="text-xs text-gray-400">
+                {getPaymentMethodDisplay(item.paymentMethod)}
+              </div>
+              {getNotesDisplay(item.notes) && (
+                <div className="text-xs text-blue-600 mt-1">
+                  Note: {getNotesDisplay(item.notes)}
+                </div>
+              )}
             </div>
           </TableCell>
           <TableCell>
@@ -271,7 +445,7 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
               <Button variant="ghost" size="sm">
                 <Eye className="h-4 w-4" />
               </Button>
-              {item.status === "allocated" && onRevoke && (
+              {(item.status === "allocated" || !item.status) && onRevoke && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -286,14 +460,19 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
         </TableRow>
       );
     } else if (typeFilter === "reallocation" && item.type === "reallocation") {
-      const projectName = item.projectId?.projectName || "Unknown Project";
+      const projectName = getProjectName(item.projectId);
 
       return (
-        <TableRow key={item.id}>
+        <TableRow key={item._id}>
           <TableCell>
             <div>
-              <div className="font-medium">{item.unit}</div>
+              <div className="font-medium">{item.unitNumber}</div>
               <div className="text-sm text-gray-500">{projectName}</div>
+              {getLocationDisplay(item.projectId) && (
+                <div className="text-xs text-gray-400">
+                  {getLocationDisplay(item.projectId)}
+                </div>
+              )}
             </div>
           </TableCell>
           <TableCell>
@@ -321,13 +500,13 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
           <TableCell>
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4 text-gray-400" />
-              <span>{item.date}</span>
+              <span>{formatDate(item.saleDate)}</span>
             </div>
           </TableCell>
           <TableCell>
             <div className="flex items-center space-x-1">
               <User className="h-4 w-4 text-gray-400" />
-              <span>{item.marketer}</span>
+              <span>{getMarketerFullName(item.marketerId)}</span>
             </div>
           </TableCell>
           <TableCell className="font-medium text-green-600">
@@ -337,28 +516,40 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
         </TableRow>
       );
     } else if (typeFilter === "revoked" && item.type === "revoked") {
-      const clientName =
-        item.client?.firstName || item.client?.name || "Unknown Client";
-      const projectName = item.project?.projectName || "Unknown Project";
+      const clientName = getClientFullName(item.clientId);
+      const projectName = getProjectName(item.projectId);
 
       return (
-        <TableRow key={item.id}>
+        <TableRow key={item._id}>
           <TableCell>
             <div>
               <div className="font-medium flex items-center space-x-2">
                 <span>{clientName}</span>
                 <AlertTriangle className="h-4 w-4 text-red-500" />
               </div>
-              <div className="text-sm text-gray-500">{item.unit}</div>
-              <div className="text-xs text-gray-400">{item.clientPhone}</div>
-              <div className="text-xs text-gray-400">via {item.marketer}</div>
+              <div className="text-sm text-gray-500">{item.unitNumber}</div>
+              <div className="text-xs text-gray-400">
+                {formatPhoneNumber(item.clientId?.phone)}
+              </div>
+              <div className="text-xs text-gray-400">
+                via {getMarketerFullName(item.marketerId)}
+              </div>
             </div>
           </TableCell>
-          <TableCell className="font-medium">{projectName}</TableCell>
+          <TableCell>
+            <div>
+              <div className="font-medium">{projectName}</div>
+              {getLocationDisplay(item.projectId) && (
+                <div className="text-sm text-gray-500">
+                  {getLocationDisplay(item.projectId)}
+                </div>
+              )}
+            </div>
+          </TableCell>
           <TableCell>
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4 text-gray-400" />
-              <span>{item.date}</span>
+              <span>{formatDate(item.saleDate)}</span>
             </div>
           </TableCell>
           <TableCell>
@@ -397,55 +588,80 @@ export function HistoryTab({ onRevoke }: HistoryTabProps) {
       );
     } else if (typeFilter === "all") {
       console.log("item", item);
-      const clientName =
-        item.clientId?.firstName || item.clientId?.name || "Unknown Client";
-      const projectName = item.projectId?.projectName || "Unknown Project";
+      const clientName = getClientFullName(item.clientId);
+      const projectName = getProjectName(item.projectId);
 
       return (
-        <TableRow key={item.id}>
+        <TableRow key={item._id}>
           <TableCell>
-            <Badge
-              variant="outline"
-              className={
-                item.type === "allocation"
-                  ? "bg-blue-100 text-blue-800"
-                  : item.type === "reallocation"
-                  ? "bg-purple-100 text-purple-800"
-                  : "bg-red-100 text-red-800"
-              }
-            >
-              {item.type}
+            <Badge variant="outline" className="bg-blue-100 text-blue-800">
+              Sale
             </Badge>
           </TableCell>
           <TableCell>
             <div>
               <div className="font-medium">{clientName}</div>
-              <div className="text-sm text-gray-500">{item.unit}</div>
+              {getEmailDisplay(item.clientId?.email) && (
+                <div className="text-sm text-gray-500">
+                  {getEmailDisplay(item.clientId?.email)}
+                </div>
+              )}
+              {formatPhoneNumber(item.clientId?.phone) && (
+                <div className="text-xs text-gray-400">
+                  {formatPhoneNumber(item.clientId?.phone)}
+                </div>
+              )}
+              <div className="text-sm text-gray-500">{item.unitNumber}</div>
             </div>
           </TableCell>
-          <TableCell>{projectName}</TableCell>
+          <TableCell>
+            <div>
+              <div className="font-medium">{projectName}</div>
+              {getLocationDisplay(item.projectId) && (
+                <div className="text-sm text-gray-500">
+                  {getLocationDisplay(item.projectId)}
+                </div>
+              )}
+            </div>
+          </TableCell>
           <TableCell>{formatDate(item.saleDate)}</TableCell>
           <TableCell>
-            {item.saleAmount && formatCurrency(item.saleAmount)}
-            {/* {item.transferFee && formatCurrency(item.transferFee)}
-            {item.originalAmount && formatCurrency(item.originalAmount)} */}
+            <div>
+              <div className="font-medium">
+                {item.saleAmount && formatCurrency(item.saleAmount)}
+              </div>
+              <div className="text-sm text-gray-500">
+                Paid:{" "}
+                {item.initialPayment && formatCurrency(item.initialPayment)}
+              </div>
+              {getRemainingBalance(item.saleAmount, item.initialPayment) >
+                0 && (
+                <div className="text-sm text-red-600">
+                  Remaining:{" "}
+                  {formatCurrency(
+                    getRemainingBalance(item.saleAmount, item.initialPayment)
+                  )}
+                </div>
+              )}
+              <div className="text-xs text-gray-400">
+                {getPaymentMethodDisplay(item.paymentMethod)}
+              </div>
+              {getNotesDisplay(item.notes) && (
+                <div className="text-xs text-blue-600 mt-1">
+                  Note: {getNotesDisplay(item.notes)}
+                </div>
+              )}
+            </div>
           </TableCell>
           <TableCell>
-            {item.status && (
-              <Badge className={getStatusColor(item.status)}>
-                {item.status}
-              </Badge>
-            )}
-            {item.reason && (
-              <Badge className={getReasonColor(item.reason)}>
-                {item.reason}
-              </Badge>
-            )}
-            {item.refundStatus && (
-              <Badge className={getRefundStatusColor(item.refundStatus)}>
-                {item.refundStatus}
-              </Badge>
-            )}
+            <Badge
+              className={getPaymentStatusColor(
+                item.saleAmount,
+                item.initialPayment
+              )}
+            >
+              {getPaymentStatus(item.saleAmount, item.initialPayment)}
+            </Badge>
           </TableCell>
           <TableCell>
             <Button variant="ghost" size="sm">

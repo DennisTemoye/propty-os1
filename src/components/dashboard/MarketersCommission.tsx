@@ -196,35 +196,56 @@ export function MarketersCommission() {
     fetchCommissions();
   }, []);
 
+  console.log(marketers);
+  console.log(commissions);
+
+  // return <div>MarketersCommission</div>;
   // Filter commissions based on filters
   const filteredCommissions = commissions.filter((commission) => {
     const matchesStatus =
-      statusFilter === "all" || commission.status === statusFilter;
+      statusFilter === "all" ||
+      (commission.status && commission.status === statusFilter);
+
+    // Safe marketer name construction with null checks
+    const marketerFirstName = commission?.marketerId?.firstName || "";
+    const marketerLastName = commission?.marketerId?.lastName || "";
+    const fullMarketerName = `${marketerFirstName} ${marketerLastName}`.trim();
+
     const matchesMarketer =
       marketerFilter === "all" ||
-      `${commission.marketerId?.firstName} ${commission.marketerId?.lastName}` ===
-        marketerFilter;
+      (fullMarketerName && fullMarketerName === marketerFilter);
+
     const matchesSearch =
-      commission?.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      commission?.marketerId?.firstName
-        ?.toLowerCase()
+      (commission?.notes || "")
+        .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      commission?.marketerId?.lastName
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase());
+      (marketerFirstName &&
+        marketerFirstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (marketerLastName &&
+        marketerLastName.toLowerCase().includes(searchTerm.toLowerCase()));
+
     const matchesDate =
       dateFilter === "all" ||
       (dateFilter === "this-month" &&
-        new Date(commission.period?.startDate).getMonth() ===
+        commission?.period?.startDate &&
+        !isNaN(new Date(commission.period.startDate).getTime()) &&
+        new Date(commission.period.startDate).getMonth() ===
           new Date().getMonth()) ||
       (dateFilter === "last-month" &&
-        new Date(commission.period?.startDate).getMonth() ===
+        commission?.period?.startDate &&
+        !isNaN(new Date(commission.period.startDate).getTime()) &&
+        new Date(commission.period.startDate).getMonth() ===
           new Date().getMonth() - 1) ||
       (dateFilter === "this-year" &&
-        new Date(commission.period?.startDate).getFullYear() ===
+        commission?.period?.startDate &&
+        !isNaN(new Date(commission.period.startDate).getTime()) &&
+        new Date(commission.period.startDate).getFullYear() ===
           new Date().getFullYear());
+
     const matchesProject =
-      projectFilter === "all" || commission.project === projectFilter;
+      projectFilter === "all" ||
+      (commission?.project && commission.project === projectFilter);
+
     return (
       matchesStatus &&
       matchesMarketer &&
@@ -238,27 +259,31 @@ export function MarketersCommission() {
   const filteredMarketers = marketers?.filter((marketer) => {
     const matchesStatus =
       marketerStatusFilter === "all" ||
-      marketer.status === marketerStatusFilter;
+      (marketer.status && marketer.status === marketerStatusFilter);
     const matchesRole =
-      marketerRoleFilter === "all" || marketer.role === marketerRoleFilter;
+      marketerRoleFilter === "all" ||
+      (marketer.role && marketer.role === marketerRoleFilter);
     const matchesSearch =
-      marketer.firstName
+      (marketer.firstName || "")
         .toLowerCase()
         .includes(marketerSearchTerm.toLowerCase()) ||
-      marketer.lastName
+      (marketer.lastName || "")
         .toLowerCase()
         .includes(marketerSearchTerm.toLowerCase()) ||
-      marketer.email.toLowerCase().includes(marketerSearchTerm.toLowerCase());
+      (marketer.email || "")
+        .toLowerCase()
+        .includes(marketerSearchTerm.toLowerCase());
     const matchesPerformanceProject =
       performanceProjectFilter === "all" ||
       (marketer.projects &&
+        Array.isArray(marketer.projects) &&
         marketer.projects.includes(performanceProjectFilter));
     return (
       matchesStatus && matchesRole && matchesSearch && matchesPerformanceProject
     );
   });
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string | null | undefined) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -269,7 +294,7 @@ export function MarketersCommission() {
     }
   };
 
-  const getCommissionStatusColor = (status: string) => {
+  const getCommissionStatusColor = (status: string | null | undefined) => {
     switch (status) {
       case "paid":
         return "bg-green-100 text-green-800";
@@ -416,11 +441,11 @@ export function MarketersCommission() {
   const handleNewMarketerSubmit = (marketerData: any) => {
     const newMarketer = {
       _id: `temp_${Date.now()}`,
-      firstName: marketerData.firstName,
-      lastName: marketerData.lastName,
-      email: marketerData.email,
-      phone: marketerData.phone,
-      role: marketerData.role,
+      firstName: marketerData.firstName || "",
+      lastName: marketerData.lastName || "",
+      email: marketerData.email || "",
+      phone: marketerData.phone || "",
+      role: marketerData.role || "External Marketer",
       leads: 0,
       conversions: 0,
       sales: 0,
@@ -463,7 +488,8 @@ export function MarketersCommission() {
 
   const handleExportReport = (marketerId?: string) => {
     const marketerName = marketerId
-      ? marketers.find((m) => m._id === marketerId)?.firstName
+      ? marketers.find((m) => m._id === marketerId)?.firstName ||
+        "Unknown Marketer"
       : "All";
     toast({
       title: "Export Started",
@@ -681,10 +707,10 @@ export function MarketersCommission() {
                         <Avatar className="h-12 w-12">
                           <AvatarImage
                             src={marketer.avatar}
-                            alt={marketer.firstName}
+                            alt={marketer.firstName || "Marketer"}
                           />
                           <AvatarFallback>
-                            {marketer.firstName
+                            {(marketer.firstName || "M")
                               .split(" ")
                               .map((n) => n[0])
                               .join("")}
@@ -692,7 +718,8 @@ export function MarketersCommission() {
                         </Avatar>
                         <div>
                           <CardTitle className="text-lg">
-                            {marketer.firstName} {marketer.lastName}
+                            {marketer.firstName || "Unknown"}{" "}
+                            {marketer.lastName || "Marketer"}
                           </CardTitle>
                           <p className="text-sm text-gray-500">
                             {marketer.email}
@@ -704,7 +731,7 @@ export function MarketersCommission() {
                       </div>
                       <div className="flex flex-col items-end space-y-2">
                         <Badge className={getStatusColor(marketer.status)}>
-                          {marketer.status}
+                          {marketer.status || "inactive"}
                         </Badge>
                         <div className="flex space-x-1">
                           <Button
@@ -867,10 +894,10 @@ export function MarketersCommission() {
                             <Avatar className="h-8 w-8">
                               <AvatarImage
                                 src={marketer.avatar}
-                                alt={marketer.firstName}
+                                alt={marketer.firstName || "Marketer"}
                               />
                               <AvatarFallback>
-                                {marketer.firstName
+                                {(marketer.firstName || "M")
                                   .split(" ")
                                   .map((n) => n[0])
                                   .join("")}
@@ -878,7 +905,8 @@ export function MarketersCommission() {
                             </Avatar>
                             <div>
                               <div className="font-medium">
-                                {marketer.firstName} {marketer.lastName}
+                                {marketer.firstName || "Unknown"}{" "}
+                                {marketer.lastName || "Marketer"}
                               </div>
                               <div className="text-sm text-gray-500">
                                 {marketer.email}
@@ -1032,9 +1060,12 @@ export function MarketersCommission() {
                       {marketers.map((marketer) => (
                         <SelectItem
                           key={marketer._id}
-                          value={`${marketer.firstName} ${marketer.lastName}`}
+                          value={`${marketer.firstName || ""} ${
+                            marketer.lastName || ""
+                          }`}
                         >
-                          {marketer.firstName} {marketer.lastName}
+                          {marketer.firstName || "Unknown"}{" "}
+                          {marketer.lastName || "Marketer"}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -1127,11 +1158,11 @@ export function MarketersCommission() {
                       <TableCell>
                         <div>
                           <div className="font-medium">
-                            {commission.marketerId?.firstName}{" "}
-                            {commission.marketerId?.lastName}
+                            {commission.marketerId?.firstName || "Unknown"}{" "}
+                            {commission.marketerId?.lastName || "Marketer"}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {commission.marketerId?.email}
+                            {commission.marketerId?.email || "No email"}
                           </div>
                         </div>
                       </TableCell>
@@ -1141,7 +1172,7 @@ export function MarketersCommission() {
                             {commission.salesIds?.length || 0} Sales
                           </div>
                           <div className="text-sm text-gray-500">
-                            {commission.notes}
+                            {commission.notes || "No notes"}
                           </div>
                           <div className="text-xs text-gray-400">
                             {commission.salesIds?.[0]?.unitNumber &&
@@ -1150,16 +1181,19 @@ export function MarketersCommission() {
                         </div>
                       </TableCell>
                       <TableCell className="font-medium">
-                        ₦{commission.totalAmount?.toLocaleString()}
+                        ₦{(commission.totalAmount || 0).toLocaleString()}
                       </TableCell>
                       <TableCell>
                         <div>
                           <div className="font-medium text-purple-600">
-                            ₦{commission.commissionAmount?.toLocaleString()}
+                            ₦
+                            {(
+                              commission.commissionAmount || 0
+                            ).toLocaleString()}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {commission.commissionRate}% (
-                            {commission.commissionType})
+                            {commission.commissionRate || 0}% (
+                            {commission.commissionType || "percentage"})
                           </div>
                         </div>
                       </TableCell>
@@ -1169,24 +1203,35 @@ export function MarketersCommission() {
                             commission.status
                           )}
                         >
-                          {commission.status}
+                          {commission.status || "unknown"}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          {new Date(
-                            commission.period?.endDate
-                          ).toLocaleDateString()}
+                          {commission.period?.endDate &&
+                          !isNaN(new Date(commission.period.endDate).getTime())
+                            ? new Date(
+                                commission.period.endDate
+                              ).toLocaleDateString()
+                            : "No end date"}
                         </div>
                         <div className="text-xs text-gray-500">
                           Period:{" "}
-                          {new Date(
-                            commission.period?.startDate
-                          ).toLocaleDateString()}{" "}
+                          {commission.period?.startDate &&
+                          !isNaN(
+                            new Date(commission.period.startDate).getTime()
+                          )
+                            ? new Date(
+                                commission.period.startDate
+                              ).toLocaleDateString()
+                            : "No start date"}{" "}
                           -{" "}
-                          {new Date(
-                            commission.period?.endDate
-                          ).toLocaleDateString()}
+                          {commission.period?.endDate &&
+                          !isNaN(new Date(commission.period.endDate).getTime())
+                            ? new Date(
+                                commission.period.endDate
+                              ).toLocaleDateString()
+                            : "No end date"}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -1207,7 +1252,11 @@ export function MarketersCommission() {
                             onClick={() =>
                               toast({
                                 title: "View Commission",
-                                description: `Viewing commission details for ${commission.marketerId?.firstName} ${commission.marketerId?.lastName}`,
+                                description: `Viewing commission details for ${
+                                  commission.marketerId?.firstName || "Unknown"
+                                } ${
+                                  commission.marketerId?.lastName || "Marketer"
+                                }`,
                               })
                             }
                           >

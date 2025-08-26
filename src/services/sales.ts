@@ -19,6 +19,48 @@ export interface SaleFilters {
   limit?: number;
 }
 
+// New interfaces based on the actual API response
+export interface SalesApiResponse {
+  data: {
+    sales: SaleRecord[];
+    totalSalesValue: number;
+    allocatedPlots: number;
+  };
+  message: string;
+  success: boolean;
+  statusCode: number;
+}
+
+export interface SaleRecord {
+  _id: string;
+  projectId: {
+    _id: string;
+    projectName: string;
+    location: string;
+  };
+  clientId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+  marketerId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+  unitNumber: string;
+  saleAmount: number;
+  initialPayment: number;
+  saleDate: string;
+  paymentMethod: string;
+  notes: string;
+  __v: number;
+}
+
 export class SalesService {
   // Record a sale
   static async recordSale(data: Sale) {
@@ -50,11 +92,18 @@ export class SalesService {
       ? `${API_ENDPOINTS.SALES.BASE}?${queryString}`
       : API_ENDPOINTS.SALES.BASE;
 
-    return await apiService.get<PaginatedResponse<Sale>>(url);
+    return await apiService.get<SalesApiResponse>(url);
   }
 
   // Get a sale by ID
   static async getSale(id: string) {
     return await apiService.get<Sale>(API_ENDPOINTS.SALES.RECORD_SALE(id));
+  }
+
+  // New method to fetch sales data with the actual API structure
+  static async getSalesData() {
+    return await apiService.get<SalesApiResponse["data"]>(
+      API_ENDPOINTS.SALES.BASE
+    );
   }
 }

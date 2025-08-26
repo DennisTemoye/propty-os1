@@ -98,29 +98,63 @@ export function AssignPropertyModal({
     setLoadingUnits(true);
     setError(null);
     try {
-      // Get the selected block to access its units
+      // Get the selected block to access its units or plots
       const block = selectedProject?.blocks?.find(
         (b: Block) => b._id === blockId
       );
-      if (block && block.units) {
-        // Filter for available units in the selected block
-        const availableBlockUnits = block.units.filter(
-          (unit: Unit) => unit.status === "available"
-        );
-        setAvailableUnits(availableBlockUnits);
-      } else {
-        // Fallback: try to fetch units from API if not available in block
-        const response = await ProjectsService.getProjectUnits(projectId);
-        if (response.success && response.data) {
-          const blockUnits = response.data.filter(
-            (unit: Unit) =>
-              unit.status === "available" && unit.projectId === projectId
-          );
-          setAvailableUnits(blockUnits);
+
+      if (block) {
+        if (selectedProject?.terminologyType === "plots") {
+          // For plot-based projects, create plot objects from block data
+          if (block.totalPlots) {
+            const plots = [];
+            const totalPlots = block.totalPlots;
+            // Use availablePlots if provided, otherwise calculate from total - reserved - sold
+            const availablePlots =
+              block.availablePlots ??
+              totalPlots - (block.reservedPlots || 0) - (block.soldPlots || 0);
+
+            // Create plot objects for available plots
+            for (let i = 0; i < availablePlots; i++) {
+              plots.push({
+                id: `plot-${block._id}-${i + 1}`,
+                plotId: `Plot ${i + 1}`,
+                size: block.defaultSize || "N/A",
+                price: block.defaultPrice || 0,
+                status: "available",
+                blockId: block._id,
+                projectId: projectId,
+              });
+            }
+            setAvailableUnits(plots);
+          } else {
+            setAvailableUnits([]);
+          }
         } else {
-          setError("Failed to fetch available units");
-          toast.error("Failed to fetch available units");
+          // For unit-based projects, use existing logic
+          if (block.units) {
+            const availableBlockUnits = block.units.filter(
+              (unit: Unit) => unit.status === "available"
+            );
+            setAvailableUnits(availableBlockUnits);
+          } else {
+            // Fallback: try to fetch units from API if not available in block
+            const response = await ProjectsService.getProjectUnits(projectId);
+            if (response.success && response.data) {
+              const blockUnits = response.data.filter(
+                (unit: Unit) =>
+                  unit.status === "available" && unit.projectId === projectId
+              );
+              setAvailableUnits(blockUnits);
+            } else {
+              setError("Failed to fetch available units");
+              toast.error("Failed to fetch available units");
+            }
+          }
         }
+      } else {
+        setError("Block not found");
+        toast.error("Block not found");
       }
     } catch (error) {
       console.error("Error fetching units:", error);
@@ -132,7 +166,9 @@ export function AssignPropertyModal({
   };
 
   const handleProjectSelect = (projectId: string) => {
+    console.log(projectId);
     const project = projects.find((p) => p._id === projectId);
+    console.log(project);
     setSelectedProject(project || null);
     setSelectedBlock(null);
     setSelectedUnit(null);
@@ -181,7 +217,7 @@ export function AssignPropertyModal({
         price: selectedUnit.price,
         size: selectedUnit.size,
       };
-
+      console.log(allocationData);
       const response = await AllocationService.createAllocation(allocationData);
 
       if (response.success) {

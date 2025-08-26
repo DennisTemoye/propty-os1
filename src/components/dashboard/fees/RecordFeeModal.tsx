@@ -1,13 +1,20 @@
-
-import React, { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { useForm, Controller } from 'react-hook-form';
-import { toast } from 'sonner';
-import { Receipt, Search } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { useForm, Controller } from "react-hook-form";
+import { toast } from "sonner";
+import { Receipt, Search, Loader2 } from "lucide-react";
+import { useFeeTypes } from "@/hooks/useFeeCollection";
+import { FeeType } from "@/services/feeCollectionService";
 
 interface RecordFeeModalProps {
   onClose: () => void;
@@ -15,41 +22,43 @@ interface RecordFeeModalProps {
 
 // Mock data - in real app this would come from API
 const projectClients = {
-  'victoria-gardens': [
-    { id: 'john-doe', name: 'John Doe' },
-    { id: 'jane-smith', name: 'Jane Smith' }
+  "victoria-gardens": [
+    { id: "john-doe", name: "John Doe" },
+    { id: "jane-smith", name: "Jane Smith" },
   ],
-  'emerald-heights': [
-    { id: 'mike-johnson', name: 'Mike Johnson' },
-    { id: 'sarah-wilson', name: 'Sarah Wilson' }
+  "emerald-heights": [
+    { id: "mike-johnson", name: "Mike Johnson" },
+    { id: "sarah-wilson", name: "Sarah Wilson" },
   ],
-  'golden-view': [
-    { id: 'david-brown', name: 'David Brown' },
-    { id: 'lisa-davis', name: 'Lisa Davis' }
+  "golden-view": [
+    { id: "david-brown", name: "David Brown" },
+    { id: "lisa-davis", name: "Lisa Davis" },
   ],
-  'sunset-heights': [
-    { id: 'robert-taylor', name: 'Robert Taylor' },
-    { id: 'emma-white', name: 'Emma White' }
-  ]
+  "sunset-heights": [
+    { id: "robert-taylor", name: "Robert Taylor" },
+    { id: "emma-white", name: "Emma White" },
+  ],
 };
 
 export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
-  const [clientSearch, setClientSearch] = useState('');
+  const [clientSearch, setClientSearch] = useState("");
+  const { feeTypes, loading: feeTypesLoading } = useFeeTypes();
+
   const form = useForm({
     defaultValues: {
-      project: '',
-      clientName: '',
-      unit: '',
-      feeType: '',
-      amount: '',
-      dueDate: '',
-      description: '',
-      status: 'Pending'
-    }
+      project: "",
+      clientName: "",
+      unit: "",
+      feeType: "",
+      amount: "",
+      dueDate: "",
+      description: "",
+      status: "pending",
+    },
   });
 
   const { control, watch } = form;
-  const selectedProject = watch('project');
+  const selectedProject = watch("project");
 
   const availableClients = useMemo(() => {
     if (!selectedProject) return [];
@@ -58,17 +67,17 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
 
   const filteredClients = useMemo(() => {
     if (!clientSearch) return availableClients;
-    return availableClients.filter(client => 
+    return availableClients.filter((client) =>
       client.name.toLowerCase().includes(clientSearch.toLowerCase())
     );
   }, [availableClients, clientSearch]);
 
   const onSubmit = (data: any) => {
-    console.log('Recording new fee:', data);
-    toast.success('Fee recorded successfully!');
+    console.log("Recording new fee:", data);
+    toast.success("Fee recorded successfully!");
     onClose();
     form.reset();
-    setClientSearch('');
+    setClientSearch("");
   };
 
   return (
@@ -81,17 +90,24 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Select onValueChange={(value) => {
-                field.onChange(value);
-                form.setValue('clientName', ''); // Reset client when project changes
-                setClientSearch('');
-              }} value={field.value}>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  form.setValue("clientName", ""); // Reset client when project changes
+                  setClientSearch("");
+                }}
+                value={field.value}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select project first" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="victoria-gardens">Victoria Gardens</SelectItem>
-                  <SelectItem value="emerald-heights">Emerald Heights</SelectItem>
+                  <SelectItem value="victoria-gardens">
+                    Victoria Gardens
+                  </SelectItem>
+                  <SelectItem value="emerald-heights">
+                    Emerald Heights
+                  </SelectItem>
                   <SelectItem value="golden-view">Golden View</SelectItem>
                   <SelectItem value="sunset-heights">Sunset Heights</SelectItem>
                 </SelectContent>
@@ -106,7 +122,9 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder={selectedProject ? "Search clients..." : "Select project first"}
+                placeholder={
+                  selectedProject ? "Search clients..." : "Select project first"
+                }
                 value={clientSearch}
                 onChange={(e) => setClientSearch(e.target.value)}
                 className="pl-10"
@@ -118,13 +136,19 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
-                <Select 
-                  onValueChange={field.onChange} 
+                <Select
+                  onValueChange={field.onChange}
                   value={field.value}
                   disabled={!selectedProject}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={selectedProject ? "Select client" : "Select project first"} />
+                    <SelectValue
+                      placeholder={
+                        selectedProject
+                          ? "Select client"
+                          : "Select project first"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {filteredClients.map((client) => (
@@ -134,7 +158,9 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
                     ))}
                     {filteredClients.length === 0 && selectedProject && (
                       <SelectItem value="" disabled>
-                        {clientSearch ? 'No clients found' : 'No clients available'}
+                        {clientSearch
+                          ? "No clients found"
+                          : "No clients available"}
                       </SelectItem>
                     )}
                   </SelectContent>
@@ -146,8 +172,8 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
 
         <div>
           <Label htmlFor="unit">Unit</Label>
-          <Input 
-            {...form.register('unit')}
+          <Input
+            {...form.register("unit")}
             placeholder="e.g., Block A - Plot 02"
           />
         </div>
@@ -161,15 +187,29 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select fee type" />
+                  <SelectValue
+                    placeholder={
+                      feeTypesLoading ? "Loading..." : "Select fee type"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="infrastructure">Infrastructure Fee</SelectItem>
-                  <SelectItem value="service">Service Charge</SelectItem>
-                  <SelectItem value="maintenance">Maintenance Fee</SelectItem>
-                  <SelectItem value="application">Application Form Fee</SelectItem>
-                  <SelectItem value="security">Security Deposit</SelectItem>
-                  <SelectItem value="legal">Legal Fee</SelectItem>
+                  {feeTypesLoading ? (
+                    <div className="flex items-center justify-center p-4">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span>Loading fee types...</span>
+                    </div>
+                  ) : feeTypes.length > 0 ? (
+                    feeTypes.map((feeType) => (
+                      <SelectItem key={feeType.id} value={feeType.id}>
+                        {feeType.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="" disabled>
+                      No fee types available
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             )}
@@ -178,8 +218,8 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
 
         <div>
           <Label htmlFor="amount">Amount *</Label>
-          <Input 
-            {...form.register('amount', { required: true })}
+          <Input
+            {...form.register("amount", { required: true })}
             placeholder="e.g., ₦5,000,000"
             type="text"
           />
@@ -187,24 +227,27 @@ export function RecordFeeModal({ onClose }: RecordFeeModalProps) {
 
         <div>
           <Label htmlFor="dueDate">Due Date *</Label>
-          <Input 
+          <Input
             type="date"
-            {...form.register('dueDate', { required: true })}
+            {...form.register("dueDate", { required: true })}
           />
         </div>
       </div>
 
       <div>
         <Label htmlFor="description">Description/Notes</Label>
-        <Textarea 
-          {...form.register('description')}
+        <Textarea
+          {...form.register("description")}
           placeholder="Additional details about this fee..."
           rows={3}
         />
       </div>
 
       <div className="flex gap-2 pt-4">
-        <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
+        <Button
+          type="submit"
+          className="flex-1 bg-green-600 hover:bg-green-700"
+        >
           <Receipt className="h-4 w-4 mr-2" />
           Record Fee
         </Button>
