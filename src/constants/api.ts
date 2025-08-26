@@ -27,6 +27,11 @@ export const API_ENDPOINTS = {
     VERIFY_EMAIL: "/auth/verify-email",
   },
 
+  // Dashboard
+  DASHBOARD: {
+    OVERVIEW: "/dashboard",
+  },
+
   // Users
   USERS: {
     BASE: "/users",
