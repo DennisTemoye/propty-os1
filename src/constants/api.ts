@@ -1,7 +1,8 @@
 // API Configuration Constants
 export const API_CONFIG = {
   // Base URL - change this to your actual API endpoint
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
+  // BASE_URL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
+  BASE_URL: "http://localhost:3000/api",
 
   // API Version
   VERSION: "v1",
