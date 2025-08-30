@@ -1,8 +1,8 @@
 // API Configuration Constants
 export const API_CONFIG = {
   // Base URL - change this to your actual API endpoint
-  // BASE_URL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
-  BASE_URL: "http://localhost:3000/api",
+  BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  // BASE_URL: "http://localhost:3000/api",
 
   // API Version
   VERSION: "v1",
@@ -167,6 +167,76 @@ export const API_ENDPOINTS = {
   PLOT_ALLOCATIONS: {
     BASE: "/plots/allocation",
     REALLOCATE: (id: string) => `/plots/reallocate/${id}`,
+  },
+
+  // Roles Management
+  ROLES: {
+    BASE: (companyId: string) => `/companies/${companyId}/roles`,
+    DETAILS: (companyId: string, roleId: string) =>
+      `/companies/${companyId}/roles/${roleId}`,
+    DEFAULT: (companyId: string) => `/companies/${companyId}/roles/default`,
+    TEMPLATES: (companyId: string) => `/companies/${companyId}/roles/templates`,
+    DUPLICATE: (companyId: string, roleId: string) =>
+      `/companies/${companyId}/roles/${roleId}/duplicate`,
+    PERMISSIONS: (companyId: string, roleId: string) =>
+      `/companies/${companyId}/roles/${roleId}/permissions`,
+    USAGE_STATS: (companyId: string, roleId: string) =>
+      `/companies/${companyId}/roles/${roleId}/usage-stats`,
+  },
+
+  // Team Members Management
+  TEAM_MEMBERS: {
+    BASE: (companyId: string) => `/companies/${companyId}/team-members`,
+    DETAILS: (companyId: string, memberId: string) =>
+      `/companies/${companyId}/team-members/${memberId}`,
+    INVITE: (companyId: string) =>
+      `/companies/${companyId}/team-members/invite`,
+    CHANGE_ROLE: (companyId: string, memberId: string) =>
+      `/companies/${companyId}/team-members/${memberId}/change-role`,
+    ACTIVATE: (companyId: string, memberId: string) =>
+      `/companies/${companyId}/team-members/${memberId}/activate`,
+    DEACTIVATE: (companyId: string, memberId: string) =>
+      `/companies/${companyId}/team-members/${memberId}/deactivate`,
+    RESEND_INVITATION: (companyId: string, memberId: string) =>
+      `/companies/${companyId}/team-members/${memberId}/resend-invitation`,
+    BULK_OPERATIONS: (companyId: string) =>
+      `/companies/${companyId}/team-members/bulk-operations`,
+    STATS: (companyId: string) => `/companies/${companyId}/team-members/stats`,
+    EXPORT: (companyId: string) =>
+      `/companies/${companyId}/team-members/export`,
+  },
+
+  // Activity Logs
+  ACTIVITY_LOGS: {
+    BASE: (companyId: string) => `/companies/${companyId}/activity-logs`,
+    SUMMARY: (companyId: string) =>
+      `/companies/${companyId}/activity-logs/summary`,
+    ANALYTICS: (companyId: string) =>
+      `/companies/${companyId}/activity-logs/analytics`,
+    EXPORT: (companyId: string) =>
+      `/companies/${companyId}/activity-logs/export`,
+    ALERTS: (companyId: string) =>
+      `/companies/${companyId}/activity-logs/alerts`,
+    RETENTION_POLICIES: (companyId: string) =>
+      `/companies/${companyId}/activity-logs/retention-policies`,
+  },
+
+  // Permission Validation
+  PERMISSIONS: {
+    VALIDATE: "/auth/validate-permissions",
+    USER_PERMISSIONS: "/auth/user-permissions",
+    MODULE_ACCESS: (module: string) => `/auth/module-access/${module}`,
+    BULK_VALIDATE: "/auth/bulk-validate-permissions",
+    PERMISSION_SUMMARY: "/auth/permission-summary",
+  },
+
+  // Role Assignment History
+  ROLE_ASSIGNMENTS: {
+    BASE: (companyId: string) => `/companies/${companyId}/role-assignments`,
+    HISTORY: (companyId: string, userId: string) =>
+      `/companies/${companyId}/role-assignments/${userId}/history`,
+    BULK_ASSIGN: (companyId: string) =>
+      `/companies/${companyId}/role-assignments/bulk-assign`,
   },
 };
 
