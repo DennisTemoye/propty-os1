@@ -26,6 +26,47 @@ import type {
 
 export class TeamMembersService {
   /**
+   * Check authentication status and debug info
+   */
+  static checkAuthStatus(): {
+    isAuthenticated: boolean;
+    hasToken: boolean;
+    tokenInfo?: {
+      length: number;
+      preview: string;
+    };
+    companyId?: string;
+  } {
+    const token = localStorage.getItem("accessToken");
+    const companyId =
+      localStorage.getItem("companyId") || localStorage.getItem("businessName");
+
+    const result: {
+      isAuthenticated: boolean;
+      hasToken: boolean;
+      tokenInfo?: {
+        length: number;
+        preview: string;
+      };
+      companyId?: string;
+    } = {
+      isAuthenticated: !!token,
+      hasToken: !!token,
+      companyId,
+    };
+
+    if (token) {
+      result.tokenInfo = {
+        length: token.length,
+        preview: token.substring(0, 20) + "...",
+      };
+    }
+
+    console.log("🔍 Auth Status Check:", result);
+    return result;
+  }
+
+  /**
    * Get all team members for a company
    */
   static async getTeamMembers(
@@ -33,6 +74,19 @@ export class TeamMembersService {
     options?: GetTeamMembersOptions
   ): Promise<TeamMember[]> {
     try {
+      // Check authentication status
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("Authentication required. Please log in to continue.");
+      }
+
+      console.log("🔐 Auth check:", {
+        hasToken: !!token,
+        tokenLength: token.length,
+        companyId,
+        endpoint: `${API_ENDPOINTS.TEAM_MEMBERS.BASE(companyId)}`,
+      });
+
       const queryParams = new URLSearchParams();
 
       if (options?.status) {
@@ -66,15 +120,37 @@ export class TeamMembersService {
       const endpoint = `${API_ENDPOINTS.TEAM_MEMBERS.BASE(
         companyId
       )}?${queryParams.toString()}`;
+
+      console.log("🚀 Making request to:", endpoint);
+
       const response = await apiService.get<TeamMember[]>(endpoint);
+      console.log("✅ Response received:", response);
 
       if (response.success && response.data) {
         return response.data;
       }
 
       throw new Error(response.message || "Failed to fetch team members");
-    } catch (error) {
-      console.error("Error fetching team members:", error);
+    } catch (error: any) {
+      console.error("❌ Error fetching team members:", {
+        error: error.message,
+        status: error.status,
+        errors: error.errors,
+        companyId,
+        options,
+      });
+
+      // Provide more specific error messages
+      if (error.status === 403) {
+        throw new Error(
+          "Access denied. You don't have permission to view team members for this company."
+        );
+      } else if (error.status === 401) {
+        throw new Error("Authentication failed. Please log in again.");
+      } else if (error.message?.includes("Authentication required")) {
+        throw error; // Re-throw our custom auth error
+      }
+
       throw error;
     }
   }
@@ -369,7 +445,7 @@ export class TeamMembersService {
       }
 
       const endpoint = `${API_ENDPOINTS.TEAM_MEMBERS.BASE(
-        filter.companyId
+        filter.businessName
       )}/search?${queryParams.toString()}`;
       const response = await apiService.get<TeamMemberSearchResult>(endpoint);
 

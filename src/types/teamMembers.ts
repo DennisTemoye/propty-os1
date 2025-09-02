@@ -1,12 +1,22 @@
 // Team Member Management Types for Teams and Roles Management
 
-import { RoleLevel } from './roles';
+import { RoleLevel } from "./roles";
 
 // Team member status
-export type MemberStatus = 'invited' | 'pending' | 'active' | 'inactive' | 'suspended';
+export type MemberStatus =
+  | "invited"
+  | "pending"
+  | "active"
+  | "inactive"
+  | "suspended";
 
 // Team member invitation status
-export type InvitationStatus = 'sent' | 'accepted' | 'expired' | 'cancelled' | 'declined';
+export type InvitationStatus =
+  | "sent"
+  | "accepted"
+  | "expired"
+  | "cancelled"
+  | "declined";
 
 // Base team member interface
 export interface TeamMember {
@@ -19,7 +29,7 @@ export interface TeamMember {
   roleName?: string;
   roleLevel?: RoleLevel;
   status: MemberStatus;
-  companyId: string;
+  businessName: string;
   invitedAt: string;
   acceptedAt?: string;
   lastLogin?: string;
@@ -65,14 +75,20 @@ export interface GetTeamMembersOptions {
   search?: string;
   page?: number;
   limit?: number;
-  sortBy?: 'firstName' | 'lastName' | 'email' | 'status' | 'lastLogin' | 'createdAt';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?:
+    | "firstName"
+    | "lastName"
+    | "email"
+    | "status"
+    | "lastLogin"
+    | "createdAt";
+  sortOrder?: "asc" | "desc";
   includeInactive?: boolean;
 }
 
 // Team member filter criteria
 export interface TeamMemberFilter {
-  companyId: string;
+  businessName: string;
   status?: MemberStatus;
   roleId?: string;
   search?: string;
@@ -130,7 +146,12 @@ export interface RoleChangeHistory {
 // Team member bulk operations
 export interface BulkTeamMemberOperation {
   memberIds: string[];
-  operation: 'activate' | 'deactivate' | 'changeRole' | 'resendInvitation' | 'delete';
+  operation:
+    | "activate"
+    | "deactivate"
+    | "changeRole"
+    | "resendInvitation"
+    | "delete";
   data?: {
     roleId?: string;
     reason?: string;
@@ -184,7 +205,12 @@ export interface TeamMemberPermissionsSummary {
 // Team member onboarding status
 export interface OnboardingStatus {
   memberId: string;
-  step: 'invited' | 'accepted' | 'profile_completed' | 'training_completed' | 'fully_onboarded';
+  step:
+    | "invited"
+    | "accepted"
+    | "profile_completed"
+    | "training_completed"
+    | "fully_onboarded";
   completedAt?: string;
   nextStep?: string;
   progress: number; // 0-100
@@ -195,11 +221,11 @@ export interface AccessReport {
   memberId: string;
   memberName: string;
   roleName: string;
-  accessLevel: 'full' | 'limited' | 'restricted';
+  accessLevel: "full" | "limited" | "restricted";
   sensitiveModules: string[];
   lastAccess: string;
   accessCount: number;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
 }
 
 // Team member export data
@@ -232,31 +258,5 @@ export interface TeamMemberSearchSuggestion {
   email: string;
   role: string;
   status: MemberStatus;
-  matchType: 'exact' | 'partial' | 'fuzzy';
+  matchType: "exact" | "partial" | "fuzzy";
 }
-
-// Export all team member-related types
-export type {
-  MemberStatus,
-  InvitationStatus,
-  TeamMember,
-  InviteTeamMemberData,
-  UpdateTeamMemberData,
-  TeamMemberWithMetadata,
-  GetTeamMembersOptions,
-  TeamMemberFilter,
-  TeamMemberSearchResult,
-  TeamMemberInvitation,
-  ChangeRoleData,
-  RoleChangeHistory,
-  BulkTeamMemberOperation,
-  TeamMemberStats,
-  TeamMemberActivity,
-  TeamMemberPermissionsSummary,
-  OnboardingStatus,
-  AccessReport,
-  TeamMemberExportData,
-  TeamMemberImportValidation,
-  TeamMemberSearchSuggestion,
-};
-

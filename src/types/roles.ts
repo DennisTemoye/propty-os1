@@ -1,12 +1,12 @@
 // Role Management Types for Teams and Roles Management
 
-import { ModulePermissions } from './permissions';
+import { ModulePermissions } from "./permissions";
 
 // Role level hierarchy
-export type RoleLevel = 'admin' | 'manager' | 'user' | 'custom';
+export type RoleLevel = "admin" | "manager" | "user" | "custom";
 
 // Role status
-export type RoleStatus = 'active' | 'inactive' | 'archived';
+export type RoleStatus = "active" | "inactive" | "archived";
 
 // Base role interface
 export interface Role {
@@ -15,7 +15,7 @@ export interface Role {
   description: string;
   level: RoleLevel;
   permissions: ModulePermissions;
-  companyId: string;
+  businessName: string;
   isDefault: boolean;
   isActive: boolean;
   createdAt: string;
@@ -58,13 +58,13 @@ export interface GetRolesOptions {
   search?: string;
   page?: number;
   limit?: number;
-  sortBy?: 'name' | 'level' | 'createdAt' | 'updatedAt';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "name" | "level" | "createdAt" | "updatedAt";
+  sortOrder?: "asc" | "desc";
 }
 
 // Role filter criteria
 export interface RoleFilter {
-  companyId: string;
+  businessName: string;
   isActive?: boolean;
   isDefault?: boolean;
   level?: RoleLevel;
@@ -91,7 +91,7 @@ export interface RoleTemplate {
   level: RoleLevel;
   permissions: ModulePermissions;
   isDefault: boolean;
-  category: 'business' | 'technical' | 'custom';
+  category: "business" | "technical" | "custom";
   companyId?: string; // undefined for global templates
 }
 
@@ -228,4 +228,3 @@ export type {
   DefaultRoleConfig,
   RolePermissionSummary,
 };
-

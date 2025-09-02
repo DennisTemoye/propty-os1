@@ -1,282 +1,385 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, Shield, Plus, Activity, Edit, Trash2, UserPlus } from 'lucide-react';
-import { CreateRoleModal } from './roles/CreateRoleModal';
-import { EditRoleModal } from './roles/EditRoleModal';
-import { InviteUserModal } from './roles/InviteUserModal';
-import { ActivityLogs } from './roles/ActivityLogs';
-import { toast } from 'sonner';
-
-interface Role {
-  id: number;
-  name: string;
-  description: string;
-  userCount: number;
-  permissions: any;
-  level: string;
-}
-
-interface TeamMember {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  roleId?: number;
-  status: string;
-  lastLogin?: string;
-  invitedAt?: string;
-}
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Users,
+  Shield,
+  Plus,
+  Activity,
+  Edit,
+  Trash2,
+  UserPlus,
+  Loader2,
+} from "lucide-react";
+import { CreateRoleModal } from "./roles/CreateRoleModal";
+import { EditRoleModal } from "./roles/EditRoleModal";
+import { InviteUserModal } from "./roles/InviteUserModal";
+import { ActivityLogs } from "./roles/ActivityLogs";
+import { toast } from "sonner";
+import { useRoles } from "@/hooks/useRoles";
+import { useTeamMembers } from "@/hooks/useTeamMembers";
+import { usePermissions } from "@/hooks/usePermissions";
+import type { Role, TeamMember } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import { AuthService } from "@/services/authService";
 
 export function TeamRoles() {
-  const [roles, setRoles] = useState<Role[]>([
-    {
-      id: 1,
-      name: 'Super Admin',
-      description: 'Full system access with all permissions',
-      userCount: 2,
-      permissions: {},
-      level: 'admin'
-    },
-    {
-      id: 2,
-      name: 'Project Manager',
-      description: 'Manage projects, units, and client assignments',
-      userCount: 5,
-      permissions: {},
-      level: 'manager'
-    },
-    {
-      id: 3,
-      name: 'Sales Agent',
-      description: 'View and manage assigned clients and properties',
-      userCount: 12,
-      permissions: {},
-      level: 'user'
-    }
-  ]);
+  const {
+    data: user,
+    isLoading: userLoading,
+    error: userError,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => AuthService.getMe(),
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { id: 1, name: 'John Manager', email: 'john@proptyos.com', role: 'Project Manager', roleId: 2, status: 'active', lastLogin: '2 hours ago' },
-    { id: 2, name: 'Sarah Sales', email: 'sarah@proptyos.com', role: 'Sales Agent', roleId: 3, status: 'active', lastLogin: '1 day ago' },
-    { id: 3, name: 'Mike Finance', email: 'mike@proptyos.com', role: 'Sales Agent', roleId: 3, status: 'pending', invitedAt: '2 days ago' }
-  ]);
+  // Get business name from user data (fallback to localStorage if needed)
+  const businessName =
+    user?.data?.companyId ||
+    (() => {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        return storedUser.companyId || storedUser.businessName;
+      } catch {
+        return null;
+      }
+    })();
+
+  console.log("businessName", businessName);
+  console.log("user", user?.data);
+
+  // Use real hooks with business name (only when businessName is available)
+  const {
+    roles,
+    selectedRole,
+    isLoading: rolesLoading,
+    error: rolesError,
+    createRole,
+    updateRole,
+    deleteRole,
+    selectRole,
+    clearSelection,
+    refreshRoles,
+  } = useRoles({ businessName: businessName || "" });
+  console.log("roles", roles);
+  const {
+    teamMembers,
+    selectedMember,
+    isLoading: membersLoading,
+    error: membersError,
+    inviteMember,
+    updateMember,
+    changeRole,
+    activateMember,
+    deactivateMember,
+    refreshTeamMembers,
+  } = useTeamMembers({ businessName: businessName || "" });
+
+  // Use real permissions hook
+  const { can, canCreate, canEdit, canDelete, isAdmin, isManager } =
+    usePermissions();
 
   const [editingRole, setEditingRole] = useState<Role | null>(null);
-  const [editModalOpen, setEditModalOpen] = useState(false);
 
-  const handleRoleCreated = (newRole: Role) => {
-    setRoles(prev => [...prev, newRole]);
-  };
-
-  const handleRoleUpdated = (updatedRole: Role) => {
-    setRoles(prev => prev.map(role => role.id === updatedRole.id ? updatedRole : role));
-  };
-
-  const handleDeleteRole = (roleId: number) => {
-    const role = roles.find(r => r.id === roleId);
-    if (role && role.userCount > 0) {
-      toast.error('Cannot delete role with assigned users');
-      return;
+  // Handle role creation
+  const handleRoleCreated = async (roleData: any) => {
+    try {
+      await createRole(roleData);
+      toast.success("Role created successfully");
+    } catch (error) {
+      toast.error("Failed to create role");
     }
-    setRoles(prev => prev.filter(role => role.id !== roleId));
-    toast.success('Role deleted successfully');
   };
 
+  // Handle role updates
+  const handleRoleUpdated = async (updatedRole: any) => {
+    try {
+      await updateRole(editingRole!.id, updatedRole);
+      setEditingRole(null);
+      toast.success("Role updated successfully");
+    } catch (error) {
+      toast.error("Failed to update role");
+    }
+  };
+
+  // Handle role deletion
+  const handleDeleteRole = async (roleId: string) => {
+    try {
+      // Check if role has assigned users
+      const roleWithUsers = roles.find((r) => r.id === roleId);
+      if (
+        roleWithUsers &&
+        teamMembers.some((member) => member.roleId === roleId)
+      ) {
+        toast.error("Cannot delete role with assigned users");
+        return;
+      }
+
+      await deleteRole(roleId);
+      toast.success("Role deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete role");
+    }
+  };
+
+  // Handle role editing
   const handleEditRole = (role: Role) => {
     setEditingRole(role);
-    setEditModalOpen(true);
   };
 
-  const handleUserInvited = (userData: TeamMember) => {
-    setTeamMembers(prev => [...prev, userData]);
-    // Update user count for the assigned role
-    if (userData.roleId) {
-      setRoles(prev => prev.map(role => 
-        role.id === userData.roleId 
-          ? { ...role, userCount: role.userCount + 1 }
-          : role
-      ));
+  // Handle user invitation
+  const handleUserInvited = async (userData: any) => {
+    try {
+      await inviteMember(userData);
+      toast.success("User invited successfully");
+    } catch (error) {
+      toast.error("Failed to invite user");
     }
   };
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'admin': return 'bg-red-100 text-red-800';
-      case 'manager': return 'bg-blue-100 text-blue-800';
-      case 'user': return 'bg-green-100 text-green-800';
-      case 'custom': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+  // Handle role change for team member
+  const handleRoleChange = async (memberId: string, newRoleId: string) => {
+    try {
+      await changeRole(memberId, newRoleId);
+      toast.success("Role changed successfully");
+    } catch (error) {
+      toast.error("Failed to change role");
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'inactive': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+  // Handle member activation/deactivation
+  const handleMemberStatusChange = async (
+    memberId: string,
+    activate: boolean
+  ) => {
+    try {
+      if (activate) {
+        await activateMember(memberId);
+        toast.success("Member activated successfully");
+      } else {
+        await deactivateMember(memberId);
+        toast.success("Member deactivated successfully");
+      }
+    } catch (error) {
+      toast.error(`Failed to ${activate ? "activate" : "deactivate"} member`);
     }
   };
+
+  // Error handling
+  useEffect(() => {
+    if (userError) {
+      toast.error(
+        `Authentication error: ${
+          userError.message || "Failed to get user data"
+        }`
+      );
+    }
+  }, [userError]);
+
+  useEffect(() => {
+    if (rolesError) {
+      toast.error(`Roles error: ${rolesError}`);
+    }
+  }, [rolesError]);
+
+  useEffect(() => {
+    if (membersError) {
+      toast.error(`Team members error: ${membersError}`);
+    }
+  }, [membersError]);
+
+  // Loading states
+  const isLoading =
+    userLoading || rolesLoading || membersLoading || !businessName;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading team and roles...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Team & Roles</h1>
-          <p className="text-gray-600 mt-1">Manage team members and role-based permissions</p>
+          <h1 className="text-3xl font-bold tracking-tight">Team & Roles</h1>
+          <p className="text-muted-foreground">
+            Manage your team members and their access permissions
+          </p>
         </div>
-        <div className="flex space-x-2">
-          <InviteUserModal roles={roles} onUserInvited={handleUserInvited} />
-          <CreateRoleModal onRoleCreated={handleRoleCreated} />
+        <div className="flex gap-2">
+          {canCreate("settings") && (
+            <CreateRoleModal onRoleCreated={handleRoleCreated} />
+          )}
+          {canCreate("settings") && (
+            <InviteUserModal roles={roles} onUserInvited={handleUserInvited} />
+          )}
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-blue-600">{teamMembers.length}</div>
-                <div className="text-sm text-gray-500">Total Team Members</div>
-              </div>
-              <Users className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-green-600">{roles.length}</div>
-                <div className="text-sm text-gray-500">Total Roles</div>
-              </div>
-              <Shield className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-orange-600">{teamMembers.filter(m => m.status === 'pending').length}</div>
-                <div className="text-sm text-gray-500">Pending Invitations</div>
-              </div>
-              <UserPlus className="h-8 w-8 text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="roles" className="space-y-6">
+      <Tabs defaultValue="roles" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="roles">Roles Management</TabsTrigger>
-          <TabsTrigger value="members">Team Members</TabsTrigger>
-          <TabsTrigger value="logs">Activity Logs</TabsTrigger>
+          <TabsTrigger value="roles" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Roles ({roles.length})
+          </TabsTrigger>
+          <TabsTrigger value="members" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Team Members ({teamMembers.length})
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Activity Logs
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="roles">
-          <Card>
-            <CardHeader>
-              <CardTitle>Roles & Permissions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                  {roles.map((role) => (
-                  <div key={role.id} className="p-6 border border-border rounded-xl hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-gray-50 to-white">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h4 className="font-medium flex items-center">
-                          <Shield className="h-4 w-4 mr-2 text-blue-600" />
-                          {role.name}
-                        </h4>
-                        <p className="text-sm text-gray-600 mt-1">{role.description}</p>
+        <TabsContent value="roles" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {roles.map((role) => (
+              <Card key={role.id} className="relative">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">{role.name}</CardTitle>
+                    <Badge
+                      variant={
+                        role.level === "admin"
+                          ? "destructive"
+                          : role.level === "manager"
+                          ? "default"
+                          : "secondary"
+                      }
+                    >
+                      {role.level}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {role.description}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      {
+                        teamMembers.filter(
+                          (member) => member.roleId === role.id
+                        ).length
+                      }{" "}
+                      users
+                    </span>
+                    <div className="flex gap-1">
+                      {canEdit("settings") && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditRole(role)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {canDelete("settings") && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteRole(role.id)}
+                          disabled={teamMembers.some(
+                            (member) => member.roleId === role.id
+                          )}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        {/* <TabsContent value="members" className="space-y-4">
+          <div className="space-y-4">
+            {teamMembers.map((member) => (
+              <Card key={member.id}>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                        <Users className="h-5 w-5" />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={getLevelColor(role.level)}>
-                          {role.level}
-                        </Badge>
-                        <div className="flex gap-1">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            className="hover:bg-primary/5 hover:border-primary/20 transition-all duration-200"
-                            onClick={() => handleEditRole(role)}
+                      <div>
+                        <p className="font-medium">
+                          {member.firstName} {member.lastName}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {member.email}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge
+                            variant={
+                              member.status === "active"
+                                ? "default"
+                                : member.status === "pending"
+                                ? "secondary"
+                                : "destructive"
+                            }
                           >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            className="hover:bg-destructive/10 hover:border-destructive/20 hover:text-destructive transition-all duration-200"
-                            onClick={() => handleDeleteRole(role.id)}
-                            disabled={role.userCount > 0}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                            {member.status}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {roles.find((r) => r.id === member.roleId)?.name ||
+                              "No role"}
+                          </span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center text-gray-500">
-                        <Users className="h-4 w-4 mr-1" />
-                        {role.userCount} users assigned
-                      </div>
+                    <div className="flex gap-2">
+                      {canEdit("settings") && member.status === "pending" && (
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            handleMemberStatusChange(member.id, true)
+                          }
+                        >
+                          Activate
+                        </Button>
+                      )}
+                      {canEdit("settings") && member.status === "active" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            handleMemberStatusChange(member.id, false)
+                          }
+                        >
+                          Deactivate
+                        </Button>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent> */}
 
-        <TabsContent value="members">
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Members</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {teamMembers.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between p-6 border border-border rounded-xl hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-gray-50 to-white">
-                    <div>
-                      <h4 className="font-medium">{member.name}</h4>
-                      <p className="text-sm text-gray-600">{member.email}</p>
-                      <p className="text-xs text-gray-500">
-                        {member.status === 'active' ? `Last login: ${member.lastLogin}` : `Invited: ${member.invitedAt}`}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <Badge variant="outline" className="mb-2">
-                        {member.role}
-                      </Badge>
-                      <br />
-                      <Badge className={getStatusColor(member.status)}>
-                        {member.status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="logs">
+        {/* <TabsContent value="activity" className="space-y-4">
           <ActivityLogs />
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
 
+      {/* Edit Role Modal */}
       {editingRole && (
         <EditRoleModal
           role={editingRole}
-          open={editModalOpen}
-          onOpenChange={setEditModalOpen}
+          open={!!editingRole}
+          onOpenChange={(open) => !open && setEditingRole(null)}
           onRoleUpdated={handleRoleUpdated}
         />
       )}

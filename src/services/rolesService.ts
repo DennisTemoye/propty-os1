@@ -1,7 +1,7 @@
 // Roles Service for Teams and Roles Management
 
-import { apiService } from './api';
-import { API_ENDPOINTS } from '@/constants/api';
+import { apiService } from "./api";
+import { API_ENDPOINTS } from "@/constants/api";
 import type {
   Role,
   CreateRoleData,
@@ -20,54 +20,85 @@ import type {
   RoleImportValidation,
   DefaultRoleConfig,
   RolePermissionSummary,
-} from '@/types/roles';
+} from "@/types/roles";
 
 export class RolesService {
   /**
    * Get all roles for a company
    */
   static async getRoles(
-    companyId: string,
+    businessName: string,
     options?: GetRolesOptions
   ): Promise<Role[]> {
     try {
       const queryParams = new URLSearchParams();
-      
+
       if (options?.includeInactive !== undefined) {
-        queryParams.append('includeInactive', options.includeInactive.toString());
+        queryParams.append(
+          "includeInactive",
+          options.includeInactive.toString()
+        );
       }
       if (options?.includeDefault !== undefined) {
-        queryParams.append('includeDefault', options.includeDefault.toString());
+        queryParams.append("includeDefault", options.includeDefault.toString());
       }
       if (options?.level) {
-        queryParams.append('level', options.level);
+        queryParams.append("level", options.level);
       }
       if (options?.search) {
-        queryParams.append('search', options.search);
+        queryParams.append("search", options.search);
       }
       if (options?.page) {
-        queryParams.append('page', options.page.toString());
+        queryParams.append("page", options.page.toString());
       }
       if (options?.limit) {
-        queryParams.append('limit', options.limit.toString());
+        queryParams.append("limit", options.limit.toString());
       }
       if (options?.sortBy) {
-        queryParams.append('sortBy', options.sortBy);
+        queryParams.append("sortBy", options.sortBy);
       }
       if (options?.sortOrder) {
-        queryParams.append('sortOrder', options.sortOrder);
+        queryParams.append("sortOrder", options.sortOrder);
       }
 
-      const endpoint = `${API_ENDPOINTS.ROLES.BASE(companyId)}?${queryParams.toString()}`;
-      const response = await apiService.get<Role[]>(endpoint);
-      
-      if (response.success && response.data) {
-        return response.data;
+      const endpoint = `${API_ENDPOINTS.ROLES.BASE(
+        businessName
+      )}?${queryParams.toString()}`;
+
+      try {
+        const response = await apiService.get<Role[]>(endpoint);
+        console.log("response", response);
+        if (response.success && response.data) {
+          return response.data;
+        }
+
+        throw new Error(response.message || "Failed to fetch roles");
+      } catch (error: any) {
+        // If it's a 403 error, try to refresh token and retry once
+        if (error.status === 403 && !(error as any)._retry) {
+          console.log(
+            "🚫 Permission denied, attempting authentication refresh and retry..."
+          );
+          (error as any)._retry = true;
+
+          // Import and use the auth debug utility to fix auth issues
+          const { AuthDebugger } = await import("@/utils/authDebug");
+          const authFixed = await AuthDebugger.autoFixAuthIssues();
+
+          if (authFixed) {
+            // Retry the request
+            const retryResponse = await apiService.get<Role[]>(endpoint);
+            if (retryResponse.success && retryResponse.data) {
+              console.log("✅ Retry successful after authentication fix");
+              return retryResponse.data;
+            }
+          }
+        }
+
+        throw error;
       }
-      
-      throw new Error(response.message || 'Failed to fetch roles');
     } catch (error) {
-      console.error('Error fetching roles:', error);
+      console.error("Error fetching roles:", error);
       throw error;
     }
   }
@@ -77,23 +108,26 @@ export class RolesService {
    */
   static async getRoleById(
     roleId: string,
-    companyId: string
+    businessName: string
   ): Promise<Role | null> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.DETAILS(companyId, roleId);
+      const endpoint = API_ENDPOINTS.ROLES.DETAILS(businessName, roleId);
       const response = await apiService.get<Role>(endpoint);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      if (response.success === false && response.message?.includes('not found')) {
+
+      if (
+        response.success === false &&
+        response.message?.includes("not found")
+      ) {
         return null;
       }
-      
-      throw new Error(response.message || 'Failed to fetch role');
+
+      throw new Error(response.message || "Failed to fetch role");
     } catch (error) {
-      console.error('Error fetching role:', error);
+      console.error("Error fetching role:", error);
       throw error;
     }
   }
@@ -103,19 +137,19 @@ export class RolesService {
    */
   static async createRole(
     roleData: CreateRoleData,
-    companyId: string
+    businessName: string
   ): Promise<Role> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.BASE(companyId);
+      const endpoint = API_ENDPOINTS.ROLES.BASE(businessName);
       const response = await apiService.post<Role>(endpoint, roleData);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to create role');
+
+      throw new Error(response.message || "Failed to create role");
     } catch (error) {
-      console.error('Error creating role:', error);
+      console.error("Error creating role:", error);
       throw error;
     }
   }
@@ -126,19 +160,19 @@ export class RolesService {
   static async updateRole(
     roleId: string,
     updates: UpdateRoleData,
-    companyId: string
+    businessName: string
   ): Promise<Role> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.DETAILS(companyId, roleId);
+      const endpoint = API_ENDPOINTS.ROLES.DETAILS(businessName, roleId);
       const response = await apiService.put<Role>(endpoint, updates);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to update role');
+
+      throw new Error(response.message || "Failed to update role");
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error("Error updating role:", error);
       throw error;
     }
   }
@@ -146,19 +180,16 @@ export class RolesService {
   /**
    * Delete a role
    */
-  static async deleteRole(
-    roleId: string,
-    companyId: string
-  ): Promise<void> {
+  static async deleteRole(roleId: string, businessName: string): Promise<void> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.DETAILS(companyId, roleId);
+      const endpoint = API_ENDPOINTS.ROLES.DETAILS(businessName, roleId);
       const response = await apiService.delete(endpoint);
-      
+
       if (!response.success) {
-        throw new Error(response.message || 'Failed to delete role');
+        throw new Error(response.message || "Failed to delete role");
       }
     } catch (error) {
-      console.error('Error deleting role:', error);
+      console.error("Error deleting role:", error);
       throw error;
     }
   }
@@ -166,18 +197,18 @@ export class RolesService {
   /**
    * Get default roles for a company
    */
-  static async getDefaultRoles(companyId: string): Promise<Role[]> {
+  static async getDefaultRoles(businessName: string): Promise<Role[]> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.DEFAULT(companyId);
+      const endpoint = API_ENDPOINTS.ROLES.DEFAULT(businessName);
       const response = await apiService.get<Role[]>(endpoint);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to fetch default roles');
+
+      throw new Error(response.message || "Failed to fetch default roles");
     } catch (error) {
-      console.error('Error fetching default roles:', error);
+      console.error("Error fetching default roles:", error);
       throw error;
     }
   }
@@ -185,18 +216,18 @@ export class RolesService {
   /**
    * Get role templates
    */
-  static async getRoleTemplates(companyId: string): Promise<RoleTemplate[]> {
+  static async getRoleTemplates(businessName: string): Promise<RoleTemplate[]> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.TEMPLATES(companyId);
+      const endpoint = API_ENDPOINTS.ROLES.TEMPLATES(businessName);
       const response = await apiService.get<RoleTemplate[]>(endpoint);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to fetch role templates');
+
+      throw new Error(response.message || "Failed to fetch role templates");
     } catch (error) {
-      console.error('Error fetching role templates:', error);
+      console.error("Error fetching role templates:", error);
       throw error;
     }
   }
@@ -206,19 +237,22 @@ export class RolesService {
    */
   static async duplicateRole(
     duplicateData: DuplicateRoleData,
-    companyId: string
+    businessName: string
   ): Promise<Role> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.DUPLICATE(companyId, duplicateData.sourceRoleId);
+      const endpoint = API_ENDPOINTS.ROLES.DUPLICATE(
+        businessName,
+        duplicateData.sourceRoleId
+      );
       const response = await apiService.post<Role>(endpoint, duplicateData);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to duplicate role');
+
+      throw new Error(response.message || "Failed to duplicate role");
     } catch (error) {
-      console.error('Error duplicating role:', error);
+      console.error("Error duplicating role:", error);
       throw error;
     }
   }
@@ -229,19 +263,19 @@ export class RolesService {
   static async updateRolePermissions(
     roleId: string,
     permissions: any,
-    companyId: string
+    businessName: string
   ): Promise<Role> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.PERMISSIONS(companyId, roleId);
+      const endpoint = API_ENDPOINTS.ROLES.PERMISSIONS(businessName, roleId);
       const response = await apiService.put<Role>(endpoint, { permissions });
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to update role permissions');
+
+      throw new Error(response.message || "Failed to update role permissions");
     } catch (error) {
-      console.error('Error updating role permissions:', error);
+      console.error("Error updating role permissions:", error);
       throw error;
     }
   }
@@ -251,19 +285,19 @@ export class RolesService {
    */
   static async getRoleUsageStats(
     roleId: string,
-    companyId: string
+    businessName: string
   ): Promise<RoleUsageStats> {
     try {
-      const endpoint = API_ENDPOINTS.ROLES.USAGE_STATS(companyId, roleId);
+      const endpoint = API_ENDPOINTS.ROLES.USAGE_STATS(businessName);
       const response = await apiService.get<RoleUsageStats>(endpoint);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to fetch role usage stats');
+
+      throw new Error(response.message || "Failed to fetch role usage stats");
     } catch (error) {
-      console.error('Error fetching role usage stats:', error);
+      console.error("Error fetching role usage stats:", error);
       throw error;
     }
   }
@@ -277,18 +311,18 @@ export class RolesService {
   ): Promise<RoleSearchResult> {
     try {
       const queryParams = new URLSearchParams();
-      
+
       // Add filter parameters
       Object.entries(filter).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           if (Array.isArray(value)) {
-            value.forEach(v => queryParams.append(key, v));
+            value.forEach((v) => queryParams.append(key, v));
           } else {
             queryParams.append(key, value.toString());
           }
         }
       });
-      
+
       // Add options parameters
       if (options) {
         Object.entries(options).forEach(([key, value]) => {
@@ -298,16 +332,18 @@ export class RolesService {
         });
       }
 
-      const endpoint = `${API_ENDPOINTS.ROLES.BASE(filter.companyId)}/search?${queryParams.toString()}`;
+      const endpoint = `${API_ENDPOINTS.ROLES.BASE(
+        filter.businessName
+      )}/search?${queryParams.toString()}`;
       const response = await apiService.get<RoleSearchResult>(endpoint);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to search roles');
+
+      throw new Error(response.message || "Failed to search roles");
     } catch (error) {
-      console.error('Error searching roles:', error);
+      console.error("Error searching roles:", error);
       throw error;
     }
   }
@@ -315,27 +351,36 @@ export class RolesService {
   /**
    * Validate role data
    */
-  static async validateRole(roleData: CreateRoleData | UpdateRoleData): Promise<RoleValidationResult> {
+  static async validateRole(
+    roleData: CreateRoleData | UpdateRoleData
+  ): Promise<RoleValidationResult> {
     try {
       // Basic validation logic
       const errors: string[] = [];
       const warnings: string[] = [];
       const suggestions: string[] = [];
 
-      if ('name' in roleData && (!roleData.name || roleData.name.trim().length === 0)) {
-        errors.push('Role name is required');
+      if (
+        "name" in roleData &&
+        (!roleData.name || roleData.name.trim().length === 0)
+      ) {
+        errors.push("Role name is required");
       }
 
-      if ('name' in roleData && roleData.name && roleData.name.length > 100) {
-        errors.push('Role name must be less than 100 characters');
+      if ("name" in roleData && roleData.name && roleData.name.length > 100) {
+        errors.push("Role name must be less than 100 characters");
       }
 
-      if ('description' in roleData && roleData.description && roleData.description.length > 500) {
-        warnings.push('Role description is quite long');
+      if (
+        "description" in roleData &&
+        roleData.description &&
+        roleData.description.length > 500
+      ) {
+        warnings.push("Role description is quite long");
       }
 
-      if ('level' in roleData && roleData.level === 'admin') {
-        suggestions.push('Admin roles should have comprehensive permissions');
+      if ("level" in roleData && roleData.level === "admin") {
+        suggestions.push("Admin roles should have comprehensive permissions");
       }
 
       return {
@@ -345,10 +390,10 @@ export class RolesService {
         suggestions,
       };
     } catch (error) {
-      console.error('Error validating role:', error);
+      console.error("Error validating role:", error);
       return {
         isValid: false,
-        errors: ['Validation failed due to system error'],
+        errors: ["Validation failed due to system error"],
         warnings: [],
         suggestions: [],
       };
@@ -359,20 +404,22 @@ export class RolesService {
    * Export roles data
    */
   static async exportRoles(
-    companyId: string,
-    format: 'json' | 'csv' = 'json'
+    businessName: string,
+    format: "json" | "csv" = "json"
   ): Promise<RoleExportData> {
     try {
-      const endpoint = `${API_ENDPOINTS.ROLES.BASE(companyId)}/export?format=${format}`;
+      const endpoint = `${API_ENDPOINTS.ROLES.BASE(
+        businessName
+      )}/export?format=${format}`;
       const response = await apiService.get<RoleExportData>(endpoint);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to export roles');
+
+      throw new Error(response.message || "Failed to export roles");
     } catch (error) {
-      console.error('Error exporting roles:', error);
+      console.error("Error exporting roles:", error);
       throw error;
     }
   }
@@ -380,20 +427,21 @@ export class RolesService {
   /**
    * Initialize default roles for a company
    */
-  static async initializeDefaultRoles(companyId: string): Promise<Role[]> {
+  static async initializeDefaultRoles(businessName: string): Promise<Role[]> {
     try {
-      const endpoint = `${API_ENDPOINTS.ROLES.BASE(companyId)}/initialize-defaults`;
+      const endpoint = `${API_ENDPOINTS.ROLES.BASE(
+        businessName
+      )}/initialize-defaults`;
       const response = await apiService.post<Role[]>(endpoint);
-      
+
       if (response.success && response.data) {
         return response.data;
       }
-      
-      throw new Error(response.message || 'Failed to initialize default roles');
+
+      throw new Error(response.message || "Failed to initialize default roles");
     } catch (error) {
-      console.error('Error initializing default roles:', error);
+      console.error("Error initializing default roles:", error);
       throw error;
     }
   }
 }
-

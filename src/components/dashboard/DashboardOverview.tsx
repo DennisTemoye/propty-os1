@@ -58,6 +58,7 @@ import { useResponsive } from "@/hooks/use-responsive";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { DashboardService } from "@/services/dashboardService";
+import { formatCurrencyKPI } from "@/utils/formatCurrency";
 
 // Types for dashboard data
 interface DashboardData {
@@ -146,16 +147,7 @@ export function DashboardOverview() {
   }, []);
 
   // Format currency helper
-  const formatCurrency = (amount: number) => {
-    if (amount >= 1000000000) {
-      return `₦${(amount / 1000000000).toFixed(1)}B`;
-    } else if (amount >= 1000000) {
-      return `₦${(amount / 1000000).toFixed(1)}M`;
-    } else if (amount >= 1000) {
-      return `₦${(amount / 1000).toFixed(1)}K`;
-    }
-    return `₦${amount}`;
-  };
+  const formatCurrency = formatCurrencyKPI;
 
   // KPI data with real data integration
   const kpiData = [

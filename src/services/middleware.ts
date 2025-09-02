@@ -163,13 +163,13 @@ export class ResponseMiddleware {
           // Unauthorized - redirect to login
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
-          window.location.href = "/login";
+          // window.location.href = "/login";
           break;
         case 403:
           toast.error(
             "Access denied. You do not have permission to perform this action."
           );
-          window.location.href = "/login";
+          // window.location.href = "/login";
           break;
         case 404:
           toast.error("Resource not found.");

@@ -1,8 +1,7 @@
 // API Configuration Constants
 export const API_CONFIG = {
   // Base URL - change this to your actual API endpoint
-  BASE_URL: import.meta.env.VITE_API_BASE_URL,
-  // BASE_URL: "http://localhost:3000/api",
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || "https://api.proptyos.com",
 
   // API Version
   VERSION: "v1",
@@ -19,6 +18,7 @@ export const API_CONFIG = {
 export const API_ENDPOINTS = {
   // Authentication
   AUTH: {
+    ME: "/auth/me",
     LOGIN: "/auth/login",
     REGISTER: "/auth/register",
     LOGOUT: "/auth/logout",
@@ -104,31 +104,61 @@ export const API_ENDPOINTS = {
     MONITORING: "/fees/monitoring",
   },
 
-  // Accounting
+  // Accounting Analytics
   ACCOUNTING: {
     BASE: "/accounting",
     INCOME: "/accounting/income",
     EXPENSES: "/accounting/expenses",
-    REPORTS: "/accounting/reports",
-    ANALYTICS: "/accounting/analytics",
+    ANALYTICS: {
+      INCOME_EXPENSES: "/accounting/analytics/income-expenses",
+      EXPENSE_BREAKDOWN: "/accounting/analytics/expense-breakdown",
+      CASH_FLOW: "/accounting/analytics/cash-flow",
+    },
+    REPORTS: {
+      SUMMARY: "/accounting/reports/summary",
+      EXPORT: "/accounting/reports/export",
+    },
   },
 
-  // Documents
+  // Document Management
   DOCUMENTS: {
     BASE: "/documents",
+    BY_ID: (id: string) => `/documents/${id}`,
     UPLOAD: "/documents/upload",
     DOWNLOAD: (id: string) => `/documents/${id}/download`,
-    DELETE: (id: string) => `/documents/${id}`,
+    METADATA: (id: string) => `/documents/${id}/metadata`,
+    SEARCH: "/documents/search",
+    CATEGORIES: {
+      BASE: "/documents/categories",
+      BY_ID: (id: string) => `/documents/categories/${id}`,
+    },
   },
 
-  // Reports
+  // Reports & Analytics
   REPORTS: {
     BASE: "/reports",
-    SALES: "/reports/sales",
-    FINANCIAL: "/reports/financial",
-    CLIENT: "/reports/client",
-    MARKETER: "/reports/marketer",
-    EXPORT: (type: string) => `/reports/${type}/export`,
+    SALES: {
+      GENERATE: "/reports/sales",
+      EXPORT: "/reports/sales/export",
+    },
+    COMMISSION: {
+      GENERATE: "/reports/commission",
+      EXPORT: "/reports/commission/export",
+    },
+    FINANCIAL: {
+      GENERATE: "/reports/financial",
+      EXPORT: "/reports/financial/export",
+    },
+    PROJECTS: "/reports/projects",
+    CLIENTS: "/reports/clients",
+    TEMPLATES: {
+      BASE: "/reports/templates",
+      BY_TYPE: (type: string) => `/reports/templates?type=${type}`,
+      BY_ID: (id: string) => `/reports/templates/${id}`,
+    },
+    INSIGHTS: "/reports/insights",
+    EXPORT: "/reports/export",
+    DOWNLOAD: (exportId: string) => `/reports/download/${exportId}`,
   },
 
   // Notifications
@@ -139,13 +169,20 @@ export const API_ENDPOINTS = {
     TEMPLATES: "/notifications/templates",
   },
 
-  // CRM
+  // CRM Pipeline
   CRM: {
     BASE: "/crm",
-    PIPELINES: "/crm/pipelines",
-    LEADS: "/crm/leads",
-    DEALS: "/crm/deals",
-    CONTACTS: "/crm/contacts",
+    LEADS: {
+      BASE: "/crm/leads",
+      BY_ID: (id: string) => `/crm/leads/${id}`,
+      CONVERT: (id: string) => `/crm/leads/${id}/convert`,
+    },
+    PIPELINE: {
+      STAGES: "/crm/pipeline/stages",
+      STAGE_BY_ID: (id: string) => `/crm/pipeline/stages/${id}`,
+      REORDER: "/crm/pipeline/stages/reorder",
+      METRICS: "/crm/pipeline/metrics",
+    },
   },
 
   // Super Admin
@@ -158,9 +195,41 @@ export const API_ENDPOINTS = {
     GLOBAL_SETTINGS: "/super-admin/settings",
   },
 
+  // Calendar & Scheduling
+  CALENDAR: {
+    EVENTS: {
+      BASE: "/calendar/events",
+      BY_ID: (id: string) => `/calendar/events/${id}`,
+      STATUS: (id: string) => `/calendar/events/${id}/status`,
+    },
+    VIEW: "/calendar/view",
+    REMINDERS: {
+      BASE: "/calendar/reminders",
+      SENT: (id: string) => `/calendar/reminders/${id}/sent`,
+    },
+  },
+
   // Commissions
   COMMISSIONS: {
     BASE: "/commissions",
+  },
+
+  // Geographic Mapping
+  MAPS: {
+    UNITS: {
+      BASE: "/maps/units",
+      BY_ID: (id: string) => `/maps/units/${id}`,
+      COORDINATES: (id: string) => `/maps/units/${id}/coordinates`,
+      BULK_COORDINATES: "/maps/units/bulk-coordinates",
+      BY_LOCATION: "/maps/units",
+    },
+    LAYERS: {
+      BASE: "/maps/layers",
+      BY_ID: (id: string) => `/maps/layers/${id}`,
+    },
+    ANALYTICS: {
+      UNITS_BY_AREA: "/maps/analytics/units-by-area",
+    },
   },
 
   // Allocations
@@ -171,39 +240,42 @@ export const API_ENDPOINTS = {
 
   // Roles Management
   ROLES: {
-    BASE: (companyId: string) => `/companies/${companyId}/roles`,
-    DETAILS: (companyId: string, roleId: string) =>
-      `/companies/${companyId}/roles/${roleId}`,
-    DEFAULT: (companyId: string) => `/companies/${companyId}/roles/default`,
-    TEMPLATES: (companyId: string) => `/companies/${companyId}/roles/templates`,
-    DUPLICATE: (companyId: string, roleId: string) =>
-      `/companies/${companyId}/roles/${roleId}/duplicate`,
-    PERMISSIONS: (companyId: string, roleId: string) =>
-      `/companies/${companyId}/roles/${roleId}/permissions`,
-    USAGE_STATS: (companyId: string, roleId: string) =>
-      `/companies/${companyId}/roles/${roleId}/usage-stats`,
+    BASE: (businessName: string) => `/companies/${businessName}/roles`,
+    DETAILS: (businessName: string, roleId: string) =>
+      `/companies/${businessName}/roles/${roleId}`,
+    DEFAULT: (businessName: string) =>
+      `/companies/${businessName}/roles/default`,
+    TEMPLATES: (businessName: string) =>
+      `/companies/${businessName}/roles/templates`,
+    DUPLICATE: (businessName: string, roleId: string) =>
+      `/companies/${businessName}/roles/${roleId}/duplicate`,
+    PERMISSIONS: (businessName: string, roleId: string) =>
+      `/companies/${businessName}/roles/${roleId}/permissions`,
+    USAGE_STATS: (businessName: string) =>
+      `/companies/${businessName}/roles/usage-stats`,
   },
 
   // Team Members Management
   TEAM_MEMBERS: {
-    BASE: (companyId: string) => `/companies/${companyId}/team-members`,
-    DETAILS: (companyId: string, memberId: string) =>
-      `/companies/${companyId}/team-members/${memberId}`,
-    INVITE: (companyId: string) =>
-      `/companies/${companyId}/team-members/invite`,
-    CHANGE_ROLE: (companyId: string, memberId: string) =>
-      `/companies/${companyId}/team-members/${memberId}/change-role`,
-    ACTIVATE: (companyId: string, memberId: string) =>
-      `/companies/${companyId}/team-members/${memberId}/activate`,
-    DEACTIVATE: (companyId: string, memberId: string) =>
-      `/companies/${companyId}/team-members/${memberId}/deactivate`,
-    RESEND_INVITATION: (companyId: string, memberId: string) =>
-      `/companies/${companyId}/team-members/${memberId}/resend-invitation`,
-    BULK_OPERATIONS: (companyId: string) =>
-      `/companies/${companyId}/team-members/bulk-operations`,
-    STATS: (companyId: string) => `/companies/${companyId}/team-members/stats`,
-    EXPORT: (companyId: string) =>
-      `/companies/${companyId}/team-members/export`,
+    BASE: (businessName: string) => `/companies/${businessName}/team-members`,
+    DETAILS: (businessName: string, memberId: string) =>
+      `/companies/${businessName}/team-members/${memberId}`,
+    INVITE: (businessName: string) =>
+      `/companies/${businessName}/team-members/invite`,
+    CHANGE_ROLE: (businessName: string, memberId: string) =>
+      `/companies/${businessName}/team-members/${memberId}/change-role`,
+    ACTIVATE: (businessName: string, memberId: string) =>
+      `/companies/${businessName}/team-members/${memberId}/activate`,
+    DEACTIVATE: (businessName: string, memberId: string) =>
+      `/companies/${businessName}/team-members/${memberId}/deactivate`,
+    RESEND_INVITATION: (businessName: string, memberId: string) =>
+      `/companies/${businessName}/team-members/${memberId}/resend-invitation`,
+    BULK_OPERATIONS: (businessName: string) =>
+      `/companies/${businessName}/team-members/bulk-operations`,
+    STATS: (businessName: string) =>
+      `/companies/${businessName}/team-members/stats`,
+    EXPORT: (businessName: string) =>
+      `/companies/${businessName}/team-members/export`,
   },
 
   // Activity Logs
@@ -237,6 +309,25 @@ export const API_ENDPOINTS = {
       `/companies/${companyId}/role-assignments/${userId}/history`,
     BULK_ASSIGN: (companyId: string) =>
       `/companies/${companyId}/role-assignments/bulk-assign`,
+  },
+
+  // Export & Download
+  EXPORT: {
+    BASE: "/export",
+    REPORTS: "/export/reports",
+    DOCUMENTS: "/export/documents",
+    MAPS: "/export/maps",
+    ACCOUNTING: "/export/accounting",
+  },
+
+  // Webhooks
+  WEBHOOKS: {
+    BASE: "/webhooks",
+    LEAD_CREATED: "/webhooks/lead.created",
+    LEAD_STAGE_CHANGED: "/webhooks/lead.stage_changed",
+    EVENT_REMINDER: "/webhooks/event.reminder",
+    DOCUMENT_UPLOADED: "/webhooks/document.uploaded",
+    UNIT_COORDINATES_UPDATED: "/webhooks/unit.coordinates_updated",
   },
 };
 

@@ -13,6 +13,7 @@ import { Reports } from "@/components/dashboard/Reports";
 import { CRMPipelinesPage } from "@/components/dashboard/tools/CRMPipelines";
 import { DocumentManagerPage } from "@/components/dashboard/tools/DocumentManager";
 import { CalendarSchedulingPage } from "@/components/dashboard/tools/CalendarScheduling";
+import { AdvancedToolsTest } from "@/components/AdvancedToolsTest";
 import { SendNotice } from "@/components/dashboard/SendNotice";
 import { Settings } from "@/components/dashboard/Settings";
 import { ReferralProgram } from "@/components/dashboard/ReferralProgram";
@@ -99,6 +100,8 @@ const CompanyDashboard = () => {
       return <DocumentManagerPage />;
     } else if (path.startsWith("/company/tools/calendar")) {
       return <CalendarSchedulingPage />;
+    } else if (path.startsWith("/company/tools/advanced-test")) {
+      return <AdvancedToolsTest />;
     } else if (path.startsWith("/company/tools/send-notice")) {
       return <SendNotice />;
     } else if (path.startsWith("/company/settings")) {

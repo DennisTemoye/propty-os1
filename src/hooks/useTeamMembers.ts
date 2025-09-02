@@ -11,7 +11,7 @@ import type {
 } from "../types/teamMembers";
 
 interface UseTeamMembersOptions {
-  companyId: string;
+  businessName: string;
   autoFetch?: boolean;
 }
 
@@ -58,7 +58,7 @@ interface UseTeamMembersReturn {
 export function useTeamMembers(
   options: UseTeamMembersOptions
 ): UseTeamMembersReturn {
-  const { companyId, autoFetch = true } = options;
+  const { businessName, autoFetch = true } = options;
 
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
@@ -72,9 +72,10 @@ export function useTeamMembers(
         setError(null);
 
         const fetchedMembers = await TeamMembersService.getTeamMembers(
-          companyId,
+          businessName,
           filters
         );
+        console.log("fetchedMembers", fetchedMembers);
         setTeamMembers(fetchedMembers);
       } catch (err) {
         const errorMessage =
@@ -85,7 +86,7 @@ export function useTeamMembers(
         setIsLoading(false);
       }
     },
-    [companyId]
+    [businessName]
   );
 
   const searchTeamMembers = useCallback(
@@ -96,11 +97,10 @@ export function useTeamMembers(
       try {
         setError(null);
 
-        const searchResult = await TeamMembersService.searchTeamMembers({
-          search: query,
-          companyId,
-          ...filters,
-        });
+        const searchResult = await TeamMembersService.searchTeamMembers(
+          { ...filters, businessName },
+          { search: query }
+        );
 
         return searchResult;
       } catch (err) {
@@ -111,7 +111,7 @@ export function useTeamMembers(
         throw err;
       }
     },
-    [companyId]
+    [businessName]
   );
 
   const inviteMember = useCallback(
@@ -121,7 +121,7 @@ export function useTeamMembers(
 
         const newMember = await TeamMembersService.inviteTeamMember(
           inviteData,
-          companyId
+          businessName
         );
         setTeamMembers((prev) => [newMember, ...prev]);
         setSelectedMember(newMember);
@@ -135,7 +135,7 @@ export function useTeamMembers(
         throw err;
       }
     },
-    [companyId]
+    [businessName]
   );
 
   const updateMember = useCallback(
@@ -149,7 +149,7 @@ export function useTeamMembers(
         const updatedMember = await TeamMembersService.updateTeamMember(
           memberId,
           updates,
-          companyId
+          businessName
         );
         setTeamMembers((prev) =>
           prev.map((member) =>
@@ -170,7 +170,7 @@ export function useTeamMembers(
         throw err;
       }
     },
-    [companyId, selectedMember]
+    [businessName, selectedMember]
   );
 
   const changeRole = useCallback(
@@ -185,7 +185,7 @@ export function useTeamMembers(
         const updatedMember = await TeamMembersService.changeRole(
           memberId,
           roleId,
-          companyId,
+          businessName,
           reason
         );
         setTeamMembers((prev) =>
@@ -207,7 +207,7 @@ export function useTeamMembers(
         throw err;
       }
     },
-    [companyId, selectedMember]
+    [businessName, selectedMember]
   );
 
   const activateMember = useCallback(
@@ -217,7 +217,7 @@ export function useTeamMembers(
 
         const updatedMember = await TeamMembersService.activateMember(
           memberId,
-          companyId
+          businessName
         );
         setTeamMembers((prev) =>
           prev.map((member) =>
@@ -238,7 +238,7 @@ export function useTeamMembers(
         throw err;
       }
     },
-    [companyId, selectedMember]
+    [businessName, selectedMember]
   );
 
   const deactivateMember = useCallback(
@@ -248,7 +248,7 @@ export function useTeamMembers(
 
         const updatedMember = await TeamMembersService.deactivateMember(
           memberId,
-          companyId
+          businessName
         );
         setTeamMembers((prev) =>
           prev.map((member) =>
@@ -269,14 +269,14 @@ export function useTeamMembers(
         throw err;
       }
     },
-    [companyId, selectedMember]
+    [businessName, selectedMember]
   );
 
   const resendInvitation = useCallback(
     async (memberId: string): Promise<void> => {
       try {
         setError(null);
-        await TeamMembersService.resendInvitation(memberId, companyId);
+        await TeamMembersService.resendInvitation(memberId, businessName);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Failed to resend invitation";
@@ -285,7 +285,7 @@ export function useTeamMembers(
         throw err;
       }
     },
-    [companyId]
+    [businessName]
   );
 
   const selectMember = useCallback((member: TeamMember | null) => {
@@ -334,10 +334,10 @@ export function useTeamMembers(
   );
 
   useEffect(() => {
-    if (autoFetch && companyId) {
+    if (autoFetch && businessName) {
       fetchTeamMembers();
     }
-  }, [autoFetch, companyId, fetchTeamMembers]);
+  }, [autoFetch, businessName, fetchTeamMembers]);
 
   return {
     teamMembers,
@@ -364,13 +364,13 @@ export function useTeamMembers(
 /**
  * Hook for managing a single team member
  */
-export function useTeamMember(memberId: string, companyId: string) {
+export function useTeamMember(memberId: string, businessName: string) {
   const [member, setMember] = useState<TeamMember | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchMember = useCallback(async () => {
-    if (!memberId || !companyId) return;
+    if (!memberId || !businessName) return;
 
     try {
       setIsLoading(true);
@@ -378,7 +378,7 @@ export function useTeamMember(memberId: string, companyId: string) {
 
       const fetchedMember = await TeamMembersService.getTeamMemberById(
         memberId,
-        companyId
+        businessName
       );
       setMember(fetchedMember);
     } catch (err) {
@@ -389,11 +389,11 @@ export function useTeamMember(memberId: string, companyId: string) {
     } finally {
       setIsLoading(false);
     }
-  }, [memberId, companyId]);
+  }, [memberId, businessName]);
 
   const updateMember = useCallback(
     async (updates: UpdateTeamMemberData) => {
-      if (!memberId || !companyId)
+      if (!memberId || !businessName)
         throw new Error("Member ID and Company ID are required");
 
       try {
@@ -402,7 +402,7 @@ export function useTeamMember(memberId: string, companyId: string) {
         const updatedMember = await TeamMembersService.updateTeamMember(
           memberId,
           updates,
-          companyId
+          businessName
         );
         setMember(updatedMember);
 
@@ -415,12 +415,12 @@ export function useTeamMember(memberId: string, companyId: string) {
         throw err;
       }
     },
-    [memberId, companyId]
+    [memberId, businessName]
   );
 
   const changeRole = useCallback(
     async (roleId: string, reason?: string) => {
-      if (!memberId || !companyId)
+      if (!memberId || !businessName)
         throw new Error("Member ID and Company ID are required");
 
       try {
@@ -429,7 +429,7 @@ export function useTeamMember(memberId: string, companyId: string) {
         const updatedMember = await TeamMembersService.changeRole(
           memberId,
           roleId,
-          companyId,
+          businessName,
           reason
         );
         setMember(updatedMember);
@@ -443,7 +443,7 @@ export function useTeamMember(memberId: string, companyId: string) {
         throw err;
       }
     },
-    [memberId, companyId]
+    [memberId, businessName]
   );
 
   useEffect(() => {

@@ -110,6 +110,20 @@ export class AuthService {
       apiService.removeAuthToken();
     }
   }
+  // Get current user
+  static async getMe() {
+    try {
+      const response = await apiService.get<UserProfile>(API_ENDPOINTS.AUTH.ME);
+      if (response.success && response.data) {
+        // Store user data in localStorage for easy access
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
+      return response;
+    } catch (error) {
+      console.error("Error getting current user:", error);
+      throw error;
+    }
+  }
 
   // Refresh access token
   static async refreshToken() {

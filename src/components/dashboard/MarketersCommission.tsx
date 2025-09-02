@@ -48,6 +48,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { MarketerService } from "@/services/marketer";
 import { CommissionService } from "@/services/CommissionService";
+import {
+  formatCurrencyKPI,
+  formatCurrencyDisplay,
+} from "@/utils/formatCurrency";
 
 const mockMarketers = [
   {
@@ -360,7 +364,7 @@ export function MarketersCommission() {
     },
     {
       title: "Total Sales Volume",
-      value: `₦${(totalSalesVolume / 1000000).toFixed(1)}M`,
+      value: formatCurrencyKPI(totalSalesVolume),
       subtitle: "Total revenue",
       icon: DollarSign,
       color: "text-green-700",
@@ -369,7 +373,7 @@ export function MarketersCommission() {
     },
     {
       title: "Commission Paid",
-      value: `₦${(totalCommissionPaid / 1000).toFixed(0)}K`,
+      value: formatCurrencyKPI(totalCommissionPaid),
       subtitle: "This period",
       icon: CheckCircle,
       color: "text-blue-700",
@@ -378,7 +382,7 @@ export function MarketersCommission() {
     },
     {
       title: "Commission Pending",
-      value: `₦${(totalCommissionPending / 1000).toFixed(0)}K`,
+      value: formatCurrencyKPI(totalCommissionPending),
       subtitle: "Awaiting payment",
       icon: Clock,
       color: "text-amber-700",
@@ -1181,15 +1185,14 @@ export function MarketersCommission() {
                         </div>
                       </TableCell>
                       <TableCell className="font-medium">
-                        ₦{(commission.totalAmount || 0).toLocaleString()}
+                        {formatCurrencyDisplay(commission.totalAmount || 0)}
                       </TableCell>
                       <TableCell>
                         <div>
                           <div className="font-medium text-purple-600">
-                            ₦
-                            {(
+                            {formatCurrencyDisplay(
                               commission.commissionAmount || 0
-                            ).toLocaleString()}
+                            )}
                           </div>
                           <div className="text-xs text-gray-500">
                             {commission.commissionRate || 0}% (

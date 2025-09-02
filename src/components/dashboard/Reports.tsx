@@ -1,185 +1,196 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { FileText, Download, TrendingUp, Users, DollarSign, Calendar, Filter, Eye } from 'lucide-react';
-import { ReportExportActions } from './reports/ReportExportActions';
-import { ReportsGenerator } from './reports/ReportsGenerator';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  FileText,
+  Download,
+  TrendingUp,
+  Users,
+  DollarSign,
+  Calendar,
+  Filter,
+  Eye,
+  BarChart3,
+  TrendingDown,
+  Minus,
+} from "lucide-react";
+import { ReportExportActions } from "./reports/ReportExportActions";
+import { ReportsGenerator } from "./reports/ReportsGenerator";
+import { ReportFilters } from "./reports/ReportFilters";
+import { ReportInsights } from "./reports/ReportInsights";
+import { ReportTemplates } from "./reports/ReportTemplates";
+import { useReports } from "@/hooks/useReports";
+import { ReportService } from "@/services/reportService";
+import {
+  formatCurrencyKPI,
+  formatCurrencyDisplay,
+  formatCurrencyCompact,
+} from "@/utils/formatCurrency";
 
 export function Reports() {
-  const [activeTab, setActiveTab] = useState('sales');
-  
-  // Filter states
-  const [dateRange, setDateRange] = useState('this-month');
-  const [projectFilter, setProjectFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [marketerFilter, setMarketerFilter] = useState('all'); // New marketer filter
-  const [includeRevoked, setIncludeRevoked] = useState(true); // For revoked allocations
+  const [activeTab, setActiveTab] = useState("sales");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Mock data for sales reports with enhanced marketer integration
-  const salesData = [
-    {
-      id: 1,
-      clientName: 'John Doe',
-      project: 'Victoria Gardens',
-      unit: 'Block A - Plot 02',
-      amount: '₦25M',
-      status: 'allocated',
-      date: '2024-01-15',
-      marketer: 'Jane Smith',
-      commission: '₦625K',
-      commissionStatus: 'paid'
-    },
-    {
-      id: 2,
-      clientName: 'Sarah Johnson',
-      project: 'Emerald Heights',
-      unit: 'Block B - Plot 08',
-      amount: '₦30M',
-      status: 'allocated',
-      date: '2024-01-10',
-      marketer: 'Mike Davis',
-      commission: '₦900K',
-      commissionStatus: 'pending'
-    },
-    {
-      id: 3,
-      clientName: 'Robert Brown',
-      project: 'Victoria Gardens',
-      unit: 'Block C - Plot 15',
-      amount: '₦22M',
-      status: 'revoked',
-      date: '2024-01-05',
-      revokedDate: '2024-01-20',
-      revocationReason: 'Client financial constraints',
-      refundType: 'partial',
-      refundAmount: '₦8.8M',
-      marketer: 'Jane Smith',
-      commission: '₦0',
-      commissionStatus: 'cancelled'
-    },
-    {
-      id: 4,
-      clientName: 'Lisa Wilson',
-      project: 'Golden View',
-      unit: 'Block D - Plot 03',
-      amount: '₦35M',
-      status: 'interested',
-      date: '2024-01-22',
-      marketer: 'Sarah Johnson',
-      commission: '₦0',
-      commissionStatus: 'pending_allocation'
+  // Use the reports hook
+  const {
+    loading,
+    error,
+    salesData,
+    commissionData,
+    financialData,
+    projectData,
+    clientData,
+    filters,
+    setFilters,
+    generateSalesReport,
+    generateCommissionReport,
+    generateFinancialReport,
+    generateProjectReport,
+    generateClientReport,
+    exportReport,
+    exportReportNew,
+    templates,
+    saveTemplate,
+    deleteTemplate,
+    insights,
+    loadInsights,
+    loadTemplates,
+    clearError,
+    resetFilters,
+  } = useReports();
+
+  // Generate initial reports when component mounts
+  useEffect(() => {
+    const initializeReports = async () => {
+      try {
+        // Generate sales report by default
+        await generateSalesReport();
+        // Load insights
+        await loadInsights();
+        // Load templates
+        await loadTemplates();
+        setLastUpdated(new Date());
+      } catch (error) {
+        console.error("Failed to initialize reports:", error);
+      }
+    };
+
+    // Only initialize if the functions are available
+    if (generateSalesReport && loadInsights && loadTemplates) {
+      initializeReports();
     }
-  ];
+  }, [generateSalesReport, loadInsights, loadTemplates]);
 
-  const marketers = ['Jane Smith', 'Mike Davis', 'Sarah Johnson'];
+  // Calculate KPI data from real data
+  const calculateKPIs = () => {
+    // Ensure data is always treated as arrays
+    const salesArray = Array.isArray(salesData) ? salesData : [];
+    const commissionArray = Array.isArray(commissionData) ? commissionData : [];
 
-  // Filter data based on current filters
-  const filteredSalesData = salesData.filter(sale => {
-    const matchesProject = projectFilter === 'all' || sale.project === projectFilter;
-    const matchesStatus = statusFilter === 'all' || sale.status === statusFilter;
-    const matchesMarketer = marketerFilter === 'all' || sale.marketer === marketerFilter;
-    const shouldInclude = includeRevoked || sale.status !== 'revoked';
-    return matchesProject && matchesStatus && matchesMarketer && shouldInclude;
-  });
+    const totalSales = salesArray.filter(
+      (s) => s.status === "allocated"
+    ).length;
+    const totalVolume = salesArray.reduce(
+      (sum, sale) => sum + (sale.amount || 0),
+      0
+    );
+    const activeClients = salesArray.length;
+    const totalCommission = commissionArray.reduce(
+      (sum, comm) => sum + (comm.totalCommission || 0),
+      0
+    );
+    const paidCommission = commissionArray.reduce(
+      (sum, comm) => sum + (comm.paidCommission || 0),
+      0
+    );
 
-  // Mock commission reports data
-  const commissionReports = [
-    {
-      id: 1,
-      marketer: 'Jane Smith',
-      totalSales: 3,
-      totalVolume: '₦47M',
-      totalCommission: '₦625K',
-      paidCommission: '₦625K',
-      pendingCommission: '₦0',
-      period: 'January 2024'
-    },
-    {
-      id: 2,
-      marketer: 'Mike Davis',
-      totalSales: 2,
-      totalVolume: '₦65M',
-      totalCommission: '₦1.5M',
-      paidCommission: '₦600K',
-      pendingCommission: '₦900K',
-      period: 'January 2024'
-    },
-    {
-      id: 3,
-      marketer: 'Sarah Johnson',
-      totalSales: 1,
-      totalVolume: '₦35M',
-      totalCommission: '₦875K',
-      paidCommission: '₦0',
-      pendingCommission: '₦875K',
-      period: 'January 2024'
-    }
-  ];
+    return {
+      totalSales,
+      totalVolume,
+      activeClients,
+      totalCommission,
+      paidCommission,
+    };
+  };
+
+  const kpiValues = calculateKPIs();
+
+  // Ensure kpiValues has default values to prevent undefined errors
+  const safeKpiValues = {
+    totalSales: kpiValues?.totalSales || 0,
+    totalVolume: kpiValues?.totalVolume || 0,
+    activeClients: kpiValues?.activeClients || 0,
+    totalCommission: kpiValues?.totalCommission || 0,
+    paidCommission: kpiValues?.paidCommission || 0,
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'allocated':
-        return 'bg-green-100 text-green-800';
-      case 'interested':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'offered':
-        return 'bg-blue-100 text-blue-800';
-      case 'revoked':
-        return 'bg-red-100 text-red-800';
-      case 'paid':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-orange-100 text-orange-800';
-      case 'cancelled':
-        return 'bg-gray-100 text-gray-800';
+      case "allocated":
+        return "bg-green-100 text-green-800";
+      case "interested":
+        return "bg-yellow-100 text-yellow-800";
+      case "offered":
+        return "bg-blue-100 text-blue-800";
+      case "revoked":
+        return "bg-red-100 text-red-800";
+      case "paid":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-orange-100 text-orange-800";
+      case "cancelled":
+        return "bg-gray-100 text-gray-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const kpiData = [
     {
-      title: 'Total Sales',
-      value: filteredSalesData.filter(s => s.status === 'allocated').length.toString(),
-      subtitle: 'Allocated plots',
+      title: "Total Sales",
+      value: safeKpiValues.totalSales.toString(),
+      subtitle: "Allocated plots",
       icon: TrendingUp,
-      color: 'text-emerald-700',
-      bgColor: 'bg-emerald-100',
-      cardBg: 'from-emerald-50 to-emerald-100',
+      color: "text-emerald-700",
+      bgColor: "bg-emerald-100",
+      cardBg: "from-emerald-50 to-emerald-100",
     },
     {
-      title: 'Sales Volume',
-      value: '₦110M',
-      subtitle: 'Total value',
+      title: "Sales Volume",
+      value: formatCurrencyKPI(safeKpiValues.totalVolume),
+      subtitle: "Total value",
       icon: DollarSign,
-      color: 'text-blue-700',
-      bgColor: 'bg-blue-100',
-      cardBg: 'from-blue-50 to-blue-100',
+      color: "text-blue-700",
+      bgColor: "bg-blue-100",
+      cardBg: "from-blue-50 to-blue-100",
     },
     {
-      title: 'Active Clients',
-      value: filteredSalesData.length.toString(),
-      subtitle: 'All statuses',
+      title: "Active Clients",
+      value: safeKpiValues.activeClients.toString(),
+      subtitle: "All statuses",
       icon: Users,
-      color: 'text-purple-700',
-      bgColor: 'bg-purple-100',
-      cardBg: 'from-purple-50 to-purple-100',
+      color: "text-purple-700",
+      bgColor: "bg-purple-100",
+      cardBg: "from-purple-50 to-purple-100",
     },
     {
-      title: 'Commission Paid',
-      value: '₦1.2M',
-      subtitle: 'To marketers',
+      title: "Commission Paid",
+      value: formatCurrencyKPI(safeKpiValues.paidCommission),
+      subtitle: "To marketers",
       icon: FileText,
-      color: 'text-amber-700',
-      bgColor: 'bg-amber-100',
-      cardBg: 'from-amber-50 to-amber-100',
+      color: "text-amber-700",
+      bgColor: "bg-amber-100",
+      cardBg: "from-amber-50 to-amber-100",
     },
   ];
 
@@ -187,29 +198,92 @@ export function Reports() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
-          <p className="text-gray-600 mt-1">Generate detailed reports and insights</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Reports & Analytics
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Generate detailed reports and insights
+          </p>
+          {lastUpdated && (
+            <p className="text-xs text-gray-500 mt-1">
+              Last updated: {lastUpdated.toLocaleString()}
+            </p>
+          )}
         </div>
         <div className="flex space-x-2">
           <ReportExportActions reportType="sales" />
-          <Button className="bg-gradient-accent hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-white border-0">
+          <Button
+            onClick={() =>
+              generateSalesReport().then(() => setLastUpdated(new Date()))
+            }
+            disabled={loading}
+            variant="outline"
+          >
             <FileText className="h-4 w-4 mr-2" />
-            Generate Report
+            {loading ? "Generating..." : "Generate Sales Report"}
+          </Button>
+          <Button
+            onClick={() =>
+              generateCommissionReport().then(() => setLastUpdated(new Date()))
+            }
+            disabled={loading}
+            variant="outline"
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            {loading ? "Generating..." : "Generate Commission Report"}
+          </Button>
+          <Button
+            onClick={() =>
+              generateFinancialReport().then(() => setLastUpdated(new Date()))
+            }
+            disabled={loading}
+            variant="outline"
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            {loading ? "Generating..." : "Generate Financial Report"}
           </Button>
         </div>
       </div>
 
+      {/* Error Display */}
+      {error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                <span className="text-red-800 font-medium">Error</span>
+                <span className="text-red-700">{error}</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearError}
+                className="text-red-700 border-red-300 hover:bg-red-100"
+              >
+                Clear
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
-          <Card key={index} className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}>
+          <Card
+            key={index}
+            className={`bg-gradient-to-br ${kpi.cardBg} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl`}
+          >
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="text-sm font-medium text-gray-600 mb-2">
                     {kpi.title}
                   </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    {kpi.value}
+                  </div>
                   <div className="text-xs text-gray-500">{kpi.subtitle}</div>
                 </div>
                 <div className={`p-3 rounded-xl ${kpi.bgColor} shadow-sm`}>
@@ -222,7 +296,38 @@ export function Reports() {
       </div>
 
       {/* Reports Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => {
+          setActiveTab(value);
+          // Generate report for the selected tab
+          switch (value) {
+            case "sales":
+              if (!Array.isArray(salesData) || salesData.length === 0) {
+                generateSalesReport().then(() => setLastUpdated(new Date()));
+              }
+              break;
+            case "commission":
+              if (
+                !Array.isArray(commissionData) ||
+                commissionData.length === 0
+              ) {
+                generateCommissionReport().then(() =>
+                  setLastUpdated(new Date())
+                );
+              }
+              break;
+            case "financial":
+              if (!financialData) {
+                generateFinancialReport().then(() =>
+                  setLastUpdated(new Date())
+                );
+              }
+              break;
+          }
+        }}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="sales">Sales Reports</TabsTrigger>
           <TabsTrigger value="commission">Commission Reports</TabsTrigger>
@@ -231,284 +336,457 @@ export function Reports() {
         </TabsList>
 
         <TabsContent value="sales" className="space-y-6">
+          {/* Summary Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-sm text-gray-600">Total Records</div>
+                <div className="text-2xl font-bold">
+                  {Array.isArray(salesData) ? salesData.length : 0}
+                </div>
+                <div className="text-xs text-gray-500">Sales entries</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-sm text-gray-600">Total Volume</div>
+                <div className="text-2xl font-bold">
+                  {formatCurrencyKPI(safeKpiValues.totalVolume)}
+                </div>
+                <div className="text-xs text-gray-500">Combined value</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-sm text-gray-600">Allocated Plots</div>
+                <div className="text-2xl font-bold">
+                  {safeKpiValues.totalSales}
+                </div>
+                <div className="text-xs text-gray-500">Confirmed sales</div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Enhanced Filters */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Filter className="h-5 w-5" />
-                Filters & Options
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Date Range</label>
-                  <Select value={dateRange} onValueChange={setDateRange}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="today">Today</SelectItem>
-                      <SelectItem value="this-week">This Week</SelectItem>
-                      <SelectItem value="this-month">This Month</SelectItem>
-                      <SelectItem value="last-month">Last Month</SelectItem>
-                      <SelectItem value="this-year">This Year</SelectItem>
-                      <SelectItem value="custom">Custom Range</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Project</label>
-                  <Select value={projectFilter} onValueChange={setProjectFilter}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Projects</SelectItem>
-                      <SelectItem value="Victoria Gardens">Victoria Gardens</SelectItem>
-                      <SelectItem value="Emerald Heights">Emerald Heights</SelectItem>
-                      <SelectItem value="Golden View">Golden View</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Status</label>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="interested">Interested</SelectItem>
-                      <SelectItem value="offered">Offered</SelectItem>
-                      <SelectItem value="allocated">Allocated</SelectItem>
-                      <SelectItem value="revoked">Revoked</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Marketer</label>
-                  <Select value={marketerFilter} onValueChange={setMarketerFilter}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Marketers</SelectItem>
-                      {marketers.map(marketer => (
-                        <SelectItem key={marketer} value={marketer}>
-                          {marketer}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Options</label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="include-revoked" 
-                      checked={includeRevoked}
-                      onCheckedChange={(checked) => setIncludeRevoked(checked === true)}
-                    />
-                    <label htmlFor="include-revoked" className="text-sm">
-                      Include Revoked
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ReportFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            onReset={resetFilters}
+            reportType="sales"
+            projects={[]}
+            marketers={[]}
+            clients={[]}
+            loading={loading}
+          />
 
           {/* Sales Data Table */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Sales & Allocation Report</CardTitle>
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  onClick={() => exportReportNew("sales", "csv")}
+                  disabled={
+                    loading ||
+                    !Array.isArray(salesData) ||
+                    salesData.length === 0
+                  }
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Project/Plot</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Marketer</TableHead>
-                    <TableHead>Commission</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredSalesData.map((sale) => (
-                    <TableRow key={sale.id}>
-                      <TableCell className="font-medium">{sale.clientName}</TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{sale.project}</div>
-                          <div className="text-sm text-gray-500">{sale.unit}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-medium">{sale.amount}</TableCell>
-                      <TableCell>{sale.marketer}</TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{sale.commission}</div>
-                          <Badge className={`text-xs ${getStatusColor(sale.commissionStatus)}`}>
-                            {sale.commissionStatus}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(sale.status)}>
-                          {sale.status}
-                        </Badge>
-                        {sale.status === 'revoked' && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            Revoked: {sale.revokedDate}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>{sale.date}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-1">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          {sale.status === 'revoked' && (
-                            <Button variant="ghost" size="sm" title="View Revocation Details">
-                              <FileText className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="ml-2 text-gray-600">
+                    Generating report...
+                  </span>
+                </div>
+              ) : !Array.isArray(salesData) || salesData.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No sales data available.</p>
+                  <p className="text-sm mt-1">
+                    Click "Generate Report" to fetch data.
+                  </p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Client</TableHead>
+                      <TableHead>Project/Plot</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Marketer</TableHead>
+                      <TableHead>Commission</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {Array.isArray(salesData) &&
+                      salesData.map((sale) => (
+                        <TableRow key={sale.id}>
+                          <TableCell className="font-medium">
+                            {sale.clientName}
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">{sale.project}</div>
+                              <div className="text-sm text-gray-500">
+                                {sale.unit}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {formatCurrencyDisplay(sale.amount || 0)}
+                          </TableCell>
+                          <TableCell>{sale.marketer}</TableCell>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">
+                                {formatCurrencyDisplay(sale.commission || 0)}
+                              </div>
+                              <Badge
+                                className={`text-xs ${getStatusColor(
+                                  sale.commissionStatus
+                                )}`}
+                              >
+                                {sale.commissionStatus}
+                              </Badge>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getStatusColor(sale.status)}>
+                              {sale.status}
+                            </Badge>
+                            {sale.status === "revoked" && sale.revokedDate && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                Revoked: {sale.revokedDate}
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell>{sale.date}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-1">
+                              <Button variant="ghost" size="sm">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              {sale.status === "revoked" && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  title="View Revocation Details"
+                                >
+                                  <FileText className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="commission" className="space-y-6">
           {/* Commission Reports */}
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">Commission Reports</h3>
+            <Button
+              onClick={() =>
+                generateCommissionReport().then(() =>
+                  setLastUpdated(new Date())
+                )
+              }
+              disabled={loading}
+              variant="outline"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              {loading ? "Generating..." : "Generate Commission Report"}
+            </Button>
+          </div>
+
+          {/* Summary Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-sm text-gray-600">Total Marketers</div>
+                <div className="text-2xl font-bold">
+                  {Array.isArray(commissionData) ? commissionData.length : 0}
+                </div>
+                <div className="text-xs text-gray-500">Active marketers</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-sm text-gray-600">Total Commission</div>
+                <div className="text-2xl font-bold">
+                  {formatCurrencyKPI(safeKpiValues.totalCommission)}
+                </div>
+                <div className="text-xs text-gray-500">Combined earnings</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-sm text-gray-600">Commission Paid</div>
+                <div className="text-2xl font-bold">
+                  {formatCurrencyKPI(safeKpiValues.paidCommission)}
+                </div>
+                <div className="text-xs text-gray-500">Settled amounts</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <ReportFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            onReset={resetFilters}
+            reportType="commission"
+            projects={[]}
+            marketers={[]}
+            clients={[]}
+            loading={loading}
+          />
+
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Marketer Commission Report</CardTitle>
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  onClick={() => exportReportNew("commission", "csv")}
+                  disabled={
+                    loading ||
+                    !Array.isArray(commissionData) ||
+                    commissionData.length === 0
+                  }
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export Commission Summary
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Marketer</TableHead>
-                    <TableHead>Total Sales</TableHead>
-                    <TableHead>Sales Volume</TableHead>
-                    <TableHead>Total Commission</TableHead>
-                    <TableHead>Paid</TableHead>
-                    <TableHead>Pending</TableHead>
-                    <TableHead>Period</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {commissionReports.map((report) => (
-                    <TableRow key={report.id}>
-                      <TableCell className="font-medium">{report.marketer}</TableCell>
-                      <TableCell>{report.totalSales}</TableCell>
-                      <TableCell className="font-medium">{report.totalVolume}</TableCell>
-                      <TableCell className="font-medium text-purple-600">{report.totalCommission}</TableCell>
-                      <TableCell className="text-green-600">{report.paidCommission}</TableCell>
-                      <TableCell className="text-orange-600">{report.pendingCommission}</TableCell>
-                      <TableCell>{report.period}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-1">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="ml-2 text-gray-600">
+                    Generating report...
+                  </span>
+                </div>
+              ) : !Array.isArray(commissionData) ||
+                commissionData.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No commission data available.</p>
+                  <p className="text-sm mt-1">
+                    Click "Generate Commission Report" to fetch data.
+                  </p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Marketer</TableHead>
+                      <TableHead>Total Sales</TableHead>
+                      <TableHead>Sales Volume</TableHead>
+                      <TableHead>Total Commission</TableHead>
+                      <TableHead>Paid</TableHead>
+                      <TableHead>Pending</TableHead>
+                      <TableHead>Period</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {Array.isArray(commissionData) &&
+                      commissionData.map((report) => (
+                        <TableRow key={report.id}>
+                          <TableCell className="font-medium">
+                            {report.marketer}
+                          </TableCell>
+                          <TableCell>{report.totalSales}</TableCell>
+                          <TableCell className="font-medium">
+                            {formatCurrencyDisplay(report.totalVolume || 0)}
+                          </TableCell>
+                          <TableCell className="font-medium text-purple-600">
+                            {formatCurrencyDisplay(report.totalCommission || 0)}
+                          </TableCell>
+                          <TableCell className="text-green-600">
+                            {formatCurrencyDisplay(report.paidCommission || 0)}
+                          </TableCell>
+                          <TableCell className="text-orange-600">
+                            {formatCurrencyDisplay(
+                              report.pendingCommission || 0
+                            )}
+                          </TableCell>
+                          <TableCell>{report.period}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-1">
+                              <Button variant="ghost" size="sm">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="financial" className="space-y-6">
-          {/* Financial reports content with revocation data */}
+          {/* Financial reports content with real data */}
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">Financial Reports</h3>
+            <Button
+              onClick={() =>
+                generateFinancialReport().then(() => setLastUpdated(new Date()))
+              }
+              disabled={loading}
+              variant="outline"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              {loading ? "Generating..." : "Generate Financial Report"}
+            </Button>
+          </div>
+
           <Card>
             <CardHeader>
               <CardTitle>Financial Summary Report</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-4">
-                  <h4 className="font-medium">Revenue Overview</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Total Sales Revenue:</span>
-                      <span className="font-medium">₦110M</span>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="ml-2 text-gray-600">
+                    Generating financial report...
+                  </span>
+                </div>
+              ) : !financialData ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No financial data available.</p>
+                  <p className="text-sm mt-1">
+                    Click "Generate Financial Report" to fetch data.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Revenue Overview</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Total Revenue:
+                        </span>
+                        <span className="font-medium">
+                          {formatCurrencyDisplay(
+                            financialData.totalRevenue || 0
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Total Expenses:
+                        </span>
+                        <span className="font-medium text-red-600">
+                          -
+                          {formatCurrencyDisplay(
+                            financialData.totalExpenses || 0
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Net Profit:
+                        </span>
+                        <span className="font-medium text-green-600">
+                          {formatCurrencyDisplay(financialData.netProfit || 0)}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Total Refunds:</span>
-                      <span className="font-medium text-red-600">-₦8.8M</span>
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Commission Overview</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Total Commission:
+                        </span>
+                        <span className="font-medium">
+                          {formatCurrencyDisplay(
+                            (financialData.commissionPaid || 0) +
+                              (financialData.commissionPending || 0)
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Commission Paid:
+                        </span>
+                        <span className="font-medium text-green-600">
+                          {formatCurrencyDisplay(
+                            financialData.commissionPaid || 0
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Commission Pending:
+                        </span>
+                        <span className="text-orange-600">
+                          {formatCurrencyDisplay(
+                            financialData.commissionPending || 0
+                          )}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Net Revenue:</span>
-                      <span className="font-medium text-green-600">₦101.2M</span>
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Additional Metrics</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Outstanding Amount:
+                        </span>
+                        <span className="font-medium">
+                          {formatCurrencyDisplay(
+                            financialData.outstandingAmount || 0
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Refunds Issued:
+                        </span>
+                        <span className="font-medium text-red-600">
+                          -
+                          {formatCurrencyDisplay(
+                            financialData.refundsIssued || 0
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Period:</span>
+                        <span className="font-medium">
+                          {financialData.period || "N/A"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <h4 className="font-medium">Commission Overview</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Total Commission Earned:</span>
-                      <span className="font-medium">₦3M</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Commission Paid:</span>
-                      <span className="font-medium text-green-600">₦1.2M</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Commission Pending:</span>
-                      <span className="font-medium text-orange-600">₦1.8M</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <h4 className="font-medium">Revocation Summary</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Plots Revoked:</span>
-                      <span className="font-medium">1</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Total Refunds Issued:</span>
-                      <span className="font-medium text-red-600">₦8.8M</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Revocation Rate:</span>
-                      <span className="font-medium">5.3%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

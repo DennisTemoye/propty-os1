@@ -14,7 +14,7 @@ import type {
 } from "@/types/roles";
 
 interface UseRolesOptions {
-  companyId: string;
+  businessName: string;
   autoFetch?: boolean;
   refreshInterval?: number;
 }
@@ -53,8 +53,8 @@ interface UseRolesReturn {
 
   // Utility methods
   getRoleById: (roleId: string) => Role | undefined;
-  getDefaultRoles: () => Role[];
-  getRoleTemplates: () => RoleTemplate[];
+  getDefaultRoles: () => Promise<Role[]>;
+  getRoleTemplates: () => Promise<RoleTemplate[]>;
   getRoleUsageStats: (roleId: string) => Promise<RoleUsageStats>;
   validateRole: (
     roleData: CreateRoleData | UpdateRoleData
@@ -69,7 +69,7 @@ interface UseRolesReturn {
  */
 export function useRoles(options: UseRolesOptions): UseRolesReturn {
   const {
-    companyId,
+    businessName,
     autoFetch = true,
     refreshInterval = 300000, // 5 minutes
   } = options;
@@ -93,7 +93,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         setIsLoading(true);
         setError(null);
 
-        const fetchedRoles = await RolesService.getRoles(companyId, {
+        const fetchedRoles = await RolesService.getRoles(businessName, {
           page,
           limit: pageSize,
           ...filters,
@@ -119,7 +119,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         setIsLoading(false);
       }
     },
-    [companyId, pageSize]
+    [businessName, pageSize]
   );
 
   // Search roles
@@ -128,11 +128,10 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
       try {
         setError(null);
 
-        const searchResult = await RolesService.searchRoles({
-          query,
-          companyId,
-          ...filters,
-        });
+        const searchResult = await RolesService.searchRoles(
+          { ...filters, businessName },
+          { search: query }
+        );
 
         return searchResult;
       } catch (err) {
@@ -143,7 +142,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         throw err;
       }
     },
-    [companyId]
+    [businessName]
   );
 
   // Create a new role
@@ -152,7 +151,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
       try {
         setError(null);
 
-        const newRole = await RolesService.createRole(roleData, companyId);
+        const newRole = await RolesService.createRole(roleData, businessName);
 
         // Add the new role to the list
         setRoles((prev) => [newRole, ...prev]);
@@ -170,7 +169,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         throw err;
       }
     },
-    [companyId]
+    [businessName]
   );
 
   // Update an existing role
@@ -182,7 +181,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         const updatedRole = await RolesService.updateRole(
           roleId,
           updates,
-          companyId
+          businessName
         );
 
         // Update the role in the list
@@ -204,7 +203,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         throw err;
       }
     },
-    [companyId, selectedRole]
+    [businessName, selectedRole]
   );
 
   // Delete a role
@@ -213,7 +212,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
       try {
         setError(null);
 
-        await RolesService.deleteRole(roleId, companyId);
+        await RolesService.deleteRole(roleId, businessName);
 
         // Remove the role from the list
         setRoles((prev) => prev.filter((role) => role.id !== roleId));
@@ -231,7 +230,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         throw err;
       }
     },
-    [companyId, selectedRole]
+    [businessName, selectedRole]
   );
 
   // Duplicate a role
@@ -241,9 +240,8 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         setError(null);
 
         const duplicatedRole = await RolesService.duplicateRole(
-          roleId,
-          companyId,
-          { name: newName }
+          { sourceRoleId: roleId, newName },
+          businessName
         );
 
         // Add the duplicated role to the list
@@ -262,7 +260,7 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
         throw err;
       }
     },
-    [companyId]
+    [businessName]
   );
 
   // Select a role
@@ -295,34 +293,34 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
   // Get default roles
   const getDefaultRoles = useCallback(async (): Promise<Role[]> => {
     try {
-      return await RolesService.getDefaultRoles(companyId);
+      return await RolesService.getDefaultRoles(businessName);
     } catch (err) {
       console.error("Error fetching default roles:", err);
       return [];
     }
-  }, [companyId]);
+  }, [businessName]);
 
   // Get role templates
   const getRoleTemplates = useCallback(async (): Promise<RoleTemplate[]> => {
     try {
-      return await RolesService.getRoleTemplates(companyId);
+      return await RolesService.getRoleTemplates(businessName);
     } catch (err) {
       console.error("Error fetching role templates:", err);
       return [];
     }
-  }, [companyId]);
+  }, [businessName]);
 
   // Get role usage stats
   const getRoleUsageStats = useCallback(
     async (roleId: string): Promise<RoleUsageStats> => {
       try {
-        return await RolesService.getRoleUsageStats(roleId, companyId);
+        return await RolesService.getRoleUsageStats(roleId, businessName);
       } catch (err) {
         console.error("Error fetching role usage stats:", err);
         throw err;
       }
     },
-    [companyId]
+    [businessName]
   );
 
   // Validate role data
@@ -331,13 +329,13 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
       roleData: CreateRoleData | UpdateRoleData
     ): Promise<RoleValidationResult> => {
       try {
-        return await RolesService.validateRole(roleData, companyId);
+        return await RolesService.validateRole(roleData);
       } catch (err) {
         console.error("Error validating role:", err);
         throw err;
       }
     },
-    [companyId]
+    [businessName]
   );
 
   // Refresh roles
@@ -366,20 +364,20 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
 
   // Auto-fetch roles on mount
   useEffect(() => {
-    if (autoFetch && companyId) {
+    if (autoFetch && businessName) {
       fetchRoles(1);
     }
-  }, [autoFetch, companyId, fetchRoles]);
+  }, [autoFetch, businessName, fetchRoles]);
 
   // Set up refresh interval
   useEffect(() => {
-    if (refreshInterval > 0 && companyId) {
+    if (refreshInterval > 0 && businessName) {
       const interval = setInterval(() => {
         refreshRoles();
       }, refreshInterval);
       return () => clearInterval(interval);
     }
-  }, [refreshInterval, companyId, refreshRoles]);
+  }, [refreshInterval, businessName, refreshRoles]);
 
   return {
     // State
@@ -425,19 +423,19 @@ export function useRoles(options: UseRolesOptions): UseRolesReturn {
 /**
  * Hook for managing a single role
  */
-export function useRole(roleId: string, companyId: string) {
+export function useRole(roleId: string, businessName: string) {
   const [role, setRole] = useState<Role | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchRole = useCallback(async () => {
-    if (!roleId || !companyId) return;
+    if (!roleId || !businessName) return;
 
     try {
       setIsLoading(true);
       setError(null);
 
-      const fetchedRole = await RolesService.getRoleById(roleId, companyId);
+      const fetchedRole = await RolesService.getRoleById(roleId, businessName);
       setRole(fetchedRole);
     } catch (err) {
       const errorMessage =
@@ -447,11 +445,11 @@ export function useRole(roleId: string, companyId: string) {
     } finally {
       setIsLoading(false);
     }
-  }, [roleId, companyId]);
+  }, [roleId, businessName]);
 
   const updateRole = useCallback(
     async (updates: UpdateRoleData) => {
-      if (!roleId || !companyId)
+      if (!roleId || !businessName)
         throw new Error("Role ID and Company ID are required");
 
       try {
@@ -460,7 +458,7 @@ export function useRole(roleId: string, companyId: string) {
         const updatedRole = await RolesService.updateRole(
           roleId,
           updates,
-          companyId
+          businessName
         );
         setRole(updatedRole);
 
@@ -473,17 +471,17 @@ export function useRole(roleId: string, companyId: string) {
         throw err;
       }
     },
-    [roleId, companyId]
+    [roleId, businessName]
   );
 
   const deleteRole = useCallback(async () => {
-    if (!roleId || !companyId)
+    if (!roleId || !businessName)
       throw new Error("Role ID and Company ID are required");
 
     try {
       setError(null);
 
-      await RolesService.deleteRole(roleId, companyId);
+      await RolesService.deleteRole(roleId, businessName);
       setRole(null);
     } catch (err) {
       const errorMessage =
@@ -492,7 +490,7 @@ export function useRole(roleId: string, companyId: string) {
       console.error("Error deleting role:", err);
       throw err;
     }
-  }, [roleId, companyId]);
+  }, [roleId, businessName]);
 
   useEffect(() => {
     fetchRole();

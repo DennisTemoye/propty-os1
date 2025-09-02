@@ -1,25 +1,41 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+} from "recharts";
+import { formatCurrencyChart } from "@/utils/formatCurrency";
 
 const monthlyData = [
-  { month: 'Jan', income: 15200000, expenses: 3400000 },
-  { month: 'Feb', income: 18500000, expenses: 4200000 },
-  { month: 'Mar', income: 22100000, expenses: 5100000 },
-  { month: 'Apr', income: 19800000, expenses: 4800000 },
-  { month: 'May', income: 25400000, expenses: 6200000 },
-  { month: 'Jun', income: 28900000, expenses: 7100000 },
+  { month: "Jan", income: 15200000, expenses: 3400000 },
+  { month: "Feb", income: 18500000, expenses: 4200000 },
+  { month: "Mar", income: 22100000, expenses: 5100000 },
+  { month: "Apr", income: 19800000, expenses: 4800000 },
+  { month: "May", income: 25400000, expenses: 6200000 },
+  { month: "Jun", income: 28900000, expenses: 7100000 },
 ];
 
 const expenseCategories = [
-  { name: 'Marketing & Advertising', value: 8500000, color: '#8b5cf6' },
-  { name: 'Legal & Registration', value: 4200000, color: '#06b6d4' },
-  { name: 'Office Supplies', value: 2100000, color: '#10b981' },
-  { name: 'Utilities', value: 3200000, color: '#f59e0b' },
-  { name: 'Professional Services', value: 5800000, color: '#ef4444' },
-  { name: 'Other Admin Costs', value: 6700000, color: '#6366f1' },
+  { name: "Marketing & Advertising", value: 8500000, color: "#8b5cf6" },
+  { name: "Legal & Registration", value: 4200000, color: "#06b6d4" },
+  { name: "Office Supplies", value: 2100000, color: "#10b981" },
+  { name: "Utilities", value: 3200000, color: "#f59e0b" },
+  { name: "Professional Services", value: 5800000, color: "#ef4444" },
+  { name: "Other Admin Costs", value: 6700000, color: "#6366f1" },
 ];
 
 const chartConfig = {
@@ -47,13 +63,26 @@ export function AnalyticsCharts() {
               <BarChart data={monthlyData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
-                <YAxis tickFormatter={(value) => `₦${(value / 1000000).toFixed(1)}M`} />
-                <ChartTooltip 
-                  content={<ChartTooltipContent />}
-                  formatter={(value: number) => [`₦${(value / 1000000).toFixed(2)}M`, '']}
+                <YAxis
+                  tickFormatter={(value) => formatCurrencyChart(value, 1)}
                 />
-                <Bar dataKey="income" fill="var(--color-income)" name="Income" />
-                <Bar dataKey="expenses" fill="var(--color-expenses)" name="Expenses" />
+                <ChartTooltip
+                  content={<ChartTooltipContent />}
+                  formatter={(value: number) => [
+                    formatCurrencyChart(value, 2),
+                    "",
+                  ]}
+                />
+                <Bar
+                  dataKey="income"
+                  fill="var(--color-income)"
+                  name="Income"
+                />
+                <Bar
+                  dataKey="expenses"
+                  fill="var(--color-expenses)"
+                  name="Expenses"
+                />
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -73,7 +102,9 @@ export function AnalyticsCharts() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) =>
+                  `${name}: ${(percent * 100).toFixed(0)}%`
+                }
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
@@ -82,8 +113,11 @@ export function AnalyticsCharts() {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <ChartTooltip 
-                formatter={(value: number) => [`₦${(value / 1000000).toFixed(2)}M`, 'Amount']}
+              <ChartTooltip
+                formatter={(value: number) => [
+                  formatCurrencyChart(value, 2),
+                  "Amount",
+                ]}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -100,14 +134,17 @@ export function AnalyticsCharts() {
             <LineChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis tickFormatter={(value) => `₦${(value / 1000000).toFixed(1)}M`} />
-              <ChartTooltip 
-                formatter={(value: number) => [`₦${(value / 1000000).toFixed(2)}M`, 'Net Profit']}
+              <YAxis tickFormatter={(value) => formatCurrencyChart(value, 1)} />
+              <ChartTooltip
+                formatter={(value: number) => [
+                  formatCurrencyChart(value, 2),
+                  "Net Profit",
+                ]}
               />
-              <Line 
-                type="monotone" 
+              <Line
+                type="monotone"
                 dataKey={(data) => data.income - data.expenses}
-                stroke="#8b5cf6" 
+                stroke="#8b5cf6"
                 strokeWidth={3}
                 name="Net Profit"
               />

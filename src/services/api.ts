@@ -281,6 +281,39 @@ export class ApiService {
       const { status, data } = error.response;
       const responseData = data as any;
 
+      // Log detailed error information for debugging
+      console.error("🚨 API Error Details:", {
+        status,
+        url: error.config?.url,
+        method: error.config?.method,
+        headers: error.config?.headers,
+        hasAuthHeader: !!error.config?.headers?.Authorization,
+        responseData,
+      });
+
+      // Special handling for auth errors
+      if (status === 401) {
+        console.warn("🔐 Unauthorized - Token may be expired or invalid");
+        // Clear invalid tokens
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+      } else if (status === 403) {
+        console.warn("🚫 Forbidden - User lacks required permissions");
+
+        // Try to refresh token and retry for 403 errors
+        if (!(error.config as any)?._retry) {
+          (error.config as any)._retry = true;
+          console.log("🔄 Attempting automatic retry for 403 error...");
+
+          // This will be handled by the middleware chain
+          return {
+            message: "Permission denied. Retrying with refreshed token...",
+            status: status,
+            errors: responseData?.errors,
+          };
+        }
+      }
+
       return {
         message: responseData?.message || `HTTP ${status}: ${error.message}`,
         status: status,
@@ -288,6 +321,10 @@ export class ApiService {
       };
     } else if (error.request) {
       // Request was made but no response received
+      console.error("📡 No response received:", {
+        url: error.config?.url,
+        method: error.config?.method,
+      });
       return {
         message:
           "No response received from server. Please check your internet connection.",
@@ -295,6 +332,7 @@ export class ApiService {
       };
     } else {
       // Something else happened
+      console.error("💥 Request setup error:", error.message);
       return {
         message: error.message || "An unexpected error occurred.",
         status: 0,
